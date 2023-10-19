@@ -1,42 +1,47 @@
 ﻿/// Stack
 #include <windows.h>
 #include <iostream>
-#define MAX 30
-int   g_iStackAray[MAX];
-int   g_iTop;
-void  InitStack()
+#define MAX 3
+int   g_iQuqueArray[MAX];
+int   g_iIn;
+int   g_iOut;
+void  InitQuque()
 {
-    g_iTop = -1;
-    memset(g_iStackAray, 0, sizeof(int) * MAX);
+    g_iIn = g_iOut = 0;
+    memset(g_iQuqueArray, 0, sizeof(int) * MAX);
 }
 int  push(int t)
 {
-    if (g_iTop >= MAX - 1)
-    {       
+    // 항상 1개의 방은 나머지가 존재한다.
+    if ((g_iIn + 1) % MAX == g_iOut)
+    {        
         return -1;
     }
-    g_iStackAray[++g_iTop] = t;
+    g_iQuqueArray[g_iIn] = t;
+    g_iIn = ++g_iIn % MAX;
     return t;
 }
 int   pop()
 {
-    if (g_iTop < 0)
-    {        
+    if (g_iIn == g_iOut)
+    {       
         return -1;
     }
-    return g_iStackAray[g_iTop--];
+    int iData = g_iQuqueArray[g_iOut];
+    g_iOut = ++g_iOut % MAX;
+    return iData;
 }
 int main()
 {
-    InitStack();
+    InitQuque();
 
-    int iWorkCounter = 100;
+    int iWorkCounter = 10;
     int iWork = 0;
     srand(time(NULL));// 난수(무작위수) 발생 초기화
     while (iWorkCounter-- > 0)
     {
         iWork = rand() % 3;
-        if (iWork == 0 || iWork== 1) // input
+        if (iWork == 0 || iWork == 1) // input
         {
             std::cout << "input ->";
             int iData = rand() % 100;// 0 ~ 99
@@ -47,8 +52,9 @@ int main()
             }
             else
             {
-                std::cout << iData << " Input top=" << 
-                      g_iTop << std::endl;
+                std::cout << iData << " Input in=" 
+                    << g_iIn << " "
+                    << " out=" << g_iOut << std::endl;
             }
         }
         else  // output
@@ -61,8 +67,9 @@ int main()
             }
             else
             {
-                std::cout << iRet << " Output! top=" << 
-                    g_iTop << std::endl;
+                std::cout << iRet << " output in="
+                    << g_iIn << " "
+                    << " out=" << g_iOut << std::endl;
             }
         }
         Sleep(1000); //  1초 마다
