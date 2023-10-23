@@ -1,9 +1,8 @@
 #pragma once
 #include <iostream>
 #define MAX_SIZE  10
-class TQueue
+class AQueue
 {
-public:
     int     item[MAX_SIZE];
     int     rear = -1;
     int     front = 0;

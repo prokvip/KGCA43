@@ -1,18 +1,18 @@
 #include "TQueue.h"
 
-void TQueue::Enqueue(int data)
+void AQueue::Enqueue(int data)
 {
     item[++rear] = data;
 }
-int TQueue::Dequeue()
+int AQueue::Dequeue()
 {
     return item[front++];
 }
-int TQueue::Size()
+int AQueue::Size()
 {
     return (rear - front + 1);
 }
-bool TQueue::IsEmpty()
+bool AQueue::IsEmpty()
 {
     if (front > rear)
     {
@@ -20,7 +20,7 @@ bool TQueue::IsEmpty()
     }
     return false;
 }
-bool TQueue::IsFull()
+bool AQueue::IsFull()
 {
     if (Size() >= MAX_SIZE)
     {
@@ -28,7 +28,7 @@ bool TQueue::IsFull()
     }
     return false;
 }
-void TQueue::Display()
+void AQueue::Display()
 {
     if (!IsEmpty())
     {

@@ -2,7 +2,7 @@
 
 int main()
 {
-    TQueue g_Queue;
+    AQueue g_Queue;
     int g_iValue = 0;
 
     for (int i = 0; i < 5; i++)
