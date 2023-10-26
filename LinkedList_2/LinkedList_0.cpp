@@ -1,5 +1,5 @@
 ﻿
-#include "TLinkedList.h"
+#include "TLinkedList.cpp"
 
 struct TStudent
 {
@@ -27,7 +27,9 @@ struct TStudent
 // - 5추가(임의의 위치), 6수정, 7검색, 8정렬
 // 제한사항(사용하기 불편하다.) : 
 // 재사용성 고려.
-TLinkedList<TStudent> list;
+TLinkedList<TStudent>   list;
+TLinkedList<int>        list2;
+TLinkedList<float>       list3;
 
 int main()
 {    
@@ -47,5 +49,14 @@ int main()
     }
     list.Show();
     list.ReverseShow();
+
+    for (int i = 0; i < 5; i++)
+    {
+        //list2.BackwardAdd(list2.NewNode(i*100));
+        list2.ForwardAdd(list2.NewNode(i*100));
+    }
+    list2.Show();
+    list2.ReverseShow();
+
     std::cout << "End!\n";
 }
