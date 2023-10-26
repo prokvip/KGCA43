@@ -15,12 +15,12 @@ struct TStudent
         std::cout << iKor + i << std::endl;
         return *this;
     }
-    /*friend std::ostream& operator << (std::ostream& os, 
+    friend std::ostream& operator << (std::ostream& os, 
         const TStudent& t)
     {
         os << t.iID << " "<< t.iKor << std::endl;
         return os;
-    }*/
+    }
 };
 // 리스트 형태라면 고려사항
 // - 1출력, 2순회, 3생성(연결), 4삭제, 
