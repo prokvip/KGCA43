@@ -23,11 +23,13 @@ TNode<T>* TLinkedList<T>::NewNode(T iData)
     return pNewNode;
 }
 template<class T>
-void   TLinkedList<T>::BackwardAdd(TNode<T>* pNewNode)
+void   TLinkedList<T>::Add(T* pNewData)
 {
+    TNode<T>* pNewNode = new TNode<T>();
+    pNewNode->DATA = *pNewData;
     // H   <-> pPrev   <->  T
     // H   <-> pPrev   <->  pNewNode  <-> T
-    TNode* pPrev = m_pTail->m_pPrev;//a
+    TNode<T>* pPrev = m_pTail->m_pPrev;//a
 
     // pPrev   ->  pNewNode
     pPrev->m_pNext = pNewNode;
@@ -38,6 +40,27 @@ void   TLinkedList<T>::BackwardAdd(TNode<T>* pNewNode)
     pNewNode->m_pNext = m_pTail;
     // pNewNode <- T
     m_pTail->m_pPrev = pNewNode;
+
+    m_iCounter++;
+}
+template<class T>
+void   TLinkedList<T>::BackwardAdd(TNode<T>* pNewNode)
+{
+    // H   <-> pPrev   <->  T
+    // H   <-> pPrev   <->  pNewNode  <-> T
+    TNode<T>* pPrev = m_pTail->m_pPrev;//a
+
+    // pPrev   ->  pNewNode
+    pPrev->m_pNext = pNewNode;
+    // pPrev   <-  pNewNode    
+    pNewNode->m_pPrev = pPrev;
+
+    // pNewNode -> T
+    pNewNode->m_pNext = m_pTail;
+    // pNewNode <- T
+    m_pTail->m_pPrev = pNewNode;
+
+    m_iCounter++;
 }
 template<class T>
 void   TLinkedList<T>::ForwardAdd(TNode<T>* pNewNode)
@@ -53,6 +76,8 @@ void   TLinkedList<T>::ForwardAdd(TNode<T>* pNewNode)
     pNewNode->m_pNext = pNext;
     //pNewNode <- pNext
     pNext->m_pPrev = pNewNode;
+
+    m_iCounter++;
 }
 template<class T>
 void  TLinkedList<T>::Show()
@@ -83,6 +108,21 @@ void  TLinkedList<T>::AllDelete()
     {
         TNode<T>* pDelNode = pNode;
         pNode = pNode->m_pNext;
-        delete pDelNode;
+        delete pDelNode;        
     }
+    m_pHead = nullptr;
+    m_pTail = nullptr;
+}
+
+template<class T>
+int TLinkedList<T>::size()
+{
+    int iCnt = 0;
+    for (TNode<T>* pNode = m_pHead->m_pNext;
+        pNode != m_pTail;
+        pNode = pNode->m_pNext)
+    {
+        iCnt++;
+    }
+    return iCnt;
 }
