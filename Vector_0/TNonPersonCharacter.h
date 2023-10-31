@@ -7,6 +7,7 @@ public:
 	void		SetMana(float p);
 	void		SetAttackPower(float p);
 	void		SetDefensivePower(float p);
+	TNonPersonCharacter();
 	virtual~TNonPersonCharacter();
 };
 

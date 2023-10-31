@@ -1,4 +1,8 @@
 #include "TPersonCharacter.h"
+TPersonCharacter::TPersonCharacter()
+{
+	std::cout << "생성자호출" << std::endl;
+}
 TPersonCharacter::~TPersonCharacter()
 {
 	std::cout << "해제자호출" << std::endl;

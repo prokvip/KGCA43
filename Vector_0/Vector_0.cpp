@@ -12,13 +12,15 @@ int main()
     std::vector<int> list;
     for (int i = 0; i < 10; i++)
     {
-        list.push_back(i);
+        //list.push_back(i);
+        list.emplace_back(i);
     }
     // 인덱싱 지원(배열접근 가능하다.)
     for (int i = 0; i < list.size(); i++)
     {
         std::cout << list[i] << " ";
     }
+    std::cout << std::endl;
     // list.begin() -> 실제 첫 데이터 저장.
     // list.end() -> 가상의 꼬리 노드
     for (std::vector<int>::iterator iter = list.begin();
@@ -29,17 +31,24 @@ int main()
         std::cout << iValue << " ";
     }
     list.clear();
+    std::cout << std::endl;
     /// <summary>
     /// vector2 
     /// </summary>
     /// <returns></returns>
     std::vector<TCharacter> listChar;
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 3; i++)
     {
-        TCharacter ch;
+        TCharacter ch({3,3});
         TPoint p = { 30*i,30*i };
         ch.SetPos(p);
         listChar.push_back(ch);
+        //listChar.emplace_back(ch);        
+    }
+    for (int i = 0; i < 3; i++)
+    {
+        TPoint p = { 30 * i,30 * i };
+        listChar.emplace_back(p);
     }
     for (int i = 0; i < listChar.size(); i++)
     {

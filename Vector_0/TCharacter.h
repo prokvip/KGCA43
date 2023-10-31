@@ -45,6 +45,8 @@ public:
 		const TCharacter* t);
 public:
 	TCharacter();
+	TCharacter(TPoint	p);
+	TCharacter(const TCharacter& c);
 	virtual ~TCharacter();
 };
 

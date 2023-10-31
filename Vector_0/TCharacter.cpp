@@ -50,6 +50,20 @@ float		TCharacter::GetDefensivePower() {
 TCharacter::TCharacter() {
 	m_Position.m_x = 0;
 	m_Position.m_y = 0;
+	std::cout << "부모 생성자호출" << std::endl;
+}
+
+TCharacter::TCharacter(TPoint	p)
+{
+	m_Position = p;	
+	std::cout << "부모 생성자호출" << std::endl;
+}
+
+TCharacter::TCharacter(const TCharacter& c)
+{
+	m_Position = c.m_Position;
+	m_Stat = c.m_Stat;
+	std::cout << "복사 생성자호출" << std::endl;
 }
 TCharacter::~TCharacter() {
 	std::cout << "부모 해제자호출" << std::endl;

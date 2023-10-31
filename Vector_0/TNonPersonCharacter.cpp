@@ -1,4 +1,8 @@
 #include "TNonPersonCharacter.h"
+TNonPersonCharacter::TNonPersonCharacter()
+{
+	std::cout << "생성자호출" << std::endl;
+}
 TNonPersonCharacter::~TNonPersonCharacter()
 {
 	std::cout << "해제자호출" << std::endl;
