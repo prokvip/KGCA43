@@ -152,6 +152,7 @@
     <ClInclude Include="TLinkedList.h" />
     <ClInclude Include="TNonPersonCharacter.h" />
     <ClInclude Include="TPersonCharacter.h" />
+    <ClInclude Include="TStd.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
