@@ -35,7 +35,7 @@ int main()
             char buf[256] = { 0, };
             int iRecvByte=recv(clientsock, buf, 256, 0);
             if (iRecvByte == 0) break; // 정상종료
-            if (clientsock == SOCKET_ERROR) break;// 비정상 종료
+            if (iRecvByte == SOCKET_ERROR) break;// 비정상 종료
             printf("[받음]%s\n",buf);
         }
         closesocket(clientsock);
