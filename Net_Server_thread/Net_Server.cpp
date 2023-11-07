@@ -1,9 +1,12 @@
 ﻿#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
 #include <winsock2.h>
+#include <list>
 const short port = 10000;
 int g_time = 0;
-// (1)socket
+
+std::list<SOCKET>  g_userlist;
+
 int main()
 {    
     /*while(1)
@@ -55,31 +58,58 @@ int main()
         }
         else
         {
-            //u_long on = FALSE;
-            //ioctlsocket(clientsock, FIONBIO, &on);
+            g_userlist.push_back(clientsock);
             printf("클라이언트 접속 ip=%s, Port:%d\n",
                 inet_ntoa(clientaddr.sin_addr),
                 ntohs(clientaddr.sin_port));
-            while (1)
+        }
+        for( std::list<SOCKET>::iterator iter = g_userlist.begin();
+                iter != g_userlist.end();
+                )
+        {
+            SOCKET cSock = *iter;
+            char buf[256] = { 0, };
+            int iRecvByte = recv(cSock, buf, 256, 0);
+            if (iRecvByte == SOCKET_ERROR)
             {
-                char buf[256] = { 0, };
-                int iRecvByte = recv(clientsock, buf, 256, 0);
-                if (iRecvByte == SOCKET_ERROR)
+                int iError = WSAGetLastError();
+                if (iError != WSAEWOULDBLOCK)
                 {
-                    int iError = WSAGetLastError();
-                    if (iError != WSAEWOULDBLOCK)
+                    iter = g_userlist.erase(iter);
+                    continue;
+                }
+            }
+            else
+            {
+                if (iRecvByte == 0 || iRecvByte == SOCKET_ERROR)
+                {
+                    iter = g_userlist.erase(iter);
+                    continue;
+                }
+                    
+                printf("[받음]%s\n", buf);    
+                int iLen = strlen(buf);
+
+                for (std::list<SOCKET>::iterator iterSend = g_userlist.begin();
+                    iterSend != g_userlist.end();
+                    iterSend++)
+                {
+                    SOCKET cSock = *iterSend;
+                        
+                    int iSendByte = send(cSock, buf, iLen, 0);
+                    if (iSendByte == SOCKET_ERROR)
                     {
-                        break;
+                        int iError = WSAGetLastError();
+                        if (iError != WSAEWOULDBLOCK)
+                        {
+                            break;
+                        }
                     }
                 }
-                else
-                {
-                    if (iRecvByte == 0) break; // 정상종료
-                    if (iRecvByte == SOCKET_ERROR) break;// 비정상 종료
-                    printf("[받음]%s\n", buf);                    
-                }
-                     
-                double time = (std::clock() - start) / (double)CLOCKS_PER_SEC;                
+                    
+            }
+            iter++;     
+               /* double time = (std::clock() - start) / (double)CLOCKS_PER_SEC;                
                 if (time > g_time + 5)
                 {
                     g_time = (int)time;
@@ -96,12 +126,12 @@ int main()
                         }
                     }
                     printf("%d바이트를 전송했습니다\n", iSendByte);
-                }
-            }
-            closesocket(clientsock);
+                }*/
+            
+            /*closesocket(clientsock);
             printf("클라이언트 접속해제 ip=%s, Port:%d\n",
                 inet_ntoa(clientaddr.sin_addr),
-                ntohs(clientaddr.sin_port));
+                ntohs(clientaddr.sin_port));*/
         }        
     }
     closesocket(sock);

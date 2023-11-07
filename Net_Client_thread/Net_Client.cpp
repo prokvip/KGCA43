@@ -10,9 +10,20 @@ void sendwork()
 {
     while (1)
     {
-        char recvbuf[256] = { 0, };
-        int iRecvByte = recv(sock, recvbuf, 256, 0);
-        printf("[받음]%s\n", recvbuf);
+        char buf[256] = { 0, };
+        int iLen = strlen(buf);
+        int iSendByte;
+        ZeroMemory(buf, sizeof(char) * 256);
+        fgets(buf, 256, stdin);
+        if (buf[0] == '\n') break;
+        iLen = strlen(buf);
+        iSendByte = send(sock, buf, iLen, 0);
+        if (iSendByte == SOCKET_ERROR)
+        {
+            break;
+        }
+        printf("%d바이트를 전송했습니다", iSendByte);
+       
     }
 }
 // (1)socket
@@ -47,24 +58,23 @@ int main() // main thread
     }
 
     std::thread sendthread(sendwork);
-
-    char buf[256] = { 0, };
-    int iLen = strlen(buf);
-    int iSendByte;
+    sendthread.detach();
+    
     while (1)
     {        
-        ZeroMemory(buf, sizeof(char) * 256);
-        fgets(buf, 256, stdin);
-        if (buf[0] == '\n') break;
-        iLen = strlen(buf);
-        iSendByte = send(sock, buf, iLen, 0);
-        printf("%d바이트를 전송했습니다", iSendByte);        
+        char recvbuf[256] = { 0, };
+        int iRecvByte = recv(sock, recvbuf, 256, 0);
+        if (iRecvByte == SOCKET_ERROR)
+        {
+            break;
+        }
+        printf("[받음]%s\n", recvbuf);
     }
     closesocket(sock);
     // )  윈속 해제    
     WSACleanup();
 
-    sendthread.join();
+    //sendthread.join();
 
     std::cout << "Hello World!\n";
 }
