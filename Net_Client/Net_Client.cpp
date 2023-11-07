@@ -42,6 +42,10 @@ int main()
         iLen = strlen(buf);
         iSendByte = send(sock, buf, iLen, 0);
         printf("%d바이트를 전송했습니다", iSendByte);
+
+        char recvbuf[256] = { 0, };
+        int iRecvByte = recv(sock, recvbuf, 256, 0);
+        printf("[받음]%s\n", recvbuf);
     }
     closesocket(sock);
     // )  윈속 해제    
