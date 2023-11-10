@@ -1,12 +1,14 @@
 #pragma once
 #include "Net_Client.cpp"
-
+#include <list>
 SOCKET sock;
 HWND g_hWnd;
 bool g_bConnect = false;
 HWND g_hEdit;
 HWND g_hButton;
 HWND g_hList;
+
+std::list<std::string> g_szMsgList;
 static int Recvwork()
 {
     char recvbuf[256] = { 0, };
@@ -28,7 +30,16 @@ static int Recvwork()
     {
         //printf("[받음]%s\n", recvbuf);
         OutputDebugStringA(recvbuf);
-        SendMessageA(g_hList, LB_ADDSTRING, 0, (LPARAM)recvbuf);
+        g_szMsgList.push_back(recvbuf);
+        if (g_szMsgList.size() > 20)
+        {
+            g_szMsgList.pop_front();
+        }
+        SendMessageA(g_hList, LB_RESETCONTENT, 0, 0);
+        for (auto msg : g_szMsgList)
+        {
+            SendMessageA(g_hList, LB_ADDSTRING, 0, (LPARAM)msg.c_str());
+        }
     }
     return 1;
 }
@@ -198,7 +209,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     HWND hWnd = CreateWindowW(L"KGCA_WINDOWS", 
-        L"Winddfdsfasfadsfdass Projects", WS_OVERLAPPEDWINDOW,
+        L"체팅프로그램", WS_OVERLAPPEDWINDOW,
         0, 0, 800, 600, nullptr, nullptr, 
         hInstance, nullptr);
 
