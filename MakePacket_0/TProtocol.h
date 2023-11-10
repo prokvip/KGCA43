@@ -17,13 +17,13 @@ typedef struct
 
 typedef struct
 {
-	byte   szName[13];  //1+1	
+	char   szName[13];  //1+1	
 	int    iID;        // 4
 	char   szMsg[1024];   // 4+4
 }CHAT_MSG;
 typedef struct
 {
-	byte   szName[13];
+	char   szName[13];
 	int    iID;
 	int    iData[10];
 }ITEM_CREATE;
