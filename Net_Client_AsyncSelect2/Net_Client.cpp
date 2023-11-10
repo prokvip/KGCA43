@@ -9,44 +9,7 @@ const short port = 10000;
 
 extern SOCKET sock;
 extern HWND g_hWnd;
-static void Recvwork()
-{
-    char recvbuf[256] = { 0, };
-    int iRecvByte = recv(sock, recvbuf, 256, 0);
-    if (iRecvByte == SOCKET_ERROR)
-    {
-        int iError = WSAGetLastError();
-        if (iError != WSAEWOULDBLOCK)
-        {
-            closesocket(sock);
-        }        
-    }
-    else
-    {
-        //printf("[받음]%s\n", recvbuf);
-        OutputDebugStringA(recvbuf);
-    }
-}
-static void sendwork()
-{
-    while (1)
-    {
-        char buf[256] = { 0, };
-        int iLen = strlen(buf);
-        int iSendByte;
-        ZeroMemory(buf, sizeof(char) * 256);
-        fgets(buf, 256, stdin);
-        if (buf[0] == '\n') break;
-        iLen = strlen(buf);
-        iSendByte = send(sock, buf, iLen, 0);
-        if (iSendByte == SOCKET_ERROR)
-        {
-            break;
-        }
-        printf("%d바이트를 전송했습니다", iSendByte);
-       
-    }
-}
+
 // (1)socket
 static int mainNetwork() // main thread
 {
@@ -88,9 +51,6 @@ static int mainNetwork() // main thread
     
     u_long on = TRUE;
     ioctlsocket(sock, FIONBIO, &on);
-
-    std::thread sendthread(sendwork);
-    sendthread.detach();   
-    
+   
     return 1;
 }

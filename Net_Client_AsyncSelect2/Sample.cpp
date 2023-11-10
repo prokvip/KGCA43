@@ -3,12 +3,73 @@
 
 SOCKET sock;
 HWND g_hWnd;
+bool g_bConnect = false;
+HWND g_hEdit;
+HWND g_hButton;
+HWND g_hList;
+static int Recvwork()
+{
+    char recvbuf[256] = { 0, };
+    int iRecvByte = recv(sock, recvbuf, 256, 0);
+    if (iRecvByte == SOCKET_ERROR)
+    {
+        int iError = WSAGetLastError();
+        if (iError != WSAEWOULDBLOCK)
+        {
 
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        //printf("[받음]%s\n", recvbuf);
+        OutputDebugStringA(recvbuf);
+        SendMessageA(g_hList, LB_ADDSTRING, 0, (LPARAM)recvbuf);
+    }
+    return 1;
+}
+static int sendwork(const char* buf, int iLen)
+{
+    int iSendByte;
+    iLen = strlen(buf);
+    iSendByte = send(sock, buf, iLen, 0);
+    if (iSendByte == SOCKET_ERROR)
+    {
+        int iError = WSAGetLastError();
+        if (iError != WSAEWOULDBLOCK)
+        {
 
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    printf("%d바이트를 전송했습니다", iSendByte);
+    return iLen;
+
+}
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_COMMAND:
+    {
+        switch (LOWORD(wParam))
+        {
+        case 200://button
+        {
+            char buffer[MAX_PATH] = { 0, };
+            SendMessageA(g_hEdit, WM_GETTEXT, MAX_PATH, (LPARAM)buffer);
+            sendwork(buffer, strlen(buffer));
+        }break;
+        }
+    }break;
     case NETWORK_MSG:
     {
         if (WSAGETSELECTERROR(lParam) != 0)
@@ -20,11 +81,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case FD_CONNECT:
         {
-            int k = 0;
+            g_bConnect = true;
         }break;
-        case FD_CLOSE:  break;
-        case FD_READ:  break;
-        case FD_WRITE:  break;
+        case FD_CLOSE: 
+        {
+            g_bConnect = false;
+        }break;
+        case FD_READ: 
+        {
+            int iRet =Recvwork();
+            // 넌블록킹 소켓.
+            if (iRet == -1)
+            {
+                g_bConnect = false;
+                closesocket(sock);
+            }
+            if (iRet == 0)
+            {
+                PostMessage(g_hWnd, NETWORK_MSG, sock, FD_READ);
+            }
+        };
+        case FD_WRITE: 
+        {
+            //sendwork();
+        }break;
         }
     }break;
     case WM_SIZE:
@@ -70,8 +150,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MyRegisterClass(hInstance);
     //2번 ) 윈도우 생성
     InitInstance(hInstance, nCmdShow);
+    /// <summary>
+    ///  채팅 UI
+    /// </summary>
+    DWORD style = WS_CHILD | WS_VISIBLE;
+    g_hList = CreateWindow(L"listbox", NULL, style, 10, 10, 400, 500,
+        g_hWnd, (HMENU)100, hInstance, NULL);
+    g_hButton = CreateWindow(L"button", L"전송", style, 640, 10, 100, 100,
+        g_hWnd, (HMENU)200, hInstance, NULL);
+    style = WS_CHILD | WS_VISIBLE | ES_MULTILINE;
+    g_hEdit = CreateWindow(L"edit", NULL, style, 430, 10, 200, 100,
+        g_hWnd, (HMENU)300, hInstance, NULL);
+    
 
+
+    // 네트워크 초기화
     mainNetwork();
+    SendMessage(g_hList, LB_ADDSTRING, 0, (LPARAM)L"체팅시작!");
 
     //3번 ) 윈도우 프로시져 작업
     MSG msg;
@@ -91,7 +186,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            //Recvwork();
+            // 게임로직
         }
     }
     closesocket(sock);
@@ -126,6 +221,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance = hInstance;
     wcex.lpszClassName = L"KGCA_WINDOWS";
     //wcex.hCursor = LoadCursor(NULL, IDC_CROSS);
-    wcex.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    wcex.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
     return RegisterClassExW(&wcex);
 }
