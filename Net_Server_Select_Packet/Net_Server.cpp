@@ -3,6 +3,13 @@
 #include <winsock2.h>
 #include <list>
 #include "TProtocol.h"
+
+
+/// RECV => 데이터 -> 네트워크카드 -> 운영체제 -> 프로세스(recvbuffer) -> recv()
+/// SEND => 데이터 -> send() -> 프로세스(sendbuffer) -> 운영체제 -> 네트워크카드
+
+
+
 const short port = 10000;
 int g_time = 0;
 std::list<UPACKET>  g_userPacketlist;
@@ -117,7 +124,29 @@ int main()
     int iRet = 0;
     iRet = WSAStartup(MAKEWORD(2, 2), &wsa);
     if (iRet != 0) return 1;
-    SOCKET listensock = socket(AF_INET, SOCK_STREAM, 0); 
+    SOCKET listensock = socket(AF_INET, SOCK_STREAM, 0);
+
+    //int socktype = 0;
+    //int istLen = sizeof(socktype);
+    //getsockopt(listensock, SOL_SOCKET, SO_TYPE, (char*)&socktype, &istLen);
+    ////if(SOCK_STREAM == socktype) //tcp socket
+
+    int sndbufsize = 0;
+    int iLen = sizeof(sndbufsize);
+    getsockopt(listensock, SOL_SOCKET, SO_SNDBUF, (char*)&sndbufsize, &iLen);
+
+    int recvbufsize = 0;
+    int iRecvLen = sizeof(recvbufsize);
+    getsockopt(listensock, SOL_SOCKET, SO_RCVBUF, (char*)&recvbufsize, &iRecvLen);
+
+   /* sndbufsize = 10000;
+    recvbufsize = 10000;
+    setsockopt(listensock, SOL_SOCKET, SO_SNDBUF, (char*)&sndbufsize, sizeof(sndbufsize));
+    setsockopt(listensock, SOL_SOCKET, SO_RCVBUF, (char*)&recvbufsize, sizeof(recvbufsize));
+    
+    getsockopt(listensock, SOL_SOCKET, SO_SNDBUF, (char*)&sndbufsize, &iLen);
+    getsockopt(listensock, SOL_SOCKET, SO_RCVBUF, (char*)&recvbufsize, &iRecvLen);*/
+
 
     SOCKADDR_IN sa;
     sa.sin_family = AF_INET;
