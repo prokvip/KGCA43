@@ -31,11 +31,13 @@ std::list<UPACKET> recvPacketList;
 
 int main()
 {    
+	//CHAT_MSG cMsg[100];
 	std::string msg = "안녕하세여";
 	std::string name = "홍길동";
 	int         ID = 999;
 
 	TPacket senddata;
+	//senddata << cMsg;
 	senddata << name << ID << "안녕하세여";
 
 	TPacket recvdata= senddata;
