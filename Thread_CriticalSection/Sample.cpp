@@ -5,10 +5,13 @@ HINSTANCE g_hInst;
 HWND hWndMain;
 LPCTSTR lpszClass = TEXT("RaceCrit");
 HANDLE g_hMutex; // 상호배제
+HANDLE g_hEvent;
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	, LPSTR lpszCmdParam, int nCmdShow)
 {
+	g_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
 	HANDLE hMutex = CreateMutex(NULL, FALSE, L"KGCA");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 	{
@@ -42,6 +45,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 		TranslateMessage(&Message);
 		DispatchMessage(&Message);
 	}
+
+	CloseHandle(g_hEvent);
 	return (int)Message.wParam;
 }
 
@@ -50,6 +55,7 @@ CRITICAL_SECTION critA;
 CRITICAL_SECTION critB;
 DWORD WINAPI ThreadFunc1(LPVOID Param)
 {
+	WaitForSingleObject(g_hEvent, INFINITE);
 	HDC hdc;
 	hdc = GetDC(hWndMain);
 	for (int i = 0; i < 100; i++) {
@@ -76,6 +82,7 @@ void Fun()
 }
 DWORD WINAPI ThreadFunc2(LPVOID Param)
 {
+	WaitForSingleObject(g_hEvent, INFINITE);
 	HDC hdc;
 	hdc = GetDC(hWndMain);
 	for (int i = 0; i < 100; i++) {
@@ -106,11 +113,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		hWndMain = hWnd;
 		return 0;
 	case WM_LBUTTONDOWN:
+		SetEvent(g_hEvent);
 		// FALSE이면 대기함수가 호출하는 함수가 소유한다.
 		// TRUE이면 CreateMutex를 호출한 스레드가 소유한다.
 		// 동기화 주체가 아니면 FALSE 둔다.
-		g_hMutex = CreateMutex(NULL, FALSE, NULL);
-		
+		g_hMutex = CreateMutex(NULL, FALSE, NULL);		
 		hThread = CreateThread(NULL, 0, ThreadFunc1, NULL, 0, &ThreadID);
 		CloseHandle(hThread);
 		hThread = CreateThread(NULL, 0, ThreadFunc1, NULL, 0, &ThreadID);
