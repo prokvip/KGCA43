@@ -58,10 +58,11 @@ int main()
     //} WSANETWORKEVENTS, FAR* LPWSANETWORKEVENTS;
 
     WSANETWORKEVENTS NetworkEvent;
-    while (1)
+    bool bRunning = true;
+    while (bRunning)
     {
          int iIndex = WSAWaitForMultipleEvents(g_iCurrentEvent, &g_hEventArray.at(0),
-             FALSE, 1000, FALSE);
+             FALSE, 0, FALSE);
          if (iIndex == WSA_WAIT_FAILED) break;
          if (iIndex == WSA_WAIT_TIMEOUT) continue;
          iIndex -= WSA_WAIT_EVENT_0;
@@ -70,7 +71,7 @@ int main()
          for (int iEvent = iIndex; iEvent < g_iCurrentEvent; iEvent++)
          {
              int iSignal = WSAWaitForMultipleEvents(1, &g_hEventArray[iEvent],
-                 TRUE, 1, FALSE);
+                 TRUE, 0, FALSE);
              if (iSignal == WSA_WAIT_FAILED)  continue;
              if (iSignal == WSA_WAIT_TIMEOUT) continue;
 
@@ -90,6 +91,7 @@ int main()
                      int iError = WSAGetLastError();
                      if (iError != WSAEWOULDBLOCK)
                      {
+                         bRunning = false;
                          break;
                      }
                  }
@@ -169,6 +171,21 @@ int main()
                          }
                          iterSend++;
                      }
+                 }
+             }
+             if (NetworkEvent.lNetworkEvents & FD_WRITE)
+             { 
+                 if (NetworkEvent.iErrorCode[FD_WRITE_BIT] != 0)
+                 {
+                     continue;
+                 }
+             }
+             if (NetworkEvent.lNetworkEvents & FD_CLOSE)
+             {
+                 if (NetworkEvent.iErrorCode[FD_CLOSE_BIT] != 0)
+                 {
+                     bRunning = false;
+                     continue;
                  }
              }
          }

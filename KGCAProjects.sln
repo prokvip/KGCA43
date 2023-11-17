@@ -103,6 +103,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Thread_CriticalSection_cs",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Net_Server_EventSelect", "Net_Server_EventSelect\Net_Server_EventSelect.vcxproj", "{6F5DB600-2700-4821-AA3A-8FA448522AE5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TNetworkLib", "TNetworkLib\TNetworkLib.vcxproj", "{4CAF4113-1441-43F9-9D8B-6B900B798358}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -439,6 +441,14 @@ Global
 		{6F5DB600-2700-4821-AA3A-8FA448522AE5}.Release|x64.Build.0 = Release|x64
 		{6F5DB600-2700-4821-AA3A-8FA448522AE5}.Release|x86.ActiveCfg = Release|Win32
 		{6F5DB600-2700-4821-AA3A-8FA448522AE5}.Release|x86.Build.0 = Release|Win32
+		{4CAF4113-1441-43F9-9D8B-6B900B798358}.Debug|x64.ActiveCfg = Debug|x64
+		{4CAF4113-1441-43F9-9D8B-6B900B798358}.Debug|x64.Build.0 = Debug|x64
+		{4CAF4113-1441-43F9-9D8B-6B900B798358}.Debug|x86.ActiveCfg = Debug|Win32
+		{4CAF4113-1441-43F9-9D8B-6B900B798358}.Debug|x86.Build.0 = Debug|Win32
+		{4CAF4113-1441-43F9-9D8B-6B900B798358}.Release|x64.ActiveCfg = Release|x64
+		{4CAF4113-1441-43F9-9D8B-6B900B798358}.Release|x64.Build.0 = Release|x64
+		{4CAF4113-1441-43F9-9D8B-6B900B798358}.Release|x86.ActiveCfg = Release|Win32
+		{4CAF4113-1441-43F9-9D8B-6B900B798358}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -489,6 +499,7 @@ Global
 		{5A6BFD6E-3286-4380-8A78-06D27FEA37F4} = {EB8F5B79-214D-48FD-9B9C-C1858DEFD979}
 		{A355B21E-16AF-4815-9A61-A33F3F429261} = {EB8F5B79-214D-48FD-9B9C-C1858DEFD979}
 		{6F5DB600-2700-4821-AA3A-8FA448522AE5} = {DD363DEC-F807-4960-AE14-168EFCF15FDC}
+		{4CAF4113-1441-43F9-9D8B-6B900B798358} = {98763E55-FA85-4E80-9A1F-308C08CA0A47}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {760E8DCA-1EDC-41D9-8CDF-C65DDEE5F915}
