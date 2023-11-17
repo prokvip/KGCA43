@@ -19,12 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TAsyncSelect.h" />
+    <ClInclude Include="TEventSelect.h" />
+    <ClInclude Include="TNetBase.h" />
     <ClInclude Include="TNetwork.h" />
+    <ClInclude Include="TNetworkStd.h" />
+    <ClInclude Include="TProtocol.h" />
     <ClInclude Include="TSelectModel.h" />
+    <ClInclude Include="TStdSelect.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TAsyncSelect.cpp" />
+    <ClCompile Include="TEventSelect.cpp" />
+    <ClCompile Include="TNetBase.cpp" />
     <ClCompile Include="TNetwork.cpp" />
     <ClCompile Include="TSelectModel.cpp" />
+    <ClCompile Include="TStdSelect.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
