@@ -1,40 +1,40 @@
 #include "TStdSelect.h"
 bool TStdSelect::Init()
 {
-    //                           IP                    TCP
-    //SOCKET sockTCP = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    //SOCKET sockUDP = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    m_hSock = socket(AF_INET, SOCK_STREAM, 0);
+    ////                           IP                    TCP
+    ////SOCKET sockTCP = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    ////SOCKET sockUDP = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    //m_hSock = socket(AF_INET, SOCK_STREAM, 0);
 
-    /// <summary>
-    /// WSAAsyncSelect()
-    /// </summary>
-    /// <returns></returns>
-    WSAAsyncSelect(m_hSock, g_hWnd, NETWORK_MSG,
-        FD_READ | FD_WRITE | FD_CLOSE | FD_CONNECT);
+    ///// <summary>
+    ///// WSAAsyncSelect()
+    ///// </summary>
+    ///// <returns></returns>
+    //WSAAsyncSelect(m_hSock, g_hWnd, NETWORK_MSG,
+    //    FD_READ | FD_WRITE | FD_CLOSE | FD_CONNECT);
 
-    SOCKADDR_IN sa;
-    sa.sin_family = AF_INET;
-    //error C4996 : 'inet_addr' : Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
-    sa.sin_addr.s_addr = inet_addr("192.168.0.12");
-    sa.sin_port = htons(m_iPort);
-    int ret = connect(m_hSock, (SOCKADDR*)&sa, sizeof(sa));
+    //SOCKADDR_IN sa;
+    //sa.sin_family = AF_INET;
+    ////error C4996 : 'inet_addr' : Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+    //sa.sin_addr.s_addr = inet_addr("192.168.0.12");
+    //sa.sin_port = htons(m_iPort);
+    //int ret = connect(m_hSock, (SOCKADDR*)&sa, sizeof(sa));
 
-    if (ret == 0)
-    {
-        printf("서버 접속 ip=%s, Port:%d 했습니다.\n",
-            inet_ntoa(sa.sin_addr),
-            ntohs(sa.sin_port));
-    }
-    else
-    {
-        printf("서버 접속 ip=%s, Port:%d 불가, 서버켜.\n",
-            inet_ntoa(sa.sin_addr),
-            ntohs(sa.sin_port));
-    }
+    //if (ret == 0)
+    //{
+    //    printf("서버 접속 ip=%s, Port:%d 했습니다.\n",
+    //        inet_ntoa(sa.sin_addr),
+    //        ntohs(sa.sin_port));
+    //}
+    //else
+    //{
+    //    printf("서버 접속 ip=%s, Port:%d 불가, 서버켜.\n",
+    //        inet_ntoa(sa.sin_addr),
+    //        ntohs(sa.sin_port));
+    //}
 
-    u_long on = TRUE;
-    ioctlsocket(m_hSock, FIONBIO, &on);
+    //u_long on = TRUE;
+    //ioctlsocket(m_hSock, FIONBIO, &on);
     return true;
 }
 bool TStdSelect::Release()

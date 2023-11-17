@@ -3,6 +3,7 @@
 
 class TSelectModel : public TNetBase
 {
+public:
 	SOCKET m_hSocck;
 public:
 	virtual bool Init() = 0;

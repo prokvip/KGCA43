@@ -192,10 +192,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_ LPWSTR    lpCmdLine,
     _In_ int       nCmdShow)
 {
-    TAsyncSelect* pSelect = nullptr;
+ /*   TAsyncSelect* pSelect = nullptr;
     TNetworkServer server(pSelect);
+    server.Init();*/
+    TNetworkServer server;
     server.Init();
-
     int iSize = sizeof(CHAT_MSG);
 
     if (AllocConsole() == TRUE)

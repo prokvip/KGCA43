@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #define PACKET_HEADER_SIZE 4
+#define PACKET_CHAT_HEADER_SIZE 17
 #pragma pack(push, 1)
 // 菩哦 备己 规过
 typedef struct
@@ -19,6 +20,10 @@ typedef struct
 {
 	char   szName[13];  //1+1	
 	int    iID;        // 4
+}CHAT_HEADER;
+typedef struct
+{
+	CHAT_HEADER header;
 	char   szMsg[1024];   // 4+4
 }CHAT_MSG;
 typedef struct

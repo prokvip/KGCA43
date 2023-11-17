@@ -39,9 +39,9 @@ bool   MakePacket(const char* msg, int iSize, WORD type)
 bool   MakeChatMessage(const char* msg, int iSize)
 {
     ZeroMemory(&g_chatMsg, sizeof(g_chatMsg));
-    g_chatMsg.iID = 9;
+    g_chatMsg.header.iID = 9;
     char szName[] = "ȫ�浿";
-    strcpy(g_chatMsg.szName, szName);
+    strcpy(g_chatMsg.header.szName, szName);
     memcpy(g_chatMsg.szMsg, msg, iSize);    
     return true;
 }
@@ -145,7 +145,7 @@ static int Recvwork()
             case PACKET_CHAT_MSG:
             {
                 CHAT_MSG* pCharMsg = (CHAT_MSG*)g_RecvPacket.msg;
-                std::string msg = pCharMsg->szName;
+                std::string msg = pCharMsg->header.szName;
                 msg += "->";
                 msg += pCharMsg->szMsg;
                 OutputDebugStringA(msg.c_str());
@@ -188,7 +188,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             char buffer[MAX_PATH] = { 0, };
             SendMessageA(g_hEdit, WM_GETTEXT, MAX_PATH, (LPARAM)buffer);
             MakeChatMessage(buffer, strlen(buffer));
-            MakePacket((char*)&g_chatMsg, sizeof(g_chatMsg), PACKET_CHAT_MSG);
+            int iSize = PACKET_CHAT_HEADER_SIZE + strlen(buffer);
+            MakePacket((char*)&g_chatMsg, iSize, PACKET_CHAT_MSG);
             sendwork();
         }break;
         }
