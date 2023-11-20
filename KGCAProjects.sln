@@ -107,6 +107,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TNetworkLib", "TNetworkLib\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Net_Server_Select_Packet_Stream", "Net_Server_Select_Packet_Stream\Net_Server_Select_Packet_Stream.vcxproj", "{EC08CF04-22B6-4810-8D2C-15D44C747E17}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "windows_2", "windows_2\windows_2.vcxproj", "{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -459,6 +461,14 @@ Global
 		{EC08CF04-22B6-4810-8D2C-15D44C747E17}.Release|x64.Build.0 = Release|x64
 		{EC08CF04-22B6-4810-8D2C-15D44C747E17}.Release|x86.ActiveCfg = Release|Win32
 		{EC08CF04-22B6-4810-8D2C-15D44C747E17}.Release|x86.Build.0 = Release|Win32
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}.Debug|x64.ActiveCfg = Debug|x64
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}.Debug|x64.Build.0 = Debug|x64
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}.Debug|x86.ActiveCfg = Debug|Win32
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}.Debug|x86.Build.0 = Debug|Win32
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}.Release|x64.ActiveCfg = Release|x64
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}.Release|x64.Build.0 = Release|x64
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}.Release|x86.ActiveCfg = Release|Win32
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -511,6 +521,7 @@ Global
 		{6F5DB600-2700-4821-AA3A-8FA448522AE5} = {DD363DEC-F807-4960-AE14-168EFCF15FDC}
 		{4CAF4113-1441-43F9-9D8B-6B900B798358} = {98763E55-FA85-4E80-9A1F-308C08CA0A47}
 		{EC08CF04-22B6-4810-8D2C-15D44C747E17} = {98763E55-FA85-4E80-9A1F-308C08CA0A47}
+		{8573BA6F-BBBE-4BF1-B10A-3C82155C30A2} = {3375D399-0F01-49C3-BC54-FBDB34E44811}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {760E8DCA-1EDC-41D9-8CDF-C65DDEE5F915}

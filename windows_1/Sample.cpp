@@ -56,7 +56,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     HWND hWnd = CreateWindowW(L"KGCA_WINDOWS", 
-        L"Winddfdsfasfadsfdass Projects", WS_OVERLAPPEDWINDOW,
+        L"Sample Projects", WS_OVERLAPPEDWINDOW,
         0, 0, 800, 600, nullptr, nullptr, 
         hInstance, nullptr);
 
