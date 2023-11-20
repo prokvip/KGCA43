@@ -10,6 +10,7 @@ OVERLAPPED g_hWriteOverlapped;
 void ASyncLoad(std::wstring filename);
 void ASyncCopy(std::wstring filename);
 
+//SleepEx 함수를 호출한 스레드가 I/O 함수를 호출한 스레드와 동일한 경우에만 발생한다.
 VOID WINAPI COMPLETION_ROUTINE(
         DWORD dwErrorCode,
         DWORD dwNumberOfBytesTransfered,
@@ -219,6 +220,7 @@ void ASyncCallbackLoad(std::wstring filename)
             PrintW(L"ERROR_IO_ERROR");
         }
         // 비동기 프로시저 호출(APC) 스레드 큐에 대기한다.
+        // TRUE : 비동기 완료 통지를 대기한다
         SleepEx(1, TRUE);
     }   
     
