@@ -1,6 +1,13 @@
 #include "TNetStd.h"
 #include "TUser.h"
+#include "TObjectPool.h"
 #define MAX_WORKER_THREAD 2
+
+struct TOV : public TObjectPool<TOV>
+{
+    OVERLAPPED ov;
+    int flag;
+};
 
 const short port = 10000;
 std::list<TUser*>  g_userlist;
@@ -188,6 +195,28 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_ LPWSTR    lpCmdLine,
     _In_ int       nCmdShow)
 {
+    TOV* tov1[8];
+    for (int i = 0; i < 8; i++)
+    {
+        tov1[i] = new TOV;
+    }
+    TOV* tov2 = new TOV;
+    TOV* tov3 = new TOV;
+
+    for (int i = 0; i < 8; i++)
+    {
+        delete tov1[i];
+    }
+
+    delete tov2;
+    delete tov3;
+
+    TOV* tov4 = new TOV;
+    TOV* tov5 = new TOV;
+    delete tov4;
+    delete tov5;
+
+    TOV::AllFree();
 
     if (AllocConsole() == TRUE)
     {

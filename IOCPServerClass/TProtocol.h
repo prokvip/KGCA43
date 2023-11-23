@@ -10,7 +10,7 @@
 typedef struct
 {
 	WORD  len;
-	WORD  type;
+	WORD  type;	
 }PACKET_HEADER;
 
 typedef struct
@@ -51,7 +51,7 @@ typedef struct
 * sendpacket.type = PACKET_CHAT_MSG;
 * sendpacket.msg = "æ»≥Á«œººø©";
 * char * sendbuffer = (char*)sendpacket;
-*
+* 
 * UPACKET recvpacket;
 * memcpy(recvpacket, sendbuffer, sizeof(sendbuffer));
   CHAT_MSG msg;
