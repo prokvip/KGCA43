@@ -1,4 +1,5 @@
 #pragma once
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <winsock2.h>
 #include <windows.h>
 #include <iostream>
@@ -6,6 +7,7 @@
 #include <list>
 #include <map>
 #include <algorithm>
+#include "TProtocol.h"
 
 struct OVERLAPPED2 : OVERLAPPED
 {

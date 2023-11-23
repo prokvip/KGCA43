@@ -3,56 +3,51 @@
 #define MAX_WORKER_THREAD 2
 
 const short port = 10000;
-std::list<TUser>  g_userlist;
+std::list<TUser*>  g_userlist;
 SOCKET          listensock;
 
 HANDLE	        g_hKillEvent;
 HANDLE          g_hWorkerThread[MAX_WORKER_THREAD];
 HANDLE          g_hIOCP;
-
-bool  DispatchRead(DWORD dwTransfer, OVERLAPPED* ov)
+int SendPacket(TUser* pUser, UPACKET& packet)
 {
-    g_OffsetRead.QuadPart += dwTransfer;
-    g_hReadOverlapped.Offset     = g_OffsetRead.LowPart;
-    g_hReadOverlapped.OffsetHigh = g_OffsetRead.HighPart;
-    DWORD dwWriteByte;
-    BOOL bRet = WriteFile(g_hWriteFile, g_pDataBuffer, dwTransfer, &dwWriteByte, &g_hWriteOverlapped);
-    if (bRet == FALSE)
+    char* sendbuffer = (char*)&packet;
+
+    pUser->wsaSendBuffer.buf = (char*)&packet;
+    pUser->wsaSendBuffer.len = packet.ph.len;
+    pUser->ovSend.flag = OVERLAPPED2::MODE_SEND;
+
+    int iSendByte = 0;
+    int iTotalSendByte = 0;
+    DWORD dwSendByte;
+    int iRet= WSASend(pUser->sock, &pUser->wsaSendBuffer, 1,
+            &dwSendByte, 0, (LPOVERLAPPED)&pUser->ovSend,   NULL);
+    if (iRet == SOCKET_ERROR)
     {
-        DWORD dwError = GetLastError();
-        if (dwError != ERROR_IO_PENDING)
+        if (WSAGetLastError() != WSA_IO_PENDING)
         {
-            return false;
+            return -1;
         }
+    }
+    return packet.ph.len;
+}
+bool Broadcastting(UPACKET& packet)
+{
+    for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
+        iterSend != g_userlist.end();
+        iterSend++)
+    {
+        TUser* pUser = (*iterSend);
+        if (pUser->bConneted == false) continue;
+        int iSendByte = SendPacket(pUser, packet);
+        if (iSendByte == SOCKET_ERROR)
+        {         
+            pUser->bConneted = false;
+            continue;
+        }        
     }
     return true;
 }
-bool DispatchWrite(DWORD dwTransfer, OVERLAPPED* ov)
-{
-    g_OffsetWrite.QuadPart += dwTransfer;
-    g_hWriteOverlapped.Offset = g_OffsetWrite.LowPart;
-    g_hWriteOverlapped.OffsetHigh = g_OffsetWrite.HighPart;
-    
-    if (dwTransfer < g_dwMaxReadSize)
-    {
-        return false;
-    }
-
-    DWORD dwReadByte;
-    BOOL bRet = ReadFile(g_hReadFile, g_pDataBuffer, g_dwMaxReadSize, &dwReadByte, &g_hReadOverlapped);
-    if (bRet == FALSE)
-    {
-        DWORD dwError = GetLastError();
-        if (dwError != ERROR_IO_PENDING)
-        {
-            return false;
-        }
-    }
-    return true;
-
-}
-
-
 DWORD WINAPI WorkerThread(LPVOID param)
 {
     DWORD dwTransfer; // 읽고,쓰고 한 바이트 
@@ -73,31 +68,10 @@ DWORD WINAPI WorkerThread(LPVOID param)
        if (bReturn == TRUE)
        {
            TUser* pUser = (TUser*)KeyValue;
-           if (pUser == nullptr)
+           if (pUser != nullptr)
            {
                pUser->Dispatch(dwTransfer, ov);
            }
-
-           /*if (KeyValue == 1000)
-           {
-               if (DispatchRead(dwTransfer, ov)== FALSE)
-               {                   
-                   ::SetEvent(g_hKillEvent);
-                   break;
-               }
-               PrintA("READ[%f] \n", (float)g_OffsetRead.QuadPart /
-                                        (float)g_filesize.QuadPart * 100.0f);
-           }
-           if (KeyValue == 2000)
-           {
-               if (DispatchWrite(dwTransfer, ov)==FALSE)
-               {
-                   ::SetEvent(g_hKillEvent);
-                   break;
-               }
-               PrintA("WRITE[%f] \n", (float)g_OffsetWrite.QuadPart /
-                   (float)g_filesize.QuadPart * 100.0f);
-           }*/
        }
        else
        {
@@ -139,18 +113,19 @@ DWORD WINAPI WorkerAcceptThread(LPVOID param)
         }
         else
         {
-            TUser user(clientsock, clientaddr);     
-            
-            user.bind(g_hIOCP);
-            user.recv();
+            TUser* user = new TUser(clientsock, clientaddr);                 
+            user->bind(g_hIOCP);
+            user->recv();
+            g_userlist.push_back(user);
 
             PrintA("클라이언트 접속 ip=%s, Port:%d\n",
                 inet_ntoa(clientaddr.sin_addr),
                 ntohs(clientaddr.sin_port));       
 
-            g_userlist.emplace_back(std::move(user));
+            
         }
     }
+    return 1;
 }
 void IOCPRun()
 {
@@ -161,8 +136,8 @@ void IOCPRun()
     WSADATA wsa;
     int iRet = 0;
     iRet = WSAStartup(MAKEWORD(2, 2), &wsa);
-    if (iRet != 0) return 1;
-    SOCKET listensock = socket(AF_INET, SOCK_STREAM, 0);
+    if (iRet != 0) return ;
+    listensock = socket(AF_INET, SOCK_STREAM, 0);
   
     SOCKADDR_IN sa;
     sa.sin_family = AF_INET;
@@ -170,16 +145,14 @@ void IOCPRun()
     sa.sin_port = htons(10000);
 
     iRet = bind(listensock, (SOCKADDR*)&sa, sizeof(sa));
-    if (iRet == SOCKET_ERROR) return 1;
+    if (iRet == SOCKET_ERROR) return ;
 
     iRet = listen(listensock, SOMAXCONN);
-    if (iRet == SOCKET_ERROR) return 1;
+    if (iRet == SOCKET_ERROR) return ;
 
+    DWORD dwThreadID;
     CloseHandle(::CreateThread(0, 0, WorkerAcceptThread, nullptr, 0, &dwThreadID));
 
-   
-    //g_hWorkerThread[MAX_WORKER_THREAD];
-    DWORD dwThreadID;
     for (int iThread = 0; iThread < MAX_WORKER_THREAD; iThread++)
     {
         g_hWorkerThread[iThread] = ::CreateThread(0, 0, WorkerThread, nullptr, 0, &dwThreadID);
@@ -255,15 +228,45 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             }
         }
         else
-        {            
-                   
+        {     
+            for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
+                iterSend != g_userlist.end();
+                iterSend++)
+            {
+                TUser* pUser = (*iterSend);
+                if (pUser->bConneted == false) continue;
+                for (auto& data : pUser->list)
+                {
+                    if (!Broadcastting(data))
+                    {
+                        pUser->bConneted = false;                       
+                    }
+                }  
+                pUser->list.clear();
+            }
+
+            //post
+            for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
+                iterSend != g_userlist.end();
+                )
+            {
+                TUser* pUser = (*iterSend);
+                if (pUser->bConneted == false) 
+                {
+                    pUser->Close();
+                    iterSend = g_userlist.erase(iterSend);
+                }  
+                else
+                {
+                    iterSend++;
+                }                 
+            }
         }
     }
 
     WaitForMultipleObjects(MAX_WORKER_THREAD, g_hWorkerThread, TRUE, INFINITE);
 
-    CloseHandle(g_hReadFile);
-    CloseHandle(g_hWriteFile);
+   
     CloseHandle(g_hKillEvent);
 
     for (int iThread = 0; iThread < MAX_WORKER_THREAD; iThread++)

@@ -1,7 +1,7 @@
 #pragma once
-#include "TProtocol.h"
-#include <list>
-#define MAX_RECV_STREAM_SIZE 2048
+#include "TNetStd.h"
+
+#define MAX_RECV_STREAM_SIZE (PACKET_MAX_SIZE*10)
 
 class TUser;
 

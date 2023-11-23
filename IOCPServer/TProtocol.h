@@ -1,6 +1,10 @@
 #pragma once
+#include <winsock2.h>
 #include <windows.h>
 #define PACKET_HEADER_SIZE 4
+#define PACKET_MSG_BUFFER_SIZE 2048
+#define PACKET_MAX_SIZE (PACKET_HEADER_SIZE+PACKET_MSG_BUFFER_SIZE)
+
 #pragma pack(push, 1)
 // 菩哦 备己 规过
 typedef struct
@@ -12,7 +16,7 @@ typedef struct
 typedef struct
 {
 	PACKET_HEADER  ph;
-	char           msg[2048];
+	char           msg[PACKET_MSG_BUFFER_SIZE];
 }UPACKET;
 
 typedef struct

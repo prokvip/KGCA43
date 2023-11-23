@@ -1,6 +1,6 @@
 #pragma once
-#include "TProtocol.h"
-#include <string>
+#include "TNetStd.h"
+
 class TPacket
 {
 public:
