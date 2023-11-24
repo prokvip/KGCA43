@@ -1,38 +1,38 @@
 #include "TServer.h"
 #include "TLog.h"
-
-DWORD WINAPI WorkerAcceptThread(LPVOID param)
+void TAccept::Close()
 {
-    //SOCKADDR_IN clientaddr;
-    //while (1)
-    //{
-    //    int addlen = sizeof(clientaddr);
-    //    SOCKET clientsock = accept(listensock, (SOCKADDR*)&clientaddr, &addlen);
-    //    if (clientsock == SOCKET_ERROR)
-    //    {
-    //        int iError = WSAGetLastError();
-    //        if (iError != WSAEWOULDBLOCK)
-    //        {
-    //            break;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        TUser* user = new TUser(clientsock, clientaddr);
-    //        user->bind(g_hIOCP);
-    //        user->recv();
-    //        g_userlist.push_back(user);
-
-    //        PrintA("클라이언트 접속 ip=%s, Port:%d\n",
-    //            inet_ntoa(clientaddr.sin_addr),
-    //            ntohs(clientaddr.sin_port));
-
-
-    //    }
-    //}
-    return 1;
+    closesocket(listensock);
 }
+bool TAccept::ThreadRun()
+{
+    if (m_pServer == nullptr) return false;
 
+    SOCKADDR_IN clientaddr;
+    int addlen = sizeof(clientaddr);
+    SOCKET clientsock = accept(listensock, (SOCKADDR*)&clientaddr, &addlen);
+    if (clientsock == SOCKET_ERROR)
+    {
+        int iError = WSAGetLastError();
+        if (iError != WSAEWOULDBLOCK)
+        {
+            LogErrorA("accept");
+            return false;
+        }
+    }
+    else
+    {
+        TUser* user = new TUser(clientsock, clientaddr);
+        user->bind(m_pServer->GetIocpHandle());
+        user->recv();
+        m_pServer->GetSessionMgr().Add(user);
+
+        LogA("클라이언트 접속 ip=%s, Port:%d\n",
+            inet_ntoa(clientaddr.sin_addr),
+            ntohs(clientaddr.sin_port));            
+    }
+    return true;
+}
 bool	TServer::Init()
 {   
     // 1) 윈속 초기화
@@ -45,21 +45,25 @@ bool	TServer::Init()
         return false;
     }
     LogDetailA("WSAStartup");
-    listensock = socket(AF_INET, SOCK_STREAM, 0);
+    m_Accepter.listensock = socket(AF_INET, SOCK_STREAM, 0);
 
     SOCKADDR_IN sa;
     sa.sin_family = AF_INET;
     sa.sin_addr.s_addr = htonl(INADDR_ANY);// inet_addr("192.168.0.12");
     sa.sin_port = htons(10000);
 
-    iRet = bind(listensock, (SOCKADDR*)&sa, sizeof(sa));
+    iRet = bind(m_Accepter.listensock, (SOCKADDR*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR) return false;
     LogDetailA("bind");
-    iRet = listen(listensock, SOMAXCONN);
+    iRet = listen(m_Accepter.listensock, SOMAXCONN);
     if (iRet == SOCKET_ERROR) return  false;
     LogDetailA("listen");
+    
+    m_Accepter.Set(this);
     m_Iocp.Init();
     LogDetailA("m_Iocp.Init()");
+
+    TThread::CreateThread();
     return true;
 }
 
@@ -99,8 +103,8 @@ int TServer::SendPacket(TUser * pUser, UPACKET & packet)
 
 bool TServer::Broadcastting(UPACKET& packet)
 {
-    /*for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
-        iterSend != g_userlist.end();
+    for (std::list<TUser*>::iterator iterSend = m_SessionMgr.g_userlist.begin();
+        iterSend != m_SessionMgr.g_userlist.end();
         iterSend++)
     {
         TUser* pUser = (*iterSend);
@@ -111,44 +115,44 @@ bool TServer::Broadcastting(UPACKET& packet)
             pUser->bConneted = false;
             continue;
         }
-    }*/
+    }
     return true;
 }
 
-bool TServer::Run()
+bool TServer::ThreadRun()
 {
-    //for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
-    //    iterSend != g_userlist.end();
-    //    iterSend++)
-    //{
-    //    TUser* pUser = (*iterSend);
-    //    if (pUser->bConneted == false) continue;
-    //    for (auto& data : pUser->list)
-    //    {
-    //        if (!Broadcastting(data))
-    //        {
-    //            pUser->bConneted = false;
-    //        }
-    //    }
-    //    pUser->list.clear();
-    //}
+     for (std::list<TUser*>::iterator iterSend = m_SessionMgr.g_userlist.begin();
+        iterSend != m_SessionMgr.g_userlist.end();
+        iterSend++)
+    {
+        TUser* pUser = (*iterSend);
+        if (pUser->bConneted == false) continue;
+        for (auto& data : pUser->list)
+        {
+            if (!Broadcastting(data))
+            {
+                pUser->bConneted = false;
+            }
+        }
+        pUser->list.clear();
+    }
 
-    ////post
-    //for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
-    //    iterSend != g_userlist.end();
-    //    )
-    //{
-    //    TUser* pUser = (*iterSend);
-    //    if (pUser->bConneted == false)
-    //    {
-    //        pUser->Close();
-    //        iterSend = g_userlist.erase(iterSend);
-    //    }
-    //    else
-    //    {
-    //        iterSend++;
-    //    }
-    //}
+    //post
+    for (std::list<TUser*>::iterator iterSend = m_SessionMgr.g_userlist.begin();
+        iterSend != m_SessionMgr.g_userlist.end();
+        )
+    {
+        TUser* pUser = (*iterSend);
+        if (pUser->bConneted == false)
+        {
+            pUser->Close();
+            iterSend = m_SessionMgr.g_userlist.erase(iterSend);
+        }
+        else
+        {
+            iterSend++;
+        }
+    }
     return true;
 }
 

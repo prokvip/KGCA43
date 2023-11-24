@@ -13,7 +13,7 @@ public:
 		static TLog log;
 		return log;
 	}
-	bool			m_bExit;
+	std::atomic<bool>		m_bExit;
 	bool			m_bThreadStarted =false;
 	std::string		m_szLogFilePath;
 	std::thread		m_hThread;

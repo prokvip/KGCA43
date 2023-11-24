@@ -6,7 +6,7 @@
 // thread2           log(msg)       threadWrite
 // thread3                          
 
-TLog::TLog()
+TLog::TLog() : m_bExit(false)
 {
 	system("md ..\\..\\log");
 	time_t now = time(NULL);
@@ -43,7 +43,10 @@ void TLog::Run()
 
 	while (1)
 	{
-		m_CondVar.wait(lock);
+		if (!m_bExit)
+		{
+			m_CondVar.wait(lock);
+		}
 		lock.unlock();
 
 		while (1)
@@ -68,7 +71,10 @@ void TLog::Run()
 }
 TLog::~TLog()
 {
-	m_bExit = true;
-	m_CondVar.notify_all();
+	{
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		m_bExit = true;
+		m_CondVar.notify_all();
+	}
 	m_hThread.join();
 }

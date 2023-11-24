@@ -149,6 +149,7 @@
     <ClCompile Include="TServer.cpp" />
     <ClCompile Include="TSessionMgr.cpp" />
     <ClCompile Include="TStreamPacket.cpp" />
+    <ClCompile Include="TThread.cpp" />
     <ClCompile Include="TUser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +162,7 @@
     <ClInclude Include="TServer.h" />
     <ClInclude Include="TSessionMgr.h" />
     <ClInclude Include="TStreamPacket.h" />
+    <ClInclude Include="TThread.h" />
     <ClInclude Include="TUser.h" />
   </ItemGroup>
   <ItemGroup>
