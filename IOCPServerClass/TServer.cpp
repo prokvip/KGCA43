@@ -1,38 +1,92 @@
 #include "TServer.h"
-bool	TServer::Init()
+#include "TLog.h"
+
+DWORD WINAPI WorkerAcceptThread(LPVOID param)
 {
+    //SOCKADDR_IN clientaddr;
+    //while (1)
+    //{
+    //    int addlen = sizeof(clientaddr);
+    //    SOCKET clientsock = accept(listensock, (SOCKADDR*)&clientaddr, &addlen);
+    //    if (clientsock == SOCKET_ERROR)
+    //    {
+    //        int iError = WSAGetLastError();
+    //        if (iError != WSAEWOULDBLOCK)
+    //        {
+    //            break;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        TUser* user = new TUser(clientsock, clientaddr);
+    //        user->bind(g_hIOCP);
+    //        user->recv();
+    //        g_userlist.push_back(user);
+
+    //        PrintA("클라이언트 접속 ip=%s, Port:%d\n",
+    //            inet_ntoa(clientaddr.sin_addr),
+    //            ntohs(clientaddr.sin_port));
+
+
+    //    }
+    //}
+    return 1;
+}
+
+bool	TServer::Init()
+{   
+    // 1) 윈속 초기화
+    WSADATA wsa;
+    int iRet = 0;
+    iRet = WSAStartup(MAKEWORD(2, 2), &wsa);
+    if (iRet != 0)
+    {
+        TLog::Get().log("WSAStartup Failed!");
+        return false;
+    }
+    LogDetailA("WSAStartup");
+    listensock = socket(AF_INET, SOCK_STREAM, 0);
+
+    SOCKADDR_IN sa;
+    sa.sin_family = AF_INET;
+    sa.sin_addr.s_addr = htonl(INADDR_ANY);// inet_addr("192.168.0.12");
+    sa.sin_port = htons(10000);
+
+    iRet = bind(listensock, (SOCKADDR*)&sa, sizeof(sa));
+    if (iRet == SOCKET_ERROR) return false;
+    LogDetailA("bind");
+    iRet = listen(listensock, SOMAXCONN);
+    if (iRet == SOCKET_ERROR) return  false;
+    LogDetailA("listen");
+    m_Iocp.Init();
+    LogDetailA("m_Iocp.Init()");
     return true;
 }
 
-bool	TServer::Relese()
-{
-    return true;
-}
-void TServer::Run()
-{
-    //PreProcess(); // 패킷처리
-    //PostProcess(); // 전송처리 및 정리
-    WaitForMultipleObjects(MAX_WORKER_THREAD, g_hWorkerThread, TRUE, INFINITE);
+bool	TServer::Release()
+{    
+    /*WaitForMultipleObjects(MAX_WORKER_THREAD, g_hWorkerThread, TRUE, INFINITE);
     CloseHandle(g_hKillEvent);
     for (int iThread = 0; iThread < MAX_WORKER_THREAD; iThread++)
     {
         CloseHandle(g_hWorkerThread[iThread]);
-    }
+    }*/
     return true;
 }
-int SendPacket(TUser * pUser, UPACKET & packet)
+int TServer::SendPacket(TUser * pUser, UPACKET & packet)
 {
     char* sendbuffer = (char*)&packet;
 
     pUser->wsaSendBuffer.buf = (char*)&packet;
     pUser->wsaSendBuffer.len = packet.ph.len;
-    pUser->ovSend.flag = OVERLAPPED2::MODE_SEND;
+
+    TOV* tov = new TOV(TOV::MODE_SEND);   
 
     int iSendByte = 0;
     int iTotalSendByte = 0;
     DWORD dwSendByte;
     int iRet = WSASend(pUser->sock, &pUser->wsaSendBuffer, 1,
-        &dwSendByte, 0, (LPOVERLAPPED)&pUser->ovSend, NULL);
+        &dwSendByte, 0, (LPOVERLAPPED)tov, NULL);
     if (iRet == SOCKET_ERROR)
     {
         if (WSAGetLastError() != WSA_IO_PENDING)
@@ -43,9 +97,9 @@ int SendPacket(TUser * pUser, UPACKET & packet)
     return packet.ph.len;
 }
 
-bool Broadcastting(UPACKET& packet)
+bool TServer::Broadcastting(UPACKET& packet)
 {
-    for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
+    /*for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
         iterSend != g_userlist.end();
         iterSend++)
     {
@@ -57,74 +111,44 @@ bool Broadcastting(UPACKET& packet)
             pUser->bConneted = false;
             continue;
         }
-    }
+    }*/
     return true;
 }
 
-void Run()
+bool TServer::Run()
 {
-    for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
-        iterSend != g_userlist.end();
-        iterSend++)
-    {
-        TUser* pUser = (*iterSend);
-        if (pUser->bConneted == false) continue;
-        for (auto& data : pUser->list)
-        {
-            if (!Broadcastting(data))
-            {
-                pUser->bConneted = false;
-            }
-        }
-        pUser->list.clear();
-    }
+    //for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
+    //    iterSend != g_userlist.end();
+    //    iterSend++)
+    //{
+    //    TUser* pUser = (*iterSend);
+    //    if (pUser->bConneted == false) continue;
+    //    for (auto& data : pUser->list)
+    //    {
+    //        if (!Broadcastting(data))
+    //        {
+    //            pUser->bConneted = false;
+    //        }
+    //    }
+    //    pUser->list.clear();
+    //}
 
-    //post
-    for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
-        iterSend != g_userlist.end();
-        )
-    {
-        TUser* pUser = (*iterSend);
-        if (pUser->bConneted == false)
-        {
-            pUser->Close();
-            iterSend = g_userlist.erase(iterSend);
-        }
-        else
-        {
-            iterSend++;
-        }
-    }
+    ////post
+    //for (std::list<TUser*>::iterator iterSend = g_userlist.begin();
+    //    iterSend != g_userlist.end();
+    //    )
+    //{
+    //    TUser* pUser = (*iterSend);
+    //    if (pUser->bConneted == false)
+    //    {
+    //        pUser->Close();
+    //        iterSend = g_userlist.erase(iterSend);
+    //    }
+    //    else
+    //    {
+    //        iterSend++;
+    //    }
+    //}
+    return true;
 }
 
-DWORD WINAPI WorkerAcceptThread(LPVOID param)
-{
-    SOCKADDR_IN clientaddr;
-    while (1)
-    {
-        int addlen = sizeof(clientaddr);
-        SOCKET clientsock = accept(listensock, (SOCKADDR*)&clientaddr, &addlen);
-        if (clientsock == SOCKET_ERROR)
-        {
-            int iError = WSAGetLastError();
-            if (iError != WSAEWOULDBLOCK)
-            {
-                break;
-            }
-        }
-        else
-        {
-            TUser* user = new TUser(clientsock, clientaddr);
-            user->bind(g_hIOCP);
-            user->recv();
-            g_userlist.push_back(user);
-
-            PrintA("클라이언트 접속 ip=%s, Port:%d\n",
-                inet_ntoa(clientaddr.sin_addr),
-                ntohs(clientaddr.sin_port));
-
-
-        }
-    }
-    return 1;
-}

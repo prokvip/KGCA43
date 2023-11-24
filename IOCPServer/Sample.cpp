@@ -1,13 +1,9 @@
 #include "TNetStd.h"
 #include "TUser.h"
-#include "TObjectPool.h"
+
 #define MAX_WORKER_THREAD 2
 
-struct TOV : public TObjectPool<TOV>
-{
-    OVERLAPPED ov;
-    int flag;
-};
+
 
 const short port = 10000;
 std::list<TUser*>  g_userlist;
@@ -22,13 +18,14 @@ int SendPacket(TUser* pUser, UPACKET& packet)
 
     pUser->wsaSendBuffer.buf = (char*)&packet;
     pUser->wsaSendBuffer.len = packet.ph.len;
-    pUser->ovSend.flag = OVERLAPPED2::MODE_SEND;
+    //pUser->ovSend.flag = TOV::MODE_SEND;
+    TOV* tov = new TOV(TOV::MODE_SEND);
 
     int iSendByte = 0;
     int iTotalSendByte = 0;
     DWORD dwSendByte;
     int iRet= WSASend(pUser->sock, &pUser->wsaSendBuffer, 1,
-            &dwSendByte, 0, (LPOVERLAPPED)&pUser->ovSend,   NULL);
+            &dwSendByte, 0, (LPOVERLAPPED)&tov->ov,   NULL);
     if (iRet == SOCKET_ERROR)
     {
         if (WSAGetLastError() != WSA_IO_PENDING)
@@ -195,26 +192,26 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_ LPWSTR    lpCmdLine,
     _In_ int       nCmdShow)
 {
-    TOV* tov1[8];
-    for (int i = 0; i < 8; i++)
-    {
-        tov1[i] = new TOV;
-    }
-    TOV* tov2 = new TOV;
-    TOV* tov3 = new TOV;
+    //TOV* tov1[8];
+    //for (int i = 0; i < 8; i++)
+    //{
+    //    tov1[i] = new TOV;
+    //}
+    //TOV* tov2 = new TOV;
+    //TOV* tov3 = new TOV;
 
-    for (int i = 0; i < 8; i++)
-    {
-        delete tov1[i];
-    }
+    //for (int i = 0; i < 8; i++)
+    //{
+    //    delete tov1[i];
+    //}
 
-    delete tov2;
-    delete tov3;
+    //delete tov2;
+    //delete tov3;
 
-    TOV* tov4 = new TOV;
-    TOV* tov5 = new TOV;
-    delete tov4;
-    delete tov5;
+    //TOV* tov4 = new TOV;
+    //TOV* tov5 = new TOV;
+    //delete tov4;
+    //delete tov5;
 
     TOV::AllFree();
 

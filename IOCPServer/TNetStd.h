@@ -9,19 +9,19 @@
 #include <algorithm>
 #include "TProtocol.h"
 
-struct OVERLAPPED2 : OVERLAPPED
-{
-	enum { MODE_RECV=0, MODE_SEND=1, };
-	int flag;
-	OVERLAPPED2(int value) : flag(value)
-	{
-
-	}
-	OVERLAPPED2()
-	{ 
-		flag = OVERLAPPED2::MODE_RECV;
-	}
-};
+//struct OV2 : OVERLAPPED
+//{
+//	enum { MODE_RECV=0, MODE_SEND=1, };
+//	int flag;
+//	OV2(int value) : flag(value)
+//	{
+//
+//	}
+//	OV2()
+//	{ 
+//		flag = OV2::MODE_RECV;
+//	}
+//};
 
 static void ConsolePrintW(const wchar_t* fmt, ...)
 {

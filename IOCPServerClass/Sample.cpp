@@ -51,8 +51,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
-    TServer.Init();
-    TServer.Run();
+    TServer server;
+    server.Init();
+    server.Run();
 
     //1번 ) 윈도우 레지스터 클래스 등록
     MyRegisterClass(hInstance);

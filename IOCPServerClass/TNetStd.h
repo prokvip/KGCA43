@@ -5,23 +5,25 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <string>
 #include <map>
 #include <algorithm>
 #include "TProtocol.h"
+#include <atlconv.h>
+#include <codecvt>
+#include "TLog.h"
 
-struct OVERLAPPED2 : OVERLAPPED
+static std::wstring mtw(std::string str)
 {
-	enum { MODE_RECV=0, MODE_SEND=1, };
-	int flag;
-	OVERLAPPED2(int value) : flag(value)
-	{
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+	return conv.from_bytes(str);
+}
 
-	}
-	OVERLAPPED2()
-	{ 
-		flag = OVERLAPPED2::MODE_RECV;
-	}
-};
+static std::string wtm(std::wstring str)
+{
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+	return conv.to_bytes(str);
+}
 
 static void ConsolePrintW(const wchar_t* fmt, ...)
 {
@@ -36,7 +38,6 @@ static void ConsolePrintW(const wchar_t* fmt, ...)
 	DWORD dwBytesWriten;
 	WriteConsoleW(handle, buf, wcslen(buf), &dwBytesWriten, 0);
 }
-
 static void ConsolePrintA(const char* fmt, ...)
 {
 	va_list ap;
@@ -49,6 +50,28 @@ static void ConsolePrintA(const char* fmt, ...)
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	DWORD dwBytesWriten;
 	WriteConsoleA(handle, buf, strlen(buf), &dwBytesWriten, 0);
+}
+static void LogPrintW(const wchar_t* fmt, ...)
+{
+	va_list ap;
+	wchar_t buf[MAX_PATH];
+
+	va_start(ap, fmt);
+	vswprintf_s(buf, fmt, ap);
+	va_end(ap);
+
+	TLog::Get().log(wtm(buf));
+}
+static void LogPrintA(const char* fmt, ...)
+{
+	va_list ap;
+	char buf[MAX_PATH];
+
+	va_start(ap, fmt);
+	vsprintf_s(buf, fmt, ap);
+	va_end(ap);
+
+	TLog::Get().log(buf);
 }
 static void E_MSG(const char* pMsg)
 {
@@ -67,4 +90,5 @@ static void E_MSG(const char* pMsg)
 #define PrintDetailA(fmt,...)   ConsolePrintA( "[%s %s %d] : " fmt, __FILE__,__FUNCTION__, __LINE__, ##__VA_ARGS__ )
 #define PrintW(fmt,...)         ConsolePrintW( fmt, __VA_ARGS__ )
 #define PrintDetailW(fmt,...)   ConsolePrintW( L"[%s %d] : " fmt, __FILEW__,__LINE__, ##__VA_ARGS__ )
-
+#define LogA(fmt,...)			LogPrintA( fmt, __VA_ARGS__ )
+#define LogDetailA(fmt,...)		LogPrintA( "[%s %s %d] : " fmt, __FILE__,__FUNCTION__, __LINE__, ##__VA_ARGS__ )

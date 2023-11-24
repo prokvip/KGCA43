@@ -1,6 +1,24 @@
 #pragma once
 #include "TStreamPacket.h"
+#include "TObjectPool.h"
 
+struct TOV : public TObjectPool<TOV>
+{
+    enum { MODE_RECV = 0, MODE_SEND = 1, };
+
+    OVERLAPPED ov;
+    int flag;
+
+    TOV(int value) : flag(value)
+    {
+        ZeroMemory(&ov, sizeof(OVERLAPPED));
+    }
+    TOV()
+    {
+        ZeroMemory(&ov, sizeof(OVERLAPPED));
+        flag = TOV::MODE_RECV;
+    }
+};
 class TUser
 {
 public:
@@ -12,8 +30,6 @@ public:
     WSABUF              wsaRecvBuffer;
     WSABUF              wsaSendBuffer;
     char                buffer[4096];
-    OVERLAPPED2         ovRecv;
-    OVERLAPPED2         ovSend;
 public:
     void    Close();
     void    bind(HANDLE iocp);
