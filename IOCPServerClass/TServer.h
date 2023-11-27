@@ -4,7 +4,7 @@ static const short port = 10000;
 #include "TThread.h"
 #include "TIocpModel.h"
 #include "TSessionMgr.h"
-
+#include "TPacketPool.h"
 class TServer;
 class TAccept : public TThread
 {
@@ -30,6 +30,17 @@ class TServer : public TThread
 	TSessionMgr		m_SessionMgr;
 	TAccept			m_Accepter;
 public:
+	TPacketPool		m_PacketPool;
+	TPacketPool		m_PacketBroadcasttingPool;
+	typedef std::function<void(T_Packet& t)>  CallFunction;
+	typedef std::map<int, CallFunction>::iterator  FunctionIterator;
+	std::map<int, CallFunction>  m_fnExecutePacket;
+
+	virtual void	AddPacket(T_Packet& tPacket) {};
+	virtual void	ChatMsg(T_Packet& t);
+	virtual void	tPACKET_MOVE_CHARACTER(T_Packet& t);
+	virtual void	tPACKET_CREATE_CHARACTER(T_Packet& t);
+
 	TIocpModel& GetIocp()
 	{
 		return m_Iocp;
@@ -58,10 +69,15 @@ class TListenServer : public TServer
 {
 };
 
-class TZoneServer : public TServer
+class TZoneServer : public TSingleton<TZoneServer>, public TServer
+{
+	friend class TSingleton<TZoneServer>;
+public:
+	virtual void	AddPacket(T_Packet& tPacket) override;
+};
+
+class TUpdateServer :  public TServer
 {
 };
 
-class TUpdateServer : public TServer
-{
-};
+#define I_Server TZoneServer::GetInstance()

@@ -9,21 +9,36 @@
 #include <string>
 #include <map>
 #include <algorithm>
+#include <functional>
+#include <thread>
+#include <mutex>
+#include <queue>
+#include <string>
+#include <condition_variable>
+#include <shared_mutex>
 #include "TProtocol.h"
-#include <atlconv.h>
-#include <codecvt>
 #include "TLog.h"
 
-static std::wstring mtw(std::string str)
+static std::string wtm(std::wstring data)
 {
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-	return conv.from_bytes(str);
+	char retData[4096] = { 0 };
+	// 변형되는 문자열의 크기가 반환된다.
+	int iLength = WideCharToMultiByte(CP_ACP, 0, data.c_str(), -1, 0, 0, NULL, NULL);
+	int iRet = WideCharToMultiByte(CP_ACP, 0,
+		data.c_str(), -1,  //  소스
+		retData, iLength, // 대상
+		NULL, NULL);	
+	return retData;
 }
-
-static std::string wtm(std::wstring str)
+static std::wstring mtw(std::string data)
 {
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-	return conv.to_bytes(str);
+	WCHAR retData[4096] = { 0 };
+	// 변형되는 문자열의 크기가 반환된다.
+	int iLength = MultiByteToWideChar(CP_ACP, 0, data.c_str(), -1, 0, 0);
+	int iRet = MultiByteToWideChar(CP_ACP, 0,
+		data.c_str(), -1,  //  소스
+		retData, iLength); // 대상
+	return retData;
 }
 
 static void ConsolePrintW(const wchar_t* fmt, ...)
@@ -125,3 +140,14 @@ static void E_MSG(const char* pMsg)
 	LocalFree(lpMsgBuf);
 	return;
 }
+
+
+template<class T> class TSingleton
+{
+public:
+	static T& GetInstance()
+	{
+		static T theSingleInstance;
+		return  theSingleInstance;
+	}
+};

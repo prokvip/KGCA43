@@ -1,5 +1,5 @@
 #include "TUser.h"
-
+#include "TServer.h"
 void TUser::Close()
 {
     bConneted = false;

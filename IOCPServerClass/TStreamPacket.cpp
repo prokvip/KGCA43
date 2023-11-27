@@ -1,5 +1,6 @@
 #include "TStreamPacket.h"
 #include "TUser.h"
+#include "TServer.h"
 
 bool  TStreamPacket::ParityCheck()
 {	
@@ -25,9 +26,12 @@ bool   TStreamPacket::GetPacket(TUser& user)
 	if (m_iReadPos >= m_pPacketStart->ph.len)
 	{
 		do {
-			UPACKET    add = { 0, };
-			CopyMemory(&add, m_pPacketStart, m_pPacketStart->ph.len);
-			user.list.push_back(add);
+			T_Packet tPacket;
+			tPacket.m_pUser = &user;
+			//UPACKET    add = { 0, };
+			CopyMemory(&tPacket.packet, m_pPacketStart, m_pPacketStart->ph.len);
+			//user.list.push_back(add);			
+		    I_Server.AddPacket(tPacket);
 
 			InterlockedAdd64(&m_iReadPos, -m_pPacketStart->ph.len);						
 			InterlockedAdd64(&m_iStartPos, m_pPacketStart->ph.len);

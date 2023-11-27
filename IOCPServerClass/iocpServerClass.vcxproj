@@ -118,6 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,7 +147,9 @@
     <ClCompile Include="TIocpModel.cpp" />
     <ClCompile Include="TLog.cpp" />
     <ClCompile Include="TPacket.cpp" />
+    <ClCompile Include="TPacketPool.cpp" />
     <ClCompile Include="TServer.cpp" />
+    <ClCompile Include="TServerPacket.cpp" />
     <ClCompile Include="TSessionMgr.cpp" />
     <ClCompile Include="TStreamPacket.cpp" />
     <ClCompile Include="TThread.cpp" />
@@ -158,6 +161,7 @@
     <ClInclude Include="TNetStd.h" />
     <ClInclude Include="TObjectPool.h" />
     <ClInclude Include="TPacket.h" />
+    <ClInclude Include="TPacketPool.h" />
     <ClInclude Include="TProtocol.h" />
     <ClInclude Include="TServer.h" />
     <ClInclude Include="TSessionMgr.h" />

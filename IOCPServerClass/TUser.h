@@ -26,7 +26,7 @@ public:
     SOCKET              sock;
     SOCKADDR_IN         addr;
     TStreamPacket       sPacket;
-    std::list<UPACKET>  list;
+    std::list<UPACKET>  list;   // recv->send
     WSABUF              wsaRecvBuffer;
     WSABUF              wsaSendBuffer;
     char                buffer[4096];

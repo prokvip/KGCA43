@@ -64,6 +64,40 @@ bool	TServer::Init()
     LogDetailA("m_Iocp.Init()");
 
     TThread::CreateThread();
+
+
+    m_fnExecutePacket[PACKET_CHAT_MSG] = std::bind(&TServer::ChatMsg, this, 
+                                                    std::placeholders::_1);
+
+    /*m_fnExecutePacket[PACKET_VERIFICATION_REQ] = &TServer::ReqVerification;
+    m_fnExecutePacket[PACKET_CHAT_NAME_REQ] = &TServer::ReqChatName;
+    m_fnExecutePacket[PACKET_CHAT_NAME_ACK] = &TServer::AckChatName;
+    m_fnExecutePacket[PACKET_CHAT_MSG] = &TServer::Msg;
+    m_fnExecutePacket[PACKET_USER_POSITION] = &TServer::MoveAction;
+    m_fnExecutePacket[PACKET_STOP_POSITION] = &TServer::MoveAction;
+
+    m_fnExecutePacket[PACKET_LOGIN_REQ] = &TServer::Login;
+    m_fnExecutePacket[PACKET_LOGOUT_REQ] = &TServer::Logout;
+    m_fnExecutePacket[PACKET_CREATE_ACCOUNT_REQ] = &TServer::CreateAccount;
+    m_fnExecutePacket[PACKET_DELETE_ACCOUNT_REQ] = &TServer::DeleteAccount;
+    m_fnExecutePacket[PACKET_CREATE_CHARACTER_REQ] = &TServer::CreateCharacter;
+    m_fnExecutePacket[PACKET_DELETE_CHARACTER_REQ] = &TServer::DeleteCharacter;
+    m_fnExecutePacket[PACKET_ZONE_ENTRY_REQ] = &TServer::ReqZoneEntry;
+    m_fnExecutePacket[PACKET_ZONE_TARGET_ACK] = &TServer::RecvZoneTargetPoint;
+
+    m_fnExecutePacket[PACKET_HIT_CHARACTER] = &TServer::HitCharacter;
+    m_fnExecutePacket[PACKET_HIT_NPC] = &TServer::HitMonster;
+    m_fnExecutePacket[PACKET_ATTACK_CHARACTER] = &TServer::AttackCharacter;
+    m_fnExecutePacket[PACKET_ATTACK_NPC] = &TServer::AttackMonster;
+    m_fnExecutePacket[PACKET_DEAD_CHARACTER] = &TServer::DeadCharacters;
+    m_fnExecutePacket[PACKET_DEAD_NPC] = &TServer::DeadMonster;
+    m_fnExecutePacket[PACKET_DAMAGE_CHARACTER] = &TServer::DamageCharacter;
+    m_fnExecutePacket[PACKET_DAMAGE_NPC] = &TServer::DamageMonster;
+    m_fnExecutePacket[PACKET_SPAWN_CHARACTER] = &TServer::SpawnCharacters;
+    m_fnExecutePacket[PACKET_SPAWN_NPC] = &TServer::SpawnMonster;
+    m_fnExecutePacket[PACKET_SYNC_CHARACTER] = &TServer::SyncCharacters;
+    m_fnExecutePacket[PACKET_SYNC_NPC_LIST] = &TServer::SyncMonster;*/
+
     return true;
 }
 
@@ -120,39 +154,44 @@ bool TServer::Broadcastting(UPACKET& packet)
 }
 
 bool TServer::ThreadRun()
-{
-     for (std::list<TUser*>::iterator iterSend = m_SessionMgr.g_userlist.begin();
+{    
+    // 브로드케스팅
+    for (auto& data : m_PacketBroadcasttingPool.list)
+    {
+        if (!Broadcastting(data.packet))
+        {            
+        }
+    }
+    m_PacketBroadcasttingPool.list.clear();
+
+    for (std::list<TUser*>::iterator iterSend = m_SessionMgr.g_userlist.begin();
         iterSend != m_SessionMgr.g_userlist.end();
         iterSend++)
     {
         TUser* pUser = (*iterSend);
-        if (pUser->bConneted == false) continue;
+        if (pUser->bConneted == false) continue;        
         for (auto& data : pUser->list)
         {
-            if (!Broadcastting(data))
+            if (!SendPacket(pUser, data))
             {
                 pUser->bConneted = false;
-            }
+            }           
         }
         pUser->list.clear();
     }
 
     //post
-    for (std::list<TUser*>::iterator iterSend = m_SessionMgr.g_userlist.begin();
-        iterSend != m_SessionMgr.g_userlist.end();
-        )
-    {
-        TUser* pUser = (*iterSend);
-        if (pUser->bConneted == false)
-        {
-            pUser->Close();
-            iterSend = m_SessionMgr.g_userlist.erase(iterSend);
-        }
-        else
-        {
-            iterSend++;
-        }
-    }
+    m_SessionMgr.DeleteUser();
     return true;
 }
 
+
+void	TZoneServer::AddPacket(T_Packet& tPacket)
+{    
+    FunctionIterator iter = m_fnExecutePacket.find(tPacket.packet.ph.type);
+    if (iter != m_fnExecutePacket.end())
+    {
+        CallFunction call = iter->second;
+        call(tPacket);
+    }
+}

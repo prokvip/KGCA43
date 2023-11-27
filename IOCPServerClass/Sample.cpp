@@ -51,8 +51,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
-    TServer server;
-    server.Init();
+    I_Server.Init();
 
     //1번 ) 윈도우 레지스터 클래스 등록
     MyRegisterClass(hInstance);
@@ -82,7 +81,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             //TServer.PostProcess(); // 전송처리 및 정리
         }
     }
-    server.Release();
+    I_Server.Release();
     return (int)msg.wParam;    
 }
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
