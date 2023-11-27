@@ -69,6 +69,15 @@ class TListenServer : public TServer
 {
 };
 
+//class TZoneUser : public TUser
+//{
+//public:
+//	void			recv2();
+//	virtual void    Close();
+//	virtual void    bind(HANDLE iocp);
+//	virtual void    recv();
+//	virtual void    Dispatch(DWORD dwTransfer, OVERLAPPED* ov);
+//};
 class TZoneServer : public TSingleton<TZoneServer>, public TServer
 {
 	friend class TSingleton<TZoneServer>;

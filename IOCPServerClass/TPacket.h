@@ -11,7 +11,7 @@ public:
 	void Get(const char* pData, int iSize);
 
 	TPacket& operator << (int data);
-	TPacket& operator << (byte data);
+	//TPacket& operator << (BYTE data);
 	TPacket& operator << (short data);
 	TPacket& operator << (long data);
 	TPacket& operator << (DWORD data);
@@ -20,7 +20,7 @@ public:
 	TPacket& operator << (std::string data);
 
 	TPacket& operator >> (int& data);
-	TPacket& operator >> (byte& data);
+	//TPacket& operator >> (BYTE& data);
 	TPacket& operator >> (short& data);
 	TPacket& operator >> (long& data);
 	TPacket& operator >> (DWORD& data);

@@ -52,10 +52,10 @@ bool	TServer::Init()
     sa.sin_addr.s_addr = htonl(INADDR_ANY);// inet_addr("192.168.0.12");
     sa.sin_port = htons(10000);
 
-    iRet = bind(m_Accepter.listensock, (SOCKADDR*)&sa, sizeof(sa));
+    iRet = ::bind(m_Accepter.listensock, (SOCKADDR*)&sa, sizeof(sa));
     if (iRet == SOCKET_ERROR) return false;
     LogDetailA("bind");
-    iRet = listen(m_Accepter.listensock, SOMAXCONN);
+    iRet = ::listen(m_Accepter.listensock, SOMAXCONN);
     if (iRet == SOCKET_ERROR) return  false;
     LogDetailA("listen");
     
@@ -168,7 +168,8 @@ bool TServer::ThreadRun()
         iterSend != m_SessionMgr.g_userlist.end();
         iterSend++)
     {
-        TUser* pUser = (*iterSend);
+        TUser* pUser = (*iterSend);    
+
         if (pUser->bConneted == false) continue;        
         for (auto& data : pUser->list)
         {

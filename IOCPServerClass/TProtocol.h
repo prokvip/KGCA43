@@ -1,6 +1,7 @@
 #pragma once
 #include <winsock2.h>
 #include <windows.h>
+#include "TMath.h"
 #define PACKET_HEADER_SIZE 4
 #define PACKET_MSG_BUFFER_SIZE 2048
 #define PACKET_MAX_SIZE (PACKET_HEADER_SIZE+PACKET_MSG_BUFFER_SIZE)
@@ -29,13 +30,27 @@ typedef struct
 	CHAT_HEADER header;
 	char   szMsg[1024];   // 4+4
 }CHAT_MSG;
-typedef struct
-{
-	byte   szName[13];
-	int    iID;
-	int    iData[10];
-}ITEM_CREATE;
 
+typedef struct {
+	WORD	user_idx;
+	WORD	posX;
+	WORD	posY;
+	WORD	direction; //0 ~7 8방향
+}TPACKET_USER_POSITION;
+
+typedef struct {
+	int m_iID;
+	int m_iType;
+	char m_name[20];
+}TPACKET_CREATE_CHARACTER_INFO;
+
+typedef struct {
+	FVector vPosition;
+	FVector vVelocity;
+	FVector vTarget;
+	FRotator vRotation;
+	float	fHealth;
+}TPACKET_CHARACTER_INFO;
 #pragma pack(pop)
 
 // 패킷 타입

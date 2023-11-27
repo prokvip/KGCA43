@@ -31,10 +31,10 @@ public:
     WSABUF              wsaSendBuffer;
     char                buffer[4096];
 public:
-    void    Close();
-    void    bind(HANDLE iocp);
-    void    recv();
-    void    Dispatch(DWORD dwTransfer, OVERLAPPED* ov);
+    virtual void    Close();
+    virtual void    bind(HANDLE iocp);
+    virtual void    recv();
+    virtual void    Dispatch(DWORD dwTransfer, OVERLAPPED* ov);
 public:
     TUser();
     TUser(SOCKET s, SOCKADDR_IN a);

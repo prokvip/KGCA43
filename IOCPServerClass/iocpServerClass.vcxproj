@@ -146,6 +146,7 @@
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="TIocpModel.cpp" />
     <ClCompile Include="TLog.cpp" />
+    <ClCompile Include="TMath.cpp" />
     <ClCompile Include="TPacket.cpp" />
     <ClCompile Include="TPacketPool.cpp" />
     <ClCompile Include="TServer.cpp" />
@@ -158,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="TIocpModel.h" />
     <ClInclude Include="TLog.h" />
+    <ClInclude Include="TMath.h" />
     <ClInclude Include="TNetStd.h" />
     <ClInclude Include="TObjectPool.h" />
     <ClInclude Include="TPacket.h" />

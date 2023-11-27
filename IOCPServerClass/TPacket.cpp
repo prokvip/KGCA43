@@ -20,11 +20,11 @@ TPacket& TPacket::operator << (int data)
 	Put((char*)&data, sizeof(int));
 	return *this;
 }
-TPacket& TPacket::operator << (byte data)
-{
-	Put((char*)&data, sizeof(byte));
-	return *this;
-}
+//TPacket& TPacket::operator << (BYTE data)
+//{
+//	Put((char*)&data, sizeof(BYTE));
+//	return *this;
+//}
 TPacket& TPacket::operator << (short data)
 {
 	Put((char*)&data, sizeof(short));
@@ -62,11 +62,11 @@ TPacket& TPacket::operator >> (int& data)
 	Get((char*)&data, sizeof(int));
 	return *this;
 }
-TPacket& TPacket::operator >> (byte& data)
-{
-	Get((char*)&data, sizeof(byte));
-	return *this;
-}
+//TPacket& TPacket::operator >> (byte& data)
+//{
+//	Get((char*)&data, sizeof(byte));
+//	return *this;
+//}
 TPacket& TPacket::operator >> (short& data)
 {
 	Get((char*)&data, sizeof(short));
