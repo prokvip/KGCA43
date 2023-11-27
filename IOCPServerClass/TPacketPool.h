@@ -12,10 +12,10 @@ struct T_Packet
 // read, write ->locking
 
 class TPacketPool
-{
+{	
 public:
 	std::shared_mutex m_sMutex;
-	std::list<T_Packet>  list;
+	std::list<T_Packet*>  list;
 	void    Add(T_Packet& tPacket);
 	void    Process(T_Packet& tPacket);
 };
