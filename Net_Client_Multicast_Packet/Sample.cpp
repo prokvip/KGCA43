@@ -294,7 +294,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             addlen = sizeof(PeerAddr);
             int recvRet = recvfrom(g_hRecvSocket, RecvBuf, 2048, 0,
                 (SOCKADDR*)&PeerAddr, &addlen);
-            PrintA(RecvBuf);            
+            PrintA("ip=%s, Port:%d msg[%s]\n",inet_ntoa(PeerAddr.sin_addr),ntohs(PeerAddr.sin_port), RecvBuf);
         }
     }
     closesocket(g_hSendSocket);
