@@ -11,7 +11,7 @@
 #include "tchar.h" // _tcscpy
 #include <list>
 
-int   g_Mode = MCAST_EXCLUDE; // MCAST_INCLUDE
+int   g_Mode = MCAST_EXCLUDE;// MCAST_INCLUDE;// MCAST_EXCLUDE; // MCAST_INCLUDE
 
 static void LogErrorA(const char* fmt, ...)
 {
@@ -130,6 +130,18 @@ void UDPSocketInit()
     int loopval = 1;
     SetMulticast(g_hRecvSocket, IP_MULTICAST_LOOP, loopval);
 
+    BOOL optval2 = TRUE;
+    // ip & port 재사용
+    setsockopt(g_hRecvSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&optval2, sizeof(optval2));
+    // 전송 데이터 사본 수신.
+    bool loop = true;
+    setsockopt(g_hRecvSocket, IPPROTO_IP, IP_MULTICAST_LOOP, (char*)&loop, sizeof(loop));
+    int ttl = 3;
+    setsockopt(g_hRecvSocket, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&ttl, sizeof(ttl));
+    // 멀티케스트 데이터를 전송할 로컬 인터페이스를 설정한다.
+    //ULONG addr = inet_addr("192.168.0.12");
+    //setsockopt(g_hRecvSocket, IPPROTO_IP, IP_MULTICAST_IF, (char*)&addr, sizeof(addr));
+
     g_RecvAddress.sin_family = AF_INET;
     g_RecvAddress.sin_addr.s_addr = htonl(INADDR_ANY);
     g_RecvAddress.sin_port = htons(9000);
@@ -150,15 +162,17 @@ void UDPSocketInit()
     struct ip_mreq mreq;
     struct ip_mreq_source mreqsrc;
     
-    int g_iSouceCnt = 3;
+    int g_iSouceCnt = 1;
     if (g_Mode == MCAST_INCLUDE)
     {
         for (int i = 0; i < g_iSouceCnt; i++)
         {
+            //IP_ADD_SOURCE_MEMBERSHIP 가입하고 특정 주소만 수신 등록.
+            //IP_DRAP_SOURCE_MEMBERSHIP 수신 등록된 리스트 제거.
             mreqsrc.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
             mreqsrc.imr_interface.s_addr = inet_addr("192.168.0.12");
             rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
-                IP_ADD_SOURCE_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
+                IP_ADD_SOURCE_MEMBERSHIP, (char*)&mreqsrc, sizeof(mreqsrc));
             if (rc == SOCKET_ERROR)
             {
                 LogErrorA("bind");
@@ -167,6 +181,8 @@ void UDPSocketInit()
     }
     else if( g_Mode == MCAST_EXCLUDE)
     {
+        //IP_ADD_MEMBERSHIP  가입한다.
+        //IP_DROP_MEMBERSHIP 탈퇴한다.
         mreq.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
         mreq.imr_interface.s_addr = inet_addr("192.168.0.12");
         rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
@@ -177,11 +193,13 @@ void UDPSocketInit()
         }
         for (int i = 0; i < g_iSouceCnt; i++)
         {
+            //IP_BLOCK_SOURCE    : 가입하고 특정 주소로부터 전송된 데이터 제외하고 수신.
+            //IP_UNBLOCK_SOURCE  : 수신할 주소의 리스트에서 특정 주소를 추가한다.
             mreqsrc.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
             mreqsrc.imr_interface.s_addr = inet_addr("192.168.0.12");
             mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.54");
             rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
-                IP_BLOCK_SOURCE, (char*)&mreq, sizeof(mreq));
+                IP_BLOCK_SOURCE, (char*)&mreqsrc, sizeof(mreqsrc));
             if (rc == SOCKET_ERROR)
             {
                 LogErrorA("bind");
