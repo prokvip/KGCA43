@@ -94,6 +94,14 @@ void UDPSocketInit()
     ::setsockopt(g_hRecvSocket, IPPROTO_IP,
         IP_MULTICAST_LOOP, (char*)&loopval, sizeof(loopval));
 
+    BOOL optval2 = TRUE;
+    setsockopt(g_hRecvSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&optval2, sizeof(optval));
+    bool loop = false;
+    setsockopt(g_hRecvSocket, IPPROTO_IP, IP_MULTICAST_LOOP, (char*)&loop, sizeof(loop));
+    int ttl = 3;
+    setsockopt(g_hRecvSocket, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&ttl, sizeof(ttl));
+    ULONG addr = inet_addr("192.168.0.12");
+    setsockopt(g_hRecvSocket, IPPROTO_IP, IP_MULTICAST_IF, (char*)&addr, sizeof(addr));
     g_RecvAddress.sin_family = AF_INET;
     g_RecvAddress.sin_addr.s_addr = htonl(INADDR_ANY);
     g_RecvAddress.sin_port = htons(9000);
@@ -109,12 +117,25 @@ void UDPSocketInit()
     mreq.imr_interface.s_addr = inet_addr("192.168.0.12");
     ::setsockopt(g_hRecvSocket, IPPROTO_IP,
         IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
+    mreq.imr_interface.s_addr = inet_addr("192.168.0.13");
+    ::setsockopt(g_hRecvSocket, IPPROTO_IP,
+        IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
+    mreq.imr_interface.s_addr = inet_addr("192.168.0.14");
+    ::setsockopt(g_hRecvSocket, IPPROTO_IP,
+        IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
 
 
-
-    g_SendAddress.sin_family = AF_INET;
-    g_SendAddress.sin_addr.s_addr = htonl(INADDR_BROADCAST);
-    g_SendAddress.sin_port = htons(9001);
+    //// EXCLUDE
+    struct ip_mreq_source mreqsrc;
+    mreqsrc.imr_interface = mreq.imr_interface;
+    mreqsrc.imr_multiaddr = mreq.imr_multiaddr;
+    mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.54");
+    int rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
+        IP_BLOCK_SOURCE, (char*)&mreqsrc, sizeof(mreqsrc));
+    if (rc == SOCKET_ERROR)
+    {
+        //LogErrorA("bind");
+    }
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

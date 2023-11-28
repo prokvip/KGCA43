@@ -11,6 +11,8 @@
 #include "tchar.h" // _tcscpy
 #include <list>
 
+int   g_Mode = MCAST_EXCLUDE; // MCAST_INCLUDE
+
 static void LogErrorA(const char* fmt, ...)
 {
     void* lpMsgBuf;
@@ -107,6 +109,16 @@ HWND        g_hWnd;
 
 SOCKADDR_IN g_hMulticastAddr;
 
+int SetMulticast(SOCKET s,  int opt, int val, int af= IPPROTO_IP)
+{
+    int rc = ::setsockopt(g_hRecvSocket, af,
+        opt, (char*)&val, sizeof(val));
+    if (rc == SOCKET_ERROR)
+    {
+        LogErrorA("IP_MULTICAST_LOOP");
+    }
+    return rc;
+}
 void UDPSocketInit()
 {
     // 1) 윈속 초기화
@@ -115,29 +127,13 @@ void UDPSocketInit()
     g_hSendSocket = socket(AF_INET, SOCK_DGRAM, 0);
     g_hRecvSocket = socket(AF_INET, SOCK_DGRAM, 0);
 
-    int loopval = false;
-    int optLevel = IPPROTO_IP;
-    int option   = IP_MULTICAST_LOOP;
-    char* optval = nullptr;
-    optval = (char*)&loopval;
-    int optlen = sizeof(loopval);
-    /*::setsockopt(g_hRecvSocket, optLevel,
-        option, optval, sizeof(optlen));*/
-    int rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
-        IP_MULTICAST_LOOP, (char*)&loopval, sizeof(loopval));
-    if (rc == SOCKET_ERROR)
-    {
-        LogErrorA("IP_MULTICAST_LOOP");
-    }
-    else
-    {
-        //LogErrorA("IP_MULTICAST_LOOP");
-    }
+    int loopval = 1;
+    SetMulticast(g_hRecvSocket, IP_MULTICAST_LOOP, loopval);
 
     g_RecvAddress.sin_family = AF_INET;
     g_RecvAddress.sin_addr.s_addr = htonl(INADDR_ANY);
     g_RecvAddress.sin_port = htons(9000);
-    rc = ::bind(g_hRecvSocket,(SOCKADDR*)&g_RecvAddress, sizeof(g_RecvAddress));
+    int rc = ::bind(g_hRecvSocket,(SOCKADDR*)&g_RecvAddress, sizeof(g_RecvAddress));
     if (rc == SOCKET_ERROR)
     {
         LogErrorA("bind");
@@ -151,31 +147,47 @@ void UDPSocketInit()
     g_hMulticastAddr.sin_addr.s_addr = inet_addr("235.7.8.9");
     g_hMulticastAddr.sin_port = htons(9000);
 
-    //INCLUDE
     struct ip_mreq mreq;
-    mreq.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
-    mreq.imr_interface.s_addr = inet_addr("192.168.0.12");
-    rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
-        IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
-    if (rc == SOCKET_ERROR)
+    struct ip_mreq_source mreqsrc;
+    
+    int g_iSouceCnt = 3;
+    if (g_Mode == MCAST_INCLUDE)
     {
-        LogErrorA("bind");
+        for (int i = 0; i < g_iSouceCnt; i++)
+        {
+            mreqsrc.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
+            mreqsrc.imr_interface.s_addr = inet_addr("192.168.0.12");
+            rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
+                IP_ADD_SOURCE_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
+            if (rc == SOCKET_ERROR)
+            {
+                LogErrorA("bind");
+            }
+        }
     }
-
-    //// EXCLUDE
-    //struct ip_mreq_source mreqsrc;
-    //mreqsrc.imr_interface = mreq.imr_interface;
-    //mreqsrc.imr_multiaddr = mreq.imr_multiaddr;
-    //mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.33");
-    //rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
-    //    IP_BLOCK_SOURCE, (char*)&mreqsrc, sizeof(mreqsrc));
-    /*if (rc == SOCKET_ERROR)
+    else if( g_Mode == MCAST_EXCLUDE)
     {
-        LogErrorA("bind");
-    }*/
-    g_SendAddress.sin_family = AF_INET;
-    g_SendAddress.sin_addr.s_addr = inet_addr("192.168.0.12");
-    g_SendAddress.sin_port = htons(9000);
+        mreq.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
+        mreq.imr_interface.s_addr = inet_addr("192.168.0.12");
+        rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
+            IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
+        if (rc == SOCKET_ERROR)
+        {
+            LogErrorA("bind");
+        }
+        for (int i = 0; i < g_iSouceCnt; i++)
+        {
+            mreqsrc.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
+            mreqsrc.imr_interface.s_addr = inet_addr("192.168.0.12");
+            mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.54");
+            rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
+                IP_BLOCK_SOURCE, (char*)&mreq, sizeof(mreq));
+            if (rc == SOCKET_ERROR)
+            {
+                LogErrorA("bind");
+            }
+        }
+    }   
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
