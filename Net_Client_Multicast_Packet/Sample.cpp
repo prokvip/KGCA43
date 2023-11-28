@@ -11,7 +11,7 @@
 #include "tchar.h" // _tcscpy
 #include <list>
 
-int   g_Mode = MCAST_EXCLUDE;// MCAST_INCLUDE;// MCAST_EXCLUDE; // MCAST_INCLUDE
+int   g_Mode =  MCAST_INCLUDE;// MCAST_EXCLUDE; // MCAST_INCLUDE
 
 static void LogErrorA(const char* fmt, ...)
 {
@@ -171,6 +171,7 @@ void UDPSocketInit()
             //IP_DRAP_SOURCE_MEMBERSHIP 수신 등록된 리스트 제거.
             mreqsrc.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
             mreqsrc.imr_interface.s_addr = inet_addr("192.168.0.12");
+            mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.12");
             rc = ::setsockopt(g_hRecvSocket, IPPROTO_IP,
                 IP_ADD_SOURCE_MEMBERSHIP, (char*)&mreqsrc, sizeof(mreqsrc));
             if (rc == SOCKET_ERROR)
