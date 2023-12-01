@@ -87,6 +87,144 @@ HWND        g_hWnd;
 TOdbc       g_Odbc;
 INT_PTR   CALLBACK DlgProc(HWND hDlg,
     UINT iMsg, WPARAM wParam, LPARAM lParam);
+void SelectAllRecord();
+void InsertRecord();
+void UpdateRecord();
+void DeleteRecord();
+
+void ErrorMsg()
+{
+    int value = -1;
+    SQLTCHAR sqlState[10] = { 0, };
+    SQLTCHAR msg[SQL_MAX_MESSAGE_LENGTH + 1] = { 0, };
+    SQLTCHAR errorMsg[SQL_MAX_MESSAGE_LENGTH + 1] = { 0, };
+    SQLSMALLINT msgLen;
+    SQLINTEGER nativeError = 0;
+
+    SQLRETURN hr;
+    // 복합에러
+    /*while (hr = SQLGetDiagRec(SQL_HANDLE_STMT, g_hStmt, value, sqlState, &nativeError, msg,
+        _countof(msg), &msgLen) != SQL_NO_DATA)*/
+        //단순에러
+    SQLError(g_Odbc.g_hEnv, g_Odbc.g_hDbc, g_Odbc.g_hStmt,
+        sqlState, &nativeError, msg, SQL_MAX_MESSAGE_LENGTH + 1, &msgLen);
+    {
+        _stprintf(errorMsg, L"SQLSTATE:%s, 진단정보:%s, 에러코드:%d",
+            sqlState, msg, nativeError);
+        ::MessageBox(NULL, errorMsg, L"진단정보", 0);
+    }
+}
+void InsertRecord()
+{
+    SQLTCHAR name[MAX_PATH];
+    SQLTCHAR Price[MAX_PATH];
+    int  iKorean=0;
+    
+    GetWindowText(g_hName, name, MAX_PATH);
+    GetWindowText(g_hPrice, Price, MAX_PATH);
+    if (BST_CHECKED == SendMessage(g_hKorean, BM_GETCHECK, 0, 0))
+    {
+        iKorean = 1;
+    }
+    TCHAR sql[MAX_PATH] = { 0, };
+    _stprintf(sql, 
+        L"INSERT INTO tblCigar(name, price, korean) values('%s',%d,%d)",
+        name, _ttoi(Price), iKorean);
+    SQLRETURN hr = SQLExecDirect(g_Odbc.g_hStmt, sql, SQL_NTS);
+    if (hr != SQL_SUCCESS)
+    {
+        ErrorMsg();
+        return;
+    }
+    SQLCloseCursor(g_Odbc.g_hStmt);
+
+    SelectAllRecord();
+}
+void UpdateRecord()
+{
+    TCHAR selectName[256] = { 0, };
+    int id = SendMessage(g_hItemList, LB_GETCURSEL, 0, 0);
+    if (id != -1)
+    {        
+        SendMessage(g_hItemList, LB_GETTEXT, id, (LPARAM)selectName);
+    }
+    else
+    {
+        return;
+    }
+    SQLTCHAR name[MAX_PATH];
+    SQLTCHAR Price[MAX_PATH];
+    int  iKorean = 0;
+    GetWindowText(g_hName, name, MAX_PATH);
+    GetWindowText(g_hPrice, Price, MAX_PATH);
+    if (BST_CHECKED == SendMessage(g_hKorean, BM_GETCHECK, 0, 0))
+    {
+        iKorean = 1;
+    }
+    TCHAR sql[MAX_PATH] = { 0, };
+    _stprintf(sql,
+        L"update tblCigar set name='%s', price=%d, korean=%d where name='%s'",
+        name, _ttoi(Price), iKorean, selectName);
+    SQLRETURN hr = SQLExecDirect(g_Odbc.g_hStmt, sql, SQL_NTS);
+    if (hr != SQL_SUCCESS)
+    {
+        ErrorMsg();
+        return;
+    }
+    SQLCloseCursor(g_Odbc.g_hStmt);
+
+    SelectAllRecord();
+}
+void DeleteRecord()
+{
+    SQLTCHAR name[MAX_PATH];
+    GetWindowText(g_hName, name, MAX_PATH);
+
+    TCHAR sql[MAX_PATH] = { 0, };
+    _stprintf(sql,
+        L"delete from tblCigar where name='%s'",name);
+    SQLRETURN hr = SQLExecDirect(g_Odbc.g_hStmt, sql, SQL_NTS);
+    if (hr != SQL_SUCCESS)
+    {
+        ErrorMsg();
+        return;
+    }
+    SQLCloseCursor(g_Odbc.g_hStmt);
+
+    SelectAllRecord();
+}
+void SelectAllRecord()
+{
+    tableList.clear();
+
+    // 조회
+    TCHAR sql[] = L"SELECT *  FROM tblCigar";
+    SQLRETURN hr = SQLExecDirect(g_Odbc.g_hStmt, sql, SQL_NTS);
+
+    TCHAR retName[25] = { 0, };
+    int   retPrice;
+    int   retKorean;
+    SQLLEN lName;
+    SQLLEN lPrive;
+    SQLLEN lKorean;
+
+    SQLBindCol(g_Odbc.g_hStmt, 1, SQL_UNICODE, retName, _countof(retName), &lName);
+    SQLBindCol(g_Odbc.g_hStmt, 2, SQL_INTEGER, &retPrice, 0, &lPrive);
+    SQLBindCol(g_Odbc.g_hStmt, 3, SQL_C_ULONG, &retKorean, 0, &lKorean);
+
+    while (SQLFetch(g_Odbc.g_hStmt) != SQL_NO_DATA)
+    {
+        tableList.emplace_back(retName, retPrice, retKorean);
+    }
+    SQLCloseCursor(g_Odbc.g_hStmt);
+
+    SendMessage(g_hItemList, LB_RESETCONTENT, 0,0);
+    for (int i = 0; i < tableList.size(); i++)
+    {
+        SendMessage(g_hItemList, LB_ADDSTRING, 0,
+            (LPARAM)tableList[i].name.c_str());
+    }
+}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -131,14 +269,16 @@ INT_PTR   CALLBACK DlgProc (HWND hDlg,
         g_hName = GetDlgItem(hDlg, IDC_NAME);
         g_hPrice = GetDlgItem(hDlg, IDC_PRICE);
         g_hKorean = GetDlgItem(hDlg, IDC_CHECK1);
-        SetWindowText(g_hName,tableList[0].name.c_str());
-        SetWindowText(g_hPrice, 
-            std::to_wstring(tableList[0].Price).c_str());
-        /*SetWindowText(g_hKorean,
-            std::to_wstring(tableList[0].Korean).c_str());*/
-        SendMessage(g_hKorean, BM_SETCHECK, 
-            (tableList[0].Korean) ?  BST_CHECKED: BST_UNCHECKED,0);
-
+        if (tableList.size() >= 1)
+        {
+            SetWindowText(g_hName, tableList[0].name.c_str());
+            SetWindowText(g_hPrice,
+                std::to_wstring(tableList[0].Price).c_str());
+            /*SetWindowText(g_hKorean,
+                std::to_wstring(tableList[0].Korean).c_str());*/
+            SendMessage(g_hKorean, BM_SETCHECK,
+                (tableList[0].Korean) ? BST_CHECKED : BST_UNCHECKED, 0);
+        }
         for (int i = 0; i < tableList.size(); i++)
         {
             SendMessage(g_hItemList, LB_ADDSTRING, 0,
@@ -150,6 +290,10 @@ INT_PTR   CALLBACK DlgProc (HWND hDlg,
     {
         switch (LOWORD(wParam))
         {
+        case IDC_INSERT_ITEM: { InsertRecord(); }break;
+        case IDC_UPDATE_ITEM: {UpdateRecord(); }break;
+        case IDC_DELETE_ITEM: {DeleteRecord(); }break;
+        case IDC_SELECT_ALL: {SelectAllRecord(); }break;
             case IDC_ITEMLIST:
             {
                 switch (HIWORD(wParam))
@@ -234,26 +378,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_Odbc.Init();    
     if (g_Odbc.Connect())
     {
-        // 조회
-        TCHAR sql[] = L"SELECT *  FROM tblCigar";
-        SQLRETURN hr = SQLExecDirect(g_Odbc.g_hStmt, sql, SQL_NTS);
-
-        TCHAR retName[25] = { 0, };
-        int   retPrice;
-        int   retKorean;
-        SQLLEN lName;
-        SQLLEN lPrive;
-        SQLLEN lKorean;
-
-        SQLBindCol(g_Odbc.g_hStmt, 1, SQL_UNICODE, retName, _countof(retName), &lName);
-        SQLBindCol(g_Odbc.g_hStmt, 2, SQL_INTEGER, &retPrice,  0,              &lPrive);
-        SQLBindCol(g_Odbc.g_hStmt, 3, SQL_C_ULONG, &retKorean, 0,              &lKorean);
-
-        while (SQLFetch(g_Odbc.g_hStmt) != SQL_NO_DATA)
-        {
-            tableList.emplace_back(retName ,retPrice, retKorean);
-        }
-        SQLCloseCursor(g_Odbc.g_hStmt);
+        SelectAllRecord();
     }
 
     /*DialogBox(hInstance,
