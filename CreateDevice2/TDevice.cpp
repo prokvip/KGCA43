@@ -51,9 +51,20 @@ bool    TDevice::GameInit()
 
     m_pd3dContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
 
+
+    D3D11_VIEWPORT vp;
+    vp.Width    = sd.BufferDesc.Width;
+    vp.Height   = sd.BufferDesc.Height;
+    vp.MinDepth = 0.0f;
+    vp.MaxDepth = 1.0f;
+    vp.TopLeftX = 0;
+    vp.TopLeftY = 0;
+    m_pd3dContext->RSSetViewports(1, &vp);
+
     Init();
     return true;
 }
+
 bool    TDevice::GameRender()
 {
     float clearColor[] = { 1,0,0,1 };

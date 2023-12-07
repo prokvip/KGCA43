@@ -5,11 +5,11 @@
 
 float4 VS( in  float2 p : KGCA) : SV_POSITION
 {
-	return float4(p.x, p.y, 0.0f, 1.0f);
+	return float4(p.x, p.y, 0.5f, 1.0f);
 }
 // 픽셀쉐이더(픽쉘에 개수만큼 호출된다.)
 // 픽셀쉐이더의 반환은 반드시 SV_TARGET 레지스터(float4 : :rgba)에 저장되어야 한다.
 float4 PS( in  float4 p : SV_POSITION) : SV_TARGET
 {
-	return float4(1,1,0,0);
+	return float4(1,1,1,0);
 }
