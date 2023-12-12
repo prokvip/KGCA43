@@ -139,6 +139,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateTexture_0", "CreateTe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateTexture_1", "CreateTexture_1\CreateTexture_1.vcxproj", "{BD13B323-417A-456C-BEB4-DD1D7E67D1B1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateTexture_2", "CreateTexture_2\CreateTexture_2.vcxproj", "{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -595,6 +597,14 @@ Global
 		{BD13B323-417A-456C-BEB4-DD1D7E67D1B1}.Release|x64.Build.0 = Release|x64
 		{BD13B323-417A-456C-BEB4-DD1D7E67D1B1}.Release|x86.ActiveCfg = Release|Win32
 		{BD13B323-417A-456C-BEB4-DD1D7E67D1B1}.Release|x86.Build.0 = Release|Win32
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}.Debug|x64.ActiveCfg = Debug|x64
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}.Debug|x64.Build.0 = Debug|x64
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}.Debug|x86.ActiveCfg = Debug|Win32
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}.Debug|x86.Build.0 = Debug|Win32
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}.Release|x64.ActiveCfg = Release|x64
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}.Release|x64.Build.0 = Release|x64
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}.Release|x86.ActiveCfg = Release|Win32
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -662,6 +672,7 @@ Global
 		{EFD29825-BB32-4A16-B8E6-CCB8B45E6746} = {80064D9D-83E7-436C-A926-4EF8513C182F}
 		{1E27B063-C5C1-4BB0-8446-9069C609A88D} = {80064D9D-83E7-436C-A926-4EF8513C182F}
 		{BD13B323-417A-456C-BEB4-DD1D7E67D1B1} = {80064D9D-83E7-436C-A926-4EF8513C182F}
+		{5CEE500A-16BD-4F64-B4AB-8B0A9AE06854} = {80064D9D-83E7-436C-A926-4EF8513C182F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {760E8DCA-1EDC-41D9-8CDF-C65DDEE5F915}
