@@ -1,6 +1,6 @@
 #pragma once
 #include <windows.h>
-
+#pragma comment (lib, "winmm.lib") // timeGetTime
 extern bool g_bChange;
 extern int g_iChangeAnimation;
 class TWindow
@@ -16,6 +16,7 @@ public:
     void ReleaseAll();
 public:
     virtual bool GameInit() { return true; };
+    virtual bool GameFrame() { return true; };
     virtual bool GameRender() { return true; };
     virtual bool GameRelease() { return true; };
 public:

@@ -146,16 +146,20 @@
   <ItemGroup>
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="TDevice.cpp" />
+    <ClCompile Include="TInput.cpp" />
     <ClCompile Include="TPlaneShape.cpp" />
     <ClCompile Include="TTextureMgr.cpp" />
+    <ClCompile Include="TTimer.cpp" />
     <ClCompile Include="TUiObj.cpp" />
     <ClCompile Include="TWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sample.h" />
     <ClInclude Include="TDevice.h" />
+    <ClInclude Include="TInput.h" />
     <ClInclude Include="TPlaneShape.h" />
     <ClInclude Include="TTextureMgr.h" />
+    <ClInclude Include="TTimer.h" />
     <ClInclude Include="TUiObj.h" />
     <ClInclude Include="TWindow.h" />
   </ItemGroup>

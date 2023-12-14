@@ -1,4 +1,5 @@
 #include "TWindow.h"
+#include <string>
 bool g_bChange = true;
 int g_iChangeAnimation = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -10,15 +11,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         UINT width = LOWORD(lParam);
         UINT height = HIWORD(lParam);
         int k = 0;
-    }break;
-    case WM_LBUTTONDOWN:
-    {
-        g_bChange = !g_bChange;
-    }break;
-    case WM_RBUTTONDOWN:
-    {
-        g_iChangeAnimation++;
-        if (g_iChangeAnimation >= 10) g_iChangeAnimation = 0;
     }break;
     case WM_CREATE: break;
     case WM_DESTROY:
@@ -82,6 +74,10 @@ void TWindow::SetWindow(HINSTANCE hInstance, int    nCmdShow)
 void TWindow::Run()
 {
     GameInit(); 
+
+    DWORD dwElapseTime = 0;
+    DWORD dwFrame100 = 1000 / 100;
+    DWORD dwTickStart = timeGetTime();
     MSG msg;
     while (1)
     {
@@ -96,7 +92,16 @@ void TWindow::Run()
         }
         else
         {
-            GameRender();
+            DWORD dwTickEnd = timeGetTime();
+            dwElapseTime += dwTickEnd - dwTickStart;
+        
+            if (dwElapseTime >= dwFrame100)
+            {
+                GameFrame();
+                GameRender();
+                dwElapseTime -= dwFrame100;
+            }
+            dwTickStart = dwTickEnd;
         }
     }
     GameRelease();

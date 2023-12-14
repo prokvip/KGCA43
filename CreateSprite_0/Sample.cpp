@@ -110,6 +110,8 @@ bool Sample::AlphaBlendState()
 
 bool    Sample::Init()
 {     
+    m_GameTimer.Init();
+    TInput::Get().Init();
     TTextureMgr::Get().Set(m_pd3dDevice, m_pd3dContext);
     AlphaBlendState();
     CreateSampleState();
@@ -167,10 +169,56 @@ bool    Sample::Init()
     m_uiList.push_back(m_Number);
     return true;
 }
+bool    Sample::Frame()
+{
+    m_GameTimer.Frame();
+    TInput::Get().Frame();
+    /*
+ * VK_0 - VK_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
+ * 0x3A - 0x40 : unassigned
+ * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
+ */
+    if (TInput::Get().m_dwKeyState['W'] == KEY_PUSH)
+    {
+        ::OutputDebugString(L"W[PUSH].\n");
+    }
+    if (TInput::Get().m_dwKeyState['W'] == KEY_HOLD)
+    {
+        ::OutputDebugString(L"W[HOLD].\n");
+    }
+    if (TInput::Get().m_dwKeyState['W'] == KEY_UP)
+    {
+        ::OutputDebugString(L"W[UP].\n");
+    }
+    if (TInput::Get().m_dwKeyState['A'] == KEY_PUSH)
+    {
+        ::OutputDebugString(L"A[PUSH].\n");
+    }
+    if (TInput::Get().m_dwKeyState['S'] == KEY_PUSH)
+    {
+        ::OutputDebugString(L"S[PUSH].\n");
+    }
+    if (TInput::Get().m_dwKeyState['D'] == KEY_PUSH)
+    {
+        ::OutputDebugString(L"D[PUSH].\n");
+    }
+    if (TInput::Get().m_dwKeyState[VK_LBUTTON] == KEY_UP)
+    {
+        g_bChange = !g_bChange;
+    }
+    if (TInput::Get().m_dwKeyState[VK_RBUTTON] == KEY_UP)
+    {
+        g_iChangeAnimation++;
+        if (g_iChangeAnimation >= 10) g_iChangeAnimation = 0;
+    }
+    return true;
+}
 bool    Sample::Render()
 {
     m_pd3dContext->PSSetSamplers(0, 1, &m_pDefaultSS);
     m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);
+    
+    TInput::Get().Render();
 
     for (auto data : m_uiList)
     {
@@ -181,10 +229,13 @@ bool    Sample::Render()
             0,
             0);
         m_DefaultPlane.PreRender();        
-        m_pd3dContext->PSSetShaderResources(0, 1, &data->m_ptTex->m_pTextureSRV);
+            data->Frame(m_GameTimer.m_fSecondPerFrame);
+            data->Render(m_pd3dContext);
         m_DefaultPlane.PostRender();
     }
 
+
+    m_GameTimer.Render();
     return true;
 }
 bool    Sample::Release() 
@@ -200,6 +251,10 @@ bool    Sample::Release()
         data->Release();
     }
     m_DefaultPlane.Release();
+
+    TInput::Get().Release();
+
+    m_GameTimer.Release();
     return true;
 }
 

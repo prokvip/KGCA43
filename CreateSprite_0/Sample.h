@@ -1,9 +1,11 @@
 #pragma once
 #include "TUiObj.h"
-
+#include "TInput.h"
+#include "TTimer.h"
 class Sample : public TDevice
 {	
 public:
+	TTimer				m_GameTimer;
 	ID3D11SamplerState* m_pDefaultSS;
 	ID3D11SamplerState* m_pDefaultSSPoint;
 	ID3D11BlendState* m_pAlphaBlendEnable;
@@ -19,6 +21,7 @@ public:
 	TPlaneShape		m_DefaultPlane;
 public:
 	bool    Init()		override;
+	bool    Frame()		override;
 	bool    Render()	override;
 	bool    Release()	override;
 	bool    AlphaBlendState();

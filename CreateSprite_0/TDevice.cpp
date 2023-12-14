@@ -64,7 +64,11 @@ bool    TDevice::GameInit()
     Init();
     return true;
 }
-
+bool    TDevice::GameFrame()
+{
+    Frame();
+    return true;
+}
 bool    TDevice::GameRender()
 {
     float clearColor[] = { 1,0,0,1 };

@@ -19,7 +19,11 @@ public:
 	virtual bool    PreRender() {
 		return true;
 	};
-	virtual bool    Render() {
+	virtual bool    Frame(float fElapsTime) {
+		return true;
+	};
+	virtual bool    Render(ID3D11DeviceContext* pd3dContext) {
+		pd3dContext->PSSetShaderResources(0, 1, &m_ptTex->m_pTextureSRV);
 		return true;
 	};
 	virtual bool    PostRender() {
@@ -37,20 +41,20 @@ class TUiNumber : public TUiObj
 {
 public:
 	std::vector<TTexture*>  m_pTexArray;
-	
+	UINT    m_iApplyIndex = 0;
+	float   m_fTimer = 0.0f;
+	float   m_fAnimationTime = 1.0f;
+	float   m_fStepTime = 0.0f;
 public:
 	bool    Init() {
 		return true;
 	};
-	bool    Load(std::wstring texFileName) {
-		return TUiObj::Load(texFileName);
-	};
+	bool    Load(std::wstring texFileName);
 	bool    PreRender() {
 		return true;
 	};
-	bool    Render() {
-		return true;
-	};
+	bool    Frame(float fElapsTime);
+	bool    Render(ID3D11DeviceContext* pd3dContext);
 	bool    PostRender() {
 		return true;
 	};
