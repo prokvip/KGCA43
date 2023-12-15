@@ -70,3 +70,6 @@ typedef list<DWORD>					DWORD_LIST;
 typedef list<DWORD>::iterator		DWORD_LIST_ITOR;
 typedef list< HANDLE >				HANDLE_LIST;
 typedef	list< HANDLE >::iterator	HANDLE_LIST_ITOR;
+
+
+extern HWND g_hWnd;

@@ -1,4 +1,5 @@
 #include "TInput.h"
+#include "TStd.h"
 bool	 TInput::Init()
 {
 	ZeroMemory(m_dwKeyState, sizeof(DWORD) * 256);
@@ -6,6 +7,10 @@ bool	 TInput::Init()
 }
 bool	 TInput::Frame()
 {
+	GetCursorPos(&m_ptMouse); // È­¸éÁÂÇ¥
+	ScreenToClient(g_hWnd, &m_ptMouse);
+
+
 	for (DWORD dwKey = 0; dwKey < 256; dwKey++)
 	{
 		SHORT sKey = ::GetAsyncKeyState(dwKey);

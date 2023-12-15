@@ -1,10 +1,26 @@
 #pragma once
 #include "TPlaneShape.h"
 
+enum T_CONTROL_STATE
+{
+	T_STATE_NORMAL = 0,
+	T_STATE_MOUSEOVER,	// HOVER
+	T_STATE_PRESSED,	// PUSH				
+	T_STATE_DISABLED,
+	
+	//T_STATE_HOLD,       // HOLD
+	//T_STATE_SELECT,		// PUSH+UP
+	//T_STATE_HIDDEN,
+	T_STATE_MAXSTATE,
+};
+
 class TUiObj 
 {
 public:
 	W_STR                   m_csName;
+	RECT					m_rtRect;
+	T_CONTROL_STATE			m_uiState;
+	BOOL					m_isSelected = FALSE;
 	std::vector<TTexture*>  m_pTexArray;
 	std::vector<TVertex>	m_VertexList;  // 시스템 메모리
 	TTexture*	m_ptTex		= nullptr;

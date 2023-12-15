@@ -137,24 +137,36 @@ bool    Sample::Init()
         m_bk->Create(L"BACK GOURND", L"../../data/RECT.png");
     m_uiList.push_back(m_bk);
 
-    m_SkillLayout = std::make_shared<TUiObj>();
-        m_SkillLayout->m_VertexList.emplace_back(TVector3(18.0f, 477.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 0.0f));      // 0
-        m_SkillLayout->m_VertexList.emplace_back(TVector3(460, 477.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
-        m_SkillLayout->m_VertexList.emplace_back(TVector3(460, 600, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
-        m_SkillLayout->m_VertexList.emplace_back(TVector3(18.0f, 600, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
-        m_SkillLayout->Create(L"Skill Rect", L"../../data/skill.png");
-    m_uiList.push_back(m_SkillLayout);
+    m_btnStart = std::make_shared<TUiObj>();
+        m_btnStart->m_VertexList.emplace_back(TVector3(350.0f, 275.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 0.0f));      // 0
+        m_btnStart->m_VertexList.emplace_back(TVector3(350+100, 275, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
+        m_btnStart->m_VertexList.emplace_back(TVector3(350+100, 275+50, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
+        m_btnStart->m_VertexList.emplace_back(TVector3(350.0f, 275+50, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
+        T_STR_VECTOR texArrayStart = {
+            L"../../data/main_start_nor.png",
+            L"../../data/main_start_pus.png",
+            L"../../data/main_start_sel.png",
+            L"../../data/main_start_dis.png"
+        };
+        m_btnStart->Create(L"Start Button", texArrayStart);
+    m_uiList.push_back(m_btnStart);
 
-    m_Skill2 = std::make_shared<TUiObj>();
-        m_Skill2->m_VertexList.emplace_back(TVector3(115.0f, 487.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 0.0f));      // 0
-        m_Skill2->m_VertexList.emplace_back(TVector3(178.0f, 487.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
-        m_Skill2->m_VertexList.emplace_back(TVector3(178.0f, 590, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
-        m_Skill2->m_VertexList.emplace_back(TVector3(115.0f, 590, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
-        if (!m_Skill2->Create(L"Skill2 Rect", L"../../data/s2.png"))
+    m_Item = std::make_shared<TUiObj>();
+        m_Item->m_VertexList.emplace_back(TVector3(115.0f, 487.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 0.0f));      // 0
+        m_Item->m_VertexList.emplace_back(TVector3(178.0f, 487.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
+        m_Item->m_VertexList.emplace_back(TVector3(178.0f, 590, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
+        m_Item->m_VertexList.emplace_back(TVector3(115.0f, 590, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
+        T_STR_VECTOR texArray = {
+            L"../../data/main_custom_nor.png",
+            L"../../data/main_custom_pus.png",
+            L"../../data/main_custom_sel.png",
+            L"../../data/main_custom_dis.png"
+        };
+        if (!m_Item->Create(L"item1", texArray))
         {
             return false;
         }
-    m_uiList.push_back(m_Skill2);
+    m_uiList.push_back(m_Item);
 
     m_Number = std::make_shared<TUiNumber>();
         m_Number->m_VertexList.emplace_back(TVector3(0, 0.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 0.0f));      // 0
@@ -210,6 +222,11 @@ bool    Sample::Frame()
         g_iChangeAnimation++;
         if (g_iChangeAnimation >= 10) g_iChangeAnimation = 0;
     }
+
+    for (auto data : m_uiList)
+    {
+        data->Frame(m_GameTimer.m_fSecondPerFrame);
+    }
     return true;
 }
 bool    Sample::Render()
@@ -219,6 +236,7 @@ bool    Sample::Render()
     
     TInput::Get().Render();
 
+    
     for (auto data : m_uiList)
     {
         m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
@@ -228,9 +246,8 @@ bool    Sample::Render()
             0,
             0);
         m_DefaultPlane.PreRender();        
-            data->Frame(m_GameTimer.m_fSecondPerFrame);
-            data->Render(m_pd3dContext);
-        m_DefaultPlane.PostRender();
+             data->Render(m_pd3dContext);
+        m_DefaultPlane.PostRender();    
     }
 
 

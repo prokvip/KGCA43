@@ -1,5 +1,6 @@
 #include "TWindow.h"
 #include <string>
+HWND g_hWnd;
 bool g_bChange = true;
 int g_iChangeAnimation = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -37,7 +38,7 @@ BOOL TWindow::InitInstance(HINSTANCE hInstance, int nCmdShow)
         return FALSE;
     }
     m_hWnd = hWnd;
-
+    g_hWnd = hWnd;
     
     ::GetWindowRect(m_hWnd, &m_rtWindow);
     ::GetClientRect(m_hWnd, &m_rtClient);

@@ -15,8 +15,8 @@ public:
 
 	std::vector<std::shared_ptr<TUiObj>>   m_uiList;
 	std::shared_ptr<TUiObj>			m_bk;
-	std::shared_ptr<TUiObj>			m_SkillLayout;
-	std::shared_ptr<TUiObj>			m_Skill2;
+	std::shared_ptr<TUiObj>			m_btnStart;
+	std::shared_ptr<TUiObj>			m_Item;
 	std::shared_ptr<TUiObj>			m_Number;
 
 	TPlaneShape		m_DefaultPlane;
