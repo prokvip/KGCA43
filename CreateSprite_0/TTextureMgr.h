@@ -1,7 +1,5 @@
 #pragma once
-#include <memory>
-#include <map>
-#include <string>
+#include "TStd.h"
 //#include "../../include/DirectXTex.h"
 //프로젝트 속성에서 C++-> 추가 포함 디렉토리에 ../../include 한다.
 #include "DirectXTex.h"

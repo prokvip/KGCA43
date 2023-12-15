@@ -1,17 +1,5 @@
 #pragma once
 #include "TWindow.h"
-#include <d3d11.h>
-#include <d3dcompiler.h>
-#include <memory>
-#include <string>
-#include <vector>
-#include <list>
-#include <map>
-
-//프로젝트 속성에 링커->입력->추가종속성 d3d11.lib; d3dcompiler.lib; DirectXTex.lib;
-//#pragma commnet을 이용하면 프로젝트으로 포함할 수 있다.
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dcompiler.lib")
 
 class TDevice : public TWindow
 {

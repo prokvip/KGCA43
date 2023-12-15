@@ -1,5 +1,4 @@
 #pragma once
-#include "TDevice.h"
 #include "TTextureMgr.h"
 
 struct TVector2
@@ -38,21 +37,21 @@ struct TVertex
 class TPlaneShape
 {
 public:
-	ID3D11Device* m_pd3dDevice = nullptr;
-	ID3D11DeviceContext* m_pd3dContext = nullptr;
-	RECT        m_rtClient;
-
-	TTexture*	m_ptTex;
-
+	W_STR                   m_csName;
+	ID3D11Device*			m_pd3dDevice = nullptr;
+	ID3D11DeviceContext*	m_pd3dContext = nullptr;
+	RECT					m_rtClient;
+	TTexture*				m_ptTex;
+	std::vector<TTexture*>  m_pTexArray;
 	std::vector<TVertex>	m_VertexList;  // 시스템 메모리
 	std::vector<DWORD>		m_IndexList;
-	ID3D11Buffer* m_pVertexBuffer;//  비디오카드 메모리
-	ID3D11Buffer* m_pIndexBuffer;//  비디오카드 메모리
-	ID3DBlob* m_pVertexShaderByteCode = nullptr;
-	ID3DBlob* m_pPixelShaderByteCode = nullptr;
-	ID3D11VertexShader* m_pVertexShader = nullptr;
-	ID3D11PixelShader* m_pPixelShader = nullptr;
-	ID3D11InputLayout* m_pVertexlayout = nullptr;
+	ID3D11Buffer*			m_pVertexBuffer;//  비디오카드 메모리
+	ID3D11Buffer*			m_pIndexBuffer;//  비디오카드 메모리
+	ID3DBlob*				m_pVertexShaderByteCode = nullptr;
+	ID3DBlob*				m_pPixelShaderByteCode = nullptr;
+	ID3D11VertexShader*		m_pVertexShader = nullptr;
+	ID3D11PixelShader*		m_pPixelShader = nullptr;
+	ID3D11InputLayout*		m_pVertexlayout = nullptr;
 public:
 	bool	CreateVertexBuffer();
 	bool	CreateIndexBuffer();
@@ -64,10 +63,12 @@ public:
 
 	bool	CreateInputLayout();
 
+	virtual bool	LoadTexture(T_STR_VECTOR texFileName);
 	virtual bool	LoadTexture(std::wstring texFileName);
 public:
 	virtual bool    Init();
-	virtual bool    Load(std::wstring texFileName);
+	virtual bool    Create(W_STR name, T_STR_VECTOR texFileName);
+	virtual bool    Create(W_STR name, W_STR texFileName);
 	virtual bool    PreRender();
 	virtual bool    Render();
 	virtual bool    PostRender();

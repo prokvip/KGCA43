@@ -1,10 +1,18 @@
 #include "TPlaneShape.h"
-
-bool	TPlaneShape::LoadTexture(std::wstring texFileName)
+bool    TPlaneShape::LoadTexture(std::wstring texFileName) 
 {
     m_ptTex = TTextureMgr::Get().Load(texFileName);
     if (m_ptTex != nullptr)
         return true;
+    return false;
+};
+bool	TPlaneShape::LoadTexture(T_STR_VECTOR texArray)
+{
+    for (int i = 0; i < texArray.size(); i++)
+    {
+        m_pTexArray.push_back(TTextureMgr::Get().Load(texArray[i]));
+    }
+    m_ptTex = m_pTexArray[0];
     return false;
 }
 ID3D11Buffer* TPlaneShape::CreateBuffer(UINT ByteWidth, UINT BindFlags, void** pAddress)
@@ -204,8 +212,58 @@ bool    TPlaneShape::Init()
 {
     return true;
 }
-bool    TPlaneShape::Load(std::wstring texFileName)
+bool    TPlaneShape::Create(W_STR name, T_STR_VECTOR texFileName)
 {
+    m_csName = name;
+    //// v0       v1
+    ////
+    //// v3       v2
+    //m_VertexList.emplace_back(TVector3(0.0f, 0.0f, 0.5f), TVector4(0, 1, 0, 1), TVector2(0.0f, 0.0f));      // 0
+    //m_VertexList.emplace_back(TVector3(m_rtClient.right, 0.0f, 0.5f), TVector4(0, 1, 0, 1), TVector2(1.0f, 0.0f));    // 1
+    //m_VertexList.emplace_back(TVector3(m_rtClient.right, m_rtClient.bottom, 0.5f), TVector4(0, 0, 1, 1), TVector2(1.0f, 1.0f));  // 2
+    //m_VertexList.emplace_back(TVector3(0.0f, m_rtClient.bottom, 0.5f), TVector4(0, 0, 1, 1), TVector2(0.0f, 1.0f));    // 3
+    m_IndexList.push_back(0);
+    m_IndexList.push_back(1);
+    m_IndexList.push_back(2);
+
+    m_IndexList.push_back(2);
+    m_IndexList.push_back(3);
+    m_IndexList.push_back(0);
+
+    if (!CreateVertexBuffer() || !CreateIndexBuffer())
+    {
+        return false;
+    }
+    if (!CreateVertexShader() || !CreatePixelShader())
+    {
+        return false;
+    }
+
+    if (!CreateInputLayout())
+    {
+        return false;
+    }
+    if (!LoadTexture(texFileName))
+    {
+        return false;
+    }
+
+    /*  UINT iSize = m_VertexList.size() * sizeof(TVertex);
+   m_pVertexBuffer = CreateBuffer(iSize, D3D11_BIND_VERTEX_BUFFER,(void**)&m_VertexList.at(0));
+   iSize = m_IndexList.size() * sizeof(DWORD);
+   m_pIndexBuffer = CreateBuffer(iSize, D3D11_BIND_INDEX_BUFFER, (void**)&m_IndexList.at(0));
+
+   m_pVertexShaderByteCode = CreateShader(L"Shader.txt", "VS", "vs_5_0");
+   m_pPixelShaderByteCode = CreateShader(L"Shader.txt", "PS", "ps_5_0");
+   if (m_pVertexShaderByteCode == nullptr || m_pVertexShaderByteCode == nullptr)
+   {
+       return false;
+   }*/
+    return true;
+}
+bool    TPlaneShape::Create(W_STR name, W_STR texFileName)
+{
+    m_csName = name;
     //// v0       v1
     ////
     //// v3       v2

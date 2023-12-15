@@ -158,6 +158,7 @@
     <ClInclude Include="TDevice.h" />
     <ClInclude Include="TInput.h" />
     <ClInclude Include="TPlaneShape.h" />
+    <ClInclude Include="TStd.h" />
     <ClInclude Include="TTextureMgr.h" />
     <ClInclude Include="TTimer.h" />
     <ClInclude Include="TUiObj.h" />

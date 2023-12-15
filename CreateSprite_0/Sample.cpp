@@ -124,18 +124,17 @@ bool    Sample::Init()
     m_DefaultPlane.m_VertexList.emplace_back(TVector3(800.0f, 0.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
     m_DefaultPlane.m_VertexList.emplace_back(TVector3(800.0f, 600, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
     m_DefaultPlane.m_VertexList.emplace_back(TVector3(0.0f, 600, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
-
-    m_DefaultPlane.Init();
-    if (!m_DefaultPlane.Load(L"../../data/RECT.png"))
+    if (!m_DefaultPlane.Create(L"DefaultPlane", L"../../data/RECT.png"))
     {
         return false;
     }
+
     m_bk = std::make_shared<TUiObj>();
         m_bk->m_VertexList.emplace_back(TVector3(0.0f, 0.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 0.0f));      // 0
         m_bk->m_VertexList.emplace_back(TVector3(m_rtClient.right, 0.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
         m_bk->m_VertexList.emplace_back(TVector3(m_rtClient.right, m_rtClient.bottom, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
         m_bk->m_VertexList.emplace_back(TVector3(0.0f, m_rtClient.bottom, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
-        m_bk->Load(L"../../data/RECT.png");
+        m_bk->Create(L"BACK GOURND", L"../../data/RECT.png");
     m_uiList.push_back(m_bk);
 
     m_SkillLayout = std::make_shared<TUiObj>();
@@ -143,7 +142,7 @@ bool    Sample::Init()
         m_SkillLayout->m_VertexList.emplace_back(TVector3(460, 477.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
         m_SkillLayout->m_VertexList.emplace_back(TVector3(460, 600, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
         m_SkillLayout->m_VertexList.emplace_back(TVector3(18.0f, 600, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
-        m_SkillLayout->Load(L"../../data/skill.png");
+        m_SkillLayout->Create(L"Skill Rect", L"../../data/skill.png");
     m_uiList.push_back(m_SkillLayout);
 
     m_Skill2 = std::make_shared<TUiObj>();
@@ -151,7 +150,7 @@ bool    Sample::Init()
         m_Skill2->m_VertexList.emplace_back(TVector3(178.0f, 487.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
         m_Skill2->m_VertexList.emplace_back(TVector3(178.0f, 590, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
         m_Skill2->m_VertexList.emplace_back(TVector3(115.0f, 590, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
-        if (!m_Skill2->Load(L"../../data/s2.png"))
+        if (!m_Skill2->Create(L"Skill2 Rect", L"../../data/s2.png"))
         {
             return false;
         }
@@ -162,7 +161,7 @@ bool    Sample::Init()
         m_Number->m_VertexList.emplace_back(TVector3(52.0f, 0.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
         m_Number->m_VertexList.emplace_back(TVector3(52.0f, 68, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
         m_Number->m_VertexList.emplace_back(TVector3(0.0f, 68, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
-        if (!m_Number->Load(L"../../data/0.png"))
+        if (!m_Number->Create(L"Number"))
         {
             return false;
         }        

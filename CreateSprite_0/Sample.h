@@ -1,4 +1,5 @@
 #pragma once
+#include "TDevice.h"
 #include "TUiObj.h"
 #include "TInput.h"
 #include "TTimer.h"

@@ -1,6 +1,5 @@
 #pragma once
-#include <windows.h>
-#pragma comment (lib, "winmm.lib") // timeGetTime
+#include "TStd.h"
 extern bool g_bChange;
 extern int g_iChangeAnimation;
 class TWindow
