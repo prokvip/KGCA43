@@ -43,7 +43,7 @@ public:
 
 class TUiNumber : public TUiObj
 {
-public:	
+public:		
 	UINT    m_iApplyIndex = 0;
 	float   m_fTimer = 0.0f;
 	float   m_fAnimationTime = 1.0f;

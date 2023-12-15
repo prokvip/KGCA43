@@ -104,6 +104,12 @@ bool Sample::AlphaBlendState()
         &bsd,
         &m_pAlphaBlendDisable);
 
+    bsd.RenderTarget[0].BlendEnable = TRUE;
+    bsd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+    bsd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+    hr = m_pd3dDevice->CreateBlendState(
+        &bsd,
+        &m_pAddBlend);
     //m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);
     return true;
 }
@@ -178,6 +184,27 @@ bool    Sample::Init()
             return false;
         }        
     m_uiList.push_back(m_Number);
+
+    m_EffectA = std::make_shared<TEffect>();
+    m_EffectA->m_VertexList.emplace_back(TVector3(100, 100.0f, 0.5f), TVector4(1, 0, 0, 1), TVector2(0.0f, 0.0f));      // 0
+    m_EffectA->m_VertexList.emplace_back(TVector3(200.0f, 100.0f, 0.5f), TVector4(1, 0, 0, 1), TVector2(1.0f, 0.0f));    // 1
+    m_EffectA->m_VertexList.emplace_back(TVector3(200.0f, 200, 0.5f), TVector4(1, 0, 0, 1), TVector2(1.0f, 1.0f));  // 2
+    m_EffectA->m_VertexList.emplace_back(TVector3(100.0f, 200, 0.5f), TVector4(1, 0, 0, 1), TVector2(0.0f, 1.0f));    // 3
+    if (!m_EffectA->Create(L"EffectA",L"../../data/effect/alpha/critical.dds", 8, 8, 1.0f))
+    {
+        return false;
+    }
+
+    m_EffectB = std::make_shared<TEffect>();
+    m_EffectB->m_VertexList.emplace_back(TVector3(200, 100.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 0.0f));      // 0
+    m_EffectB->m_VertexList.emplace_back(TVector3(300.0f, 100.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
+    m_EffectB->m_VertexList.emplace_back(TVector3(300.0f, 200, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
+    m_EffectB->m_VertexList.emplace_back(TVector3(200.0f, 200, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
+    if (!m_EffectB->Create(L"EffectB", L"../../data/effect/get_item_02.tga", 4, 4, 1.0f))
+    {
+        return false;
+    }
+    
     return true;
 }
 bool    Sample::Frame()
@@ -227,17 +254,52 @@ bool    Sample::Frame()
     {
         data->Frame(m_GameTimer.m_fSecondPerFrame);
     }
+
+    m_EffectA->Frame(m_GameTimer.m_fSecondPerFrame);
+    m_EffectB->Frame(m_GameTimer.m_fSecondPerFrame);
     return true;
 }
 bool    Sample::Render()
 {
     m_pd3dContext->PSSetSamplers(0, 1, &m_pDefaultSS);
-    m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);
-    
-    TInput::Get().Render();
+    m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);    
+#pragma region BK
+    /*m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
+        0,
+        nullptr,
+        &m_bk->m_VertexList.at(0),
+        0,
+        0);
+    m_DefaultPlane.PreRender();
+    m_bk->Render(m_pd3dContext);
+    m_DefaultPlane.PostRender();*/
+#pragma endregion BK
 
-    
-    for (auto data : m_uiList)
+#pragma region EFFECT
+    //m_pd3dContext->OMSetBlendState(m_pAddBlend, 0, -1);
+    m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
+        0,
+        nullptr,
+        &m_EffectA->m_VertexList.at(0),
+        0,
+        0);
+    m_DefaultPlane.PreRender();
+    m_EffectA->Render(m_pd3dContext);
+    m_DefaultPlane.PostRender();
+
+    m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
+        0,
+        nullptr,
+        &m_EffectB->m_VertexList.at(0),
+        0,
+        0);
+    m_DefaultPlane.PreRender();
+    m_EffectB->Render(m_pd3dContext);
+    m_DefaultPlane.PostRender();
+#pragma endregion EFFECT  
+
+    m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);
+    /*for (auto data : m_uiList)
     {
         m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
             0,
@@ -248,10 +310,11 @@ bool    Sample::Render()
         m_DefaultPlane.PreRender();        
              data->Render(m_pd3dContext);
         m_DefaultPlane.PostRender();    
-    }
-
-
+    }*/
+    
+    
     m_GameTimer.Render();
+    TInput::Get().Render();
     return true;
 }
 bool    Sample::Release() 

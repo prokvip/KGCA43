@@ -36,6 +36,10 @@ SamplerState g_Sample : register(s0); // 샘플러 0번에 있는 샘플러로 텍스처 컬러�
 // 픽셀쉐이더의 반환은 반드시 SV_TARGET 레지스터(float4 : :rgba)에 저장되어야 한다.
 float4 PS( VS_OUT v) : SV_TARGET
 {
-	float4 texColor = g_txDiffuse.Sample(g_Sample, v.t);
+	float4 texColor = g_txDiffuse.Sample(g_Sample, v.t);	
+	if( texColor.a == 1.0f)
+	{
+		texColor.a = texColor.r + texColor.g + texColor.b;
+	}
 	return texColor*v.c; 
 }

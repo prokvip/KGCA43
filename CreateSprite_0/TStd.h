@@ -17,7 +17,6 @@
 #define randf(x) (x*rand()/(float)RAND_MAX)
 #define randf2(x,off) (off+x*rand()/(float)RAND_MAX)
 #define randstep(fMin,fMax) (fMin+((float)fMax-(float)fMin)*rand()/(float)RAND_MAX)
-#define clamp(x,MinX,MaxX) if (x>MaxX) x=MaxX; else if (x<MinX) x=MinX;
 
 //////////////////////////////////////////////
 // 객체 및 배열 할당과 삭제 및 소멸 매크로
@@ -73,3 +72,11 @@ typedef	list< HANDLE >::iterator	HANDLE_LIST_ITOR;
 
 
 extern HWND g_hWnd;
+
+typedef struct tagTRECT
+{
+    float    left;
+    float    top;
+    float    right;
+    float    bottom;
+} tRECT;

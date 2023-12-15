@@ -71,7 +71,7 @@ bool    TDevice::GameFrame()
 }
 bool    TDevice::GameRender()
 {
-    float clearColor[] = { 1,0,0,1 };
+    float clearColor[] = { 0.0f,0.0f,0.0f,1 };
     m_pd3dContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
 
     Render();
