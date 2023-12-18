@@ -12,7 +12,6 @@ bool  Sample::Release()
     return true;
 }
 
-
 //HINSTANCE : 운영체제가 관리하는 윈도우 프로세스ID
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
