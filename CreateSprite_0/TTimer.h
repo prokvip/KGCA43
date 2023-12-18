@@ -14,6 +14,7 @@ public:
     DWORD m_dwTickStart;
     DWORD m_dwTickEnd;
     std::wstring m_msg;
+    std::wstring m_outmsg;
 public:
     bool  Init();
     bool  Frame();

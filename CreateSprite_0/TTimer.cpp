@@ -27,17 +27,18 @@ bool  TTimer::Frame()
 }
 bool  TTimer::Render()
 {
-	std::wstring outmsg = L"게임경과시간:";
-	outmsg += std::to_wstring(m_fGameTimer);
-	outmsg += L" ";
-	outmsg += L"1프레임 경과시간:";
-	outmsg += std::to_wstring(m_fSecondPerFrame);
-	outmsg += L" ";
-	outmsg += L"초당 프레임:";
-	outmsg += m_msg;
-	outmsg += L"\n";
+	m_outmsg.clear();
+	m_outmsg = L"게임경과시간:";
+	m_outmsg += std::to_wstring(m_fGameTimer);
+	m_outmsg += L" ";
+	m_outmsg += L"1프레임 경과시간:";
+	m_outmsg += std::to_wstring(m_fSecondPerFrame);
+	m_outmsg += L" ";
+	m_outmsg += L"초당 프레임:";
+	m_outmsg += m_msg;
+	m_outmsg += L"\n";
 
-	OutputDebugString(outmsg.c_str());
+	//OutputDebugString(outmsg.c_str());
 	return true;
 }
 bool  TTimer::Release()

@@ -22,28 +22,11 @@ bool Sample::CreateSampleState()
     return true;
 }
 bool Sample::CreatePixelShader()
-{
-    D3D11_SAMPLER_DESC sd;
-    ZeroMemory(&sd, sizeof(sd));
-    sd.Filter= D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-
-    HRESULT hr = m_pd3dDevice->CreateSamplerState(&sd, &m_pDefaultSS);
-
-    ZeroMemory(&sd, sizeof(sd));
-    sd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-    sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-
-    hr = m_pd3dDevice->CreateSamplerState(&sd, &m_pDefaultSSPoint);
-
+{   
     ID3DBlob* pBlobByteCode;
     ID3DBlob* ppErrorMsgs = nullptr;
-    hr = D3DCompileFromFile(
-        L"DefaultShaderVSPS.txt",
+    HRESULT hr = D3DCompileFromFile(
+        L"effect.txt",
         nullptr,
         nullptr,
         "PS",
@@ -103,19 +86,19 @@ bool Sample::AlphaBlendState()
     hr = m_pd3dDevice->CreateBlendState(
         &bsd,
         &m_pAlphaBlendDisable);
-
-    bsd.RenderTarget[0].BlendEnable = TRUE;
-    bsd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-    bsd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-    hr = m_pd3dDevice->CreateBlendState(
-        &bsd,
-        &m_pAddBlend);
-    //m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);
-    return true;
+        
+     return true;
 }
 
 bool    Sample::Init()
 {     
+    IDXGISurface* dxgiSurface;
+    HRESULT hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (void**)&dxgiSurface);
+    if (SUCCEEDED(hr))
+    {
+        m_dxWrite.Init(dxgiSurface);
+        if (dxgiSurface)dxgiSurface->Release();
+    }    
     m_GameTimer.Init();
     TInput::Get().Init();
     TTextureMgr::Get().Set(m_pd3dDevice, m_pd3dContext);
@@ -264,7 +247,7 @@ bool    Sample::Render()
     m_pd3dContext->PSSetSamplers(0, 1, &m_pDefaultSS);
     m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);    
 #pragma region BK
-    /*m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
+    m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
         0,
         nullptr,
         &m_bk->m_VertexList.at(0),
@@ -272,34 +255,11 @@ bool    Sample::Render()
         0);
     m_DefaultPlane.PreRender();
     m_bk->Render(m_pd3dContext);
-    m_DefaultPlane.PostRender();*/
+    m_DefaultPlane.PostRender();
 #pragma endregion BK
 
-#pragma region EFFECT
-    //m_pd3dContext->OMSetBlendState(m_pAddBlend, 0, -1);
-    m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
-        0,
-        nullptr,
-        &m_EffectA->m_VertexList.at(0),
-        0,
-        0);
-    m_DefaultPlane.PreRender();
-    m_EffectA->Render(m_pd3dContext);
-    m_DefaultPlane.PostRender();
-
-    m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
-        0,
-        nullptr,
-        &m_EffectB->m_VertexList.at(0),
-        0,
-        0);
-    m_DefaultPlane.PreRender();
-    m_EffectB->Render(m_pd3dContext);
-    m_DefaultPlane.PostRender();
-#pragma endregion EFFECT  
-
     m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);
-    /*for (auto data : m_uiList)
+    for (auto data : m_uiList)
     {
         m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
             0,
@@ -310,11 +270,39 @@ bool    Sample::Render()
         m_DefaultPlane.PreRender();        
              data->Render(m_pd3dContext);
         m_DefaultPlane.PostRender();    
-    }*/
+    }
     
-    
+#pragma region EFFECT
+   
+    m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
+        0,
+        nullptr,
+        &m_EffectA->m_VertexList.at(0),
+        0,
+        0);
+    m_DefaultPlane.PreRender();
+        m_pd3dContext->PSSetShader(m_pPixelShaderAlphaTest, NULL, 0);
+        m_EffectA->Render(m_pd3dContext);
+    m_DefaultPlane.PostRender();
+
+    m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
+        0,
+        nullptr,
+        &m_EffectB->m_VertexList.at(0),
+        0,
+        0);
+    m_DefaultPlane.PreRender();
+        m_pd3dContext->PSSetShader(m_pPixelShaderAlphaTest, NULL, 0);
+        m_EffectB->Render(m_pd3dContext);
+    m_DefaultPlane.PostRender();
+#pragma endregion EFFECT  
+
+
     m_GameTimer.Render();
     TInput::Get().Render();
+
+    m_dxWrite.Render();
+    m_dxWrite.Draw20(0, 30, m_GameTimer.m_outmsg);
     return true;
 }
 bool    Sample::Release() 
@@ -325,15 +313,23 @@ bool    Sample::Release()
     if (m_pAlphaBlendDisable)m_pAlphaBlendDisable->Release();
     if (m_pPixelShaderAlphaTest)m_pPixelShaderAlphaTest->Release();
 
-    for (auto data : m_uiList)
+    /*for (auto data : m_uiList)
     {
         data->Release();
-    }
-    m_DefaultPlane.Release();
+    }*/
+   if(m_bk)m_bk->Release();
+   if (m_btnStart)m_btnStart->Release();
+   if (m_Item)m_Item->Release();
+   if (m_Number)m_Number->Release();
+   if (m_EffectA)m_EffectA->Release();
+   if (m_EffectB)m_EffectB->Release();
+   m_DefaultPlane.Release();
 
     TInput::Get().Release();
 
     m_GameTimer.Release();
+
+    m_dxWrite.Release();
     return true;
 }
 

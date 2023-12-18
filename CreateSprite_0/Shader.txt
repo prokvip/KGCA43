@@ -37,9 +37,5 @@ SamplerState g_Sample : register(s0); // 샘플러 0번에 있는 샘플러로 텍스처 컬러�
 float4 PS( VS_OUT v) : SV_TARGET
 {
 	float4 texColor = g_txDiffuse.Sample(g_Sample, v.t);	
-	if( texColor.a == 1.0f)
-	{
-		texColor.a = texColor.r + texColor.g + texColor.b;
-	}
 	return texColor*v.c; 
 }

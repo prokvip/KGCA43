@@ -4,15 +4,16 @@
 #include "TInput.h"
 #include "TTimer.h"
 #include "TEffect.h"
+#include "TDxWrite.h"
 class Sample : public TDevice
 {	
 public:
+	TDxWrite			m_dxWrite;
 	TTimer				m_GameTimer;
-	ID3D11SamplerState* m_pDefaultSS;
-	ID3D11SamplerState* m_pDefaultSSPoint;
-	ID3D11BlendState* m_pAddBlend;
-	ID3D11BlendState* m_pAlphaBlendEnable;
-	ID3D11BlendState* m_pAlphaBlendDisable;
+	ID3D11SamplerState* m_pDefaultSS = nullptr;
+	ID3D11SamplerState* m_pDefaultSSPoint = nullptr;
+	ID3D11BlendState* m_pAlphaBlendEnable = nullptr;
+	ID3D11BlendState* m_pAlphaBlendDisable = nullptr;
 	ID3D11PixelShader* m_pPixelShaderAlphaTest = nullptr;
 
 	std::vector<std::shared_ptr<TUiObj>>   m_uiList;
@@ -20,10 +21,7 @@ public:
 	std::shared_ptr<TUiObj>			m_btnStart;
 	std::shared_ptr<TUiObj>			m_Item;
 	std::shared_ptr<TUiObj>			m_Number;
-
 	TPlaneShape						m_DefaultPlane;
-
-
 	std::shared_ptr<TEffect>		m_EffectA;
 	std::shared_ptr<TEffect>		m_EffectB;
 public:
