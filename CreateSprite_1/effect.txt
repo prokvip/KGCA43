@@ -1,0 +1,35 @@
+// HLSL( C언와 유사한 언어 )
+// 정점쉐이더( 정점의 개수만큼 호출된다.)
+// 정점버퍼에 있는 각 정점을 InputLayout 구조에 따라서 정점 쉐이더에 전달한다. 
+// 정점쉐이더의 반환은 반드시 SV_POSITION 레지스터(float4:xyzw)에 저장되어야 한다.
+
+struct VS_OUT
+{
+	float4 p : SV_POSITION;
+	float4 c : COLOR0;	  // COLOR0, COLOR1
+	float2 t : TEXCOORD0; // TEXCOORD0 ~ TEXCOORD15
+};
+VS_OUT VS( float4 c : COLOR, float3 p : POSITION, float2 t : TEX ) 
+{
+	VS_OUT v = (VS_OUT)0;
+	float1 x = (p.x / 800.0f) * 2.0f-1.0f;
+	float1 y = -((p.y / 600.0f) * 2.0f-1.0f);
+	v.p = float4(x,y,0.5f, 1.0f); // 스위즐링
+	v.c = c;
+	v.t = t;
+	return v;
+}
+
+Texture2D g_txDiffuse : register(t0); // 텍스처레지스터 3번에 텍스처가 있다.
+SamplerState g_Sample : register(s0); // 샘플러 0번에 있는 샘플러로 텍스처 컬러를 읽어라.
+// 픽셀쉐이더(픽쉘에 개수만큼 호출된다.)
+// 픽셀쉐이더의 반환은 반드시 SV_TARGET 레지스터(float4 : :rgba)에 저장되어야 한다.
+float4 PS( VS_OUT v) : SV_TARGET
+{
+	float4 texColor = g_txDiffuse.Sample(g_Sample, v.t);	
+	if( texColor.r == 0.0f && texColor.g == 0.0f && texColor.b == 0.0f )
+	{
+		discard;
+	}
+	return texColor*v.c; 
+}
