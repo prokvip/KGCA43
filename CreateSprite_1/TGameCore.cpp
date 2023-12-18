@@ -87,6 +87,9 @@ bool TGameCore::GameInit()
 }
 bool TGameCore::GameFrame()
 {
+    m_GameTimer.Frame();
+    TInput::Get().Frame();
+
     Frame();
     return true;
 }
@@ -104,7 +107,8 @@ bool TGameCore::GameRender()
 
     m_GameTimer.Render();
     TInput::Get().Render();
-    m_dxWrite.Render();
+    //m_dxWrite.Render();
+    m_dxWrite.Draw20(0, 30, m_GameTimer.m_outmsg);
 
     m_pSwapChain->Present(0, 0);
     return true;
