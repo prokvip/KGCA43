@@ -9,6 +9,11 @@ struct VS_OUT
 	float4 c : COLOR0;	  // COLOR0, COLOR1
 	float2 t : TEXCOORD0; // TEXCOORD0 ~ TEXCOORD15
 };
+struct PS_OUT
+{
+	float4 add : SV_TARGET0;
+	float4 mul : SV_TARGET1;
+};
 VS_OUT VS( float4 c : COLOR, float3 p : POSITION, float2 t : TEX ) 
 {
 	VS_OUT v = (VS_OUT)0;
@@ -24,12 +29,19 @@ Texture2D g_txDiffuse : register(t0); // 텍스처레지스터 3번에 텍스처가 있다.
 SamplerState g_Sample : register(s0); // 샘플러 0번에 있는 샘플러로 텍스처 컬러를 읽어라.
 // 픽셀쉐이더(픽쉘에 개수만큼 호출된다.)
 // 픽셀쉐이더의 반환은 반드시 SV_TARGET 레지스터(float4 : :rgba)에 저장되어야 한다.
-float4 PS( VS_OUT v) : SV_TARGET
+PS_OUT PS( VS_OUT v) 
 {
-	float4 texColor = g_txDiffuse.Sample(g_Sample, v.t);	
-	if( texColor.r == 0.0f && texColor.g == 0.0f && texColor.b == 0.0f )
-	{
-		discard;
-	}
-	return texColor*v.c; 
+	PS_OUT vOut = (PS_OUT)0;
+	float4 vColor = g_txDiffuse.Sample(g_Sample, v.t);	
+	float alpha = vColor.r + vColor.g +vColor.b;
+	
+	//float alpha = max(max(vColor.r, vColor.g), vColor.b);
+	//float alpha = (vColor.r + vColor.g + vColor.b) / 3.0f;
+	// 1번 -> 결과 = 배경색 * vOut.mul;  
+	//  검정색 부분은 1이 되어서 배경색 그대로 유지, 
+	//  검정색이 아닌부분은 0이 되어서 결과가 검정색이 된다.
+	// 2번 -> 결과 = 배경색 + vOut.add;
+	vOut.mul = float4(1 - alpha, 1 - alpha, 1 - alpha, 1);
+	vOut.add = float4(vColor.xyz, 1);
+	return vOut;
 }

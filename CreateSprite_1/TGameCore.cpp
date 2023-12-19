@@ -51,6 +51,33 @@ bool TGameCore::AlphaBlendState()
 
     return true;
 }
+bool TGameCore::DualSourceColorBlending()
+{
+    D3D11_BLEND_DESC bsd;
+    ZeroMemory(&bsd, sizeof(bsd));
+    //bsd.AlphaToCoverageEnable = TRUE;
+    bsd.RenderTarget[0].BlendEnable = TRUE;
+    //bsd.IndependentBlendEnable = TRUE;
+
+    // rgb  
+ //FINALCOLOR = DEST COLOR* (1-SRCALPHA) + SRC COLOR * SRC ALPAH
+    bsd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;         // SV_TARGET0
+    bsd.RenderTarget[0].DestBlend = D3D11_BLEND_SRC1_COLOR; // SV_TARGET1
+    bsd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+
+    // A
+    bsd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    bsd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    bsd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    bsd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+
+    HRESULT hr = m_pd3dDevice->CreateBlendState(
+        &bsd,
+        &m_pDualSourceColorBlending);
+
+    return true;
+}
 bool TGameCore::GameInit()
 {
     CreateDevice();
@@ -69,6 +96,7 @@ bool TGameCore::GameInit()
     TInput::Get().Init();
     TTextureMgr::Get().Set(m_pd3dDevice, m_pd3dContext);
     AlphaBlendState();
+    DualSourceColorBlending();
     CreateSampleState();
 
     m_DefaultPlane.m_pd3dDevice = m_pd3dDevice;
@@ -104,6 +132,12 @@ bool TGameCore::GameRender()
     m_pd3dContext->PSSetSamplers(0, 1, &m_pDefaultSS);
     m_pd3dContext->OMSetBlendState(m_pAlphaBlendEnable, 0, -1);
 
+    m_pd3dContext->UpdateSubresource(m_DefaultPlane.m_pVertexBuffer,
+        0,
+        nullptr,
+        &m_DefaultPlane.m_VertexList.at(0),
+        0,
+        0);
     m_DefaultPlane.Render();
 
     Render();
@@ -123,7 +157,8 @@ bool TGameCore::GameRelease()
     if (m_pDefaultSSPoint)m_pDefaultSSPoint->Release();
     if (m_pAlphaBlendEnable)m_pAlphaBlendEnable->Release();
     if (m_pAlphaBlendDisable)m_pAlphaBlendDisable->Release();
-    
+    if (m_pDualSourceColorBlending)m_pDualSourceColorBlending->Release();
+
     m_DefaultPlane.Release();
     TInput::Get().Release();
     m_GameTimer.Release();

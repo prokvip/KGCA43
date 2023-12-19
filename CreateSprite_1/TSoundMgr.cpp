@@ -51,7 +51,8 @@ void TSound::Play(bool bLoop)
 
 void TSound::Stop()
 {
-	_ASSERT(m_pChannel);
+	if (m_pChannel == nullptr) return;
+	//_ASSERT(m_pChannel);
 	m_pChannel->stop();
 	m_pChannel = nullptr;
 }

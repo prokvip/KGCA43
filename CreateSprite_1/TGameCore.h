@@ -15,9 +15,11 @@ public:
 	ID3D11SamplerState* m_pDefaultSSPoint = nullptr;
 	ID3D11BlendState* m_pAlphaBlendEnable = nullptr;
 	ID3D11BlendState* m_pAlphaBlendDisable = nullptr;
+	ID3D11BlendState* m_pDualSourceColorBlending = nullptr;
 public:
 	TPlaneShape						m_DefaultPlane;
 public:
+	bool	DualSourceColorBlending();
 	bool    AlphaBlendState();
 	bool	CreatePixelShader();
 	bool	CreateSampleState();
