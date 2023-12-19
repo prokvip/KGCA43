@@ -5,6 +5,7 @@
 #include "TTimer.h"
 #include "TEffect.h"
 #include "TDxWrite.h"
+#include "TSoundMgr.h"
 class TGameCore : public TDevice
 {
 public:

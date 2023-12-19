@@ -1,4 +1,6 @@
 #include "TTimer.h"
+float   g_fSecondPerFrame = 0.0f;
+
 bool  TTimer::Init()
 {
 	m_dwTickStart = timeGetTime();
@@ -9,7 +11,7 @@ bool  TTimer::Frame()
 	m_dwTickEnd = timeGetTime();
 	DWORD dwElapseTick = m_dwTickEnd - m_dwTickStart;
 	
-	m_fSecondPerFrame = dwElapseTick / 1000.0f;
+	g_fSecondPerFrame = m_fSecondPerFrame = dwElapseTick / 1000.0f;
 	m_fGameTimer += m_fSecondPerFrame;
 	
 	m_iFPS++;

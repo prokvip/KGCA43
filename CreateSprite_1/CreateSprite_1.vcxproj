@@ -118,13 +118,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../include/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include/;../../FMOD/inc;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../lib/;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../lib/;../../FMOD/lib/x64;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,6 +151,7 @@
     <ClCompile Include="TGameCore.cpp" />
     <ClCompile Include="TInput.cpp" />
     <ClCompile Include="TPlaneShape.cpp" />
+    <ClCompile Include="TSoundMgr.cpp" />
     <ClCompile Include="TTextureMgr.cpp" />
     <ClCompile Include="TTimer.cpp" />
     <ClCompile Include="TUiObj.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="TGameCore.h" />
     <ClInclude Include="TInput.h" />
     <ClInclude Include="TPlaneShape.h" />
+    <ClInclude Include="TSoundMgr.h" />
     <ClInclude Include="TStd.h" />
     <ClInclude Include="TTextureMgr.h" />
     <ClInclude Include="TTimer.h" />

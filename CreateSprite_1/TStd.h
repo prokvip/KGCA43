@@ -7,7 +7,7 @@
 #include <vector>
 #include <list>
 #include <map>
-
+#include <atlconv.h> // A2W
 //프로젝트 속성에 링커->입력->추가종속성 d3d11.lib; d3dcompiler.lib; DirectXTex.lib;
 //#pragma commnet을 이용하면 프로젝트으로 포함할 수 있다.
 #pragma comment (lib, "d3d11.lib")
@@ -71,8 +71,8 @@ typedef list< HANDLE >				HANDLE_LIST;
 typedef	list< HANDLE >::iterator	HANDLE_LIST_ITOR;
 
 
-extern HWND g_hWnd;
-
+extern HWND		g_hWnd;
+extern float	g_fSecondPerFrame ;
 typedef struct tagTRECT
 {
     float    left;
@@ -80,3 +80,16 @@ typedef struct tagTRECT
     float    right;
     float    bottom;
 } tRECT;
+
+
+static std::wstring to_mw(const std::string& _src)
+{
+	USES_CONVERSION;
+	return std::wstring(A2W(_src.c_str()));
+};
+
+static std::string to_wm(const std::wstring& _src)
+{
+	USES_CONVERSION;
+	return std::string(W2A(_src.c_str()));
+};

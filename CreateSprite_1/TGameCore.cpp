@@ -55,6 +55,8 @@ bool TGameCore::GameInit()
 {
     CreateDevice();
 
+    TSoundMgr::Get().Init();
+
     IDXGISurface* dxgiSurface;
     HRESULT hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (void**)&dxgiSurface);
     if (SUCCEEDED(hr))
@@ -89,6 +91,7 @@ bool TGameCore::GameFrame()
 {
     m_GameTimer.Frame();
     TInput::Get().Frame();
+    TSoundMgr::Get().Frame();
 
     Frame();
     return true;
@@ -127,5 +130,6 @@ bool TGameCore::GameRelease()
     m_dxWrite.Release();
     
     DeleteDevice();
+
     return true;
 }
