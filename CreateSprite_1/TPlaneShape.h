@@ -13,6 +13,10 @@ struct TVector3
 	float x;
 	float y;
 	float z;
+	void operator * (float fvalue); 
+	{
+
+	}
 	TVector3() { x = 0; y = 0; z = 0; }
 	TVector3(float _x, float _y, float _z = 0.0f) { x = _x; y = _y; z = _z; }
 };

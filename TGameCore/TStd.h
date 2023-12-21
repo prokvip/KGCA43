@@ -74,7 +74,7 @@ typedef	list< HANDLE >::iterator	HANDLE_LIST_ITOR;
 
 
 extern HWND		g_hWnd;
-extern float	g_fSecondPerFrame ;
+extern float	g_fSecPerFrame ;
 typedef struct tagTRECT
 {
     float    left;

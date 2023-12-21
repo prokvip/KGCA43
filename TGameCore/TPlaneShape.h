@@ -5,6 +5,45 @@ struct TVector2
 {
 	float x;
 	float y;
+	TVector2 operator+(const TVector2& V) const
+	{
+		return TVector2(x + V.x, y + V.y);
+	}
+	TVector2 operator-(const TVector2& V) const
+	{
+		return TVector2(x - V.x, y - V.y);
+	}
+	TVector2 operator-(float Bias) const
+	{
+		return TVector2(x * Bias, y * Bias);
+	}
+	TVector2 operator+(float Bias) const
+	{
+		return TVector2(x + Bias, y + Bias);
+	}
+	TVector2 operator*(float Scale) const
+	{
+		return TVector2(x * Scale, y * Scale );
+	}
+	TVector2 operator/(float Scale) const
+	{
+		return TVector2(x / Scale, y / Scale);
+	}	
+	bool operator==(const TVector2& V) const
+	{
+		if (fabs(x - V.x) < 0.001f)
+		{
+			if (fabs(y - V.y) < 0.001f)
+			{				
+				return true;
+			}
+		}
+		return false;
+	}
+	bool operator!=(const TVector2& V) const
+	{
+		return !(*this == V);
+	}
 	TVector2() { x = 0; y = 0; }
 	TVector2(float _x, float _y) { x = _x; y = _y; }
 };
@@ -38,6 +77,10 @@ class TPlaneShape
 {
 public:
 	W_STR                   m_csName;
+	W_STR                   m_csDefaultVSFileName;
+	W_STR                   m_csDefaultPSFileName;
+	C_STR                   m_csDefaultVSEntryName;
+	C_STR                   m_csDefaultPSEntryName;
 	ID3D11Device*			m_pd3dDevice = nullptr;
 	ID3D11DeviceContext*	m_pd3dContext = nullptr;
 	RECT					m_rtClient;
@@ -74,4 +117,9 @@ public:
 	virtual bool    Render();
 	virtual bool    PostRender();
 	virtual bool    Release();
+public:
+	TPlaneShape()
+	{
+		Init();
+	}
 };

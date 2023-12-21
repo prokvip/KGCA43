@@ -1,8 +1,13 @@
 #include "THeroObj.h"
+#include "TInput.h"
 bool    THeroObj::Create(TInitSet info, W_STR texFileName)
 {
     m_InitSet = info;
     m_csName = info.name;    
+    m_vPos = info.p;
+    m_csDefaultVSFileName = L"../../data/shader/object.txt";
+    m_csDefaultPSFileName = L"../../data/shader/object.txt";
+    m_ptexMask = TTextureMgr::Get().Load(info.szMaskTex);
     TPlaneShape::Create(m_csName, texFileName);
     return true;
 }
@@ -35,4 +40,58 @@ bool   THeroObj::SetVB(TVector2 p,
     m_VertexList.emplace_back(TVector3(p.x, p.y + size.y, 0.5f), TVector4(1, 1, 1, 1), uv3);    // 3
 
 	return true;
+}
+void   THeroObj::SetPosion(TVector2 p)
+{
+    m_VertexList[0].pos = TVector3(p.x, p.y, 0.5f);
+    m_VertexList[1].pos = TVector3(p.x + m_InitSet.size.x, p.y, 0.5f);
+    m_VertexList[2].pos = TVector3(p.x + m_InitSet.size.x, p.y + m_InitSet.size.y, 0.5f);
+    m_VertexList[3].pos = TVector3(p.x, p.y + m_InitSet.size.y, 0.5f);
+    m_pd3dContext->UpdateSubresource(m_pVertexBuffer,
+        0,
+        nullptr,
+        &m_VertexList.at(0),
+        0,
+        0);
+}
+void   THeroObj::SetPosion(float x, float y)
+{
+
+}
+bool THeroObj::Frame()
+{
+    if (TInput::Get().m_dwKeyState['W'] == KEY_HOLD)
+    {
+        m_vPos = m_vPos + TVector2(0.0f, -1.0f) * g_fSecPerFrame * 300.0f;
+    }       
+    if (TInput::Get().m_dwKeyState['S'] == KEY_HOLD)
+    {
+        m_vPos = m_vPos + TVector2(0.0f, 1.0f) * g_fSecPerFrame * 300.0f;
+    }
+    if (TInput::Get().m_dwKeyState['A'] == KEY_HOLD)
+    {
+        m_vPos = m_vPos + TVector2(-1.0f, 0.0f) * g_fSecPerFrame * 300.0f;
+    }
+    if (TInput::Get().m_dwKeyState['D'] == KEY_HOLD)
+    {
+        m_vPos = m_vPos + TVector2(1.0f, 0.0f) * g_fSecPerFrame * 300.0f;
+    }
+    if (TInput::Get().m_dwKeyState[VK_LBUTTON] == KEY_UP)
+    {
+
+    }
+    if (TInput::Get().m_dwKeyState[VK_RBUTTON] == KEY_UP)
+    {
+    }
+    SetPosion(m_vPos);
+    return true;
+}
+
+bool THeroObj::PreRender()
+{
+    if (m_ptexMask != nullptr)
+    {
+        m_pd3dContext->PSSetShaderResources(1, 1, &m_ptexMask->m_pTextureSRV);
+    }
+    return TPlaneShape::PreRender();
 }

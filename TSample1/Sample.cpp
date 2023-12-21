@@ -6,7 +6,7 @@ bool	   Sample::Init()
     m_Hero->m_pd3dContext = m_pd3dContext;
     m_Hero->m_rtClient = m_rtClient;
 
-    TInitSet info = { L"Hero",
+    TInitSet info = { L"Hero", L"../../data/bitmap2.bmp",
                     {380.0f, 300.0f },
                     {91.0f,1.0f},
                     {40.0f, 60.0f} };

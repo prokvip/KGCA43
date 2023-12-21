@@ -112,10 +112,10 @@ bool TPlaneShape::CreateVertexShader()
 {
     ID3DBlob* ppErrorMsgs = nullptr;
     HRESULT hr = D3DCompileFromFile(
-        L"../../data/shader/Shader.txt",
+        m_csDefaultVSFileName.c_str(),
         nullptr,
         nullptr,
-        "VS",
+        m_csDefaultVSEntryName.c_str(),
         "vs_5_0",
         0,
         0,
@@ -145,10 +145,10 @@ bool TPlaneShape::CreatePixelShader()
 {
     ID3DBlob* ppErrorMsgs = nullptr;
     HRESULT hr = D3DCompileFromFile(
-        L"../../data/shader/Shader.txt",
+        m_csDefaultPSFileName.c_str(),
         nullptr,
         nullptr,
-        "PS",
+        m_csDefaultPSEntryName.c_str(),
         "ps_5_0",
         0,
         0,
@@ -210,6 +210,10 @@ bool TPlaneShape::CreateInputLayout()
 }
 bool    TPlaneShape::Init()
 {
+    m_csDefaultVSFileName = L"../../data/shader/shader.txt";
+    m_csDefaultPSFileName = L"../../data/shader/shader.txt";
+    m_csDefaultVSEntryName = "VS";
+    m_csDefaultPSEntryName = "PS";
     return true;
 }
 bool    TPlaneShape::Create(W_STR name, T_STR_VECTOR texFileName)

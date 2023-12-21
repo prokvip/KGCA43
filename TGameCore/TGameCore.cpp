@@ -108,7 +108,7 @@ bool TGameCore::GameInit()
     m_DefaultPlane.m_VertexList.emplace_back(TVector3(800.0f, 0.0f, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 0.0f));    // 1
     m_DefaultPlane.m_VertexList.emplace_back(TVector3(800.0f, 600, 0.5f), TVector4(1, 1, 1, 1), TVector2(1.0f, 1.0f));  // 2
     m_DefaultPlane.m_VertexList.emplace_back(TVector3(0.0f, 600, 0.5f), TVector4(1, 1, 1, 1), TVector2(0.0f, 1.0f));    // 3
-    if (!m_DefaultPlane.Create(L"DefaultPlane", L"../../data/RECT.png"))
+    if (!m_DefaultPlane.Create(L"DefaultPlane", L"../../data/T_Fire_Tiled_D.tga"))
     {
         return false;
     }
