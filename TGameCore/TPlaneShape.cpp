@@ -215,6 +215,13 @@ bool    TPlaneShape::Init()
 bool    TPlaneShape::Create(W_STR name, T_STR_VECTOR texFileName)
 {
     m_csName = name;
+    if (!texFileName.empty())
+    {
+        if (!LoadTexture(texFileName))
+        {
+            return false;
+        }
+    }
     //// v0       v1
     ////
     //// v3       v2
@@ -243,10 +250,7 @@ bool    TPlaneShape::Create(W_STR name, T_STR_VECTOR texFileName)
     {
         return false;
     }
-    if (!LoadTexture(texFileName))
-    {
-        return false;
-    }
+    
 
     /*  UINT iSize = m_VertexList.size() * sizeof(TVertex);
    m_pVertexBuffer = CreateBuffer(iSize, D3D11_BIND_VERTEX_BUFFER,(void**)&m_VertexList.at(0));
