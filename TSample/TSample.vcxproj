@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{40ECDADC-330B-4C74-91CE-C017D9AD79D3}</ProjectGuid>
-    <RootNamespace>windows1</RootNamespace>
+    <ProjectGuid>{d5fa8853-4fbb-457b-b95c-96d4e25bc8ef}</ProjectGuid>
+    <RootNamespace>TSample</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -79,7 +79,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../output/</OutDir>
-    <IntDir>../../output/CreateSprie_1</IntDir>
+    <IntDir>../../output/TSample</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -118,13 +118,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../DxTex/include;../../FMOD/inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;../../DxTex/include;../../FMOD/inc;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../../lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../DXTex/lib/;../../FMOD/lib/x64;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,37 +144,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Sample.cpp" />
-    <ClCompile Include="TDevice.cpp" />
-    <ClCompile Include="TDxWrite.cpp" />
-    <ClCompile Include="TEffect.cpp" />
-    <ClCompile Include="TGameCore.cpp" />
-    <ClCompile Include="TInput.cpp" />
-    <ClCompile Include="TPlaneShape.cpp" />
-    <ClCompile Include="TSoundMgr.cpp" />
-    <ClCompile Include="TTextureMgr.cpp" />
-    <ClCompile Include="TTimer.cpp" />
-    <ClCompile Include="TUiObj.cpp" />
-    <ClCompile Include="TWindow.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Sample.h" />
-    <ClInclude Include="TDevice.h" />
-    <ClInclude Include="TDxWrite.h" />
-    <ClInclude Include="TEffect.h" />
-    <ClInclude Include="TGameCore.h" />
-    <ClInclude Include="TInput.h" />
-    <ClInclude Include="TPlaneShape.h" />
-    <ClInclude Include="TSoundMgr.h" />
-    <ClInclude Include="TStd.h" />
-    <ClInclude Include="TTextureMgr.h" />
-    <ClInclude Include="TTimer.h" />
-    <ClInclude Include="TUiObj.h" />
-    <ClInclude Include="TWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="effect.txt" />
-    <Text Include="Shader.txt" />
+    <ClCompile Include="Sample.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TGameCore\TGameCore.vcxproj">
+      <Project>{7805438e-57d0-448e-8d61-761f6b9299f6}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
