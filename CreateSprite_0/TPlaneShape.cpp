@@ -310,6 +310,10 @@ bool    TPlaneShape::Create(W_STR name, W_STR texFileName)
    }*/
     return true;
 }
+bool    TPlaneShape::Frame()
+{
+    return true;
+}
 bool    TPlaneShape::PreRender()
 {
     m_pd3dContext->PSSetShaderResources(0, 1, &m_ptTex->m_pTextureSRV);

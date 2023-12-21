@@ -264,6 +264,14 @@ bool    TPlaneShape::Create(W_STR name, T_STR_VECTOR texFileName)
 bool    TPlaneShape::Create(W_STR name, W_STR texFileName)
 {
     m_csName = name;
+    if (!texFileName.empty())
+    {
+        if (!LoadTexture(texFileName))
+        {
+            return false;
+        }
+    }
+
     //// v0       v1
     ////
     //// v3       v2
@@ -292,10 +300,7 @@ bool    TPlaneShape::Create(W_STR name, W_STR texFileName)
     {
         return false;
     }
-    if (!LoadTexture(texFileName))
-    {
-        return false;
-    }
+   
 
     /*  UINT iSize = m_VertexList.size() * sizeof(TVertex);
    m_pVertexBuffer = CreateBuffer(iSize, D3D11_BIND_VERTEX_BUFFER,(void**)&m_VertexList.at(0));
@@ -332,6 +337,10 @@ bool    TPlaneShape::PreRender()
 bool    TPlaneShape::PostRender()
 {
     m_pd3dContext->DrawIndexed(m_IndexList.size(), 0, 0);
+    return true;
+}
+bool    TPlaneShape::Frame()
+{
     return true;
 }
 bool    TPlaneShape::Render()

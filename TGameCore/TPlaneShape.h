@@ -53,15 +53,15 @@ public:
 	ID3D11PixelShader*		m_pPixelShader = nullptr;
 	ID3D11InputLayout*		m_pVertexlayout = nullptr;
 public:
-	bool	CreateVertexBuffer();
-	bool	CreateIndexBuffer();
+	virtual bool	CreateVertexBuffer();
+	virtual bool	CreateIndexBuffer();
 	ID3D11Buffer* CreateBuffer(UINT ByteWidth, UINT BindFlags, void** pAddress);
 
-	bool	CreateVertexShader();
-	bool	CreatePixelShader();
+	virtual bool	CreateVertexShader();
+	virtual bool	CreatePixelShader();
 	ID3DBlob* CreateShader(LPCWSTR pFileName, LPCSTR pEntrypoint, LPCSTR pTarget);
 
-	bool	CreateInputLayout();
+	virtual bool	CreateInputLayout();
 
 	virtual bool	LoadTexture(T_STR_VECTOR texFileName);
 	virtual bool	LoadTexture(std::wstring texFileName);
@@ -70,6 +70,7 @@ public:
 	virtual bool    Create(W_STR name, T_STR_VECTOR texFileName);
 	virtual bool    Create(W_STR name, W_STR texFileName);
 	virtual bool    PreRender();
+	virtual bool    Frame();
 	virtual bool    Render();
 	virtual bool    PostRender();
 	virtual bool    Release();

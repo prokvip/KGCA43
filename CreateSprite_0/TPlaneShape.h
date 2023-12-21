@@ -70,6 +70,7 @@ public:
 	virtual bool    Create(W_STR name, T_STR_VECTOR texFileName);
 	virtual bool    Create(W_STR name, W_STR texFileName);
 	virtual bool    PreRender();
+	virtual bool    Frame();
 	virtual bool    Render();
 	virtual bool    PostRender();
 	virtual bool    Release();
