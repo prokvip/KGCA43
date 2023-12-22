@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{cad3bf70-968c-4640-990e-308ce99dde1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TDevice.cpp">
@@ -86,5 +89,16 @@
     <ClInclude Include="TWindow.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="effect.txt">
+      <Filter>shader</Filter>
+    </Text>
+    <Text Include="object.txt">
+      <Filter>shader</Filter>
+    </Text>
+    <Text Include="Shader.txt">
+      <Filter>shader</Filter>
+    </Text>
   </ItemGroup>
 </Project>
