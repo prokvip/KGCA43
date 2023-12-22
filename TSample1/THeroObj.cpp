@@ -5,6 +5,7 @@ bool    THeroObj::Create(TInitSet info, W_STR texFileName)
     m_InitSet = info;
     m_csName = info.name;    
     m_vPos = info.p;
+    m_fSpeed = info.fMaxSpeed*0.5f;
     m_csDefaultVSFileName = L"../../data/shader/object.txt";
     m_csDefaultPSFileName = L"../../data/shader/object.txt";
     m_ptexMask = TTextureMgr::Get().Load(info.szMaskTex);
@@ -60,21 +61,37 @@ void   THeroObj::SetPosion(float x, float y)
 }
 bool THeroObj::Frame()
 {
+    //  위치 = 현 위치 + 이동방향 * 시간의 동기화( 1초당 최대 거리 이동)
+    //  g_fSecPerFrame * m_fSpeed;
+    //  1프레임  -> 1초 * 300     -> 300
+    //  10프레임 -> 0.1초 * 300   -> 300
+    //  100프레임 -> 0.01초 *300  -> 300
+    m_fSpeed -= g_fSecPerFrame* m_fSpeed*0.9f;
+    m_fSpeed = max(0.0f, m_fSpeed);
+    m_fSpeed = min(m_InitSet.fMaxSpeed, m_fSpeed);
     if (TInput::Get().m_dwKeyState['W'] == KEY_HOLD)
     {
-        m_vPos = m_vPos + TVector2(0.0f, -1.0f) * g_fSecPerFrame * 300.0f;
+        m_fSpeed = max(m_InitSet.fMaxSpeed * 0.5f, m_fSpeed);
+        m_fSpeed += g_fSecPerFrame * m_fSpeed;
+        m_vDirection += TVector2(0, -1.0f);
     }       
     if (TInput::Get().m_dwKeyState['S'] == KEY_HOLD)
     {
-        m_vPos = m_vPos + TVector2(0.0f, 1.0f) * g_fSecPerFrame * 300.0f;
-    }
+        m_fSpeed = max(m_InitSet.fMaxSpeed * 0.5f, m_fSpeed);
+        m_fSpeed += g_fSecPerFrame * m_fSpeed;
+        m_vDirection += TVector2(0, 1.0f);
+    }   
     if (TInput::Get().m_dwKeyState['A'] == KEY_HOLD)
     {
-        m_vPos = m_vPos + TVector2(-1.0f, 0.0f) * g_fSecPerFrame * 300.0f;
-    }
+        m_fSpeed = max(m_InitSet.fMaxSpeed * 0.5f, m_fSpeed);
+        m_fSpeed += g_fSecPerFrame * m_fSpeed;
+        m_vDirection += TVector2(-1, 0.0f);
+    }  
     if (TInput::Get().m_dwKeyState['D'] == KEY_HOLD)
     {
-        m_vPos = m_vPos + TVector2(1.0f, 0.0f) * g_fSecPerFrame * 300.0f;
+        m_fSpeed = max(m_InitSet.fMaxSpeed * 0.5f, m_fSpeed);
+        m_fSpeed += g_fSecPerFrame * m_fSpeed;
+        m_vDirection += TVector2(1, 0.0f);
     }
     if (TInput::Get().m_dwKeyState[VK_LBUTTON] == KEY_UP)
     {
@@ -83,6 +100,10 @@ bool THeroObj::Frame()
     if (TInput::Get().m_dwKeyState[VK_RBUTTON] == KEY_UP)
     {
     }
+    
+    m_vDirection.Normalized();
+    m_vVelocity = m_vDirection *g_fSecPerFrame* m_fSpeed;
+    m_vPos = m_vPos + m_vVelocity;
     SetPosion(m_vPos);
     return true;
 }
@@ -94,4 +115,8 @@ bool THeroObj::PreRender()
         m_pd3dContext->PSSetShaderResources(1, 1, &m_ptexMask->m_pTextureSRV);
     }
     return TPlaneShape::PreRender();
+}
+THeroObj::THeroObj()
+{
+    m_fAccel = 0.0f;
 }

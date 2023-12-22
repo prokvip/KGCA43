@@ -9,7 +9,7 @@ bool	   Sample::Init()
     TInitSet info = { L"Hero", L"../../data/bitmap2.bmp",
                     {380.0f, 300.0f },
                     {91.0f,1.0f},
-                    {40.0f, 60.0f} };
+                    {40.0f, 60.0f},300.0f };
     if (!m_Hero->Create(info, L"../../data/bitmap1.bmp"))
     {
         return false;

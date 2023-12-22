@@ -5,6 +5,43 @@ struct TVector2
 {
 	float x;
 	float y;
+	float Length()
+	{
+		return sqrt(LingthSquared());
+	}
+	float LingthSquared()
+	{
+		return (x * x, y * y);
+	}
+	TVector2 Normal()
+	{
+		float fLength = Length();
+		if (fLength <= 0.0f)
+		{
+			x = y = 0.0f;
+			return *this;
+		}
+		float InvertLength = 1.0 / fLength;
+		return TVector2(x* InvertLength, y * InvertLength);
+	}
+	void Normalized()
+	{
+		float InvertLength = 1.0 / Length();
+		x *= InvertLength;
+		y * InvertLength;
+	}
+	TVector2& operator+=(const TVector2& V) 
+	{
+		x += V.x;
+		y += V.y;
+		return *this;
+	}
+	TVector2& operator-=(const TVector2& V)
+	{
+		x -= V.x;
+		y -= V.y;
+		return *this;
+	}
 	TVector2 operator+(const TVector2& V) const
 	{
 		return TVector2(x + V.x, y + V.y);
