@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{bb030696-63f7-4ac7-a366-458d16fb0932}</ProjectGuid>
-    <RootNamespace>StrategyPattern</RootNamespace>
+    <ProjectGuid>{1788ac05-909e-43b7-8011-a9935aec6a94}</ProjectGuid>
+    <RootNamespace>Observer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Composite</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,7 +79,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../output/</OutDir>
-    <IntDir>../../output/Composite</IntDir>
+    <IntDir>../../output/Observer</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -142,21 +141,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Sample.cpp" />
-    <ClCompile Include="TComposite.cpp" />
-    <ClCompile Include="TContext.cpp" />
-    <ClCompile Include="TComponent.cpp" />
-    <ClCompile Include="TCircleLeaf.cpp" />
-    <ClCompile Include="TLineLeaf.cpp" />
-    <ClCompile Include="TRectangleLeaf.cpp" />
+    <ClCompile Include="Observer.cpp" />
+    <ClCompile Include="TBarGraphObserver.cpp" />
+    <ClCompile Include="TLineGraphObserver.cpp" />
+    <ClCompile Include="TObserver.cpp" />
+    <ClCompile Include="TScoreCard.cpp" />
+    <ClCompile Include="TSubject.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TComposite.h" />
-    <ClInclude Include="TContext.h" />
-    <ClInclude Include="TComponent.h" />
-    <ClInclude Include="TCircleLeaf.h" />
-    <ClInclude Include="TLineLeaf.h" />
-    <ClInclude Include="TRectangleLeaf.h" />
+    <ClInclude Include="TBarGraphObserver.h" />
+    <ClInclude Include="TLineGraphObserver.h" />
+    <ClInclude Include="TObserver.h" />
+    <ClInclude Include="TScoreCard.h" />
+    <ClInclude Include="TSubject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

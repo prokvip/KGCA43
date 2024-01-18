@@ -171,9 +171,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InterfaceSegregationPrincip
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiskovSubstitutionPrinciple", "LiskovSubstitutionPrinciple\LiskovSubstitutionPrinciple.vcxproj", "{2683E78B-6D53-411A-A049-602A290CE7F6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StrategyPattern", "StrategyPattern\StrategyPattern.vcxproj", "{BB030696-63F7-4AC7-A366-458D16FB0932}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Composite", "StrategyPattern\StrategyPattern.vcxproj", "{BB030696-63F7-4AC7-A366-458D16FB0932}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CompositePattern", "CompositePattern\CompositePattern.vcxproj", "{47D5E4A8-34E6-4D3F-8DE6-117A85FA8F53}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Strategy", "CompositePattern\CompositePattern.vcxproj", "{47D5E4A8-34E6-4D3F-8DE6-117A85FA8F53}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Observer", "Observer\Observer.vcxproj", "{1788AC05-909E-43B7-8011-A9935AEC6A94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -743,6 +745,14 @@ Global
 		{47D5E4A8-34E6-4D3F-8DE6-117A85FA8F53}.Release|x64.Build.0 = Release|x64
 		{47D5E4A8-34E6-4D3F-8DE6-117A85FA8F53}.Release|x86.ActiveCfg = Release|Win32
 		{47D5E4A8-34E6-4D3F-8DE6-117A85FA8F53}.Release|x86.Build.0 = Release|Win32
+		{1788AC05-909E-43B7-8011-A9935AEC6A94}.Debug|x64.ActiveCfg = Debug|x64
+		{1788AC05-909E-43B7-8011-A9935AEC6A94}.Debug|x64.Build.0 = Debug|x64
+		{1788AC05-909E-43B7-8011-A9935AEC6A94}.Debug|x86.ActiveCfg = Debug|Win32
+		{1788AC05-909E-43B7-8011-A9935AEC6A94}.Debug|x86.Build.0 = Debug|Win32
+		{1788AC05-909E-43B7-8011-A9935AEC6A94}.Release|x64.ActiveCfg = Release|x64
+		{1788AC05-909E-43B7-8011-A9935AEC6A94}.Release|x64.Build.0 = Release|x64
+		{1788AC05-909E-43B7-8011-A9935AEC6A94}.Release|x86.ActiveCfg = Release|Win32
+		{1788AC05-909E-43B7-8011-A9935AEC6A94}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -826,6 +836,7 @@ Global
 		{2683E78B-6D53-411A-A049-602A290CE7F6} = {4A7E0231-CB71-4990-B15B-76F7643F66CA}
 		{BB030696-63F7-4AC7-A366-458D16FB0932} = {4A7E0231-CB71-4990-B15B-76F7643F66CA}
 		{47D5E4A8-34E6-4D3F-8DE6-117A85FA8F53} = {4A7E0231-CB71-4990-B15B-76F7643F66CA}
+		{1788AC05-909E-43B7-8011-A9935AEC6A94} = {4A7E0231-CB71-4990-B15B-76F7643F66CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {760E8DCA-1EDC-41D9-8CDF-C65DDEE5F915}
