@@ -35,6 +35,15 @@ struct LegacyDeleterNoneFunTemplate
         delete p;
     }
 };
+template <typename T>
+struct DeleterNoneTemplate
+{
+    template<typename T>
+    void operator()(T* p)
+    {
+        //delete p;
+    }
+};
 struct LegacyDeleter
 {
     LegacyDeleter()
@@ -88,17 +97,19 @@ int main()
             });
     }
     {
-        TSubject data;
-        //error
-        //std::shared_ptr<TSubject> newData(&data, LegacyDeleterNoneFunTemplate2);
+        TSubject data;        
+        std::shared_ptr<TSubject> newData(&data, LegacyDeleterNoneFunTemplate2<TSubject>);
+
+        TSubject data1;
+        std::shared_ptr<TSubject> newData1(&data1, DeleterNoneTemplate<TSubject>());
 
         TSubject* totalScore1 = new TSubject;       
-        std::shared_ptr<TSubject> newData1(totalScore1, LegacyDeleterNoneFun);
+        std::shared_ptr<TSubject> newData2(totalScore1, LegacyDeleterNoneFun);
 
         TSubject* totalScore2 = new TSubject;
-        std::shared_ptr<TSubject> newData2(totalScore2, LegacyDeleterNoneFunTemplate());
+        std::shared_ptr<TSubject> newData3(totalScore2, LegacyDeleterNoneFunTemplate());
 
-        std::shared_ptr<TSubject> newData3(&totalScore, LegacyDeleterNoneFun);
+        std::shared_ptr<TSubject> newData4(&totalScore, LegacyDeleterNoneFun);
     }
     TBarGraphObserver  barGraph(&totalScore);
     TLineGraphObserver lineGraph(&totalScore);
