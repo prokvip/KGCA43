@@ -4,8 +4,9 @@ class TSubject;
 class TBarGraphObserver :   public TObserver
 {
 public:
-	TSubject* pScoreData = nullptr;
-	TSubject* pScoreListCopy = nullptr;
+	using TSubjectNew = std::shared_ptr<TSubject>;
+	TSubjectNew  m_pScoreData = nullptr;
+	TSubjectNew  m_pUpdateList = nullptr;
 public:
 	virtual void update() override;
 public:

@@ -2,21 +2,21 @@
 #include "TSubject.h"
 void TBarGraphObserver::update()
 {
-	pScoreListCopy->m_ScoreList.clear();
+	m_pUpdateList->m_ScoreListBar.clear();
 
-	for (auto iter = pScoreData->m_ScoreList.begin();
-		iter != pScoreData->m_ScoreList.end();
+	for (auto iter = m_pScoreData->m_ScoreListBar.begin();
+		iter != m_pScoreData->m_ScoreListBar.end();
 		iter++)
 	{
-		TScoreCard* pScore = (TScoreCard*)*iter;
-		pScoreListCopy->m_ScoreList.push_back(pScore);
+		//TScoreCard* pScore = iter->get();
+		m_pUpdateList->m_ScoreListBar.push_back(*iter);
 	}
 }
 
 void   TBarGraphObserver::print()
 {
-	for( auto iter = pScoreListCopy->m_ScoreList.begin();
-		 iter != pScoreListCopy->m_ScoreList.end();
+	for( auto iter = m_pUpdateList->m_ScoreListBar.begin();
+		 iter != m_pUpdateList->m_ScoreListBar.end();
 		 iter++)
 	{
 		TScoreCard* pScore = (TScoreCard*)*iter;
@@ -27,6 +27,11 @@ void   TBarGraphObserver::print()
 TBarGraphObserver::TBarGraphObserver(TSubject* pScores)
 {
 	pScores->observes.push_back(this);
-	pScoreData = pScores;
-	pScoreListCopy = new TSubject;
+	// 스트링 생성자 호출
+	m_pUpdateList = std::make_shared<TSubject>(L"bb");		
+	//기본 복사생성자 호출
+	m_pScoreData = std::make_shared<TSubject>(*pScores);	
+	// 포인터를 받는 생성자가 있어야 한다.
+	//m_pScoreData = std::make_shared<TSubject>(pScores);
+	
 }

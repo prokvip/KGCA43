@@ -3,9 +3,10 @@
 class TSubject;
 class TLineGraphObserver :   public TObserver
 {
-public:
-	TSubject* pScoreData = nullptr;
-	TSubject* pScoreListCopy = nullptr;
+public:	
+	using TSubjectNew = std::shared_ptr<TSubject>;
+	TSubject* m_pScoreData = nullptr;
+	std::list<TSubjectNew>  m_pUpdateList;
 	virtual void update() override;
 public:
 	void   print();
