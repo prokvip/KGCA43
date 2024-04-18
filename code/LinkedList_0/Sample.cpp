@@ -5,8 +5,10 @@ struct TDATA
     int    iValue;
     TDATA* pNext;
 };
+
+TDATA* g_pHead     = nullptr;
 TDATA* g_pBeginData= nullptr;
-TDATA* g_pEndData = nullptr;
+TDATA* g_pEndData  = nullptr;
 
 
 
@@ -14,12 +16,35 @@ int top;
 void Init(); // 데이터초기화
 void Reset();
 void NewData();
-void AllDelete();
+void Release();
+
+void AllDeleteData();
 bool push_back(int data);
 bool push_front(int data);
+bool pushback(int data);
+bool pushfront(int data);
 int  pop();
 void print();
 
+// link(&g_pEndData, &pNewData);
+void  link(TDATA** a, TDATA** b)
+{
+    /*if (g_pBeginData == nullptr)
+    {
+        g_pBeginData = *b;
+        g_pEndData = *b;
+    }
+    else*/
+    {
+        // 후위
+        //(*a)->pNext = *b;
+        //*a = *b;
+
+        //전위
+        (*a)->pNext = *b;
+        *b = *a;
+    }
+}
 int main()
 {
     //int    id = 3;
@@ -40,19 +65,29 @@ int main()
     // TDATA(1,2* address) ->  TDATA(2, 3* add) -> TDATA(3, nullptr) 
     for (int iData = 0; iData < 3; iData++)
     {
-        push_back(iData);
+        //push_back(iData);
+        pushback(iData);
     }
     print();
-    AllDelete();
+    AllDeleteData();
 
     // 전위연결리스트
     // TDATA(2, 1 address) ->TDATA(1, 0 address) -> TDATA(0, nullptr) 
     for (int iData = 0; iData < 3; iData++)
     {
-        push_front(iData);
+        //push_front(iData);
+        pushfront(iData);
     }
     print();
-    AllDelete();
+    AllDeleteData();
+
+    Release();
+}
+
+void Release()
+{
+    free(g_pHead);
+    g_pHead = nullptr;
 }
 TDATA* NewData(int data)
 {
@@ -71,13 +106,17 @@ TDATA* NewData(int data)
 // [ 0 1 0 1 1 0 ] -> [ 1 1 1 0 0 0] 
 void Init()
 {    
-     g_pBeginData = nullptr;
-     g_pEndData = nullptr;
+     g_pHead = (TDATA*)malloc(sizeof(TDATA));
+     memset(g_pHead, 0, sizeof(TDATA));
+
+     Reset();
 }
 void Reset()
 {
-    g_pBeginData = nullptr;
-    g_pEndData = nullptr;
+    g_pHead->pNext = nullptr;
+
+    g_pBeginData = g_pHead;
+    g_pEndData = g_pHead;
 }
 //bool Init()
 //{    
@@ -88,7 +127,7 @@ void Reset()
 //    }
 //    return true;
 //}
-void AllDelete()
+void AllDeleteData()
 {
     //TDATA* pDelData  = g_pBeginData;
     //TDATA* pNextData = g_pBeginData;
@@ -100,8 +139,8 @@ void AllDelete()
     //    pDelData = nullptr;
     //}
    
-   TDATA* pNextData = g_pBeginData;
-   for (TDATA* pBegin = g_pBeginData;
+   TDATA* pNextData = g_pBeginData->pNext;
+   for (TDATA* pBegin = g_pBeginData->pNext;
         pBegin != nullptr;
         pBegin = pNextData)
     {
@@ -109,11 +148,32 @@ void AllDelete()
         free(pBegin);
         pBegin = nullptr;
     }    
-    Reset();
+    
+   
+
+   Reset();
+}
+bool pushback(int data)
+{
+    TDATA* pNewData = NewData(data);
+
+  /*  if (g_pBeginData == nullptr)
+    {
+        g_pBeginData = pNewData;
+        g_pEndData = pNewData;
+    }
+    else*/
+    {
+        //link(&g_pEndData, &pNewData);
+        g_pEndData->pNext = pNewData;
+        g_pEndData = pNewData;
+    }
+    return true;
 }
 bool push_back(int data)
 {
-    TDATA* pNewData = NewData(data);   
+    TDATA* pNewData = NewData(data);  
+    
     if (g_pBeginData == nullptr)
     {
         g_pBeginData = pNewData;    
@@ -121,26 +181,16 @@ bool push_back(int data)
     }
     else
     {
+        //link(&g_pEndData, &pNewData);
         g_pEndData->pNext = pNewData; 
         g_pEndData = pNewData;
     }
-    return true;
-    // 
-   // //_ASSERT(top < 5);
-   // //int ni = sizeof(g_pBeginData) / sizeof(g_pBeginData[0]);
-   //// int n = _countof(g_pBeginData);
-   // if (top >= 5)
-   // {
-   //     printf("\nStack Overflow!");        
-   //     printf(" %s:%d", __FUNCTION__, __LINE__);
-   //     return -1 ;
-   // }
-   // g_pBeginData[top++] = data; 
-   // printf("\npush:%d", data);   
+    return true;  
 }
 bool push_front(int data)
 {
     TDATA* pNewData = NewData(data);
+    
     if (g_pBeginData == nullptr)
     {
         g_pBeginData = pNewData;
@@ -148,10 +198,20 @@ bool push_front(int data)
     }
     else
     {
+        //link(&pNewData, &g_pBeginData );
         pNewData->pNext = g_pBeginData;
         g_pBeginData = pNewData;        
     }   
     return true;   
+}
+bool pushfront(int data)
+{
+    TDATA* pNewData = NewData(data);
+    {
+        pNewData->pNext = g_pBeginData->pNext;
+        g_pBeginData->pNext = pNewData;
+    }
+    return true;
 }
 int  pop()
 {
@@ -168,7 +228,7 @@ int  pop()
 }
 void print()
 {
-    for (TDATA* pBegin= g_pBeginData;
+    for (TDATA* pBegin=  g_pBeginData->pNext;
          pBegin != nullptr;
          pBegin = pBegin->pNext)
     {
