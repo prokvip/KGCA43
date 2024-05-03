@@ -72,7 +72,7 @@ int main()
     iRet = b4[1];
     B& refRet = b4();
     iRet = refRet[0];
-    // 가상함수 사용시 메모리 크기가 커진다.
+    // 가상함수 사용시 메모리 주소가 변한한다.
     //int* pPoint = (int*)(new B(9));
     //int a1 = pPoint[0];
     //int a2 = pPoint[1];
