@@ -11,11 +11,11 @@ private:
 class B {
 public:
     B(int i) : value(i) {}
-    //virtual ~B() {};
+    virtual ~B() {};
     int value = 0;
     int valueB = 0;
 public:
-    void show(A& obj)
+    virtual void show(A& obj)
     {
         A a;
         std::cout << a.value << obj.value;
@@ -72,12 +72,15 @@ int main()
     iRet = b4[1];
     B& refRet = b4();
     iRet = refRet[0];
-    // 가상함수 사용시 메모리 주소가 변한한다.
-    //int* pPoint = (int*)(new B(9));
-    //int a1 = pPoint[0];
-    //int a2 = pPoint[1];
-    B* pB = new B(9);
+    
+    // 가상함수 사용시 선단에 가상함수테이블 주소(8바이트)가 위치한다.
+    int* pPoint = (int*)(new B(9));
+    int a1 = pPoint[0];
+    int a2 = pPoint[1];
 
+    B* pB = new B(9);
+    int size = sizeof(B); // 
+    int size2 = _msize(pB);
     std::cout << *pB << b1 << b2 << b3;
 
 
