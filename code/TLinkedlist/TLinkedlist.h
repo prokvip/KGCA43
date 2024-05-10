@@ -3,25 +3,29 @@
 #include <iostream>
 
 template< class T>
-class TNode
-{
-public:
-    T*     data;
-    TNode* pNext; // 뒤로
-    TNode* pPrev; // 앞으로
+class TIterator
+{    
+public:    
+    T* data;
+    T& operator*(void) { return *data; }
+    // 순회( 앞<->뒤 )
+    void operator++(void) {}
+    void operator++(int) {}
+    TIterator* pNext; // 뒤로
+    TIterator* pPrev; // 앞으로
 };
 
 template< class T>
 class TLinkedlist
-{
+{    
 private:
-    TNode<T>* g_pHead;
-    TNode<T>* g_pTail;
+    TIterator<T>* g_pHead;
+    TIterator<T>* g_pTail;
     int    g_iDataCounter;
-public:
-    TNode<T>* head() { return g_pHead; }
-    TNode<T>* begin() { return g_pHead->pNext; }
-    TNode<T>* end() { return g_pTail; }
+public:    
+    TIterator<T>* head() { return g_pHead; }
+    TIterator<T>* begin() { return g_pHead->pNext; }
+    TIterator<T>* end() { return g_pTail; }
     int    size() { return g_iDataCounter; }
 public:
 	TLinkedlist();
@@ -32,9 +36,9 @@ public:
     void    Reset();
     void    Release();
     void    AllDeleteData();
-    bool    push_back(TNode<T>* pPos, T* pNewData);
-    bool    push_front(TNode<T>* pPos, T* pNewData);
-    TNode<T>*  Find(int data);
+    bool    push_back(TIterator<T>* pPos, T* pNewData);
+    bool    push_front(TIterator<T>* pPos, T* pNewData);
+    TIterator<T>*  Find(int data);
     bool    Delete(int data);
-    bool    Delete(TNode<T>* pDel);
+    bool    Delete(TIterator<T>* pDel);
 };

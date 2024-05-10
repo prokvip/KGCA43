@@ -1,13 +1,13 @@
 #include "TDataManager.h"
 
-void TDataManager::ShowFL(TNode<TCharacter>* a, TNode<TCharacter>* b)
+void TDataManager::ShowFL(TIterator<TCharacter>* a, TIterator<TCharacter>* b)
 {
     if (a == nullptr) a = m_tList.begin();
     if (b == nullptr) b = a;
 
     printf("\n");
-    TNode<TCharacter>* pBegin = a;
-    TNode<TCharacter>* pEnd = b;
+    TIterator<TCharacter>* pBegin = a;
+    TIterator<TCharacter>* pEnd = b;
     do {
           if (pBegin != m_tList.head() && pBegin != m_tList.end())
         {
@@ -16,14 +16,14 @@ void TDataManager::ShowFL(TNode<TCharacter>* a, TNode<TCharacter>* b)
         pBegin = pBegin->pNext;
     } while (pBegin != b);
 }
-void TDataManager::ShowLF(TNode<TCharacter>* a, TNode<TCharacter>* b)
+void TDataManager::ShowLF(TIterator<TCharacter>* a, TIterator<TCharacter>* b)
 {
     if (a == nullptr) a = m_tList.end()->pPrev;
     if (b == nullptr) b = a;
 
     printf("\n");
-    TNode<TCharacter>* pBegin = a;
-    TNode<TCharacter>* pEnd = b;
+    TIterator<TCharacter>* pBegin = a;
+    TIterator<TCharacter>* pEnd = b;
     do {
         if (pBegin != m_tList.head() && pBegin != m_tList.end())
         {
@@ -53,7 +53,7 @@ void   TDataManager::Save()
     errno_t errCode = fopen_s(&fp, "demo.txt", "w");
     if (errCode == 0)
     {
-        TNode<TCharacter>* pBegin = m_tList.begin();
+        TIterator<TCharacter>* pBegin = m_tList.begin();
         fprintf(fp, "%s = %d\n", "Total", m_tList.size());
         // 파일에 출력작업..
         do {
@@ -76,7 +76,7 @@ int    TDataManager::Load()
         for (int iCnt = 0; iCnt < iTotalCounter; iCnt++)
         {
             fscanf(fp, "%d", &iLoadValue);
-            //TNode<TCharacter>* newNode = new TNode<TCharacter>();
+            //TIterator<TCharacter>* newNode = new TIterator<TCharacter>();
             TCharacter* newItem = new TCharacter(iLoadValue);
             m_tList.push_front(m_tList.head(), 
                 newItem);

@@ -13,8 +13,8 @@ TLinkedlist<T>::~TLinkedlist()
 template<class T>
 void TLinkedlist<T>::AllDeleteData()
 {
-    TNode<T>* pNextData = g_pHead->pNext;
-    for (TNode<T>* pBegin = g_pHead->pNext;
+    TIterator<T>* pNextData = g_pHead->pNext;
+    for (TIterator<T>* pBegin = g_pHead->pNext;
         pBegin != g_pTail;
         pBegin = pNextData)
     {
@@ -25,15 +25,15 @@ void TLinkedlist<T>::AllDeleteData()
     Reset();
 }
 template<class T>
-bool    TLinkedlist<T>::Delete(TNode<T>* pDel)
+bool    TLinkedlist<T>::Delete(TIterator<T>* pDel)
 {
     if (pDel == nullptr) return false;
     if (pDel == g_pHead) return false;
     if (pDel == g_pTail) return false;
 
     // A <->  D  <->   B
-    TNode<T>* A = pDel->pPrev;
-    TNode<T>* B = pDel->pNext;
+    TIterator<T>* A = pDel->pPrev;
+    TIterator<T>* B = pDel->pNext;
     free(pDel);
     A->pNext = B;
     B->pPrev = A;
@@ -43,13 +43,13 @@ bool    TLinkedlist<T>::Delete(TNode<T>* pDel)
 template<class T>
 bool    TLinkedlist<T>::Delete(int data)
 {
-    TNode<T>* pDelData = Find(data);
+    TIterator<T>* pDelData = Find(data);
     return Delete(pDelData);
 }
 template<class T>
-TNode<T>* TLinkedlist<T>::Find(int data)
+TIterator<T>* TLinkedlist<T>::Find(int data)
 {
-    /*for (TNode<T>* pBegin = g_pHead->pNext;
+    /*for (TIterator<T>* pBegin = g_pHead->pNext;
         pBegin != g_pTail;
         pBegin = pBegin->pNext)
     {
@@ -64,12 +64,12 @@ TNode<T>* TLinkedlist<T>::Find(int data)
 template<class T>
 void TLinkedlist<T>::Init()
 {
-    g_pHead = new TNode<T>;
-    memset(g_pHead, 0, sizeof(TNode<T>));
+    g_pHead = new TIterator<T>;
+    memset(g_pHead, 0, sizeof(TIterator<T>));
     g_pHead->data = nullptr;
 
-    g_pTail = new TNode<T>;
-    memset(g_pTail, 0, sizeof(TNode<T>));
+    g_pTail = new TIterator<T>;
+    memset(g_pTail, 0, sizeof(TIterator<T>));
     g_pTail->data = nullptr;
     Reset();
 }
@@ -96,15 +96,15 @@ void    TLinkedlist<T>::Release()
     g_pHead = nullptr;
 }
 template<class T>
-bool TLinkedlist<T>::push_back(TNode<T>* pPosition, 
+bool TLinkedlist<T>::push_back(TIterator<T>* pPosition, 
     T* pData)
 {
     if (pPosition == nullptr) return false;
-    TNode<T>* pNewData = new TNode<T>;
+    TIterator<T>* pNewData = new TIterator<T>;
     pNewData->data = pData;
     // H<->N1<->T
     // H<->N1<->N2<->T
-    TNode<T>* pPreData = pPosition->pPrev;
+    TIterator<T>* pPreData = pPosition->pPrev;
     // N1 -> N2    T
     pPreData->pNext = pNewData;
     // N1    N2 -> T
@@ -118,11 +118,11 @@ bool TLinkedlist<T>::push_back(TNode<T>* pPosition,
     return true;
 }
 template<class T>
-bool TLinkedlist<T>::push_front(TNode<T>* pPos,
+bool TLinkedlist<T>::push_front(TIterator<T>* pPos,
     T* pData)
 {
-    TNode<T>* pPreData = pPos->pNext; //(N1)
-    TNode<T>* pNewData = new TNode<T>;
+    TIterator<T>* pPreData = pPos->pNext; //(N1)
+    TIterator<T>* pNewData = new TIterator<T>;
     pNewData->data = pData;
     // N1(pre)<-> N2 <-> H
     pPos->pNext = pNewData;
