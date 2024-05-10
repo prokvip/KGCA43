@@ -167,7 +167,7 @@ int main()
     }
 
 
-
+    intList.clear();
 
     //TLinkedlist<TItem> itemlist;
     //TLinkedlist<TCharacter> charlist;
