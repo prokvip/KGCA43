@@ -33,7 +33,7 @@ public:
 		jValue = copy.jValue;
 	}	
 	// 이동생성자
-	TCharacter(TCharacter&& copy)
+	TCharacter(TCharacter&& copy) noexcept
 	{
 		jValue = copy.jValue;
 		m_pData = copy.m_pData;
@@ -41,7 +41,7 @@ public:
 		copy.m_pData = nullptr;
 	}
 	 ///이동대입연산자
-	void operator = (TCharacter&& copy)
+	void operator = (TCharacter&& copy) noexcept
 	{
 		jValue = copy.jValue;
 		// 이미 m_pData가 할당되어 있으면
@@ -86,7 +86,7 @@ public:
 	TCharacter() { 
 		jValue = -1; 
 	};
-	~TCharacter() {
+	virtual ~TCharacter() {
 		jValue = -1; 
 		delete[] m_pData;
 	};
