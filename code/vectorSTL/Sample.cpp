@@ -79,15 +79,17 @@ int main()
     FunRef({ 666 });
 
     std::vector<TCharacter> intList;    
-    //intList.reserve(10); // 메모리 확보(예약)한다.
+    intList.reserve(10); // 메모리 확보(예약)한다.
     //intList.resize(3);  // 메모리 생성한다.(중요, 객체가 들어 있다.)
-
+    intList.push_back(1); // 생성 및 이동한다.
+    intList.push_back(2);
+    intList.push_back({ 3, 3.14f });
     // 객체의 생성자를 통하여 생성된다.
     // 메모리 확보되어 있으면 복사를 안한다.
-    intList.emplace_back(7);
-    intList.emplace_back(9);
-    intList.emplace_back( 44, 3.14f );       
-    intList.emplace(intList.end(),  55, 2.234f );
+    intList.emplace_back(4); // 생성만 한다.
+    intList.emplace_back(5); 
+    intList.emplace_back( 6, 3.14f );       
+    intList.emplace(intList.end(),  7, 2.234f );
 
 
     std::vector<TCharacter> intListCopy;
