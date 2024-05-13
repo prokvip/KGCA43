@@ -25,12 +25,24 @@ public:
 	TCharacter(const TCharacter& copy)
 	{
 		jValue = copy.jValue;
-		m_pData = copy.m_pData;
+		
+		m_pData = new int[3];
+		m_pData[0] = copy.m_pData[0];
+		m_pData[1] = copy.m_pData[1];
+		m_pData[2] = copy.m_pData[2];
+		
+		m_list = copy.m_list;
 	}
 	// 대입연산자
 	void operator = (const TCharacter& copy)
 	{
 		jValue = copy.jValue;
+		m_pData = new int[3];
+		m_pData[0] = copy.m_pData[0];
+		m_pData[1] = copy.m_pData[1];
+		m_pData[2] = copy.m_pData[2];
+
+		m_list = copy.m_list;
 	}	
 	// 이동생성자
 	TCharacter(TCharacter&& copy) noexcept
@@ -89,6 +101,8 @@ public:
 	virtual ~TCharacter() {
 		jValue = -1; 
 		delete[] m_pData;
+		m_pData = nullptr;
+		m_list.clear();
 	};
 };
 class TMap : public TObject
