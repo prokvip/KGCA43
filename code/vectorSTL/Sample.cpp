@@ -37,19 +37,19 @@ void MenuPrint()
 
 void  FunCopy(TCharacter src )
 {
-    std::cout << src.jValue;
+    std::cout << src.jValue << std::endl;
 }
 void  FunRef(TCharacter& src)
 {
-    std::cout << src.jValue;
+    std::cout << src.jValue << std::endl;
 }
 void  FunRef(TCharacter&& src)
 {
-    std::cout << src.jValue;
+    std::cout << src.jValue << std::endl;
 }
 void  FunPoint(TCharacter* src)
 {
-    std::cout << src->jValue;
+    std::cout << src->jValue << std::endl;
 }
 TCharacter  FunRet()
 {
@@ -135,11 +135,12 @@ int main()
 
 
     // 순회방법들.
+    std::cout << std::endl;
     for (int i = 0; i < intList3.size(); i++)
     {
         std::cout << intList3[i].iValue << " ";
     }
-   
+    std::cout << std::endl;
     for (Iter iter = intList3.begin();
           iter != intList3.end();
           iter++)
@@ -147,6 +148,7 @@ int main()
         TItem& ch = *iter;
         std::cout << ch.iValue << " ";
     }
+    std::cout << std::endl;
     using rIter = std::vector<TItem>::reverse_iterator;
     for (rIter iter = intList3.rbegin();
         iter != intList3.rend();
@@ -155,6 +157,7 @@ int main()
         TItem& ch = *iter;
         std::cout << ch.iValue << " ";
     }
+    std::cout << std::endl;
     using cIter = std::vector<TItem>::const_iterator;
     for (cIter iter = intList3.begin();
         iter != intList3.end();
@@ -163,6 +166,7 @@ int main()
         const TItem& ch = *iter;
         std::cout << ch.iValue << " ";
     }
+    std::cout << std::endl;
     for (cIter cIter2 = intList3.cbegin();
         cIter2 != intList3.cend();
         cIter2++)
@@ -170,6 +174,7 @@ int main()
         const TItem& ch = *cIter2;
         std::cout << ch.iValue << " ";
     }
+    std::cout << std::endl;
     using rcIter = std::vector<TItem>::const_reverse_iterator;
     for (rcIter iter = intList3.crbegin();
         iter != intList3.crend();
@@ -178,27 +183,31 @@ int main()
         const TItem& ch = *iter;
         std::cout << ch.iValue << " ";
     }
+    std::cout << std::endl;
     for (TItem ch : intList3)
     {
         ch.iValue = 99;
         std::cout << ch.iValue << " ";
     }
+    std::cout << std::endl;
     for (TItem& ch : intList3)
     {
         ch.iValue = ch.iValue +100;
         std::cout << ch.iValue << " ";
     }
+    std::cout << std::endl;
     for (auto ch : intList3)
     {
         ch.iValue = 99;
         std::cout << ch.iValue << " ";
     }
+    std::cout << std::endl;
     for (auto& ch : intList3)
     {
         ch.iValue = 99;
         std::cout << ch.iValue << " ";
     }
-
+    std::cout << std::endl;
     for (int i = 0; i < intList3.size(); i++)
     {
         TItem& chRef = intList3.front();
@@ -208,6 +217,7 @@ int main()
         // [0][1][2] -> [1][2]
         //intList3.pop_front();//없다.빅오(n)
     }
+    std::cout << std::endl;
     for (int i = 0; i < intList3.size(); i++)
     {
         std::cout<< intList3[i].iValue <<" ";
