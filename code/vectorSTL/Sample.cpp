@@ -104,114 +104,115 @@ int main()
     // 메모리의 위치는 변경되지 않는다.
     intListMoveCopy = std::move(intList);
     intListMoveCopy.clear();
-    //intList.clear();
+    
+    intList.clear();
 
-    //////////////////////////////////////////////////////////////////////////
-    //// 배열(인덱싱지원) -> 메모리 리사이즈(동적배열)가 가능하다.
-    //std::vector<TItem> intList2;
-    //for (int i = 0; i < 10; i++)
-    //{
-    //    TItem ch(rand()%100);  // 기본생성자 호출
-    //    intList2.push_back(ch);     // 복사생성자 호출
-    //}
-    //intList2.erase(--intList2.end());
-    //intList2.erase(intList2.begin());
-    //intList2.erase(std::begin(intList2));    
+    ////////////////////////////////////////////////////////////////////////
+    // 배열(인덱싱지원) -> 메모리 리사이즈(동적배열)가 가능하다.
+    std::vector<TItem> intList2;
+    for (int i = 0; i < 10; i++)
+    {
+        TItem ch(rand()%100);  // 기본생성자 호출
+        intList2.push_back(ch);     // 복사생성자 호출
+    }
+    intList2.erase(--intList2.end());
+    intList2.erase(intList2.begin());
+    intList2.erase(std::begin(intList2));    
 
-    //std::vector<TItem> intList3;
-    //TItem ch7(rand() % 100);
-    //intList3.insert(intList3.begin(), { ch7, ch7 });
-    //intList3.insert(intList3.begin(),intList2.begin(), intList2.end());
-    //
+    std::vector<TItem> intList3;
+    TItem ch7(rand() % 100);
+    intList3.insert(intList3.begin(), { ch7, ch7 });
+    intList3.insert(intList3.begin(),intList2.begin(), intList2.end());
+    
 
-    ////typedef std::vector<TItem>::iterator cIter;
-    //using Iter = std::vector<TItem>::iterator;
-    ////Iter iterFind = intList3.begin();
-    //TItem chInsert(99);
-    //TItem ch8(rand() % 100);
-    //Iter currentIter = intList3.insert(intList3.begin(), chInsert);
-    //intList3.insert(currentIter, { ch8,ch8,ch8 });
+    //typedef std::vector<TItem>::iterator cIter;
+    using Iter = std::vector<TItem>::iterator;
+    //Iter iterFind = intList3.begin();
+    TItem chInsert(99);
+    TItem ch8(rand() % 100);
+    Iter currentIter = intList3.insert(intList3.begin(), chInsert);
+    intList3.insert(currentIter, { ch8,ch8,ch8 });
 
 
-    //// 순회방법들.
-    //for (int i = 0; i < intList3.size(); i++)
-    //{
-    //    std::cout << intList3[i].iValue << " ";
-    //}
+    // 순회방법들.
+    for (int i = 0; i < intList3.size(); i++)
+    {
+        std::cout << intList3[i].iValue << " ";
+    }
    
-    //for (Iter iter = intList3.begin();
-    //      iter != intList3.end();
-    //      iter++)
-    //{
-    //    TItem& ch = *iter;
-    //    std::cout << ch.iValue << " ";
-    //}
-    //using rIter = std::vector<TItem>::reverse_iterator;
-    //for (rIter iter = intList3.rbegin();
-    //    iter != intList3.rend();
-    //    iter++)
-    //{
-    //    TItem& ch = *iter;
-    //    std::cout << ch.iValue << " ";
-    //}
-    //using cIter = std::vector<TItem>::const_iterator;
-    //for (cIter iter = intList3.begin();
-    //    iter != intList3.end();
-    //    iter++)
-    //{
-    //    const TItem& ch = *iter;
-    //    std::cout << ch.iValue << " ";
-    //}
-    //for (cIter cIter2 = intList3.cbegin();
-    //    cIter2 != intList3.cend();
-    //    cIter2++)
-    //{
-    //    const TItem& ch = *cIter2;
-    //    std::cout << ch.iValue << " ";
-    //}
-    //using rcIter = std::vector<TItem>::const_reverse_iterator;
-    //for (rcIter iter = intList3.crbegin();
-    //    iter != intList3.crend();
-    //    iter++)
-    //{
-    //    const TItem& ch = *iter;
-    //    std::cout << ch.iValue << " ";
-    //}
-    //for (TItem ch : intList3)
-    //{
-    //    ch.iValue = 99;
-    //    std::cout << ch.iValue << " ";
-    //}
-    //for (TItem& ch : intList3)
-    //{
-    //    ch.iValue = ch.iValue +100;
-    //    std::cout << ch.iValue << " ";
-    //}
-    //for (auto ch : intList3)
-    //{
-    //    ch.iValue = 99;
-    //    std::cout << ch.iValue << " ";
-    //}
-    //for (auto& ch : intList3)
-    //{
-    //    ch.iValue = 99;
-    //    std::cout << ch.iValue << " ";
-    //}
+    for (Iter iter = intList3.begin();
+          iter != intList3.end();
+          iter++)
+    {
+        TItem& ch = *iter;
+        std::cout << ch.iValue << " ";
+    }
+    using rIter = std::vector<TItem>::reverse_iterator;
+    for (rIter iter = intList3.rbegin();
+        iter != intList3.rend();
+        iter++)
+    {
+        TItem& ch = *iter;
+        std::cout << ch.iValue << " ";
+    }
+    using cIter = std::vector<TItem>::const_iterator;
+    for (cIter iter = intList3.begin();
+        iter != intList3.end();
+        iter++)
+    {
+        const TItem& ch = *iter;
+        std::cout << ch.iValue << " ";
+    }
+    for (cIter cIter2 = intList3.cbegin();
+        cIter2 != intList3.cend();
+        cIter2++)
+    {
+        const TItem& ch = *cIter2;
+        std::cout << ch.iValue << " ";
+    }
+    using rcIter = std::vector<TItem>::const_reverse_iterator;
+    for (rcIter iter = intList3.crbegin();
+        iter != intList3.crend();
+        iter++)
+    {
+        const TItem& ch = *iter;
+        std::cout << ch.iValue << " ";
+    }
+    for (TItem ch : intList3)
+    {
+        ch.iValue = 99;
+        std::cout << ch.iValue << " ";
+    }
+    for (TItem& ch : intList3)
+    {
+        ch.iValue = ch.iValue +100;
+        std::cout << ch.iValue << " ";
+    }
+    for (auto ch : intList3)
+    {
+        ch.iValue = 99;
+        std::cout << ch.iValue << " ";
+    }
+    for (auto& ch : intList3)
+    {
+        ch.iValue = 99;
+        std::cout << ch.iValue << " ";
+    }
 
-    //for (int i = 0; i < intList3.size(); i++)
-    //{
-    //    TItem& chRef = intList3.front();
-    //    intList3.pop_back(); // 빅오(1)
-    //    chRef = intList3.back();
-    //    intList3.pop_back(); // 빅오(1)
-    //    // [0][1][2] -> [1][2]
-    //    //intList3.pop_front();//없다.빅오(n)
-    //}
-    //for (int i = 0; i < intList3.size(); i++)
-    //{
-    //    std::cout<< intList3[i].iValue <<" ";
-    //}
+    for (int i = 0; i < intList3.size(); i++)
+    {
+        TItem& chRef = intList3.front();
+        intList3.pop_back(); // 빅오(1)
+        chRef = intList3.back();
+        intList3.pop_back(); // 빅오(1)
+        // [0][1][2] -> [1][2]
+        //intList3.pop_front();//없다.빅오(n)
+    }
+    for (int i = 0; i < intList3.size(); i++)
+    {
+        std::cout<< intList3[i].iValue <<" ";
+    }
 
 
-    //intList3.clear();
+    intList3.clear();
 }
