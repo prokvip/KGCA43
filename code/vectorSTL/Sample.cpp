@@ -4,36 +4,12 @@
 
 /// <summary>
 /// 
-//이동생성자 : 수작업 필요(기존 복수하고 기존 메모리 초기화) 
+//이동생성자 : 수작업 필요(기존 복사하고 기존 메모리 초기화) 
 // 원래 데이터를 복사하지 않고 기존 객체의 소유권을 
 // 신규 객체의 새로운 변수로 이동하는 특수 멤버 함수이다.
 
 //이동생성자는 해당 객체가 필요없을 때(제거를 예상할 때)
-// 이동 생성자 없으면 -> 복사 생성자( 호출된다.
-//             있으면 또는 이동 대입 연산자 -> 복사 생성자는 삭제로 본다.
-
-/// </summary>
-enum WORK {
-    SCREEN_PRINT = 0,
-    NEW_DATA,
-    FILE_SAVE,
-    FILE_LOAD,
-    DATA_UPDATE,
-    DEL_DATA,
-    SORT_DATA,
-    CREATE_SAMPLE_DATA = 9,
-    EXIT = 99
-};
-
-
-void TitlePrint()
-{
-    printf("\n<<--------(점수)관리프로그램-------->>\n");
-}
-void MenuPrint()
-{
-    printf("\n출력(0),신규(1),저장(2),로드(3),수정(4),삭제(5),정렬(6),샘플용(9),종료(99)");
-}
+// 이동 생성자 없으면 -> 복사 생성자( 호출된다.)             
 
 void  FunCopy(TCharacter src )
 {
@@ -59,14 +35,15 @@ TCharacter  FunRet()
 
 void FunText(int& value)
 {
-
+    std::cout << "FunText(int& value)" << std::endl;
 }
 void FunText(int&& value)
 {
-
+    std::cout << "FunText(int&& value)" << std::endl;
 }
 int main()
 {   
+#pragma region 기본 함수 호출(이동시멘틱)
     {
             int a = 7;
             FunText(a);
@@ -85,6 +62,8 @@ int main()
             TCharacter t4(200);
             t4 = FunRet();  
     }
+#pragma endregion
+#pragma region bbb
     {
         std::vector<TCharacter> intList;
         intList.reserve(10); // 메모리 확보(예약)한다.
@@ -107,6 +86,8 @@ int main()
 
         intList.clear();
     }
+#pragma endregion
+#pragma region ccc
     {
         ////////////////////////////////////////////////////////////////////////
         // 배열(인덱싱지원) -> 메모리 리사이즈(동적배열)가 가능하다.
@@ -227,4 +208,5 @@ int main()
 
         intList3.clear();
     }
+#pragma endregion
 }
