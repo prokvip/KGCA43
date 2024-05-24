@@ -44,42 +44,28 @@ int WINAPI wWinMain( HINSTANCE hInstance,
 
 bool  TDevice::CreateDevice(HWND hWnd)
 {
-	IDXGIAdapter* pAdapter=nullptr;
-	D3D_DRIVER_TYPE DriverType = D3D_DRIVER_TYPE_HARDWARE;
-	HMODULE Software = nullptr;
-	UINT Flags = 0;
 	CONST D3D_FEATURE_LEVEL pFeatureLevels = D3D_FEATURE_LEVEL_11_0;
-	UINT FeatureLevels = 1;
-	UINT SDKVersion = D3D11_SDK_VERSION;
-	
 	DXGI_SWAP_CHAIN_DESC pSwapChainDesc;
 	ZeroMemory(&pSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-
 	pSwapChainDesc.BufferDesc.Width = 1024;
 	pSwapChainDesc.BufferDesc.Height = 768;
 	pSwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	pSwapChainDesc.BufferDesc.RefreshRate.Denominator= 1;
 	pSwapChainDesc.BufferDesc.Format= DXGI_FORMAT_R8G8B8A8_UNORM;
-	pSwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	pSwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
 	pSwapChainDesc.SampleDesc.Count = 1;
-	pSwapChainDesc.SampleDesc.Quality = 0;
 	pSwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	pSwapChainDesc.BufferCount = 1;
 	pSwapChainDesc.OutputWindow = hWnd;
 	pSwapChainDesc.Windowed= true;
-	pSwapChainDesc.SwapEffect= DXGI_SWAP_EFFECT_DISCARD;
-	pSwapChainDesc.Flags = 0;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(
-		pAdapter,
-		DriverType,
-		Software,
-		Flags,
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE,
+		nullptr,
+		0,
 		&pFeatureLevels,
-		FeatureLevels,
-		SDKVersion,
+		1,
+		D3D11_SDK_VERSION,
 		&pSwapChainDesc,
 
 		&g_pSwapChain,
@@ -121,10 +107,10 @@ bool  TDevice::CreateDevice(HWND hWnd)
 }
 void  TDevice::DeleteDevice()
 {
-	g_pSwapChain->Release(); 
-	g_pd3dDevice->Release();
-	g_pContext->Release();
-	g_pRTV->Release();
+	if(g_pSwapChain)g_pSwapChain->Release(); 
+	if (g_pd3dDevice)g_pd3dDevice->Release();
+	if (g_pContext)g_pContext->Release();
+	if (g_pRTV)g_pRTV->Release();
 }
 
 void   TDevice::GameRun()
