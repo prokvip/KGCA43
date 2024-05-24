@@ -9,6 +9,6 @@ public:
 	void   CreateRegisterClass(HINSTANCE hInstance);
 	bool   CreateWin(UINT xSize = 800, UINT ySize = 600);
 	void   WindowRun();
-	void   GameRun();
+	virtual void   GameRun();
 };
 
