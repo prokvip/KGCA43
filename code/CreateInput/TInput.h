@@ -13,10 +13,12 @@ class TInput
 {
 private:
 	DWORD   g_dwKeyState[256];
+	POINT   m_ptMousePos;
 public:
 public:
 	void    DebugPrint(int iKey);
-	void    Frame();
+	void    DebugMousePos();
+	void    Frame(HWND hWnd);
 	DWORD   KeyCheck(DWORD dwKey);
 	void    KeyTest();
 public:

@@ -4,16 +4,32 @@
  * 0x3A - 0x40 : unassigned
  * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
  */
+	void    TInput::DebugPrint(int iKey)
+	{
+#ifdef _DEBUG
+		static int iPushCounter = 0;
+		TCHAR msgKey[MAX_PATH] = { 0, };
+		_stprintf_s(msgKey, L"KEY=%d(%d)\n", iKey, iPushCounter++);
+		OutputDebugString(msgKey);
+#endif
+	}
+	void    TInput::DebugMousePos()
+	{
+#ifdef _DEBUG
+		TCHAR msgKey[MAX_PATH] = { 0, };
+		_stprintf_s(msgKey, L"Mouse X=%d, Y=%d\n", 
+			m_ptMousePos.x, m_ptMousePos.y);
+		OutputDebugString(msgKey);
+#endif
+	}
 
-void    TInput::DebugPrint(int iKey)
+void    TInput::Frame(HWND hWnd)
 {
-	static int iPushCounter = 0;
-	TCHAR msgKey[MAX_PATH] = { 0, };
-	_stprintf_s(msgKey, L"KEY=%d(%d)\n", iKey, iPushCounter++);
-	OutputDebugString(msgKey);
-}
-void    TInput::Frame()
-{
+	// 화면좌표계를 반환한다.
+	GetCursorPos(&m_ptMousePos);
+	// 클라이언트 좌표계로 변환한다.
+	ScreenToClient(hWnd, &m_ptMousePos);
+
 	for (int iKey = 0; iKey < 255; iKey++)
 	{
 		//			GetKeyState(iKey);

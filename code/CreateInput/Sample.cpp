@@ -8,7 +8,8 @@ public:
 public:
 	virtual void   GameRun() override
 	{
-		m_Input.Frame();
+		m_Input.Frame(m_hWnd);
+		m_Input.DebugMousePos();
 		m_Input.KeyTest();
 		TDevice::GameRun();		
 	}
