@@ -1,4 +1,6 @@
 #include "TWindow.h"
+TWindow* g_pWindow = nullptr;
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	lParam);
 void   TWindow::CreateRegisterClass(HINSTANCE hInstance)
@@ -60,11 +62,32 @@ void   TWindow::GameRun()
 {
 
 }
+TWindow::TWindow()
+{
+	g_pWindow = this;
+}
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	lParam)
 {
 	switch (uMsg)
 	{
+		// 프로그램의 활성화(포커스)
+	case WM_ACTIVATE:
+	{
+		if (LOWORD(wParam) == WA_INACTIVE)
+		{
+			// 어플리케이션 비선택
+			if(g_pWindow!= nullptr)
+				g_pWindow->m_isActive = false;
+		}
+		else
+		{
+			// 어플리케이션 선택
+			if (g_pWindow != nullptr)
+				g_pWindow->m_isActive = true;
+		}
+	}return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);// WM_QUIT
 		return 0;

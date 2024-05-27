@@ -13,11 +13,16 @@ public:
 		m_Timer.Frame();
 		m_Timer.DebugTimer();
 
-		m_Input.Frame(m_hWnd);
-		/*m_Input.DebugMousePos();
-		m_Input.KeyTest();*/
-
-		//Sleep(10);
+		if (m_isActive)
+		{
+			m_Input.Frame(m_hWnd);
+			m_Input.DebugMousePos();
+			m_Input.KeyTest();
+		}
+		else
+		{
+			Sleep(10);
+		}
 
 		TDevice::GameRun();		
 	}
