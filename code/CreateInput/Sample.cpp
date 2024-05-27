@@ -1,16 +1,24 @@
 #include "TDevice.h"
+#include "TTimer.h"
 #include "TInput.h"
 
 class Sample : public TDevice
 {
 public:
 	TInput m_Input;
+	TTimer m_Timer;
 public:
 	virtual void   GameRun() override
 	{
+		m_Timer.Frame();
+		m_Timer.DebugTimer();
+
 		m_Input.Frame(m_hWnd);
-		m_Input.DebugMousePos();
-		m_Input.KeyTest();
+		/*m_Input.DebugMousePos();
+		m_Input.KeyTest();*/
+
+		//Sleep(10);
+
 		TDevice::GameRun();		
 	}
 };
