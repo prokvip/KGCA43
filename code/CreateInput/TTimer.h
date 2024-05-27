@@ -13,8 +13,11 @@ class TTimer
 	// 1초에 경과한 프레임 카운터
 	DWORD   m_dwFPS;
 
-	float m_fPreTimeTick;
-	float m_fCurrentTimeTick;
+	DWORD m_dwPreTimeTick;
+	DWORD m_dwCurrentTimeTick;
+
+	int		iFPS = 0;
+	float	fSecondTime = 0.0f;
 public:
 	void    DebugTimer();
 	void    Init();

@@ -12,8 +12,8 @@ void    TTimer::DebugTimer()
 }
 void    TTimer::Init()
 {
-	m_fPreTimeTick = timeGetTime();
-	m_fCurrentTimeTick = 0.0f;
+	m_dwPreTimeTick = timeGetTime();
+	m_dwCurrentTimeTick = 0.0f;
 	m_fGameTimeTick = 0.0f;
 	m_dwFPS = 0;
 }
@@ -21,16 +21,14 @@ void    TTimer::Frame()
 {
 	// 이전시간
 	// 현재시간
-	m_fCurrentTimeTick = timeGetTime();
+	m_dwCurrentTimeTick = timeGetTime();
 	// 경과시간(초단위)= 현재시간 - 이전시간
-	m_dwSecondPerFrame = m_fCurrentTimeTick - m_fPreTimeTick;
-	m_fSecondPerFrame = m_dwSecondPerFrame / 1000.0f;
+	m_dwSecondPerFrame = m_dwCurrentTimeTick - m_dwPreTimeTick;
+	m_fSecondPerFrame = (float)m_dwSecondPerFrame / 1000.0f;
 	m_fGameTimeTick += m_fSecondPerFrame;
 
-	static int iFPS = 0;
-	static float fSecondTime = 0.0f;
 	fSecondTime += m_fSecondPerFrame;
-	if (fSecondTime >= 1.0f)
+	if (fSecondTime >= 1.0f) // 1.01f
 	{
 		m_dwFPS = iFPS;
 		fSecondTime = fSecondTime - 1.0f;
@@ -38,5 +36,5 @@ void    TTimer::Frame()
 	}
 	iFPS++;
 
-	m_fPreTimeTick = m_fCurrentTimeTick;
+	m_dwPreTimeTick = m_dwCurrentTimeTick;
 }
