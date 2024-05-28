@@ -37,4 +37,12 @@ void    TTimer::Frame()
 	iFPS++;
 
 	m_dwPreTimeTick = m_dwCurrentTimeTick;
+
+
+	TCHAR msgKey[MAX_PATH] = { 0, };
+	_stprintf_s(msgKey,
+		L"FPS=%ld, GameTimer=%10.4f SPF=%d\n",
+		m_dwFPS, m_fGameTimeTick,
+		m_dwSecondPerFrame);
+	m_csBuffer = msgKey;
 }

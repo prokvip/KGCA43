@@ -15,8 +15,9 @@ void   TWindow::CreateRegisterClass(HINSTANCE hInstance)
 
 	m_hInstance = hInstance;
 }
-bool   TWindow::CreateWin(UINT xSize, UINT ySize)
+bool   TWindow::CreateWin(HINSTANCE hInstance, UINT xSize, UINT ySize)
 {
+	CreateRegisterClass(hInstance);
 	// 2)등록된 윈도우클래스를 사용하여 윈도우 생성한다.
 	HWND hwnd = CreateWindowEx(
 		0,
@@ -39,9 +40,8 @@ bool   TWindow::CreateWin(UINT xSize, UINT ySize)
 	ShowWindow(hwnd, SW_SHOW);
 	return true;
 }
-void   TWindow::WindowRun()
+bool   TWindow::WindowRun()
 {
-	GameInit();
 	// 메세지큐에 담겨있는 모든 메세지를 수작업으로 프로시져에 전달한다.
 	MSG msg = { };
 	while (WM_QUIT != msg.message)
@@ -53,21 +53,12 @@ void   TWindow::WindowRun()
 		}
 		else
 		{
-			// 게임 로직을 가동한다. 1프레임
-			GameRun();
+			return true;
 		}
 	}
-	GameRelease();
+	return false;
 }
-void   TWindow::GameInit()
-{
-}
-void   TWindow::GameRun()
-{
-}
-void   TWindow::GameRelease()
-{
-}
+
 TWindow::TWindow()
 {
 	g_pWindow = this;

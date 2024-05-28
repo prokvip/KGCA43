@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+#include <string>
 #include <tchar.h>
 #pragma comment(lib, "winmm.lib")
 
@@ -18,6 +19,9 @@ class TTimer
 
 	int		iFPS = 0;
 	float	fSecondTime = 0.0f;
+
+public:
+	std::wstring   m_csBuffer;
 public:
 	void    DebugTimer();
 	void    Init();

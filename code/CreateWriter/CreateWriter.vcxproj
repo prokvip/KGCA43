@@ -154,6 +154,7 @@
     <ClInclude Include="TCore.h" />
     <ClInclude Include="TDevice.h" />
     <ClInclude Include="TInput.h" />
+    <ClInclude Include="TStd.h" />
     <ClInclude Include="TTimer.h" />
     <ClInclude Include="TWindow.h" />
     <ClInclude Include="TWriterFont.h" />
