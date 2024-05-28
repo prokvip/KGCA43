@@ -148,6 +148,7 @@
     <ClCompile Include="TInput.cpp" />
     <ClCompile Include="TTimer.cpp" />
     <ClCompile Include="TWindow.cpp" />
+    <ClCompile Include="TWriterFont.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TCore.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="TInput.h" />
     <ClInclude Include="TTimer.h" />
     <ClInclude Include="TWindow.h" />
+    <ClInclude Include="TWriterFont.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

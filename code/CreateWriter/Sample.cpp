@@ -1,6 +1,8 @@
 #include "TCore.h"
+#include "TWriterFont.h"
 class Sample : public TCore
 {
+	TWriterFont  m_font;
 public:
 	// 초기화 작업
 	virtual void Init() override
@@ -27,7 +29,6 @@ int WINAPI wWinMain( HINSTANCE hInstance,
 					PWSTR pCmdLine, 
 					int nCmdShow)
 {
-
 	Sample win;
 	win.CreateRegisterClass(hInstance);
 	if (win.CreateWin(1024, 768))
@@ -38,7 +39,6 @@ int WINAPI wWinMain( HINSTANCE hInstance,
 			// 블럭상태
 			win.WindowRun();			
 		}
-		// 그래픽 처리를 위한 소멸 작업
 		win.DeleteDevice();
 	}	
 	return 0;

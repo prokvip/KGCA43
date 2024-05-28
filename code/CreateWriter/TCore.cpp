@@ -55,4 +55,5 @@ void   TCore::GameRun()
 void   TCore::GameRelease()
 {
 	Release();
+	DeleteDevice();
 }
