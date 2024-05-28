@@ -65,8 +65,24 @@ bool  TDevice::CreateDevice(HWND hWnd)
 }
 void  TDevice::DeleteDevice()
 {
-	if (g_pSwapChain)g_pSwapChain->Release();
-	if (g_pd3dDevice)g_pd3dDevice->Release();
-	if (g_pContext)g_pContext->Release();
-	if (g_pRTV)g_pRTV->Release();
+	if (g_pSwapChain)
+	{
+		g_pSwapChain->Release();
+		g_pSwapChain = nullptr;
+	}
+	if (g_pd3dDevice)
+	{
+		g_pd3dDevice->Release();
+		g_pd3dDevice = nullptr;
+	}
+	if (g_pContext)
+	{
+		g_pContext->Release();
+		g_pContext = nullptr;
+	}
+	if (g_pRTV)
+	{
+		g_pRTV->Release();
+		g_pRTV = nullptr;
+	}
 }
