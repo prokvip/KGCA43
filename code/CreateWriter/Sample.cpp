@@ -1,5 +1,6 @@
 #include "TCore.h"
 #include "TWriterFont.h"
+// 기능을 구현 및 테스트한다.
 class Sample : public TCore
 {
 	TWriterFont  m_font;
