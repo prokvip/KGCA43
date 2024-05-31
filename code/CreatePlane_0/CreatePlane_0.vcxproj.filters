@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="TCore.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="TDevice.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="TInput.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="TTimer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="TWindow.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="TWriterFont.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="TMath.cpp" />
+    <ClCompile Include="TDxObject.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TCore.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="TDevice.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="TInput.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="TStd.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="TTimer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="TWindow.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="TWriterFont.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="TMath.h" />
+    <ClInclude Include="TDxObject.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{fe97d4be-3d18-4312-a4a5-51142652169e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
