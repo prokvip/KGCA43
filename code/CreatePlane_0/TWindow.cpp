@@ -17,6 +17,8 @@ void   TWindow::CreateRegisterClass(HINSTANCE hInstance)
 }
 bool   TWindow::CreateWin(HINSTANCE hInstance, UINT xSize, UINT ySize)
 {
+	m_xWindowSize = xSize;
+	m_yWindowSize = ySize;
 	CreateRegisterClass(hInstance);
 	// 2)등록된 윈도우클래스를 사용하여 윈도우 생성한다.
 	HWND hwnd = CreateWindowEx(

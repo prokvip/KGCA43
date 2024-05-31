@@ -75,23 +75,23 @@ public:
 	{ 
 		m_ViewPort.TopLeftX = 0;
 		m_ViewPort.TopLeftY = 0;
-		m_ViewPort.Width = 400;
-		m_ViewPort.Height = 300;
+		m_ViewPort.Width = m_xWindowSize / 2;
+		m_ViewPort.Height = m_yWindowSize / 2;
 		m_pContext->RSSetViewports(1, &m_ViewPort);
 		objScreen.Render(m_pContext);
 
-		m_ViewPort.TopLeftX = 400;
+		m_ViewPort.TopLeftX = m_xWindowSize / 2;
 		m_ViewPort.TopLeftY = 0;
 		m_pContext->RSSetViewports(1, &m_ViewPort);
 		m_pContext->Draw(objScreen.m_vList.size(), 0);
 
 		m_ViewPort.TopLeftX = 0;
-		m_ViewPort.TopLeftY = 300;
+		m_ViewPort.TopLeftY = m_yWindowSize / 2;
 		m_pContext->RSSetViewports(1, &m_ViewPort);
 		m_pContext->Draw(objScreen.m_vList.size(), 0);
 
-		/*m_ViewPort.TopLeftX = 400;
-		m_ViewPort.TopLeftY = 300;
+		/*m_ViewPort.TopLeftX = _xWindowSize / 2;
+		m_ViewPort.TopLeftY = m_yWindowSize / 2;
 		m_pContext->RSSetViewports(1, &m_ViewPort);
 		m_pContext->Draw(objScreen.m_vList.size(), 0);*/
 
