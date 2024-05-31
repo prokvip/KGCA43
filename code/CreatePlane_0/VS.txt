@@ -1,0 +1,6 @@
+// 정점쉐이더 반환값이 무조건 float4 형 이어야 한다.
+// 시멘틱(의미구조) : SV_POSITION, POSITION) 
+float4 VSMain( float2 p : POS) : SV_POSITION
+{
+  return float4(p.x,p.y,0.5f,1.0f);
+}

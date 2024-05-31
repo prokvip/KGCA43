@@ -8,12 +8,18 @@
 class TDevice : public TWindow
 {
 public:
-	//인터페이스 획득(할당, 생성)
-	ID3D11Device*			g_pd3dDevice = nullptr;
-	ID3D11DeviceContext*	g_pContext = nullptr;
-	IDXGISwapChain*			g_pSwapChain = nullptr;
-	ID3D11RenderTargetView* g_pRTV = nullptr;
+	//할당, 생성
+	ID3D11Device*			m_pd3dDevice = nullptr;
+	//관리, 운영
+	ID3D11DeviceContext*	m_pContext = nullptr;
+
+	IDXGISwapChain*			m_pSwapChain = nullptr;
+	ID3D11RenderTargetView* m_pRTV = nullptr;
+
+	D3D11_VIEWPORT			m_ViewPort;
 public:
 	bool			CreateDevice(HWND hWnd);
 	void			DeleteDevice();
+
+	void            SetViewport();
 };

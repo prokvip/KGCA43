@@ -24,12 +24,15 @@ void   TCore::GamePostFrame()
 void  TCore::GamePreRender()
 {
 	float clearColor[] = { 0.3640f, 0.4543545322f, 0.645672321f, 1.0f };
-	g_pContext->ClearRenderTargetView(g_pRTV, clearColor);
+	m_pContext->ClearRenderTargetView(m_pRTV, clearColor);
+
+	m_pContext->OMSetRenderTargets(1, &m_pRTV, nullptr);
+	m_pContext->RSSetViewports(1, &m_ViewPort);
 }
 void  TCore::GamePostRender()
 {
 	m_font.DrawText(m_Timer.m_csBuffer, { 0,0 });
-	g_pSwapChain->Present(0, 0);
+	m_pSwapChain->Present(0, 0);
 }
 void   TCore::GameRender()
 {
@@ -52,7 +55,7 @@ void   TCore::GameInit()
 		m_font.Init();
 		// 3D 백버퍼를 얻어서 전달해야 한다.
 		IDXGISurface* dxgiSurface = nullptr;
-		g_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface),
+		m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface),
 			(void**)&dxgiSurface);
 		m_font.ResetDevice(dxgiSurface);
 		dxgiSurface->Release();

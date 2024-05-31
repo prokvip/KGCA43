@@ -1,0 +1,9 @@
+// 픽셀쉐이더 , float1(x), float2(x,y), float3(x,y,z), float4(x,y,z,w)
+// 반환값 = FLOAT4(R,G,B,A)로 반환되어야 한다.
+// 시멘틱(의미구조) : SV_POSITION, SV_TARGET
+// 쉐이더 입력 및 출력 데이터는 
+// 지정된 레지스터에 저장 및 출력 되어야 한다.
+float4 PSMain( float4 p : SV_POSITION ) : SV_Target
+{
+  return float4(1,0,0,1);
+}

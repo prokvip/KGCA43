@@ -8,8 +8,8 @@ bool  TDevice::CreateDevice(HWND hWnd)
 	CONST D3D_FEATURE_LEVEL pFeatureLevels = D3D_FEATURE_LEVEL_11_0;
 	DXGI_SWAP_CHAIN_DESC pSwapChainDesc;
 	ZeroMemory(&pSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-	pSwapChainDesc.BufferDesc.Width = 1024;
-	pSwapChainDesc.BufferDesc.Height = 768;
+	pSwapChainDesc.BufferDesc.Width = 800;
+	pSwapChainDesc.BufferDesc.Height = 600;
 	pSwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	pSwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	pSwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -29,28 +29,28 @@ bool  TDevice::CreateDevice(HWND hWnd)
 		D3D11_SDK_VERSION,
 		&pSwapChainDesc,
 
-		&g_pSwapChain,
-		&g_pd3dDevice,
+		&m_pSwapChain,
+		&m_pd3dDevice,
 		nullptr,
-		&g_pContext);
+		&m_pContext);
 
 	if (FAILED(hr))
 	{
 		return false;
 	}
 
-	//ID3D11RenderTargetView* g_pRTV = nullptr;
-	if (g_pd3dDevice != nullptr && g_pSwapChain != nullptr)
+	//ID3D11RenderTargetView* m_pRTV = nullptr;
+	if (m_pd3dDevice != nullptr && m_pSwapChain != nullptr)
 	{
 		ID3D11Texture2D* pBackBuffer = nullptr;
-		g_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
+		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
 
 		ID3D11Resource* pResource = pBackBuffer;
 		D3D11_RENDER_TARGET_VIEW_DESC* pDesc = nullptr;
-		hr = g_pd3dDevice->CreateRenderTargetView(
+		hr = m_pd3dDevice->CreateRenderTargetView(
 			pResource,
 			pDesc,
-			&g_pRTV);
+			&m_pRTV);
 		if (FAILED(hr))
 		{
 			return false;
@@ -59,33 +59,48 @@ bool  TDevice::CreateDevice(HWND hWnd)
 		pBackBuffer->Release();
 
 	}
-
-	if (g_pContext != nullptr)
+	
+	SetViewport();
+	
+	/*if (m_pContext != nullptr)
 	{
-		g_pContext->OMSetRenderTargets(1, &g_pRTV, nullptr);
-	}
+		m_pContext->OMSetRenderTargets(1, &m_pRTV, nullptr);
+	}*/
 	return true;
 }
 void  TDevice::DeleteDevice()
 {
-	if (g_pSwapChain)
+	if (m_pSwapChain)
 	{
-		g_pSwapChain->Release();
-		g_pSwapChain = nullptr;
+		m_pSwapChain->Release();
+		m_pSwapChain = nullptr;
 	}
-	if (g_pd3dDevice)
+	if (m_pd3dDevice)
 	{
-		g_pd3dDevice->Release();
-		g_pd3dDevice = nullptr;
+		m_pd3dDevice->Release();
+		m_pd3dDevice = nullptr;
 	}
-	if (g_pContext)
+	if (m_pContext)
 	{
-		g_pContext->Release();
-		g_pContext = nullptr;
+		m_pContext->Release();
+		m_pContext = nullptr;
 	}
-	if (g_pRTV)
+	if (m_pRTV)
 	{
-		g_pRTV->Release();
-		g_pRTV = nullptr;
+		m_pRTV->Release();
+		m_pRTV = nullptr;
 	}
+}
+
+void  TDevice::SetViewport()
+{
+	//DXGI_SWAP_CHAIN_DESC cd;
+	//m_pSwapChain->GetDesc(&cd);
+	m_ViewPort.TopLeftX = 0;
+	m_ViewPort.TopLeftY = 0;
+	m_ViewPort.Width = 800;
+	m_ViewPort.Height = 600;
+	m_ViewPort.MinDepth = 0;
+	m_ViewPort.MaxDepth = 1;
+	m_pContext->RSSetViewports(1, &m_ViewPort);
 }

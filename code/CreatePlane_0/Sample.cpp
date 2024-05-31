@@ -2,6 +2,8 @@
 #include "TDxObject.h"
 class Sample: public TCore{
 
+	TDxObject objScreen; // 삼각형
+	TDxObject objNDC;
 public:
 	void   Init() override
 	{
@@ -11,21 +13,47 @@ public:
 		//  |     X      |
 
 		// 0,600  -     800,600        
-		TDxObject objScreen; // 삼각형
-		objScreen.v.resize(3);
-		objScreen.v[0] = T_Math::FVector2(0.0f, 0.0f);
-		objScreen.v[1] = T_Math::FVector2(800.0f, 0.0f);
-		objScreen.v[2] = T_Math::FVector2(800.0f, 600.0f);
 		
+		objScreen.m_vList.resize(6);
+		// 시계방향으로 구축되어야 한다.
+		objScreen.m_vList[0].v = T_Math::FVector2(-1.0f, +1.0f);
+		objScreen.m_vList[1].v = T_Math::FVector2(1.0f, +1.0f);
+		objScreen.m_vList[2].v = T_Math::FVector2(1.0f, -1.0f);
+
+		objScreen.m_vList[3].v = T_Math::FVector2(-1.0f, +1.0f);
+		objScreen.m_vList[4].v = T_Math::FVector2(1.0f, -1.0f);
+		objScreen.m_vList[5].v = T_Math::FVector2(-1.0f, -1.0f);
+
+		//objScreen.m_vList[0].v = T_Math::FVector2(0.0f, 0.0f);
+		//objScreen.m_vList[1].v = T_Math::FVector2(800.0f, 0.0f);
+		//objScreen.m_vList[2].v = T_Math::FVector2(800.0f, 600.0f);
+		if (objScreen.CreateVertexBuffer(m_pd3dDevice) == false)
+		{
+			objScreen.Release();
+			return ;
+		}
+		if (objScreen.LoadShader(m_pd3dDevice)==false)
+		{
+			objScreen.Release();
+			return ;
+		}
+		if (objScreen.CreateInputLayout(m_pd3dDevice) == false)
+		{
+			objScreen.Release();
+			return;
+		}
 
 		// 정규화된 장치 좌표계(NDC) : (직각좌표계 사용)
+		// *어떤 좌표계를 사용하던지 관계없이 
+		// 최종적으로는 NDC 범위로 되어야 화면에 렌더링된다.
+		// 
 		// -1 ~ +1 범위로 제한하는 좌표계
-		// -1,+1   -     +1,+1
+		// -1,+1   -         +1,+1
+		//    -0.5      +0.5
+		//         0,0
 
-
-
-		// -1,-1    -     +1,-1     
-		/*TDxObject objNDC;
+		// -1,-1    -        +1,-1     
+		/*
 		objNDC.v[0] = T_Math::FVector2(-1.0f, +1.0f);
 		objNDC.v[1] = T_Math::FVector2( 1.0f, +1.0f);
 		objNDC.v[2] = T_Math::FVector2( 1.0f, -1.0f);
@@ -42,6 +70,35 @@ public:
 		float fLength4 = vNormalize.Length();*/
 		
 		int k = 0;
+	}
+	void   Render() override
+	{ 
+		m_ViewPort.TopLeftX = 0;
+		m_ViewPort.TopLeftY = 0;
+		m_ViewPort.Width = 400;
+		m_ViewPort.Height = 300;
+		m_pContext->RSSetViewports(1, &m_ViewPort);
+		objScreen.Render(m_pContext);
+
+		m_ViewPort.TopLeftX = 400;
+		m_ViewPort.TopLeftY = 0;
+		m_pContext->RSSetViewports(1, &m_ViewPort);
+		m_pContext->Draw(objScreen.m_vList.size(), 0);
+
+		m_ViewPort.TopLeftX = 0;
+		m_ViewPort.TopLeftY = 300;
+		m_pContext->RSSetViewports(1, &m_ViewPort);
+		m_pContext->Draw(objScreen.m_vList.size(), 0);
+
+		/*m_ViewPort.TopLeftX = 400;
+		m_ViewPort.TopLeftY = 300;
+		m_pContext->RSSetViewports(1, &m_ViewPort);
+		m_pContext->Draw(objScreen.m_vList.size(), 0);*/
+
+	}
+	void   Release() override
+	{
+		objScreen.Release();
 	}
 
 };

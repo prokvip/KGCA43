@@ -52,5 +52,16 @@
     <Filter Include="core">
       <UniqueIdentifier>{fe97d4be-3d18-4312-a4a5-51142652169e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HLSL">
+      <UniqueIdentifier>{e802628f-b4b5-4600-b93d-56d400d6f7a4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="PS.txt">
+      <Filter>HLSL</Filter>
+    </Text>
+    <Text Include="VS.txt">
+      <Filter>HLSL</Filter>
+    </Text>
   </ItemGroup>
 </Project>
