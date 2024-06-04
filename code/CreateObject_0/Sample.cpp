@@ -10,14 +10,14 @@ public:
 	void   Init() override
 	{		
 		RECT rtBk = { 0, 0, g_xClientSize, g_yClientSize };
-		objScreen.Create(m_pd3dDevice,m_pContext, rtBk, L"bk.bmp");
+		objScreen.Create(m_pd3dDevice.Get(),m_pContext, rtBk, L"bk.bmp");
 
 		objList.resize(3);
 
-		objList[0].Create(m_pd3dDevice, m_pContext, { 0, 0, 100, 100 }, L"kgca1.png");
-		objList[1].Create(m_pd3dDevice, m_pContext, { 700, 0, 800, 100 }, L"kgca2.png");
-		objList[2].Create(m_pd3dDevice, m_pContext, { 700, 500, 800, 600 }, L"kgca3.png");
-		hero.Create(m_pd3dDevice, m_pContext, { 350, 250, 450, 350 }, L"obj.jpg");
+		objList[0].Create(m_pd3dDevice.Get(), m_pContext, { 0, 0, 100, 100 }, L"kgca1.png");
+		objList[1].Create(m_pd3dDevice.Get(), m_pContext, { 700, 0, 800, 100 }, L"kgca2.png");
+		objList[2].Create(m_pd3dDevice.Get(), m_pContext, { 700, 500, 800, 600 }, L"kgca3.png");
+		hero.Create(m_pd3dDevice.Get(), m_pContext, { 350, 250, 450, 350 }, L"obj.jpg");
 	}
 	void   Frame() override
 	{

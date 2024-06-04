@@ -9,7 +9,8 @@ class TDevice : public TWindow
 {
 public:
 	//且寸, 积己
-	ID3D11Device*			m_pd3dDevice = nullptr;
+	ComPtr<ID3D11Device>   m_pd3dDevice = nullptr;
+	//ID3D11Device*			m_pd3dDevice = nullptr;
 	//包府, 款康
 	ID3D11DeviceContext*	m_pContext = nullptr;
 

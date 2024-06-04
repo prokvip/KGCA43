@@ -1,26 +1,26 @@
 #pragma once
-#include <d3d11.h> 
-#include <d3dcompiler.h> 
-//../../dxtk/include  기본경로로 설정한다. (속성)
-#include "WicTextureLoader.h"
+#include "TStd.h"
 
-//#include "../../dxtk/include/WicTextureLoader.h"
-#include <vector>
-#include <string>
-#include "TMath.h"
-#pragma comment ( lib, "d3dcompiler.lib")
-
-#ifdef _DEBUG
-	#pragma comment(lib, "DirectXTK_D.lib")
-#else
-	#pragma comment(lib, "DirectXTK_R.lib")
-#endif
 // p, n, c, t
 struct TVertex
 {
 	T_Math::FVector2 p; // 정점위치
 	T_Math::FVector4 c; // 정점컬러
 	T_Math::FVector2 t; // 정점텍스처좌표
+	TVertex() = default;
+	TVertex(T_Math::FVector2 p, T_Math::FVector4 c, T_Math::FVector2 t)
+	{
+		this->p = p;
+		this->c = c;
+		this->t = t;
+	}
+	TVertex(float x, float y, float r, float g, float b, 
+		float a, float u, float v)
+	{
+		this->p = { x, y };
+		this->c = { r,g,b,a };
+		this->t = { u, v };
+	}
 };
 class TDxObject 
 {
@@ -28,9 +28,9 @@ class TDxObject
 	ID3D11DeviceContext* m_pContext = nullptr;
 
 	// 렌더링 파이브라인(픽쉘쉐이더)에 전송 데이터
-	ID3D11ShaderResourceView* m_pSRV = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV = nullptr;	
 	// 텍스처(이미지) 로드 데이터
-	ID3D11Resource* m_pTexture = nullptr;
+	ComPtr<ID3D11Resource> m_pTexture = nullptr;
 public:	
 	T_Math::FVector2		m_vPos;
 	// 시스템 메모리에 할당된 버퍼.

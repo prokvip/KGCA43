@@ -2,15 +2,11 @@
 #include "TStd.h"
 TDxObject& TDxObject::Move(float dx, float dy)
 {
-	m_vList[0].p.X += dx;	m_vList[0].p.Y += dy;
-	m_vList[1].p.X += dx;	m_vList[1].p.Y += dy;
-	m_vList[2].p.X += dx;	m_vList[2].p.Y += dy;
-	m_vList[3].p.X += dx;	m_vList[3].p.Y += dy;
-	m_vList[4].p.X += dx;	m_vList[4].p.Y += dy;
-	m_vList[5].p.X += dx;	m_vList[5].p.Y += dy;
-
-	m_vPos.X += dx;
-	m_vPos.Y += dy;
+	for (auto& v : m_vList)
+	{
+		v.p += { dx, dy };
+	}	
+	m_vPos = { dx,dy };
 
 	for (int i = 0; i < m_vList.size(); i++)
 	{
@@ -41,21 +37,46 @@ bool   TDxObject::Create(
 	ID3D11DeviceContext* pContext,
 	RECT rt, std::wstring texName) 
 {
+
+	// 포인터 변수의 주소 반환 : m_pSRV.GetAddressOf();
+	// 포인터 주소 :m_pSRV.Get();
+
 	m_pd3dDevice = pd3dDevice;
 	m_pContext = pContext;
 	HRESULT hr =
 		DirectX::CreateWICTextureFromFile(
 			m_pd3dDevice,
 			texName.c_str(),
-			&m_pTexture,
-			&m_pSRV);
+			m_pTexture.GetAddressOf(),//&m_pTexture
+			m_pSRV.GetAddressOf());
 
 	m_vPos.X = (rt.left+rt.right)* 0.5f;
 	m_vPos.Y = (rt.bottom + rt.top) * 0.5f;
 
 	m_vList.resize(6);
 	// 시계방향으로 구축되어야 한다.
-	m_vList[0].p = T_Math::FVector2(rt.left, rt.top);
+	m_vList[0] = {  (float)rt.left, (float)rt.top,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f };
+	m_vList[1] = {  T_Math::FVector2(rt.right, rt.top),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(1, 0) };
+	m_vList[2] = {  T_Math::FVector2(rt.right, rt.bottom),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(1, 1) };
+	m_vList[3] = { T_Math::FVector2(rt.right, rt.bottom),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(1, 1) };
+	m_vList[4] = { T_Math::FVector2(rt.left, rt.bottom),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(0, 1) };
+	/*m_vList[5] = { T_Math::FVector2(rt.left, rt.top),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(0, 0) };
+	*/
+	m_vList[5].p = T_Math::FVector2(rt.left, rt.top);
+	m_vList[5].c = T_Math::FVector4(0, 0, 1, 1);
+	m_vList[5].t = T_Math::FVector2(0, 0);
+
+	/*m_vList[0].p = T_Math::FVector2(rt.left, rt.top);
 	m_vList[1].p = T_Math::FVector2(rt.right , rt.top);
 	m_vList[2].p = T_Math::FVector2(rt.right, rt.bottom );
 	m_vList[0].c = T_Math::FVector4(1, 0, 0, 1);
@@ -74,7 +95,7 @@ bool   TDxObject::Create(
 	m_vList[5].c = T_Math::FVector4(0, 0, 1, 1);
 	m_vList[3].t = T_Math::FVector2(1, 1);
 	m_vList[4].t = T_Math::FVector2(0, 1);
-	m_vList[5].t = T_Math::FVector2(0, 0);
+	m_vList[5].t = T_Math::FVector2(0, 0);*/
 
 
 	// 화면좌표계를  NDC좌표 변경한다.
@@ -224,10 +245,7 @@ bool     TDxObject::CreateInputLayout(ID3D11Device* pd3dDevice)
 }
 void     TDxObject::Render(ID3D11DeviceContext* pContext)
 {
-	
-
-	// 사용하지 않는 파이프라인은 디폴트 값 또는 null사용된다.
-	
+	// 사용하지 않는 파이프라인은 디폴트 값 또는 null사용된다.	
 	UINT StartSlot = 0;
 	UINT NumBuffers = 1;
 	UINT pStrides = sizeof(TVertex); // 1개의 정점 크기
@@ -237,7 +255,7 @@ void     TDxObject::Render(ID3D11DeviceContext* pContext)
 	pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
 	// 0번 슬롯으로 텍스처 전달
-	pContext->PSSetShaderResources(0, 1, &m_pSRV);
+	pContext->PSSetShaderResources(0, 1, m_pSRV.GetAddressOf());
 	//Texture2D g_txTexture : register(t0);
 
 	pContext->VSSetShader(m_pVertexShader, nullptr, 0);	
@@ -246,16 +264,16 @@ void     TDxObject::Render(ID3D11DeviceContext* pContext)
 }
 void TDxObject::Release()
 {
-	if (m_pSRV)
+	/*if (m_pSRV)
 	{
 		m_pSRV->Release();
-		m_pSRV = nullptr;
+		m_pSRV = nullptr;m_pSRV.Reset();
 	}
 	if (m_pTexture)
 	{
 		m_pTexture->Release();
 		m_pTexture = nullptr;
-	}
+	}*/
 
 	if (VS_Bytecode)
 	{

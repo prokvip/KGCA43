@@ -2,6 +2,7 @@
 namespace T_Math
 {
 	FVector2 FVector2::ZeroVector2(0.0f, 0.0f);
+
 	bool     FVector2::IsZero(float& fLentgh)
 	{
 		fLentgh = Length();
@@ -19,6 +20,12 @@ namespace T_Math
 			return true;
 		}
 		return false;
+	}
+	FVector2 FVector2::operator +=(const FVector2& v)
+	{
+		X += v.X;
+		Y += v.Y;
+		return *this;
 	}
 	FVector2 FVector2::operator +(const FVector2& v) const
 	{

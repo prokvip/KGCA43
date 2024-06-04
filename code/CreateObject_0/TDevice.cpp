@@ -30,7 +30,7 @@ bool  TDevice::CreateDevice(HWND hWnd)
 		&pSwapChainDesc,
 
 		&m_pSwapChain,
-		&m_pd3dDevice,
+		m_pd3dDevice.GetAddressOf(),
 		nullptr,
 		&m_pContext);
 
@@ -42,30 +42,23 @@ bool  TDevice::CreateDevice(HWND hWnd)
 	//ID3D11RenderTargetView* m_pRTV = nullptr;
 	if (m_pd3dDevice != nullptr && m_pSwapChain != nullptr)
 	{
-		ID3D11Texture2D* pBackBuffer = nullptr;
-		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
+		ComPtr<ID3D11Texture2D> pBackBuffer = nullptr;
+		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
+			(void**)pBackBuffer.GetAddressOf());
 
-		ID3D11Resource* pResource = pBackBuffer;
 		D3D11_RENDER_TARGET_VIEW_DESC* pDesc = nullptr;
 		hr = m_pd3dDevice->CreateRenderTargetView(
-			pResource,
+			pBackBuffer.Get(),
 			pDesc,
 			&m_pRTV);
 		if (FAILED(hr))
 		{
 			return false;
 		}
-
-		pBackBuffer->Release();
-
 	}
 	
 	SetViewport();
-	
-	/*if (m_pContext != nullptr)
-	{
-		m_pContext->OMSetRenderTargets(1, &m_pRTV, nullptr);
-	}*/
+
 	return true;
 }
 void  TDevice::DeleteDevice()
@@ -75,11 +68,11 @@ void  TDevice::DeleteDevice()
 		m_pSwapChain->Release();
 		m_pSwapChain = nullptr;
 	}
-	if (m_pd3dDevice)
+	/*if (m_pd3dDevice)
 	{
 		m_pd3dDevice->Release();
 		m_pd3dDevice = nullptr;
-	}
+	}*/
 	if (m_pContext)
 	{
 		m_pContext->Release();
