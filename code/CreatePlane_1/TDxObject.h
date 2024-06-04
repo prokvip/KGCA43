@@ -9,7 +9,7 @@
 // p, n, c, t
 struct TVertex
 {
-	T_Math::FVector2 v; // 정점위치
+	T_Math::FVector2 p; // 정점위치
 	T_Math::FVector4 c; // 정점컬러
 	T_Math::FVector2 t; // 정점텍스처좌표
 };

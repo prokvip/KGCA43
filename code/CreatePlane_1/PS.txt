@@ -4,13 +4,24 @@
 // 쉐이더 입력 및 출력 데이터는 
 // 지정된 레지스터에 저장 및 출력 되어야 한다.
 
-struct VS_Out
+Texture2D g_txTexture : register(t0);
+SamplerState sampler0 : register(s0);
+
+struct PS_In
 {
 	float4 p : SV_POSITION;// 반드시 float4
 	float4 c  :COLOR;
+	float2 t  :TEXCOORD0;
 };
-
-float4 PSMain( VS_Out vsOut ) : SV_Target
+struct PS_Out
 {
-  return vsOut.c;
+	float4 c : SV_Target;
+};
+PS_Out PSMain( PS_In psIn )
+{
+   PS_Out  psOut=(PS_Out)0;
+   float4 pixel = g_txTexture.Sample(sampler0, psIn.t);
+   psOut.c = pixel;
+   return psOut;
+  //return float4(psIn.t.x, psIn.t.y, 0,1);
 }

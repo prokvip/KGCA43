@@ -8,8 +8,8 @@ bool  TDevice::CreateDevice(HWND hWnd)
 	CONST D3D_FEATURE_LEVEL pFeatureLevels = D3D_FEATURE_LEVEL_11_0;
 	DXGI_SWAP_CHAIN_DESC pSwapChainDesc;
 	ZeroMemory(&pSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-	pSwapChainDesc.BufferDesc.Width = m_xWindowSize;
-	pSwapChainDesc.BufferDesc.Height = m_yWindowSize;
+	pSwapChainDesc.BufferDesc.Width = m_xClientSize;
+	pSwapChainDesc.BufferDesc.Height = m_yClientSize;
 	pSwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	pSwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	pSwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -98,8 +98,8 @@ void  TDevice::SetViewport()
 	//m_pSwapChain->GetDesc(&cd);
 	m_ViewPort.TopLeftX = 0;
 	m_ViewPort.TopLeftY = 0;
-	m_ViewPort.Width = m_xWindowSize;
-	m_ViewPort.Height = m_yWindowSize;
+	m_ViewPort.Width = m_xClientSize;
+	m_ViewPort.Height = m_yClientSize;
 	m_ViewPort.MinDepth = 0;
 	m_ViewPort.MaxDepth = 1;
 	m_pContext->RSSetViewports(1, &m_ViewPort);

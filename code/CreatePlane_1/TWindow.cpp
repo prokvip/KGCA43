@@ -17,18 +17,24 @@ void   TWindow::CreateRegisterClass(HINSTANCE hInstance)
 }
 bool   TWindow::CreateWin(HINSTANCE hInstance, UINT xSize, UINT ySize)
 {
-	m_xWindowSize = xSize;
-	m_yWindowSize = ySize;
+	m_xClientSize = xSize;
+	m_yClientSize = ySize;
 	CreateRegisterClass(hInstance);
+
+	DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+	// 추가 : 클라이언트 크기를 xSize, ySize 조정한다.
+	RECT rt = {0,0,xSize, ySize};
+	AdjustWindowRect(&rt, dwStyle, FALSE);
+
 	// 2)등록된 윈도우클래스를 사용하여 윈도우 생성한다.
 	HWND hwnd = CreateWindowEx(
 		0,
 		L"SAMPLE_WINDOW",
 		L"샘플 윈도우 프로젝트", // Window text
-		WS_OVERLAPPEDWINDOW,	 // Window style
+		dwStyle,	 // Window style
 		// Size and position
 		0, 0,   // position
-		xSize, ySize,//Size
+		rt.right- rt.left, rt.bottom-rt.top,//Size
 		NULL, // Parent window
 		NULL, // Menu
 		m_hInstance, // Instance handle
@@ -38,6 +44,10 @@ bool   TWindow::CreateWin(HINSTANCE hInstance, UINT xSize, UINT ySize)
 	{
 		return false;
 	}
+
+	GetWindowRect(hwnd, &m_rtWindow);
+	GetClientRect(hwnd, &m_rtClient);
+
 	m_hWnd = hwnd;
 	ShowWindow(hwnd, SW_SHOW);
 	return true;

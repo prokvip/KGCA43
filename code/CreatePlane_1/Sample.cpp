@@ -26,30 +26,58 @@ public:
 				&m_pTexture,
 				&m_pSRV);
 		// 화면좌표계
-		// 0,0    -     800,0
+		// 0,0[0,0]    -     800,0[1,0]
 
 		//  |     X      |
 
-		// 0,600  -     800,600        
+		// 0,600[0,1]  -     800,600[1,1]        
 		
 		objScreen.m_vList.resize(6);
 		// 시계방향으로 구축되어야 한다.
-		objScreen.m_vList[0].v = T_Math::FVector2(-1.0f, +1.0f);
-		objScreen.m_vList[1].v = T_Math::FVector2(1.0f, +1.0f);
-		objScreen.m_vList[2].v = T_Math::FVector2(1.0f, -1.0f);
+		objScreen.m_vList[0].p = T_Math::FVector2(m_rtClient.left, m_rtClient.top);
+		objScreen.m_vList[1].p = T_Math::FVector2(m_rtClient.right/2, m_rtClient.top);
+		objScreen.m_vList[2].p = T_Math::FVector2(m_rtClient.right/2, m_rtClient.bottom/2);
 		objScreen.m_vList[0].c = T_Math::FVector4(1,0,0,1);
 		objScreen.m_vList[1].c = T_Math::FVector4(0,1,0,1);
 		objScreen.m_vList[2].c = T_Math::FVector4(0,0,1,1);
+		objScreen.m_vList[0].t = T_Math::FVector2(0, 0);
+		objScreen.m_vList[1].t = T_Math::FVector2(1, 0);
+		objScreen.m_vList[2].t = T_Math::FVector2(1, 1);
 
-		objScreen.m_vList[3].v = T_Math::FVector2(+1.0f, -1.0f);
-		objScreen.m_vList[4].v = T_Math::FVector2(-1.0f, -1.0f);
-		objScreen.m_vList[5].v = T_Math::FVector2(-1.0f, +1.0f);
+
+		objScreen.m_vList[3].p = T_Math::FVector2(m_rtClient.right/2, m_rtClient.bottom/2);
+		objScreen.m_vList[4].p = T_Math::FVector2(m_rtClient.left, m_rtClient.bottom/2);
+		objScreen.m_vList[5].p = T_Math::FVector2(m_rtClient.left, m_rtClient.top);
 		objScreen.m_vList[3].c = T_Math::FVector4(1, 0, 0, 1);
 		objScreen.m_vList[4].c = T_Math::FVector4(0, 1, 0, 1);
 		objScreen.m_vList[5].c = T_Math::FVector4(0, 0, 1, 1);
-		//objScreen.m_vList[0].v = T_Math::FVector2(0.0f, 0.0f);
-		//objScreen.m_vList[1].v = T_Math::FVector2(800.0f, 0.0f);
-		//objScreen.m_vList[2].v = T_Math::FVector2(800.0f, 600.0f);
+		objScreen.m_vList[3].t = T_Math::FVector2(1, 1);
+		objScreen.m_vList[4].t = T_Math::FVector2(0, 1);
+		objScreen.m_vList[5].t = T_Math::FVector2(0, 0);
+		
+
+		// 화면좌표계를  NDC좌표 변경한다.
+
+		for (auto& V : objScreen.m_vList)
+		{
+			// 화면좌표계
+			T_Math::FVector2  v = V.p;
+			// 0~ 800 -> 0 ~ 1
+			v.X = v.X / m_rtClient.right;
+			v.Y = v.Y / m_rtClient.bottom;
+			//NDC 좌표계
+			// 0 ~ 1  -> -1 ~ +1
+			V.p.X = v.X * 2.0f - 1.0f;
+			V.p.Y = -(v.Y * 2.0f - 1.0f);
+
+			int k = 0;
+			// -1 ~ 1  -> 0 ~ +1
+			/*v.X = v.X * 0.5f + 0.5f;
+			v.Y = v.Y * 0.5f + 0.5f;*/
+		}
+
+
+
 		if (objScreen.CreateVertexBuffer(m_pd3dDevice) == false)
 		{
 			objScreen.Release();
@@ -96,6 +124,9 @@ public:
 	}
 	void   Render() override
 	{ 
+		// 0번 슬롯으로 텍스처 전달
+		m_pContext->PSSetShaderResources(   0, 1, &m_pSRV);
+		//Texture2D g_txTexture : register(t0);
 		objScreen.Render(m_pContext);
 	}
 	void   Release() override

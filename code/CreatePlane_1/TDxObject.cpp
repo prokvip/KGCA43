@@ -1,12 +1,12 @@
 #include "TDxObject.h"
 TDxObject& TDxObject::Move(float dx, float dy)
 {
-	m_vList[0].v.X = m_vList[0].v.X + dx;
-	m_vList[0].v.Y = m_vList[0].v.Y + dy;
-	m_vList[1].v.X = m_vList[1].v.X + dx;
-	m_vList[1].v.Y = m_vList[1].v.Y + dy;
-	m_vList[2].v.X = m_vList[2].v.X + dx;
-	m_vList[2].v.Y = m_vList[2].v.Y + dy;
+	m_vList[0].p.X = m_vList[0].p.X + dx;
+	m_vList[0].p.Y = m_vList[0].p.Y + dy;
+	m_vList[1].p.X = m_vList[1].p.X + dx;
+	m_vList[1].p.Y = m_vList[1].p.Y + dy;
+	m_vList[2].p.X = m_vList[2].p.X + dx;
+	m_vList[2].p.Y = m_vList[2].p.Y + dy;
 	return *this;
 }
 
@@ -108,12 +108,15 @@ bool     TDxObject::LoadShader(ID3D11Device* pd3dDevice)
 // 정점쉐이더는 정점단위로 호출된다.
 // |x, y, r,g,b,a|,|x, y, r,g,b,a| ,|x, y, r,g,b,a| ,|x, y, r,g,b,a| 
 //   0~7  8~11
+// |x, y, r,g,b,a, u,v|,|x, y, r,g,b,a, u,v| ,|x, y, r,g,b,a, u,v| ,|x, y, r,g,b,a, u,v| 
+//   0~7  8~11   24~32
 bool     TDxObject::CreateInputLayout(ID3D11Device* pd3dDevice)
 {
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 {"POS",0,	DXGI_FORMAT_R32G32_FLOAT,		0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
 {"COLOR",0,DXGI_FORMAT_R32G32B32A32_FLOAT,	0,8,D3D11_INPUT_PER_VERTEX_DATA,0 },
+{"TEX",0,DXGI_FORMAT_R32G32_FLOAT,		    0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
 	};
 
 	UINT NumElements = sizeof(layout) / sizeof(layout[0]);
