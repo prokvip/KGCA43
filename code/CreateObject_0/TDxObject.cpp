@@ -2,21 +2,28 @@
 #include "TStd.h"
 TDxObject& TDxObject::Move(float dx, float dy)
 {
-	m_vList[0].p.X += dx;
-	m_vList[0].p.Y += dy;
-	m_vList[1].p.X += dx;
-	m_vList[1].p.Y += dy;
-	m_vList[2].p.X += dx;
-	m_vList[2].p.Y += dy;
-	m_vList[3].p.X += dx;
-	m_vList[3].p.Y += dy;
-	m_vList[4].p.X += dx;
-	m_vList[4].p.Y += dy;
-	m_vList[5].p.X += dx;
-	m_vList[5].p.Y += dy;
+	m_vList[0].p.X += dx;	m_vList[0].p.Y += dy;
+	m_vList[1].p.X += dx;	m_vList[1].p.Y += dy;
+	m_vList[2].p.X += dx;	m_vList[2].p.Y += dy;
+	m_vList[3].p.X += dx;	m_vList[3].p.Y += dy;
+	m_vList[4].p.X += dx;	m_vList[4].p.Y += dy;
+	m_vList[5].p.X += dx;	m_vList[5].p.Y += dy;
+
+	for (int i = 0; i < m_vList.size(); i++)
+	{
+		// 화면좌표계
+		T_Math::FVector2  v = m_vList[i].p;
+		// 0~ 800 -> 0 ~ 1
+		v.X = v.X / g_xClientSize;
+		v.Y = v.Y / g_yClientSize;
+		//NDC 좌표계
+		// 0 ~ 1  -> -1 ~ +1
+		m_vListNDC[i].p.X = v.X * 2.0f - 1.0f;
+		m_vListNDC[i].p.Y = -(v.Y * 2.0f - 1.0f);
+	}
 
 	m_pContext->UpdateSubresource(m_pVertexBuffer,
-		0, NULL, &m_vList.at(0), 0, 0);
+		0, NULL, &m_vListNDC.at(0), 0, 0);
 	return *this;
 }
 bool   TDxObject::Create(
@@ -61,18 +68,18 @@ bool   TDxObject::Create(
 
 
 	// 화면좌표계를  NDC좌표 변경한다.
-
-	for (auto& V : m_vList)
+	m_vListNDC = m_vList;
+	for( int i = 0; i < m_vList.size(); i++)
 	{
 		// 화면좌표계
-		T_Math::FVector2  v = V.p;
+		T_Math::FVector2  v = m_vList[i].p;
 		// 0~ 800 -> 0 ~ 1
 		v.X = v.X / g_xClientSize;
 		v.Y = v.Y / g_yClientSize;
 		//NDC 좌표계
 		// 0 ~ 1  -> -1 ~ +1
-		V.p.X = v.X * 2.0f - 1.0f;
-		V.p.Y = -(v.Y * 2.0f - 1.0f);
+		m_vListNDC[i].p.X = v.X * 2.0f - 1.0f;
+		m_vListNDC[i].p.Y = -(v.Y * 2.0f - 1.0f);
 
 		int k = 0;
 		// -1 ~ 1  -> 0 ~ +1
@@ -113,7 +120,7 @@ bool     TDxObject::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 	// 시스템메모리가 ->GPU메모리로 체워지는 데이터
 	D3D11_SUBRESOURCE_DATA sd;
 	ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-	sd.pSysMem = &m_vList.at(0);
+	sd.pSysMem = &m_vListNDC.at(0);
 
 	HRESULT hr = pd3dDevice->CreateBuffer(
 		&bd,

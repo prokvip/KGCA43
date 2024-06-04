@@ -35,6 +35,7 @@ public:
 	T_Math::FVector2		m_vPos;
 	// 시스템 메모리에 할당된 버퍼.
 	std::vector<TVertex>  m_vList;
+	std::vector<TVertex>  m_vListNDC;
 	TDxObject& Move(float dx, float dy);
 public:
 	virtual bool   Create(ID3D11Device* pd3dDevice,

@@ -21,14 +21,14 @@ public:
 	}
 	void   Frame() override
 	{
-		float fSpeed = g_fSecondPerFrame;
+		float fSpeed = 100.0f* g_fSecondPerFrame;
 		if (m_Input.KeyCheck('W') == KEY_HOLD)
 		{			
-			hero.Move(0.0f, fSpeed);
+			hero.Move(0.0f, -fSpeed);
 		}
 		if (m_Input.KeyCheck('S') == KEY_HOLD)
 		{			
-			hero.Move(0.0f, -fSpeed);
+			hero.Move(0.0f, fSpeed);
 		}
 		if (m_Input.KeyCheck('A') == KEY_HOLD)
 		{
