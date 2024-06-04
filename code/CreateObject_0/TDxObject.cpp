@@ -9,6 +9,7 @@ TDxObject& TDxObject::Move(float dx, float dy)
 	m_vList[4].p.X += dx;	m_vList[4].p.Y += dy;
 	m_vList[5].p.X += dx;	m_vList[5].p.Y += dy;
 
+
 	for (int i = 0; i < m_vList.size(); i++)
 	{
 		// È­¸éÁÂÇ¥°è
@@ -22,8 +23,7 @@ TDxObject& TDxObject::Move(float dx, float dy)
 		m_vListNDC[i].p.Y = -(v.Y * 2.0f - 1.0f);
 	}
 
-	m_pContext->UpdateSubresource(m_pVertexBuffer,
-		0, NULL, &m_vListNDC.at(0), 0, 0);
+	m_pContext->UpdateSubresource(m_pVertexBuffer,	0, NULL, &m_vListNDC.at(0), 0, 0);
 	return *this;
 }
 bool   TDxObject::Create(
