@@ -9,6 +9,8 @@ TDxObject& TDxObject::Move(float dx, float dy)
 	m_vList[4].p.X += dx;	m_vList[4].p.Y += dy;
 	m_vList[5].p.X += dx;	m_vList[5].p.Y += dy;
 
+	m_vPos.X += dx;
+	m_vPos.Y += dy;
 
 	for (int i = 0; i < m_vList.size(); i++)
 	{
