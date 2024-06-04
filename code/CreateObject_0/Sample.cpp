@@ -43,10 +43,16 @@ public:
 	void   Render() override
 	{ 		
 		objScreen.Render(m_pContext);
-		for (auto& obj : objList)
+		/*for (auto& obj : objList)
 		{
 			obj.Render(m_pContext);
-		}
+		}*/
+		//auto LamdaRender = [&](auto& obj) { obj.Render(m_pContext); };
+		for_each(begin(objList), end(objList), [&](auto& obj) 
+			{
+				obj.Render(m_pContext); 
+			});
+
 		hero.Render(m_pContext);
 	}
 	void   Release() override
