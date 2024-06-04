@@ -38,6 +38,8 @@ public:
 	std::vector<TVertex>  m_vListNDC;
 	TDxObject& Move(float dx, float dy);
 public:
+	T_Math::FVector2 ConvertScreenToNDC(T_Math::FVector2 v);
+
 	virtual bool   Create(ID3D11Device* pd3dDevice,
 		ID3D11DeviceContext* pContext,
 		RECT rt, std::wstring texName);

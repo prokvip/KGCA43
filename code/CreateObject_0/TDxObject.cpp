@@ -12,19 +12,27 @@ TDxObject& TDxObject::Move(float dx, float dy)
 
 	for (int i = 0; i < m_vList.size(); i++)
 	{
-		// È­¸éÁÂÇ¥°è
-		T_Math::FVector2  v = m_vList[i].p;
-		// 0~ 800 -> 0 ~ 1
-		v.X = v.X / g_xClientSize;
-		v.Y = v.Y / g_yClientSize;
-		//NDC ÁÂÇ¥°è
-		// 0 ~ 1  -> -1 ~ +1
-		m_vListNDC[i].p.X = v.X * 2.0f - 1.0f;
-		m_vListNDC[i].p.Y = -(v.Y * 2.0f - 1.0f);
+		m_vListNDC[i].p = ConvertScreenToNDC(m_vList[i].p);
 	}
-
 	m_pContext->UpdateSubresource(m_pVertexBuffer,	0, NULL, &m_vListNDC.at(0), 0, 0);
 	return *this;
+}
+T_Math::FVector2 TDxObject::ConvertScreenToNDC(T_Math::FVector2 v)
+{
+	// 0~ 800 -> 0 ~ 1
+	v.X = v.X / g_xClientSize;
+	v.Y = v.Y / g_yClientSize;
+	//NDC ÁÂÇ¥°è
+	// 0 ~ 1  -> -1 ~ +1
+	T_Math::FVector2 ret;
+	ret.X = v.X * 2.0f - 1.0f;
+	ret.Y = -(v.Y * 2.0f - 1.0f);
+
+
+	// -1 ~ 1  -> 0 ~ +1
+	/*v.X = v.X * 0.5f + 0.5f;
+	v.Y = v.Y * 0.5f + 0.5f;*/
+	return ret;
 }
 bool   TDxObject::Create(
 	ID3D11Device* pd3dDevice,	
@@ -71,24 +79,8 @@ bool   TDxObject::Create(
 	m_vListNDC = m_vList;
 	for( int i = 0; i < m_vList.size(); i++)
 	{
-		// È­¸éÁÂÇ¥°è
-		T_Math::FVector2  v = m_vList[i].p;
-		// 0~ 800 -> 0 ~ 1
-		v.X = v.X / g_xClientSize;
-		v.Y = v.Y / g_yClientSize;
-		//NDC ÁÂÇ¥°è
-		// 0 ~ 1  -> -1 ~ +1
-		m_vListNDC[i].p.X = v.X * 2.0f - 1.0f;
-		m_vListNDC[i].p.Y = -(v.Y * 2.0f - 1.0f);
-
-		int k = 0;
-		// -1 ~ 1  -> 0 ~ +1
-		/*v.X = v.X * 0.5f + 0.5f;
-		v.Y = v.Y * 0.5f + 0.5f;*/
+		m_vListNDC[i].p = ConvertScreenToNDC(m_vList[i].p);		
 	}
-
-
-
 	if (CreateVertexBuffer(m_pd3dDevice) == false)
 	{
 		Release();

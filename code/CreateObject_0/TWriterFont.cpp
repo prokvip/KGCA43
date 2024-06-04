@@ -64,7 +64,7 @@ void TWriterFont::DrawText(std::wstring msg, POINT pos)
 {
 	m_pd2dRT->BeginDraw();
 	D2D1_RECT_F layoutRect = { pos.x,pos.y, 800, 600 };
-	m_pDefaultColor->SetColor({ 1,1,0,1 });
+	m_pDefaultColor->SetColor({ 1,0,0,1 });
 	m_pd2dRT->DrawText(msg.c_str(), msg.size(),
 		m_pWriteTF30, &layoutRect, m_pDefaultColor);
 	m_pd2dRT->EndDraw();
