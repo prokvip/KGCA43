@@ -3,17 +3,26 @@
 // 움직임 기능이 없는 오브젝트
 class TActor : public TDxObject
 {
+public:
+	float				m_fSpeed = 300.0f;  // 속력	
+	T_Math::FVector2	m_vDirection = { 1.0f, 0.0f };
+	T_Math::FVector2	m_vOffset;
+	T_Math::FVector2	m_vVelocity; // 속도
+	
 };
 // 움직임 기능이 있는 오브젝트
 class TPawn : public TActor
 {
+public:
+	virtual void  Move(T_Math::FVector2 d)
+	{
+		T_Math::FVector2 vOffset = d * m_fSpeed * g_fSecondPerFrame;
+		m_vPos += vOffset;
+		m_vOffset += vOffset;
+	}
 };
 class THero : public TPawn
 {
-public:
-	float				m_fSpeed = 100.0f;  // 속력	
-	T_Math::FVector2	m_vOffset;
-	T_Math::FVector2	m_vVelocity; // 속도
 public:
 	virtual void     Frame() override
 	{
@@ -30,13 +39,6 @@ public:
 		m_pContext->UpdateSubresource(m_pVertexBuffer, 0, NULL, &m_vListNDC.at(0), 0, 0);
 
 		m_vOffset = { 0.0f,0.0f };
-	}
-
-	virtual void  Move(T_Math::FVector2 d)
-	{
-		T_Math::FVector2 vOffset = d * m_fSpeed * g_fSecondPerFrame;;
-		m_vPos = m_vPos + vOffset;
-		m_vOffset += vOffset;
 	}
 	virtual void  Front()
 	{
@@ -73,46 +75,35 @@ public:
 		m_vPos = m_vPos + vOffset;
 		m_vOffset += vOffset;
 	}
+	THero()
+	{
+		m_fSpeed = 100.0f;  // 속력	
+	}
 };
 
 class TNpc : public TPawn
 {
 public:
-	float				m_fSpeed = 300.0f;  // 속력	
-	T_Math::FVector2	m_vDirection = { 1.0f, 0.0f };
-	T_Math::FVector2	m_vOffset;
-	T_Math::FVector2	m_vVelocity; // 속도
-	virtual void  Move(T_Math::FVector2 d)
-	{
-		T_Math::FVector2 vOffset = d * m_fSpeed * g_fSecondPerFrame;
-		m_vPos = m_vPos + vOffset;
-		m_vOffset += vOffset;
-	}
 	virtual void     Frame() override
 	{
 		if (m_vPos.X > g_xClientSize)
 		{
-			m_vDirection.X *= -1.0f;
-			m_vPos.X = g_xClientSize;
+			m_vDirection.X = -1.0f;
 		}
 		if (m_vPos.X < 0)
 		{
-			m_vDirection.X *= -1.0f;
-			m_vPos.X = 0;
+			m_vDirection.X = 1.0f;
 		}
 		if (m_vPos.Y > g_yClientSize)
 		{
-			m_vDirection.Y *= -1.0f;
-			m_vPos.Y = g_yClientSize;
-		}
+			m_vDirection.Y = -1.0f;
+			}
 		if (m_vPos.Y < 0)
 		{
-			m_vDirection.Y *= -1.0f;
-			m_vPos.Y = 0;
+			m_vDirection.Y = 1.0f;
 		}
 
 		Move(m_vDirection);
-
 
 		// 화면좌표계
 		for (auto& v : m_vList)
@@ -128,12 +119,11 @@ public:
 
 		m_vOffset = { 0.0f,0.0f };
 	}
-
 	TNpc()
 	{
 		m_fSpeed = randstep(100.0f, 300.0f);
-		m_vDirection.X = 1.0f;// randstep(-1.0f, 1.0f);
-		m_vDirection.Y = 1.0f;// randstep(-1.0f, 1.0f);
+		m_vDirection.X = randstep(-1.0f, 1.0f);
+		m_vDirection.Y = randstep(-1.0f, 1.0f);
 	}
 };
 
