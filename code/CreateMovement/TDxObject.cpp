@@ -1,22 +1,6 @@
 #include "TDxObject.h"
 #include "TStd.h"
-TDxObject& TDxObject::Move(float dx, float dy)
-{
-	// 화면좌표계
-	for (auto& v : m_vList)
-	{
-		v.p += { dx, dy };
-	}	
-	m_vPos = { dx,dy };
 
-	// NDC 좌표계 변환
-	for (int i = 0; i < m_vList.size(); i++)
-	{
-		m_vListNDC[i].p = ConvertScreenToNDC(m_vList[i].p);
-	}
-	m_pContext->UpdateSubresource(m_pVertexBuffer,	0, NULL, &m_vListNDC.at(0), 0, 0);
-	return *this;
-}
 T_Math::FVector2 TDxObject::ConvertScreenToNDC(T_Math::FVector2 v)
 {
 	// 0~ 800 -> 0 ~ 1
@@ -27,8 +11,6 @@ T_Math::FVector2 TDxObject::ConvertScreenToNDC(T_Math::FVector2 v)
 	T_Math::FVector2 ret;
 	ret.X = v.X * 2.0f - 1.0f;
 	ret.Y = -(v.Y * 2.0f - 1.0f);
-
-
 	// -1 ~ 1  -> 0 ~ +1
 	/*v.X = v.X * 0.5f + 0.5f;
 	v.Y = v.Y * 0.5f + 0.5f;*/
@@ -38,6 +20,36 @@ T_Math::FVector2 TDxObject::ConvertScreenToNDC(T_Math::FVector2 v)
 void   TDxObject::Frame()
 {
 	
+}
+
+void   TDxObject::SetVertexData(RECT rt)
+{
+	m_vList.resize(6);
+	// 시계방향으로 구축되어야 한다.
+	m_vList[0] = { (float)rt.left, (float)rt.top,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f };
+	m_vList[1] = { T_Math::FVector2(rt.right, rt.top),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(1, 0) };
+	m_vList[2] = { T_Math::FVector2(rt.right, rt.bottom),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(1, 1) };
+	m_vList[3] = { T_Math::FVector2(rt.right, rt.bottom),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(1, 1) };
+	m_vList[4] = { T_Math::FVector2(rt.left, rt.bottom),
+					T_Math::FVector4(1, 1, 1, 1),
+					T_Math::FVector2(0, 1) };
+	m_vList[5].p = T_Math::FVector2(rt.left, rt.top);
+	m_vList[5].c = T_Math::FVector4(0, 0, 1, 1);
+	m_vList[5].t = T_Math::FVector2(0, 0);
+
+
+	// 화면좌표계를  NDC좌표 변경한다.
+	m_vListNDC = m_vList;
+	for (int i = 0; i < m_vList.size(); i++)
+	{
+		m_vListNDC[i].p = ConvertScreenToNDC(m_vList[i].p);
+	}
 }
 bool   TDxObject::Create(
 	ID3D11Device* pd3dDevice,	
@@ -57,60 +69,8 @@ bool   TDxObject::Create(
 			m_pTexture.GetAddressOf(),//&m_pTexture
 			m_pSRV.GetAddressOf());
 
-	m_vPos.X = (rt.left+rt.right)* 0.5f;
-	m_vPos.Y = (rt.bottom + rt.top) * 0.5f;
+	SetVertexData(rt);
 
-	m_vList.resize(6);
-	// 시계방향으로 구축되어야 한다.
-	m_vList[0] = {  (float)rt.left, (float)rt.top,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f };
-	m_vList[1] = {  T_Math::FVector2(rt.right, rt.top),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(1, 0) };
-	m_vList[2] = {  T_Math::FVector2(rt.right, rt.bottom),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(1, 1) };
-	m_vList[3] = { T_Math::FVector2(rt.right, rt.bottom),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(1, 1) };
-	m_vList[4] = { T_Math::FVector2(rt.left, rt.bottom),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(0, 1) };
-	/*m_vList[5] = { T_Math::FVector2(rt.left, rt.top),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(0, 0) };
-	*/
-	m_vList[5].p = T_Math::FVector2(rt.left, rt.top);
-	m_vList[5].c = T_Math::FVector4(0, 0, 1, 1);
-	m_vList[5].t = T_Math::FVector2(0, 0);
-
-	/*m_vList[0].p = T_Math::FVector2(rt.left, rt.top);
-	m_vList[1].p = T_Math::FVector2(rt.right , rt.top);
-	m_vList[2].p = T_Math::FVector2(rt.right, rt.bottom );
-	m_vList[0].c = T_Math::FVector4(1, 0, 0, 1);
-	m_vList[1].c = T_Math::FVector4(0, 1, 0, 1);
-	m_vList[2].c = T_Math::FVector4(0, 0, 1, 1);
-	m_vList[0].t = T_Math::FVector2(0, 0);
-	m_vList[1].t = T_Math::FVector2(1, 0);
-	m_vList[2].t = T_Math::FVector2(1, 1);
-
-
-	m_vList[3].p = T_Math::FVector2(rt.right, rt.bottom);
-	m_vList[4].p = T_Math::FVector2(rt.left, rt.bottom);
-	m_vList[5].p = T_Math::FVector2(rt.left, rt.top);
-	m_vList[3].c = T_Math::FVector4(1, 0, 0, 1);
-	m_vList[4].c = T_Math::FVector4(0, 1, 0, 1);
-	m_vList[5].c = T_Math::FVector4(0, 0, 1, 1);
-	m_vList[3].t = T_Math::FVector2(1, 1);
-	m_vList[4].t = T_Math::FVector2(0, 1);
-	m_vList[5].t = T_Math::FVector2(0, 0);*/
-
-
-	// 화면좌표계를  NDC좌표 변경한다.
-	m_vListNDC = m_vList;
-	for( int i = 0; i < m_vList.size(); i++)
-	{
-		m_vListNDC[i].p = ConvertScreenToNDC(m_vList[i].p);		
-	}
 	if (CreateVertexBuffer(m_pd3dDevice) == false)
 	{
 		Release();
@@ -250,7 +210,7 @@ bool     TDxObject::CreateInputLayout(ID3D11Device* pd3dDevice)
 	}
 	return true;
 }
-void     TDxObject::Render(ID3D11DeviceContext* pContext)
+void     TDxObject::PreRender(ID3D11DeviceContext* pContext)
 {
 	// 사용하지 않는 파이프라인은 디폴트 값 또는 null사용된다.	
 	UINT StartSlot = 0;
@@ -260,14 +220,22 @@ void     TDxObject::Render(ID3D11DeviceContext* pContext)
 	pContext->IASetVertexBuffers(StartSlot, NumBuffers, &m_pVertexBuffer, &pStrides, &pOffsets);
 	pContext->IASetInputLayout(m_pVertexLayout);
 	pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	
+
 	// 0번 슬롯으로 텍스처 전달
 	pContext->PSSetShaderResources(0, 1, m_pSRV.GetAddressOf());
 	//Texture2D g_txTexture : register(t0);
 
-	pContext->VSSetShader(m_pVertexShader, nullptr, 0);	
-	pContext->PSSetShader(m_pPixelShader, nullptr, 0);	
+	pContext->VSSetShader(m_pVertexShader, nullptr, 0);
+	pContext->PSSetShader(m_pPixelShader, nullptr, 0);
+}
+void     TDxObject::PostRender(ID3D11DeviceContext* pContext)
+{
 	pContext->Draw(m_vList.size(), 0);
+}
+void     TDxObject::Render(ID3D11DeviceContext* pContext)
+{
+	PreRender(pContext);
+	PostRender(pContext);	
 }
 void TDxObject::Release()
 {

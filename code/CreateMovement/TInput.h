@@ -13,8 +13,8 @@ class TInput
 {
 private:
 	DWORD   g_dwKeyState[256];
+public:	
 	POINT   m_ptMousePos;
-public:
 public:
 	void    DebugPrint(int iKey);
 	void    DebugMousePos();

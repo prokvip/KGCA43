@@ -11,6 +11,7 @@ public:
 	TInput m_Input;
 	TTimer m_Timer;
 	TWriterFont  m_font;
+	bool		 m_bGameRun = true;
 public:
 	virtual void Init();
 	virtual void Frame();

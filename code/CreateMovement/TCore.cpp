@@ -65,7 +65,7 @@ void   TCore::GameInit()
 void   TCore::GameRun()
 {
 	GameInit();
-	while(1)
+	while(m_bGameRun)
 	{
 		if(TWindow::WindowRun()==false)
 		{

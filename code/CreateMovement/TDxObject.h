@@ -33,11 +33,10 @@ protected:
 	// 텍스처(이미지) 로드 데이터
 	ComPtr<ID3D11Resource> m_pTexture = nullptr;
 public:	
-	T_Math::FVector2		m_vPos;
 	// 시스템 메모리에 할당된 버퍼.
 	std::vector<TVertex>  m_vList;
 	std::vector<TVertex>  m_vListNDC;
-	TDxObject& Move(float dx, float dy);
+	
 public:
 	T_Math::FVector2 ConvertScreenToNDC(T_Math::FVector2 v);
 
@@ -58,7 +57,11 @@ public:
 	ID3D11InputLayout* m_pVertexLayout = nullptr;
 	bool     CreateInputLayout(ID3D11Device* pd3dDevice);
 	virtual void     Frame();
+	virtual void     PreRender(ID3D11DeviceContext* pContext);
 	virtual void     Render(ID3D11DeviceContext* pContext);
+	virtual void     PostRender(ID3D11DeviceContext* pContext);
 	virtual void     Release();
+
+	virtual void	SetVertexData(RECT rt);
 };
 

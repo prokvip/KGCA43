@@ -1,14 +1,32 @@
 #include "Sample.h"
 
-void   Sample::Init() 
-{	
+void   Sample::Init()
+{
+	std::wstring texPath = L"../../data/"; //0.bmp
+	for (int iTex = 0; iTex < 10; iTex++)
+	{	
+		std::wstring texFileName = texPath +
+		std::to_wstring(iTex) + L".bmp";
+		ComPtr<ID3D11ShaderResourceView> texSRV;
+		//ComPtr<ID3D11Resource> m_pTexture = nullptr;
+		HRESULT hr =
+			DirectX::CreateWICTextureFromFile(
+				m_pd3dDevice.Get(),
+				texFileName.c_str(),
+				nullptr,
+				texSRV.GetAddressOf());
+		m_pNumber.push_back(texSRV);
+		
+	}
+
+
 	T_Math::FVector2 a = { 10.0f, 0.0f };
 	T_Math::FVector2 b = { 0.0f, 10.0f };
 	float fDot = a | b;
 	float fAngle = a.Angle(b);
 
 	RECT rtBk = { 0, 0, g_xClientSize, g_yClientSize };
-	objScreen.Create(m_pd3dDevice.Get(),m_pContext, rtBk, L"bk.bmp");
+	objScreen.Create(m_pd3dDevice.Get(), m_pContext, rtBk, L"bk.bmp");
 
 	m_UIList.resize(3);
 
@@ -16,7 +34,8 @@ void   Sample::Init()
 	m_UIList[1].Create(m_pd3dDevice.Get(), m_pContext, { 700, 0, 800, 100 }, L"kgca2.png");
 	m_UIList[2].Create(m_pd3dDevice.Get(), m_pContext, { 700, 500, 800, 600 }, L"kgca3.png");
 	hero.Create(m_pd3dDevice.Get(), m_pContext, { 350, 250, 450, 350 }, L"obj.jpg");
-	
+	hero.m_fSpeed = 500.0f;
+
 	for (int iNpc = 0; iNpc < 10; iNpc++)
 	{
 		TNpc npc;
@@ -24,12 +43,29 @@ void   Sample::Init()
 		pos.X = randstep(0.0f, g_xClientSize);
 		pos.Y = randstep(0.0f, g_yClientSize);
 		npc.Create(m_pd3dDevice.Get(), m_pContext,
-					{ (LONG)pos.X, (LONG)pos.Y,(LONG)(pos.X+ 50.0f), (LONG)(pos.Y+50.0f) }, L"bump_512.bmp");
+			{ (LONG)pos.X, (LONG)pos.Y,(LONG)(pos.X + 50.0f), (LONG)(pos.Y + 50.0f) }, L"bump_512.bmp");
 		m_npcList.push_back(npc);
 	}
+	m_iNpcCounter = m_npcList.size();
+
 }
-void    Sample::Frame() 
-{		
+void    Sample::Frame()
+{
+	for (auto& ui : m_UIList)
+	{
+		if(TCollision::RectToPt(ui.m_rt, m_Input.m_ptMousePos))
+		{
+			//ui.m_bDead = true;
+		}
+	}
+	for (auto& npc : m_npcList)
+	{
+		if (npc.m_bDead==false && TCollision::RectToRect(npc.m_rt, hero.m_rt))
+		{
+			npc.m_bDead = true;
+			m_iNpcCounter = max(1, m_iNpcCounter-1);
+		}
+	}
 	if (m_Input.KeyCheck('W') == KEY_HOLD)
 	{
 		hero.Move({ 0.0f, -1.0f });
@@ -84,16 +120,33 @@ void    Sample::Render()
 		obj.Render(m_pContext);
 	}*/
 	//auto LamdaRender = [&](auto& obj) { obj.Render(m_pContext); };
+	
 	for_each(begin(m_UIList), end(m_UIList), [&](auto& obj) 
 		{
-			obj.Render(m_pContext); 
+			if (!obj.m_bDead)
+			{
+				//obj.Render(m_pContext);
+				obj.PreRender(m_pContext);
+				m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter-1].GetAddressOf());
+				obj.PostRender(m_pContext);
+				
+			}
 		});
 
+	
+
 	hero.Render(m_pContext);
+
+	bool bGameEnding = true;
 	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
 	{
-		m_npcList[iNpc].Render(m_pContext);
+		if (!m_npcList[iNpc].m_bDead)
+		{
+			m_npcList[iNpc].Render(m_pContext);
+			bGameEnding = false;
+		}
 	}
+	m_bGameRun = !bGameEnding;
 }
 void    Sample::Release() 
 {		
