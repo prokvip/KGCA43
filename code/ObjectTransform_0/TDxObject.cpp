@@ -37,30 +37,28 @@ void   TDxObject::Frame()
 
 void   TDxObject::SetVertexData(RECT rt)
 {
-	m_vList.resize(6);
+	m_vListScreen.resize(6);
 	// 시계방향으로 구축되어야 한다.
-	m_vList[0] = { (float)rt.left, (float)rt.top,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f };
-	m_vList[1] = { T_Math::FVector2(rt.right, rt.top),
+	m_vListScreen[0] = { (float)rt.left, (float)rt.top,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f };
+	m_vListScreen[1] = { T_Math::FVector2(rt.right, rt.top),
 					T_Math::FVector4(1, 1, 1, 1),
 					T_Math::FVector2(1, 0) };
-	m_vList[2] = { T_Math::FVector2(rt.right, rt.bottom),
+	m_vListScreen[2] = { T_Math::FVector2(rt.right, rt.bottom),
 					T_Math::FVector4(1, 1, 1, 1),
 					T_Math::FVector2(1, 1) };
-	m_vList[3] = { T_Math::FVector2(rt.right, rt.bottom),
+	m_vListScreen[3] = { T_Math::FVector2(rt.right, rt.bottom),
 					T_Math::FVector4(1, 1, 1, 1),
 					T_Math::FVector2(1, 1) };
-	m_vList[4] = { T_Math::FVector2(rt.left, rt.bottom),
+	m_vListScreen[4] = { T_Math::FVector2(rt.left, rt.bottom),
 					T_Math::FVector4(1, 1, 1, 1),
 					T_Math::FVector2(0, 1) };
-	m_vList[5].p = T_Math::FVector2(rt.left, rt.top);
-	m_vList[5].c = T_Math::FVector4(0, 0, 1, 1);
-	m_vList[5].t = T_Math::FVector2(0, 0);
+	m_vListScreen[5].p = T_Math::FVector2(rt.left, rt.top);
+	m_vListScreen[5].c = T_Math::FVector4(0, 0, 1, 1);
+	m_vListScreen[5].t = T_Math::FVector2(0, 0);
 
-	// 생성시 정점리스트
-	m_vListInit = m_vList;
 	// 화면좌표계를  NDC좌표 변경한다.
-	m_vListNDC = m_vList;
-	
+	m_vList    = m_vListScreen;	
+	m_vListNDC = m_vListScreen;
 	UpdateVertexBuffer();
 }
 bool   TDxObject::Create(
@@ -242,7 +240,7 @@ void     TDxObject::PreRender(ID3D11DeviceContext* pContext)
 }
 void     TDxObject::PostRender(ID3D11DeviceContext* pContext)
 {
-	pContext->Draw(m_vList.size(), 0);
+	pContext->Draw(m_vListScreen.size(), 0);
 }
 void     TDxObject::Render(ID3D11DeviceContext* pContext)
 {

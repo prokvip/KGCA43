@@ -104,19 +104,19 @@ namespace T_Math
 		}
 	};
 
-	struct float3x2
+	struct float3x3
 	{
 		union {
 			struct {
-				float _11, _12;
-				float _21, _22;
-				float _31, _32;
+				float _11, _12, _13;
+				float _21, _22, _23;
+				float _31, _32, _33;
 			};
-			float m[3][2];
-			float f[6];
+			float m[3][3];
+			float f[9];
 		};
 	};
-	class FMatrix : public float3x2
+	class FMatrix : public float3x3
 	{
 	public:
 		FMatrix()
@@ -125,14 +125,18 @@ namespace T_Math
 		}
 		void Identity()
 		{
-			_11 = _12 = 0.0f;
-			_21 = _22 = 0.0f;
-			_31 = _32 = 0.0f;
+			_11 = _12 = _13 = 0.0f;
+			_21 = _22 = _23 = 0.0f;
+			_31 = _32 = _33 = 0.0f;
 
-			_11 = _22 = 1.0f;
+			_11 = _22 = _33 = 1.0f;
 		}
 		FMatrix operator *(const FMatrix& matrix)
 		{
+			// [3 * 2] * [ 3 * 2] =   
+			// m[0][0], m[0][1]  1.0f
+			// m[1][0], m[1][1]  1.0f
+			// m[2][0], m[2][1]  1.0f
 			FMatrix ret;
 			for (int iColumn=0; iColumn < 2; iColumn++)
 			{

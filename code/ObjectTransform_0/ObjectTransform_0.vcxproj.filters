@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="TCollision.cpp" />
+    <ClCompile Include="TCore.cpp" />
+    <ClCompile Include="TDevice.cpp" />
+    <ClCompile Include="TDxObject.cpp" />
+    <ClCompile Include="TInput.cpp" />
+    <ClCompile Include="TMath.cpp" />
+    <ClCompile Include="TTimer.cpp" />
+    <ClCompile Include="TWindow.cpp" />
+    <ClCompile Include="TWriterFont.cpp" />
+    <ClCompile Include="TActor.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="TPawn.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="THero.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="TNpc.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sample.h" />
+    <ClInclude Include="TCollision.h" />
+    <ClInclude Include="TCore.h" />
+    <ClInclude Include="TDevice.h" />
+    <ClInclude Include="TDxObject.h" />
+    <ClInclude Include="TInput.h" />
+    <ClInclude Include="TMath.h" />
+    <ClInclude Include="TStd.h" />
+    <ClInclude Include="TTimer.h" />
+    <ClInclude Include="TWindow.h" />
+    <ClInclude Include="TWriterFont.h" />
+    <ClInclude Include="TActor.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="TPawn.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="THero.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="TNpc.h">
+      <Filter>object</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="PS.txt" />
+    <Text Include="VS.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="object">
+      <UniqueIdentifier>{b0df6473-fd2c-483a-b4e9-9e73fda3f546}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

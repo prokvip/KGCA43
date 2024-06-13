@@ -34,9 +34,9 @@ protected:
 	ComPtr<ID3D11Resource> m_pTexture = nullptr;
 public:	
 	// 시스템 메모리에 할당된 버퍼.
-	std::vector<TVertex>  m_vList;
-	std::vector<TVertex>  m_vListInit;
-	std::vector<TVertex>  m_vListNDC;
+	std::vector<TVertex>  m_vListScreen; // 초기 화면 정보
+	std::vector<TVertex>  m_vList;		 // 프레임 화면 정보
+	std::vector<TVertex>  m_vListNDC;	 // NDC
 	
 public:
 	T_Math::FVector2 ConvertScreenToNDC(T_Math::FVector2 v);
@@ -63,6 +63,6 @@ public:
 	virtual void     PostRender(ID3D11DeviceContext* pContext);
 	virtual void     Release();
 
-	virtual void	SetVertexData(RECT rt);
+	virtual void	 SetVertexData(RECT rt);
 };
 

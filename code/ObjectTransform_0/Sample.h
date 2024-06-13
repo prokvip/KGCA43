@@ -1,6 +1,7 @@
 #pragma once
 #include "TCore.h"
-#include "TActor.h"
+#include "THero.h"
+#include "TNpc.h"
 
 class Sample : public TCore
 {

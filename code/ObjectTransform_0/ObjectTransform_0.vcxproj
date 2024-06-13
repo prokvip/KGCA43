@@ -150,8 +150,11 @@
     <ClCompile Include="TCore.cpp" />
     <ClCompile Include="TDevice.cpp" />
     <ClCompile Include="TDxObject.cpp" />
+    <ClCompile Include="THero.cpp" />
     <ClCompile Include="TInput.cpp" />
     <ClCompile Include="TMath.cpp" />
+    <ClCompile Include="TNpc.cpp" />
+    <ClCompile Include="TPawn.cpp" />
     <ClCompile Include="TTimer.cpp" />
     <ClCompile Include="TWindow.cpp" />
     <ClCompile Include="TWriterFont.cpp" />
@@ -163,8 +166,11 @@
     <ClInclude Include="TCore.h" />
     <ClInclude Include="TDevice.h" />
     <ClInclude Include="TDxObject.h" />
+    <ClInclude Include="THero.h" />
     <ClInclude Include="TInput.h" />
     <ClInclude Include="TMath.h" />
+    <ClInclude Include="TNpc.h" />
+    <ClInclude Include="TPawn.h" />
     <ClInclude Include="TStd.h" />
     <ClInclude Include="TTimer.h" />
     <ClInclude Include="TWindow.h" />
