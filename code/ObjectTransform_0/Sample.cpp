@@ -110,48 +110,48 @@ void    Sample::Frame()
 	objScreen.Frame();
 
 
-	for (auto& ui : m_UIList)
-	{
-		if(TCollision::RectToPt(ui.m_rt, m_Input.m_ptMousePos))
-		{
-			//ui.m_bDead = true;
-		}
-	}
-	for (auto& npc : m_npcList)
-	{
-		if (npc.m_bDead==false && TCollision::RectToRect(npc.m_rt, hero.m_rt))
-		{
-			npc.m_bDead = true;
-			m_iNpcCounter = max(1, m_iNpcCounter-1);
-		}
-	}
-	if (m_Input.KeyCheck('W') == KEY_HOLD)
-	{
-		hero.Move({ 0.0f, -1.0f });
-		//hero.Front();
-	}
-	if (m_Input.KeyCheck('S') == KEY_HOLD)
-	{
-		hero.Move({ 0.0f, 1.0f });
-		//hero.Back();
-	}
-	if (m_Input.KeyCheck('A') == KEY_HOLD)
-	{
-		hero.Move({ -1.0f, 0.0f });
-		//hero.Left();
-	}
-	if (m_Input.KeyCheck('D') == KEY_HOLD)
-	{
-		hero.Move({ 1.0f, 0.0f });
-		//hero.Right();
-	}	
+	//for (auto& ui : m_UIList)
+	//{
+	//	if(TCollision::RectToPt(ui.m_rt, m_Input.m_ptMousePos))
+	//	{
+	//		//ui.m_bDead = true;
+	//	}
+	//}
+	//for (auto& npc : m_npcList)
+	//{
+	//	if (npc.m_bDead==false && TCollision::RectToRect(npc.m_rt, hero.m_rt))
+	//	{
+	//		npc.m_bDead = true;
+	//		m_iNpcCounter = max(1, m_iNpcCounter-1);
+	//	}
+	//}
+	//if (m_Input.KeyCheck('W') == KEY_HOLD)
+	//{
+	//	hero.Move({ 0.0f, -1.0f });
+	//	//hero.Front();
+	//}
+	//if (m_Input.KeyCheck('S') == KEY_HOLD)
+	//{
+	//	hero.Move({ 0.0f, 1.0f });
+	//	//hero.Back();
+	//}
+	//if (m_Input.KeyCheck('A') == KEY_HOLD)
+	//{
+	//	hero.Move({ -1.0f, 0.0f });
+	//	//hero.Left();
+	//}
+	//if (m_Input.KeyCheck('D') == KEY_HOLD)
+	//{
+	//	hero.Move({ 1.0f, 0.0f });
+	//	//hero.Right();
+	//}	
 
-	hero.Frame();
-	
-	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
-	{
-		m_npcList[iNpc].Frame();
-	}
+	//hero.Frame();
+	//
+	//for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
+	//{
+	//	m_npcList[iNpc].Frame();
+	//}
 }
 void    Sample::Render() 
 { 		
