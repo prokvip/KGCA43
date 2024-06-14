@@ -1,17 +1,4 @@
 #include "THero.h"
-void THero::Frame() 
-{
-	m_matWorld._31 = m_vOffset.X;
-	m_matWorld._32 = m_vOffset.Y;
-	Trans(m_matWorld);
-	// 화면좌표계
-/*	for (auto& v : m_vListScreen)
-	{
-		v.p += m_vOffset;
-	}
-	UpdateVertexBuffer();*/
-	m_vOffset = { 0.0f,0.0f };
-}
 void  THero::Front()
 {
 	// 시간의 동기화
