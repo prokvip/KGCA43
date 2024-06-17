@@ -220,6 +220,8 @@ bool     TDxObject::CreateInputLayout(ID3D11Device* pd3dDevice)
 }
 void     TDxObject::PreRender(ID3D11DeviceContext* pContext)
 {
+	UpdateVertexBuffer();
+
 	// 사용하지 않는 파이프라인은 디폴트 값 또는 null사용된다.	
 	UINT StartSlot = 0;
 	UINT NumBuffers = 1;

@@ -2,7 +2,7 @@
 void    TActor::Frame()
 {
 	m_matWorld = m_matCenter * m_matScale * m_matRotate * m_matTrans;
-	Transform(m_matWorld);
+	SetWorldTransform();
 	m_vOffset = { 0.0f,0.0f };
 }
 void    TActor::SetTrans(T_Math::FVector2& p)
@@ -32,26 +32,24 @@ void    TActor::SetPos(float& dx, float& dy)
 	m_vPos.X = dx;
 	m_vPos.Y = dx;
 }
-void TActor::SetWorld(T_Math::FMatrix& m)
+void TActor::SetWorldMatrix(T_Math::FMatrix& m)
 {
 	m_matWorld = m;
 }
-TActor& TActor::Transform(T_Math::FMatrix& m)
+TActor& TActor::SetWorldTransform(T_Math::FMatrix& m)
 {	
 	for (int iv = 0; iv < m_vListScreen.size(); iv++)
 	{
 		m_vList[iv].p = m_vListScreen[iv].p * m;
 	}
-	UpdateVertexBuffer();
 	return *this;
 }
-TActor& TActor::Transform()
+TActor& TActor::SetWorldTransform()
 {
 	for (int iv = 0; iv < m_vListScreen.size(); iv++)
 	{
 		m_vList[iv].p = m_vListScreen[iv].p * m_matWorld;
 	}
-	UpdateVertexBuffer();
 	return *this;
 }
 void   TActor::SetVertexData(RECT rt)

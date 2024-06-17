@@ -32,11 +32,11 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV = nullptr;	
 	// 텍스처(이미지) 로드 데이터
 	ComPtr<ID3D11Resource> m_pTexture = nullptr;
-public:	
 	// 시스템 메모리에 할당된 버퍼.
 	std::vector<TVertex>  m_vListScreen; // 초기 화면 정보
 	std::vector<TVertex>  m_vList;		 // 프레임 화면 정보
 	std::vector<TVertex>  m_vListNDC;	 // NDC
+public:
 	std::wstring		  m_szShaderFilename;
 public:
 	T_Math::FVector2 ConvertScreenToNDC(T_Math::FVector2 v);
@@ -54,16 +54,16 @@ public:
 	ID3D11PixelShader* m_pPixelShader = nullptr;
 	ID3DBlob* VS_Bytecode = nullptr; // 오브젝트 파일
 	ID3DBlob* PS_Bytecode = nullptr; // 오브젝트 파일
-	bool     LoadShader(ID3D11Device* pd3dDevice);
+	virtual bool     LoadShader(ID3D11Device* pd3dDevice);
 
 	ID3D11InputLayout* m_pVertexLayout = nullptr;
-	bool     CreateInputLayout(ID3D11Device* pd3dDevice);
+	virtual	bool     CreateInputLayout(ID3D11Device* pd3dDevice);
+
 	virtual void     Frame();
 	virtual void     PreRender(ID3D11DeviceContext* pContext);
 	virtual void     Render(ID3D11DeviceContext* pContext);
 	virtual void     PostRender(ID3D11DeviceContext* pContext);
 	virtual void     Release();
-
 	virtual void	 SetVertexData(RECT rt);
 };
 

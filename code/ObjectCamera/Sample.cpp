@@ -13,7 +13,7 @@ void   Sample::Init()
 	matRotate.rotate(TBASIS_PI/2.0f);
 
 
-	std::wstring texPath = L"../../data/"; //0.bmp
+	std::wstring texPath = L"../../data/Number/"; //0.bmp
 	for (int iTex = 0; iTex < 10; iTex++)
 	{	
 		std::wstring texFileName = texPath +
@@ -26,8 +26,7 @@ void   Sample::Init()
 				texFileName.c_str(),
 				nullptr,
 				texSRV.GetAddressOf());
-		m_pNumber.push_back(texSRV);
-		
+		m_pNumber.push_back(texSRV);		
 	}
 
 
@@ -37,19 +36,14 @@ void   Sample::Init()
 	float fAngle = a.Angle(b);
 
 	RECT rtBk = { 0, 0, 10000.0f, g_yClientSize };
-	objScreen.Create(m_pd3dDevice.Get(), m_pContext, rtBk, 
-		L"../../data/bk.bmp");
+	objScreen.Create(m_pd3dDevice.Get(), m_pContext, rtBk,	L"../../data/bk.bmp");
 
 	m_UIList.resize(3);
 
-	m_UIList[0].Create(m_pd3dDevice.Get(), m_pContext, { 0, 0, 100, 100 }, 
-		L"../../data/kgca1.png");
-	m_UIList[1].Create(m_pd3dDevice.Get(), m_pContext, { 700, 0, 800, 100 },
-		L"../../data/kgca2.png");
-	m_UIList[2].Create(m_pd3dDevice.Get(), m_pContext, { 700, 500, 800, 600 }, 
-		L"../../data/kgca3.png");
-	hero.Create(m_pd3dDevice.Get(), m_pContext, { 50, 250, 150, 350 }, 
-		L"../../data/obj.jpg");
+	m_UIList[0].Create(m_pd3dDevice.Get(), m_pContext, { 0, 0, 100, 100 },	L"../../data/kgca1.png");
+	m_UIList[1].Create(m_pd3dDevice.Get(), m_pContext, { 700, 0, 800, 100 },L"../../data/kgca2.png");
+	m_UIList[2].Create(m_pd3dDevice.Get(), m_pContext, { 700, 500, 800, 600 }, L"../../data/kgca3.png");
+	hero.Create(m_pd3dDevice.Get(), m_pContext, { 50, 250, 150, 350 }, 	L"../../data/obj.jpg");
 	hero.m_fSpeed = 500.0f;
 
 	for (int iNpc = 0; iNpc < 10; iNpc++)
@@ -59,7 +53,7 @@ void   Sample::Init()
 		pos.X = randstep(0.0f, g_xClientSize);
 		pos.Y = randstep(0.0f, g_yClientSize);
 		npc.Create(m_pd3dDevice.Get(), m_pContext,
-			{ (LONG)pos.X, (LONG)pos.Y,(LONG)(pos.X + 50.0f), (LONG)(pos.Y + 50.0f) }, 
+			{ (LONG)pos.X, (LONG)pos.Y,(LONG)(pos.X + 50.0f), (LONG)(pos.Y + 50.0f) },
 			L"../../data/bump_512.bmp");
 		m_npcList.push_back(npc);
 	}
@@ -143,21 +137,21 @@ void    Sample::Frame()
 }
 void    Sample::Render() 
 { 		
-	objScreen.SetTransform(m_Cam.GetMatrix());
+	objScreen.SetViewTransform(m_Cam.GetMatrix());
 	objScreen.Render(m_pContext);
 
 	for_each(begin(m_UIList), end(m_UIList), [&](auto& obj) 
 	{
 		//if (!obj.m_bDead)
 		{
-			//obj.SetTransform(m_Cam.GetMatrix());
+			//obj.SetViewTransform(m_Cam.GetMatrix());
 			obj.PreRender(m_pContext);
 			m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter-1].GetAddressOf());
 			obj.PostRender(m_pContext);
 		}
 	});	
 
-	hero.SetTransform(m_Cam.GetMatrix());
+	hero.SetViewTransform(m_Cam.GetMatrix());
 	hero.Render(m_pContext);
 
 	bool bGameEnding = true;
@@ -165,7 +159,7 @@ void    Sample::Render()
 	{
 		if (!m_npcList[iNpc].m_bDead)
 		{
-			m_npcList[iNpc].SetTransform(m_Cam.GetMatrix());
+			m_npcList[iNpc].SetViewTransform(m_Cam.GetMatrix());
 			m_npcList[iNpc].Render(m_pContext);
 			bGameEnding = false;
 		}

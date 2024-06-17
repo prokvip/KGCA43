@@ -224,22 +224,25 @@ void    Sample::Frame()
 }
 void    Sample::Render() 
 { 		
-	//m_pContext->OMSetBlendState(m_pAlphaBlend, 0, -1);
+	m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
 
-	objScreen.SetTransform(m_Cam.GetMatrix());
+	objScreen.SetViewTransform(m_Cam.GetMatrix());
 	objScreen.Render(m_pContext);
 
-
+	// 화면 고정( 뷰 변환 생략 )
+	//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
 	m_UIList[0].PreRender(m_pContext);
 	m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter - 1].GetAddressOf());
 	m_UIList[0].PostRender(m_pContext);
 
 	for (int iNpc = 1; iNpc < m_UIList.size(); iNpc++)
 	{
+		// 화면 고정( 뷰 변환 생략 )
+		//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
 		m_UIList[iNpc].Render(m_pContext);		
 	}	
 
-	hero.SetTransform(m_Cam.GetMatrix());
+	hero.SetViewTransform(m_Cam.GetMatrix());
 	hero.Render(m_pContext);
 
 	bool bGameEnding = true;
@@ -248,7 +251,7 @@ void    Sample::Render()
 		{
 			if (!obj.m_bDead)
 			{
-				obj.SetTransform(m_Cam.GetMatrix());
+				obj.SetViewTransform(m_Cam.GetMatrix());
 				obj.Render(m_pContext);
 				bGameEnding = false;
 			}

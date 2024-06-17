@@ -30,10 +30,11 @@ public:
 	virtual TActor& Move(T_Math::FVector2 d);
 	virtual void	SetPos(T_Math::FVector2& p);
 	virtual void	SetPos(float& dx, float& dy);
-	virtual void	SetWorld(T_Math::FMatrix& m);
-protected:
-	TActor&			Transform();
-	TActor&			Transform(T_Math::FMatrix& m);
+	
+	virtual void	SetWorldMatrix(T_Math::FMatrix& m);
+
+	virtual TActor& SetWorldTransform();
+	virtual TActor& SetWorldTransform(T_Math::FMatrix& m);
 };
 
 
