@@ -140,30 +140,33 @@ void    Sample::Render()
 	objScreen.SetViewTransform(m_Cam.GetMatrix());
 	objScreen.Render(m_pContext);
 
-	for_each(begin(m_UIList), end(m_UIList), [&](auto& obj) 
+	// 화면 고정( 뷰 변환 생략 )
+	//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
+	m_UIList[0].PreRender(m_pContext);
+	m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter - 1].GetAddressOf());
+	m_UIList[0].PostRender(m_pContext);
+
+	for (int iNpc = 1; iNpc < m_UIList.size(); iNpc++)
 	{
-		//if (!obj.m_bDead)
-		{
-			//obj.SetViewTransform(m_Cam.GetMatrix());
-			obj.PreRender(m_pContext);
-			m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter-1].GetAddressOf());
-			obj.PostRender(m_pContext);
-		}
-	});	
+		// 화면 고정( 뷰 변환 생략 )
+		//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
+		m_UIList[iNpc].Render(m_pContext);
+	}
 
 	hero.SetViewTransform(m_Cam.GetMatrix());
 	hero.Render(m_pContext);
 
 	bool bGameEnding = true;
-	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
-	{
-		if (!m_npcList[iNpc].m_bDead)
+
+	for_each(begin(m_npcList), end(m_npcList), [&](auto& obj)
 		{
-			m_npcList[iNpc].SetViewTransform(m_Cam.GetMatrix());
-			m_npcList[iNpc].Render(m_pContext);
-			bGameEnding = false;
-		}
-	}
+			if (!obj.m_bDead)
+			{
+				obj.SetViewTransform(m_Cam.GetMatrix());
+				obj.Render(m_pContext);
+				bGameEnding = false;
+			}
+		});
 	m_bGameRun = !bGameEnding;
 }
 void    Sample::Release() 

@@ -121,31 +121,25 @@ void    Sample::Render()
 	}*/
 	//auto LamdaRender = [&](auto& obj) { obj.Render(m_pContext); };
 	
-	for_each(begin(m_UIList), end(m_UIList), [&](auto& obj) 
-		{
-			if (!obj.m_bDead)
-			{
-				//obj.Render(m_pContext);
-				obj.PreRender(m_pContext);
-				m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter-1].GetAddressOf());
-				obj.PostRender(m_pContext);
-				
-			}
-		});
-
-	
+	m_UIList[0].PreRender(m_pContext);
+	m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter - 1].GetAddressOf());
+	m_UIList[0].PostRender(m_pContext);
+	for (int iNpc = 1; iNpc < m_UIList.size(); iNpc++)
+	{
+		m_UIList[iNpc].Render(m_pContext);
+	}
 
 	hero.Render(m_pContext);
 
 	bool bGameEnding = true;
-	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
-	{
-		if (!m_npcList[iNpc].m_bDead)
+	for_each(begin(m_npcList), end(m_npcList), [&](auto& obj)
 		{
-			m_npcList[iNpc].Render(m_pContext);
-			bGameEnding = false;
-		}
-	}
+			if (!obj.m_bDead)
+			{
+				obj.Render(m_pContext);
+				bGameEnding = false;
+			}
+		});
 	m_bGameRun = !bGameEnding;
 }
 void    Sample::Release() 
