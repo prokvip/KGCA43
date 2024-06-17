@@ -48,31 +48,50 @@ void   Sample::Init()
 
 	std::wstring iconList[] =
 	{
-		L"../../data/S_KBSJoint.PNG",
-		L"../../data/S_KHinge.PNG",
-		L"../../data/S_KPrismatic.PNG",
-		L"../../data/S_LevelSequence.PNG",
-		L"../../data/S_NavP.PNG",
-		L"../../data/S_Note.PNG",
-		L"../../data/S_Pawn.PNG",
-		L"../../data/S_Player.PNG",
-		L"../../data/S_PortalActorIcon2.PNG",
-		L"../../data/S_RadForce.PNG",
-		L"../../data/S_SkyAtmosphere.PNG",
-		L"../../data/S_SceneCaptureIcon.PNG",
-		L"../../data/S_LevelSequence.PNG",
-		L"../../data/S_SkyLight.PNG",
-		L"../../data/S_Solver.PNG",
-		L"../../data/S_TargetPoint.PNG",
-		L"../../data/S_Terrain.PNG",
-		L"../../data/S_Thruster.PNG",
-		L"../../data/S_VectorFieldVol.PNG",
+		L"../../data/Icons/S_KBSJoint.PNG",
+		L"../../data/Icons/S_KHinge.PNG",
+		L"../../data/Icons/S_KPrismatic.PNG",
+		L"../../data/Icons/S_LevelSequence.PNG",
+		L"../../data/Icons/S_NavP.PNG",
+
+		L"../../data/Icons/S_Note.PNG",
+		L"../../data/Icons/S_Pawn.PNG",
+		L"../../data/Icons/S_Player.PNG",
+		L"../../data/Icons/S_PortalActorIcon2.PNG",
+		L"../../data/Icons/S_RadForce.PNG",
+
+		L"../../data/Icons/S_SkyAtmosphere.PNG",
+		L"../../data/Icons/S_SceneCaptureIcon.PNG",
+		L"../../data/Icons/S_LevelSequence.PNG",
+		L"../../data/Icons/S_SkyLight.PNG",
+		L"../../data/Icons/S_Solver.PNG",
+
+		L"../../data/Icons/S_TargetPoint.PNG",
+		L"../../data/Icons/S_Terrain.PNG",
+		L"../../data/Icons/S_Thruster.PNG",
+		L"../../data/Icons/S_VectorFieldVol.PNG",
 	};
-	std::wstring texPath = L"../../data/"; 
+	std::wstring texPath = L"../../data/Number/"; 
 	for (int iTex = 0; iTex < 10; iTex++)
 	{	
-		//std::wstring texFileName = texPath + L"숫자";
-		//texFileName += std::to_wstring(0) + L".png";
+		std::wstring texFileName = texPath + L"숫자";
+		texFileName += std::to_wstring(iTex) + L".png";
+		ComPtr<ID3D11ShaderResourceView> texSRV;
+		//ComPtr<ID3D11Resource> m_pTexture = nullptr;
+		HRESULT hr =
+			DirectX::CreateWICTextureFromFile(
+				m_pd3dDevice.Get(),
+				texFileName.c_str(),
+				nullptr,
+				texSRV.GetAddressOf());
+		m_pNumber.push_back(texSRV);		
+	}
+	
+	UINT iNumberIcons = _countof(iconList);
+	texPath.clear();
+	texPath = L"../../data/Icons/";
+	for (int iTex = 0; iTex < iNumberIcons; iTex++)
+	{
 		ComPtr<ID3D11ShaderResourceView> texSRV;
 		//ComPtr<ID3D11Resource> m_pTexture = nullptr;
 		HRESULT hr =
@@ -81,8 +100,7 @@ void   Sample::Init()
 				iconList[iTex].c_str(),
 				nullptr,
 				texSRV.GetAddressOf());
-		m_pNumber.push_back(texSRV);
-		
+		m_pIcons.push_back(texSRV);
 	}
 
 
@@ -110,7 +128,7 @@ void   Sample::Init()
 	
 	//DrawRect = { 91, 1, 91+40, 1+60 }
 	hero.Create(m_pd3dDevice.Get(), m_pContext, { 380, 270, 420, 330 }, 
-		L"../../data/bitmap1Alpha.bmp",
+		L"../../data/Sprite/bitmap1Alpha.bmp",
 		L"Alphablend.hlsl");
 	hero.m_fSpeed = 500.0f;
 
@@ -122,7 +140,7 @@ void   Sample::Init()
 		pos.Y = randstep(0.0f, g_yClientSize);
 		npc.Create(m_pd3dDevice.Get(), m_pContext,
 			{ (LONG)pos.X, (LONG)pos.Y,(LONG)(pos.X + 67.0f), (LONG)(pos.Y + 78.0f) }, 
-			L"../../data/bitmap1Alpha.bmp",
+			L"../../data/Sprite/bitmap1Alpha.bmp",
 			L"Alphablend.hlsl");
 		m_npcList.push_back(npc);
 	}
@@ -211,30 +229,30 @@ void    Sample::Render()
 	objScreen.SetTransform(m_Cam.GetMatrix());
 	objScreen.Render(m_pContext);
 
-	for_each(begin(m_UIList), end(m_UIList), [&](auto& obj) 
+
+	m_UIList[0].PreRender(m_pContext);
+	m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter - 1].GetAddressOf());
+	m_UIList[0].PostRender(m_pContext);
+
+	for (int iNpc = 1; iNpc < m_UIList.size(); iNpc++)
 	{
-		//if (!obj.m_bDead)
-		{
-			//obj.SetTransform(m_Cam.GetMatrix());
-			obj.PreRender(m_pContext);
-			m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter-1].GetAddressOf());
-			obj.PostRender(m_pContext);
-		}
-	});	
+		m_UIList[iNpc].Render(m_pContext);		
+	}	
 
 	hero.SetTransform(m_Cam.GetMatrix());
 	hero.Render(m_pContext);
 
 	bool bGameEnding = true;
-	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
-	{
-		if (!m_npcList[iNpc].m_bDead)
+	
+	for_each(begin(m_npcList), end(m_npcList), [&](auto& obj)
 		{
-			m_npcList[iNpc].SetTransform(m_Cam.GetMatrix());
-			m_npcList[iNpc].Render(m_pContext);
-			bGameEnding = false;
-		}
-	}
+			if (!obj.m_bDead)
+			{
+				obj.SetTransform(m_Cam.GetMatrix());
+				obj.Render(m_pContext);
+				bGameEnding = false;
+			}
+		});
 	m_bGameRun = !bGameEnding;
 }
 void    Sample::Release() 

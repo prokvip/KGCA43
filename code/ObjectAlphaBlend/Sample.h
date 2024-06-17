@@ -47,6 +47,7 @@ class Sample : public TCore
 	THero hero;	
 	UINT  m_iNpcCounter=0;
 	std::vector<ComPtr<ID3D11ShaderResourceView>> m_pNumber;
+	std::vector<ComPtr<ID3D11ShaderResourceView>> m_pIcons;
 
 	ComPtr<ID3D11BlendState> m_pAlphaBlend=nullptr;
 	HRESULT SetAlphaBlendState();
