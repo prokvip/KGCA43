@@ -101,19 +101,19 @@ class TNpc : public TPawn
 public:
 	virtual void     Frame() override
 	{
-		if (m_vPos.X > g_xClientSize+300)
+		if (m_vPos.X > g_xClientSize)
 		{
 			m_vDirection.X = -1.0f;
 		}
-		if (m_vPos.X < 0-300)
+		if (m_vPos.X < 0)
 		{
 			m_vDirection.X = 1.0f;
 		}
-		if (m_vPos.Y > g_yClientSize+300)
+		if (m_vPos.Y > g_yClientSize)
 		{
 			m_vDirection.Y = -1.0f;
 			}
-		if (m_vPos.Y < 0-300)
+		if (m_vPos.Y < 0)
 		{
 			m_vDirection.Y = 1.0f;
 		}

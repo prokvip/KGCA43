@@ -2,7 +2,7 @@
 
 void   Sample::Init()
 {
-	std::wstring texPath = L"../../data/"; //0.bmp
+	std::wstring texPath = L"../../data/Number/"; //0.bmp
 	for (int iTex = 0; iTex < 10; iTex++)
 	{	
 		std::wstring texFileName = texPath +
