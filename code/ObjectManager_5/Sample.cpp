@@ -48,11 +48,8 @@ void   Sample::Init()
 {
 	TAssetManager<TResouce>& mgr = TAssetManager<TResouce>::Get();
 	mgr.Set(m_pd3dDevice.Get(), m_pContext);
-	CRuntimeClass* pTexClass = RUNTIME_CLASS(TTexture);
-	CRuntimeClass* pShaderClass = RUNTIME_CLASS(TShader);
-	std::shared_ptr<TResouce> pTex1 = mgr.Load(L"../../data/1234.jpg", pTexClass);
-	std::shared_ptr<TResouce> pShader = mgr.Load(L"alphablend.hlsl", pShaderClass);
-
+	std::shared_ptr<TResouce> pTex1 = mgr.Load(L"../../data/1234.jpg",	RUNTIME_CLASS(TTexture));
+	std::shared_ptr<TResouce> pShader = mgr.Load(L"alphablend.hlsl",	RUNTIME_CLASS(TShader));
 
 		
 	SetAlphaBlendState();
