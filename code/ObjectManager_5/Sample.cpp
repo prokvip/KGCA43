@@ -50,7 +50,8 @@ void   Sample::Init()
 	mgr.Set(m_pd3dDevice.Get(), m_pContext);
 	std::shared_ptr<TResouce> pTex1 = mgr.Load(L"../../data/1234.jpg",	RUNTIME_CLASS(TTexture));
 	std::shared_ptr<TResouce> pShader = mgr.Load(L"alphablend.hlsl",	RUNTIME_CLASS(TShader));
-
+	std::shared_ptr<TTexture> pTexturePoint = std::dynamic_pointer_cast<TTexture>(pTex1);
+	std::shared_ptr<TShader> pShaderPoint = std::dynamic_pointer_cast<TShader>(pShader);
 		
 	SetAlphaBlendState();
 
