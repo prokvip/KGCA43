@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <list>
+#include <memory>
 #include <algorithm>
 #include <d3d11.h>
 #include <d3dcompiler.h> 

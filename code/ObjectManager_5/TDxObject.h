@@ -32,7 +32,7 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV = nullptr;	
 	// 텍스처(이미지) 로드 데이터
 	//ComPtr<ID3D11Resource> m_pTexture = nullptr;
-	TTexture* m_pTexture = nullptr;
+	TTexture* m_pTexture=nullptr;
 	// 시스템 메모리에 할당된 버퍼.
 	std::vector<TVertex>  m_vListScreen; // 초기 화면 정보
 	std::vector<TVertex>  m_vList;		 // 프레임 화면 정보

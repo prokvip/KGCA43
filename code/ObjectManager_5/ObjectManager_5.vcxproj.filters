@@ -27,6 +27,9 @@
     <ClCompile Include="TShaderMgr.cpp">
       <Filter>manager</Filter>
     </ClCompile>
+    <ClCompile Include="TAssetManager.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sample.h" />
@@ -51,6 +54,9 @@
       <Filter>manager</Filter>
     </ClInclude>
     <ClInclude Include="TShaderMgr.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TAssetManager.h">
       <Filter>manager</Filter>
     </ClInclude>
   </ItemGroup>

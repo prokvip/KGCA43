@@ -46,8 +46,14 @@ HRESULT  Sample::SetAlphaBlendState()
 }
 void   Sample::Init()
 {
-	TTexture* pTex1 = I_Tex.Load(L"../../data/Icons/S_SkyAtmosphere.PNG");
-	TShader* pShader = I_Shader.Load(L"alphablend.hlsl");
+	TAssetManager<TResouce>& mgr = TAssetManager<TResouce>::Get();
+	mgr.Set(m_pd3dDevice.Get(), m_pContext);
+	CRuntimeClass* pTexClass = RUNTIME_CLASS(TTexture);
+	CRuntimeClass* pShaderClass = RUNTIME_CLASS(TShader);
+	std::shared_ptr<TResouce> pTex1 = mgr.Load(L"../../data/1234.jpg", pTexClass);
+	std::shared_ptr<TResouce> pShader = mgr.Load(L"alphablend.hlsl", pShaderClass);
+
+
 		
 	SetAlphaBlendState();
 
@@ -81,7 +87,7 @@ void   Sample::Init()
 	{	
 		std::wstring texFileName = texPath + L"¼ýÀÚ";
 		texFileName += std::to_wstring(iTex) + L".png";
-		TTexture* pTex = I_Tex.Load(texFileName);
+		TTexture* pTex = I_Tex.Load(texFileName).get();
 		m_pNumber.push_back(pTex->m_pSRV);
 	}
 	
@@ -90,7 +96,7 @@ void   Sample::Init()
 	texPath = L"../../data/Icons/";
 	for (int iTex = 0; iTex < iNumberIcons; iTex++)
 	{
-		TTexture* pTex = I_Tex.Load(iconList[iTex]);
+		TTexture* pTex = I_Tex.Load(iconList[iTex]).get();
 		m_pIcons.push_back(pTex->m_pSRV);
 	}
 

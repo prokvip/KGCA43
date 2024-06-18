@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="TActor.cpp" />
+    <ClCompile Include="TAssetManager.cpp" />
     <ClCompile Include="TBaseManager.cpp" />
     <ClCompile Include="TCollision.cpp" />
     <ClCompile Include="TCore.cpp" />
@@ -179,6 +180,7 @@
   <ItemGroup>
     <ClInclude Include="Sample.h" />
     <ClInclude Include="TActor.h" />
+    <ClInclude Include="TAssetManager.h" />
     <ClInclude Include="TBaseManager.h" />
     <ClInclude Include="TCollision.h" />
     <ClInclude Include="TCore.h" />
