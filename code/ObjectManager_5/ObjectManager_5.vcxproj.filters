@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FxCompile Include="Alphablend.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="TActor.cpp" />
+    <ClCompile Include="TCollision.cpp" />
+    <ClCompile Include="TCore.cpp" />
+    <ClCompile Include="TDevice.cpp" />
+    <ClCompile Include="TDxObject.cpp" />
+    <ClCompile Include="THero.cpp" />
+    <ClCompile Include="TInput.cpp" />
+    <ClCompile Include="TMath.cpp" />
+    <ClCompile Include="TNpc.cpp" />
+    <ClCompile Include="TPawn.cpp" />
+    <ClCompile Include="TTimer.cpp" />
+    <ClCompile Include="TWindow.cpp" />
+    <ClCompile Include="TWriterFont.cpp" />
+    <ClCompile Include="TTexMgr.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TBaseManager.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TShaderMgr.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sample.h" />
+    <ClInclude Include="TActor.h" />
+    <ClInclude Include="TCollision.h" />
+    <ClInclude Include="TCore.h" />
+    <ClInclude Include="TDevice.h" />
+    <ClInclude Include="TDxObject.h" />
+    <ClInclude Include="THero.h" />
+    <ClInclude Include="TInput.h" />
+    <ClInclude Include="TMath.h" />
+    <ClInclude Include="TNpc.h" />
+    <ClInclude Include="TPawn.h" />
+    <ClInclude Include="TStd.h" />
+    <ClInclude Include="TTimer.h" />
+    <ClInclude Include="TWindow.h" />
+    <ClInclude Include="TWriterFont.h" />
+    <ClInclude Include="TTexMgr.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TBaseManager.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TShaderMgr.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="manager">
+      <UniqueIdentifier>{dc08f3a2-348b-4d8e-a9fe-757a7c09b4e7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

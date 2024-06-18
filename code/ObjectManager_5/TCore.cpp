@@ -52,6 +52,7 @@ void   TCore::GameInit()
 	// 그래픽 처리를 위한 초기화 작업
 	if (TDevice::CreateDevice(m_hWnd))
 	{
+		I_Tex.Set(m_pd3dDevice.Get(), m_pContext);
 		m_font.Init();
 		// 3D 백버퍼를 얻어서 전달해야 한다.
 		IDXGISurface* dxgiSurface = nullptr;

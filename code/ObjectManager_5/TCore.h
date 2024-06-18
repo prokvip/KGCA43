@@ -3,7 +3,7 @@
 #include "TTimer.h"
 #include "TInput.h"
 #include "TWriterFont.h"
-
+#include "TTexMgr.h"
 // 테스트를 완료하고  TCore에 포함한다.
 class TCore : public TDevice, TBaseCore
 {

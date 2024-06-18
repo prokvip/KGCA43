@@ -21,9 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{CF259877-6D21-406F-BB82-E3CBF9FB4B5A}</ProjectGuid>
+    <ProjectGuid>{997312BE-1B42-440B-853F-589AAA7EA228}</ProjectGuid>
     <RootNamespace>CreateWindow</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ObjectManager_5</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -79,7 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../output/</OutDir>
-    <IntDir>../../output/ObjectCamera</IntDir>
+    <IntDir>../../output/ObjectManager_5</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -126,6 +127,19 @@
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../dxtk/lib;</AdditionalLibraryDirectories>
     </Link>
+    <FxCompile>
+      <EntryPointName>main</EntryPointName>
+    </FxCompile>
+    <FxCompile>
+      <ShaderType>Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <DisableOptimizations>false</DisableOptimizations>
+      <EnableDebuggingInformation>false</EnableDebuggingInformation>
+      <AssemblerOutput>AssemblyCodeAndHex</AssemblerOutput>
+      <AssemblerOutputFile>alphablend.txt</AssemblerOutputFile>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -146,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="TActor.cpp" />
+    <ClCompile Include="TBaseManager.cpp" />
     <ClCompile Include="TCollision.cpp" />
     <ClCompile Include="TCore.cpp" />
     <ClCompile Include="TDevice.cpp" />
@@ -155,6 +170,8 @@
     <ClCompile Include="TMath.cpp" />
     <ClCompile Include="TNpc.cpp" />
     <ClCompile Include="TPawn.cpp" />
+    <ClCompile Include="TShaderMgr.cpp" />
+    <ClCompile Include="TTexMgr.cpp" />
     <ClCompile Include="TTimer.cpp" />
     <ClCompile Include="TWindow.cpp" />
     <ClCompile Include="TWriterFont.cpp" />
@@ -162,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="Sample.h" />
     <ClInclude Include="TActor.h" />
+    <ClInclude Include="TBaseManager.h" />
     <ClInclude Include="TCollision.h" />
     <ClInclude Include="TCore.h" />
     <ClInclude Include="TDevice.h" />
@@ -171,10 +189,17 @@
     <ClInclude Include="TMath.h" />
     <ClInclude Include="TNpc.h" />
     <ClInclude Include="TPawn.h" />
+    <ClInclude Include="TShaderMgr.h" />
     <ClInclude Include="TStd.h" />
+    <ClInclude Include="TTexMgr.h" />
     <ClInclude Include="TTimer.h" />
     <ClInclude Include="TWindow.h" />
     <ClInclude Include="TWriterFont.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Alphablend.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

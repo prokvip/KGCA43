@@ -1,5 +1,5 @@
 #include "TDxObject.h"
-#include "TStd.h"
+
 void   TDxObject::UpdateVertexBuffer()
 {
 	// NDC 좌표계 변환
@@ -64,20 +64,17 @@ void   TDxObject::SetVertexData(RECT rt)
 bool   TDxObject::Create(
 	ID3D11Device* pd3dDevice,	
 	ID3D11DeviceContext* pContext,
-	RECT rt, std::wstring texName) 
-{
-
-	// 포인터 변수의 주소 반환 : m_pSRV.GetAddressOf();
-	// 포인터 주소 :m_pSRV.Get();
-
+	RECT rt, std::wstring texName, std::wstring hlsl) 
+{		
 	m_pd3dDevice = pd3dDevice;
 	m_pContext = pContext;
-	HRESULT hr =
-		DirectX::CreateWICTextureFromFile(
-			m_pd3dDevice,
-			texName.c_str(),
-			m_pTexture.GetAddressOf(),//&m_pTexture
-			m_pSRV.GetAddressOf());
+	m_szShaderFilename = hlsl;
+
+	m_pTexture = I_Tex.Load(texName);
+	if (m_pTexture != nullptr)
+	{
+		m_pSRV = m_pTexture->m_pSRV;
+	}	
 
 	SetVertexData(rt);
 
@@ -130,7 +127,7 @@ bool     TDxObject::LoadShader(ID3D11Device* pd3dDevice)
 	
 	ID3DBlob* errormsg = nullptr; // 컴파일 중 오류 메세지
 	hr = D3DCompileFromFile(
-		L"../../data/Shader/VS.txt",
+		m_szShaderFilename.c_str(),
 		nullptr,
 		nullptr,
 		 "VSMain",
@@ -163,7 +160,7 @@ bool     TDxObject::LoadShader(ID3D11Device* pd3dDevice)
 
 	/// 픽쉘쉐이더 로드 및 생성	
 	hr = D3DCompileFromFile(
-		L"../../data/Shader/PS.txt",
+		m_szShaderFilename.c_str(),
 		nullptr,
 		nullptr,
 		"PSMain",
@@ -222,6 +219,8 @@ bool     TDxObject::CreateInputLayout(ID3D11Device* pd3dDevice)
 }
 void     TDxObject::PreRender(ID3D11DeviceContext* pContext)
 {
+	UpdateVertexBuffer();
+
 	// 사용하지 않는 파이프라인은 디폴트 값 또는 null사용된다.	
 	UINT StartSlot = 0;
 	UINT NumBuffers = 1;
