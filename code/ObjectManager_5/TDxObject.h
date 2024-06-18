@@ -1,6 +1,6 @@
 #pragma once
 #include "TTexMgr.h"
-
+#include "TShaderMgr.h"
 // p, n, c, t
 struct TVertex
 {
@@ -51,11 +51,9 @@ public:
 	ID3D11Buffer* m_pVertexBuffer=nullptr;
 	bool     CreateVertexBuffer(ID3D11Device* pd3dDevice);
 	
-	ID3D11VertexShader* m_pVertexShader = nullptr;
-	ID3D11PixelShader* m_pPixelShader = nullptr;
-	ID3DBlob* VS_Bytecode = nullptr; // 오브젝트 파일
-	ID3DBlob* PS_Bytecode = nullptr; // 오브젝트 파일
-	virtual bool     LoadShader(ID3D11Device* pd3dDevice);
+	TShader* m_pShader = nullptr;
+	
+	virtual bool     LoadShader(std::wstring filename);
 
 	ID3D11InputLayout* m_pVertexLayout = nullptr;
 	virtual	bool     CreateInputLayout(ID3D11Device* pd3dDevice);

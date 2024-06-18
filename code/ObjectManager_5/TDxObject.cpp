@@ -83,7 +83,7 @@ bool   TDxObject::Create(
 		Release();
 		return false;
 	}
-	if (LoadShader(m_pd3dDevice) == false)
+	if (LoadShader(m_szShaderFilename) == false)
 	{
 		Release();
 		return false;
@@ -118,71 +118,10 @@ bool     TDxObject::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 	if (FAILED(hr)) return false;
 	return true;
 }
-bool     TDxObject::LoadShader(ID3D11Device* pd3dDevice)
+bool     TDxObject::LoadShader(std::wstring filename)
 {
-	// HLSL(High Level shader Language) 언어(컴파일 언어) : C언어와 유사함.
-	// HLSL언어로 작성해서 컴파일을 하고 오브젝트를 사용한다.
-
-	HRESULT hr;
-	
-	ID3DBlob* errormsg = nullptr; // 컴파일 중 오류 메세지
-	hr = D3DCompileFromFile(
-		m_szShaderFilename.c_str(),
-		nullptr,
-		nullptr,
-		 "VSMain",
-		 "vs_5_0", // dx11 정점쉐이더 컴파일러
-		 0,
-		 0,
-		 &VS_Bytecode,
-		 &errormsg
-	);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, 
-			(char*)errormsg->GetBufferPointer(), 
-			"ERROR", MB_OK);
-		return false;
-	}
-
-	// 오브젝트 파일의 시작주소
-	const void* pShaderBytecode = VS_Bytecode->GetBufferPointer();
-	// 오브젝트 파일의 크기
-	SIZE_T BytecodeLength = VS_Bytecode->GetBufferSize();
-
-	hr = pd3dDevice->CreateVertexShader(pShaderBytecode, BytecodeLength, nullptr, &m_pVertexShader);
-	
-	if (FAILED(hr))
-	{
-		return false;
-	}
-	if (errormsg) errormsg->Release();
-
-	/// 픽쉘쉐이더 로드 및 생성	
-	hr = D3DCompileFromFile(
-		m_szShaderFilename.c_str(),
-		nullptr,
-		nullptr,
-		"PSMain",
-		"ps_5_0", // dx11 정점쉐이더 컴파일러
-		0,
-		0,
-		&PS_Bytecode,
-		&errormsg
-	);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL,
-			(char*)errormsg->GetBufferPointer(),
-			"ERROR", MB_OK);
-		return false;
-	}
-
-	pShaderBytecode = PS_Bytecode->GetBufferPointer();
-	BytecodeLength = PS_Bytecode->GetBufferSize();
-	hr = pd3dDevice->CreatePixelShader(PS_Bytecode->GetBufferPointer(),
-		PS_Bytecode->GetBufferSize(), nullptr,&m_pPixelShader);
-	if (FAILED(hr)) return false;
+	m_pShader = I_Shader.Load(filename);
+	if (m_pShader==nullptr) return false;
 	return true;
 }
 // GPU 가 처리하는 순서
@@ -199,17 +138,17 @@ bool     TDxObject::CreateInputLayout(ID3D11Device* pd3dDevice)
 {
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
-{"POS",0,	DXGI_FORMAT_R32G32_FLOAT,		0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-{"COLOR",0,DXGI_FORMAT_R32G32B32A32_FLOAT,	0,8,D3D11_INPUT_PER_VERTEX_DATA,0 },
-{"TEX",0,DXGI_FORMAT_R32G32_FLOAT,		    0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"POS",0,	DXGI_FORMAT_R32G32_FLOAT,		0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"COLOR",0,DXGI_FORMAT_R32G32B32A32_FLOAT,	0,8,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"TEX",0,DXGI_FORMAT_R32G32_FLOAT,		    0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
 	};
 
 	UINT NumElements = sizeof(layout) / sizeof(layout[0]);
 	HRESULT hr = pd3dDevice->CreateInputLayout(
 		layout,
 		NumElements,
-		VS_Bytecode->GetBufferPointer(),
-		VS_Bytecode->GetBufferSize(),
+		m_pShader->VS_Bytecode->GetBufferPointer(),
+		m_pShader->VS_Bytecode->GetBufferSize(),
 		&m_pVertexLayout);
 	if (FAILED(hr))
 	{
@@ -234,8 +173,8 @@ void     TDxObject::PreRender(ID3D11DeviceContext* pContext)
 	pContext->PSSetShaderResources(0, 1, m_pSRV.GetAddressOf());
 	//Texture2D g_txTexture : register(t0);
 
-	pContext->VSSetShader(m_pVertexShader, nullptr, 0);
-	pContext->PSSetShader(m_pPixelShader, nullptr, 0);
+	pContext->VSSetShader(m_pShader->m_pVertexShader, nullptr, 0);
+	pContext->PSSetShader(m_pShader->m_pPixelShader, nullptr, 0);
 }
 void     TDxObject::PostRender(ID3D11DeviceContext* pContext)
 {
@@ -247,44 +186,12 @@ void     TDxObject::Render(ID3D11DeviceContext* pContext)
 	PostRender(pContext);	
 }
 void TDxObject::Release()
-{
-	/*if (m_pSRV)
-	{
-		m_pSRV->Release();
-		m_pSRV = nullptr;m_pSRV.Reset();
-	}
-	if (m_pTexture)
-	{
-		m_pTexture->Release();
-		m_pTexture = nullptr;
-	}*/
-
-	if (VS_Bytecode)
-	{
-		VS_Bytecode->Release();
-		VS_Bytecode = nullptr;
-	}
-	if (PS_Bytecode)
-	{
-		PS_Bytecode->Release();
-		PS_Bytecode = nullptr;
-	}
-
+{	
 	if (m_pVertexBuffer)
 	{
 		m_pVertexBuffer->Release();
 		m_pVertexBuffer = nullptr;
-	}
-	if (m_pVertexShader)
-	{
-		m_pVertexShader->Release();
-		m_pVertexShader = nullptr;
-	}
-	if (m_pPixelShader)
-	{
-		m_pPixelShader->Release();
-		m_pPixelShader = nullptr;
-	}
+	}	
 	if (m_pVertexLayout)
 	{
 		m_pVertexLayout->Release();

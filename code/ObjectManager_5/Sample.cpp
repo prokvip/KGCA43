@@ -46,16 +46,9 @@ HRESULT  Sample::SetAlphaBlendState()
 }
 void   Sample::Init()
 {
-	TTexture* pTex1 = I_Tex.Load(L"xxx.bmp");
-	TTexture* pTex2 = I_Tex.GetPtr(L"xxx.bmp");
-
-	// singleton ∆–≈œ
-	//TBaseManager<TTexture, TBaseManager>& mgr = 
-	//	TBaseManager<TTexture, TBaseManager>::Get();
-	//std::wstring name = mgr.m_csName;
-	//mgr.m_csName = L"first";
-	////std::wstring name1 = TBaseManager<TTexture>::Get().m_csName;
-
+	TTexture* pTex1 = I_Tex.Load(L"../../data/Icons/S_SkyAtmosphere.PNG");
+	TShader* pShader = I_Shader.Load(L"alphablend.hlsl");
+		
 	SetAlphaBlendState();
 
 	std::wstring iconList[] =
