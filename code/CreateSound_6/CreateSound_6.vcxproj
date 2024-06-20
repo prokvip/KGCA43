@@ -21,10 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{997312BE-1B42-440B-853F-589AAA7EA228}</ProjectGuid>
+    <ProjectGuid>{3779CFBF-8D0C-4F1A-AFBD-5C5FA255BA55}</ProjectGuid>
     <RootNamespace>CreateWindow</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>ObjectManager_5</ProjectName>
+    <ProjectName>CreateSound_6</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,7 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../output/</OutDir>
-    <IntDir>../../output/ObjectManager_5</IntDir>
+    <IntDir>../../output/CreateSound_6</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="TActor.cpp" />
+    <ClCompile Include="TAssetManager.cpp" />
     <ClCompile Include="TBaseManager.cpp" />
     <ClCompile Include="TCollision.cpp" />
     <ClCompile Include="TCore.cpp" />
@@ -179,6 +180,7 @@
   <ItemGroup>
     <ClInclude Include="Sample.h" />
     <ClInclude Include="TActor.h" />
+    <ClInclude Include="TAssetManager.h" />
     <ClInclude Include="TBaseManager.h" />
     <ClInclude Include="TCollision.h" />
     <ClInclude Include="TCore.h" />

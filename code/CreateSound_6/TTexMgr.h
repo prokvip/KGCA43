@@ -1,8 +1,9 @@
 #pragma once
-#include "TBaseManager.h"
+#include "TAssetManager.h"
 class TTexture : public TResouce
 {
 public:
+	RUNTIME_DECLARE(TTexture)
 public:
 	std::wstring m_csName;
 	// 렌더링 파이브라인(픽쉘쉐이더)에 전송 데이터

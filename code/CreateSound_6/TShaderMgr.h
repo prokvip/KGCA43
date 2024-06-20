@@ -1,9 +1,9 @@
 #pragma once
-#include "TBaseManager.h"
+#include "TAssetManager.h"
 class TShader : public TResouce
 {
 public:
-
+	RUNTIME_DECLARE(TShader)
 public:
 	std::wstring m_csName;
 	ID3D11VertexShader* m_pVertexShader = nullptr;

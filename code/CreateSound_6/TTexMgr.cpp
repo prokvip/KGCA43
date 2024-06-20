@@ -1,4 +1,8 @@
 #include "TTexMgr.h"
+RUNTIME_IMPLEMENT(TTexture)
+//TResouce* TTexture::CreateObject() { return new TTexture; };
+//CRuntimeClass TTexture::classTTexture = { "TTexture", sizeof(TTexture), TTexture::CreateObject };
+//CRuntimeClass* TTexture::GetRuntimeClass() const { return &classTTexture; }
 
 void TTexture::Release()
 {

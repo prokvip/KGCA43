@@ -1,4 +1,8 @@
 #include "TShaderMgr.h"
+RUNTIME_IMPLEMENT(TShader)
+//TResouce* TShader::CreateObject() { return new TShader; };
+//CRuntimeClass TShader::classTShader = { "TShader", sizeof(TShader), TShader::CreateObject };
+//CRuntimeClass* TShader::GetRuntimeClass() const { return &classTShader; }
 
 void TShader::Release()
 {
