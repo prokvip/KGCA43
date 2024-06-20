@@ -72,6 +72,7 @@ std::shared_ptr<T> TAssetManager<T>::Load(std::wstring fullpath, CRuntimeClass* 
 	{
 		return pFindData;
 	}
+	if (pClass == nullptr) return nullptr;
 
 	std::shared_ptr<T>  pData(pClass->CreateObject());
 	pData->m_csName = name;
