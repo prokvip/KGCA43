@@ -2,10 +2,9 @@
 void    TActor::Render(ID3D11DeviceContext* pContext)
 {
 	TDxObject::PreRender(pContext);
-	if (m_pSprite != nullptr && m_pSprite->m_pSRVList.size() > 1)
+	if (m_pSprite != nullptr)
 	{
-		pContext->PSSetShaderResources(0, 1,
-			m_pSprite->GetSRV().GetAddressOf());
+		pContext->PSSetShaderResources(0, 1,m_pSprite->GetSRV().GetAddressOf());
 	}
 	TDxObject::PostRender(pContext);
 }

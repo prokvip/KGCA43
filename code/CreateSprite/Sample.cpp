@@ -132,10 +132,15 @@ void   Sample::Init()
 	sprite3->SetAnim(1.0f);
 	m_EffectList.emplace_back(sprite3);
 
-	auto sprite4 = std::make_shared<TSprite>();
-	sprite4->Load(L"../../data/Effect/rivival_01.dds", 4, 4);
+	auto sprite4 = std::make_shared<TSprite>();	
+	sprite4->Load(L"../../data/Effect/slashFire_4x4.png", 4, 4);
 	sprite4->SetAnim(0.5f);
 	m_EffectList.emplace_back(sprite4);
+
+	auto sprite5 = std::make_shared<TSprite>();
+	sprite5->Load(L"../../data/Effect/rivival_01.dds", 4, 4);
+	sprite5->SetAnim(0.5f);
+	m_EffectList.emplace_back(sprite5);
 
 
 	I_Sound.Set(nullptr, nullptr);

@@ -2,11 +2,19 @@
 
 ComPtr<ID3D11ShaderResourceView> TSprite::GetSRV()
 {
-	return m_pSRVList[m_iAnimIndex];
+	if (m_pSRVList.size() > m_iAnimIndex)
+	{
+		return m_pSRVList[m_iAnimIndex];
+	}
+	return m_pTex->m_pSRV;
 }
 ComPtr<ID3D11ShaderResourceView> TSprite::GetSRV(UINT index)
 {
-	return m_pSRVList[index];
+	if (m_pSRVList.size() > index)
+	{
+		return m_pSRVList[index];
+	}
+	return m_pTex->m_pSRV;
 }
 void  TSprite::Load( std::wstring* iconList, UINT iCount )
 {	
@@ -24,7 +32,6 @@ void  TSprite::Load( std::wstring* iconList, UINT iCount )
 void  TSprite::Load(std::wstring path, UINT xSize, UINT ySize)
 {
 	m_pTex = I_Tex.Load(path).get();
-	m_pSRVList.push_back(m_pTex->m_pSRV);
 
 	UINT wSize = m_pTex->td.Width;
 	UINT hSize = m_pTex->td.Height;
