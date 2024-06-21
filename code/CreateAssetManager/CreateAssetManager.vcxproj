@@ -24,7 +24,7 @@
     <ProjectGuid>{3779CFBF-8D0C-4F1A-AFBD-5C5FA255BA55}</ProjectGuid>
     <RootNamespace>CreateWindow</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>CreateSound_6</ProjectName>
+    <ProjectName>CreateAssetManager</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,7 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../output/</OutDir>
-    <IntDir>../../output/CreateSound_6</IntDir>
+    <IntDir>../../output/CreateAssetManager</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -119,13 +119,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../dxtk/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../dxtk/include;../../fmod/inc;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../dxtk/lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../dxtk/lib;../../fmod/lib/x64;</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <EntryPointName>main</EntryPointName>
@@ -172,6 +172,7 @@
     <ClCompile Include="TNpc.cpp" />
     <ClCompile Include="TPawn.cpp" />
     <ClCompile Include="TShaderMgr.cpp" />
+    <ClCompile Include="TSound.cpp" />
     <ClCompile Include="TTexMgr.cpp" />
     <ClCompile Include="TTimer.cpp" />
     <ClCompile Include="TWindow.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="TNpc.h" />
     <ClInclude Include="TPawn.h" />
     <ClInclude Include="TShaderMgr.h" />
+    <ClInclude Include="TSound.h" />
     <ClInclude Include="TStd.h" />
     <ClInclude Include="TTexMgr.h" />
     <ClInclude Include="TTimer.h" />

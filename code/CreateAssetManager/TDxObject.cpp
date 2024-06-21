@@ -11,7 +11,7 @@ void   TDxObject::UpdateVertexBuffer()
 	}
 	if (m_pVertexBuffer != nullptr)
 	{
-		m_pContext->UpdateSubresource(m_pVertexBuffer, 0, NULL, &m_vListNDC.at(0), 0, 0);
+		TDevice::m_pContext->UpdateSubresource(m_pVertexBuffer.Get(), 0, NULL, &m_vListNDC.at(0), 0, 0);
 	}
 }
 T_Math::FVector2 TDxObject::ConvertScreenToNDC(T_Math::FVector2 v)
@@ -61,13 +61,8 @@ void   TDxObject::SetVertexData(RECT rt)
 	m_vListNDC = m_vListScreen;
 	UpdateVertexBuffer();
 }
-bool   TDxObject::Create(
-	ID3D11Device* pd3dDevice,	
-	ID3D11DeviceContext* pContext,
-	RECT rt, std::wstring texName, std::wstring hlsl) 
+bool   TDxObject::Create(RECT rt, std::wstring texName, std::wstring hlsl) 
 {		
-	m_pd3dDevice = pd3dDevice;
-	m_pContext = pContext;
 	m_szShaderFilename = hlsl;
 
 	m_pTexture = I_Tex.Load(texName).get();
@@ -78,7 +73,7 @@ bool   TDxObject::Create(
 
 	SetVertexData(rt);
 
-	if (CreateVertexBuffer(m_pd3dDevice) == false)
+	if (CreateVertexBuffer() == false)
 	{
 		Release();
 		return false;
@@ -88,14 +83,14 @@ bool   TDxObject::Create(
 		Release();
 		return false;
 	}
-	if (CreateInputLayout(m_pd3dDevice) == false)
+	if (CreateInputLayout() == false)
 	{
 		Release();
 		return false;
 	}
 	return true;
 }
-bool     TDxObject::CreateVertexBuffer(ID3D11Device* pd3dDevice)
+bool     TDxObject::CreateVertexBuffer()
 {
 	// 버퍼 할당 크기를 세팅한다.
 	D3D11_BUFFER_DESC  bd;
@@ -111,10 +106,10 @@ bool     TDxObject::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 	ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
 	sd.pSysMem = &m_vListNDC.at(0);
 
-	HRESULT hr = pd3dDevice->CreateBuffer(
+	HRESULT hr = TDevice::m_pd3dDevice->CreateBuffer(
 		&bd,
 		&sd,
-		&this->m_pVertexBuffer);
+		m_pVertexBuffer.GetAddressOf());
 	if (FAILED(hr)) return false;
 	return true;
 }
@@ -134,7 +129,7 @@ bool     TDxObject::LoadShader(std::wstring filename)
 //   0~7  8~11
 // |x, y, r,g,b,a, u,v|,|x, y, r,g,b,a, u,v| ,|x, y, r,g,b,a, u,v| ,|x, y, r,g,b,a, u,v| 
 //   0~7  8~11   24~32
-bool     TDxObject::CreateInputLayout(ID3D11Device* pd3dDevice)
+bool     TDxObject::CreateInputLayout()
 {
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
@@ -144,12 +139,12 @@ bool     TDxObject::CreateInputLayout(ID3D11Device* pd3dDevice)
 	};
 
 	UINT NumElements = sizeof(layout) / sizeof(layout[0]);
-	HRESULT hr = pd3dDevice->CreateInputLayout(
+	HRESULT hr = TDevice::m_pd3dDevice->CreateInputLayout(
 		layout,
 		NumElements,
 		m_pShader->VS_Bytecode->GetBufferPointer(),
 		m_pShader->VS_Bytecode->GetBufferSize(),
-		&m_pVertexLayout);
+		m_pVertexLayout.GetAddressOf());
 	if (FAILED(hr))
 	{
 		return false;
@@ -165,16 +160,16 @@ void     TDxObject::PreRender(ID3D11DeviceContext* pContext)
 	UINT NumBuffers = 1;
 	UINT pStrides = sizeof(TVertex); // 1개의 정점 크기
 	UINT pOffsets = 0; // 버퍼에 시작 인덱스
-	pContext->IASetVertexBuffers(StartSlot, NumBuffers, &m_pVertexBuffer, &pStrides, &pOffsets);
-	pContext->IASetInputLayout(m_pVertexLayout);
+	pContext->IASetVertexBuffers(StartSlot, NumBuffers, m_pVertexBuffer.GetAddressOf(), &pStrides, &pOffsets);
+	pContext->IASetInputLayout(m_pVertexLayout.Get());
 	pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// 0번 슬롯으로 텍스처 전달
 	pContext->PSSetShaderResources(0, 1, m_pSRV.GetAddressOf());
 	//Texture2D g_txTexture : register(t0);
 
-	pContext->VSSetShader(m_pShader->m_pVertexShader, nullptr, 0);
-	pContext->PSSetShader(m_pShader->m_pPixelShader, nullptr, 0);
+	pContext->VSSetShader(m_pShader->m_pVertexShader.Get(), nullptr, 0);
+	pContext->PSSetShader(m_pShader->m_pPixelShader.Get(), nullptr, 0);
 }
 void     TDxObject::PostRender(ID3D11DeviceContext* pContext)
 {
@@ -186,15 +181,5 @@ void     TDxObject::Render(ID3D11DeviceContext* pContext)
 	PostRender(pContext);	
 }
 void TDxObject::Release()
-{	
-	if (m_pVertexBuffer)
-	{
-		m_pVertexBuffer->Release();
-		m_pVertexBuffer = nullptr;
-	}	
-	if (m_pVertexLayout)
-	{
-		m_pVertexLayout->Release();
-		m_pVertexLayout = nullptr;
-	}
+{		
 }

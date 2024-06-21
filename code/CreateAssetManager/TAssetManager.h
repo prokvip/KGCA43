@@ -5,8 +5,8 @@
 #define DECLARE_CLASSNAME				static std::wstring lpszClassName;
 #define IMPLEMENT_CLASSNAME(s)			char s##::lpszClassName = (L#s);
 
-#define DECLARE_DYNCREATE				static TResouce* CreateObject();
-#define IMPLEMENT_DYNCREATE(s)			TResouce* s::CreateObject()	{return new s;};
+#define DECLARE_DYNCREATE				static TResource* CreateObject();
+#define IMPLEMENT_DYNCREATE(s)			TResource* s::CreateObject()	{return new s;};
 
 #define DECLARE_DYNAMIC(s)				static CRuntimeClass class##s;
 #define IMPLEMENT_DYNAMIC(s)			CRuntimeClass s::class##s={ L#s, sizeof(s), s::CreateObject };
@@ -23,8 +23,8 @@ struct CRuntimeClass
 {
 	std::wstring	m_lpszClassName;
 	UINT			m_iObjectSize;
-	TResouce* (*pfnCreateObject)();
-	TResouce* CreateObject()
+	TResource* (*pfnCreateObject)();
+	TResource* CreateObject()
 	{
 		return (*pfnCreateObject)();
 	}
@@ -36,29 +36,17 @@ class TAssetManager : public TSingleton<TAssetManager<T>>
 	friend class TSingleton<TAssetManager>;
 public:
 	std::wstring m_csName = L"none";
-
-	ID3D11Device* m_pd3dDevice = nullptr;
-	ID3D11DeviceContext* m_pContext = nullptr;
 public:
-	void Set(ID3D11Device* pd3dDevice,	ID3D11DeviceContext* pContext)
-	{
-		m_pd3dDevice = pd3dDevice;
-		m_pContext = pContext;
-	}
 	std::map<std::wstring, std::shared_ptr<T>>  m_list;
-	virtual std::shared_ptr<T> Load(std::wstring filename, CRuntimeClass* pClass);
-	std::shared_ptr<T> GetPtr(std::wstring key);
-	void   ReleaseAll();
-	std::wstring splitpath(std::wstring path, std::wstring filename);
+	virtual std::shared_ptr<T>  Load(std::wstring filename, CRuntimeClass* pClass);
+	virtual std::shared_ptr<T>  CreateObject(std::wstring path, std::wstring name, TResource* pResource);
+	virtual std::shared_ptr<T>	GetPtr(std::wstring key);	
+	virtual std::wstring		splitpath(std::wstring path, std::wstring filename);
+	virtual void				Release();
 private:
-	TAssetManager()
-	{
-	}
+	TAssetManager() = default;
 public:
-	virtual ~TAssetManager()
-	{
-		ReleaseAll();
-	}
+	virtual ~TAssetManager() = default;
 };
 
 template<class T>
@@ -74,9 +62,16 @@ std::shared_ptr<T> TAssetManager<T>::Load(std::wstring fullpath, CRuntimeClass* 
 	}
 	if (pClass == nullptr) return nullptr;
 
-	std::shared_ptr<T>  pData(pClass->CreateObject());
-	pData->m_csName = name;
-	if (pData->Load(m_pd3dDevice, fullpath) == false)
+	return CreateObject(fullpath, name, pClass->CreateObject());
+}
+template <class T>
+std::shared_ptr<T>  TAssetManager<T>::CreateObject(
+	std::wstring path, std::wstring name, TResource* pResource)
+{
+	//std::shared_ptr<T>  pData = std::make_shared<T>();
+	std::shared_ptr<T>  pData(pResource);
+	pData->Init(name);
+	if (pData->Load( path) == false)
 	{
 		return nullptr;
 	}
@@ -94,13 +89,13 @@ std::shared_ptr<T> TAssetManager<T>::GetPtr(std::wstring key)
 	return nullptr;
 }
 template<class T>
-void TAssetManager<T>::ReleaseAll()
+void TAssetManager<T>::Release()
 {
 	for (auto pData : m_list)
 	{
 		pData.second->Release();
-		//delete pData.second;
 	}
+	
 	m_list.clear();
 }
 template<class T>

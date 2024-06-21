@@ -1,19 +1,22 @@
 #include "TTexMgr.h"
 RUNTIME_IMPLEMENT(TTexture)
-//TResouce* TTexture::CreateObject() { return new TTexture; };
+//TResource* TTexture::CreateObject() { return new TTexture; };
 //CRuntimeClass TTexture::classTTexture = { "TTexture", sizeof(TTexture), TTexture::CreateObject };
 //CRuntimeClass* TTexture::GetRuntimeClass() const { return &classTTexture; }
-
+void TTexture::Init(std::wstring name)
+{
+	m_csName = name;
+}
 void TTexture::Release()
 {
 	m_pSRV.Reset();
 	m_pTexture.Reset();
 }
-bool TTexture::Load(ID3D11Device* pd3dDevice, std::wstring filename)
+bool TTexture::Load(std::wstring filename)
 {
 	HRESULT hr =
 		DirectX::CreateWICTextureFromFile(
-			pd3dDevice,
+			TDevice::m_pd3dDevice.Get(),
 			filename.c_str(),
 			m_pTexture.GetAddressOf(),//&m_pTexture
 			m_pSRV.GetAddressOf());

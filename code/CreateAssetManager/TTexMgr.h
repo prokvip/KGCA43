@@ -1,6 +1,6 @@
 #pragma once
 #include "TAssetManager.h"
-class TTexture : public TResouce
+class TTexture : public TResource
 {
 public:
 	RUNTIME_DECLARE(TTexture)
@@ -11,8 +11,9 @@ public:
 	// 텍스처(이미지) 로드 데이터
 	ComPtr<ID3D11Resource> m_pTexture = nullptr;
 public:
-	void Release();
-	bool Load(ID3D11Device* pd3dDevice, std::wstring filename);
+	void Init(std::wstring name) override;
+	void Release()override;
+	bool Load( std::wstring filename);
 };
 // TTexture객체를 리스트로 하는 싱글톤 TTexMgr 생성
 class TTexMgr : public TBaseManager<TTexture,TTexMgr>

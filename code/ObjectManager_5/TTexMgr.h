@@ -1,6 +1,6 @@
 #pragma once
 #include "TBaseManager.h"
-class TTexture : public TResouce
+class TTexture : public TResource
 {
 public:
 public:

@@ -1,9 +1,12 @@
 #include "TShaderMgr.h"
 RUNTIME_IMPLEMENT(TShader)
-//TResouce* TShader::CreateObject() { return new TShader; };
+//TResource* TShader::CreateObject() { return new TShader; };
 //CRuntimeClass TShader::classTShader = { "TShader", sizeof(TShader), TShader::CreateObject };
 //CRuntimeClass* TShader::GetRuntimeClass() const { return &classTShader; }
-
+void TShader::Init(std::wstring name)
+{
+	m_csName = name;
+}
 void TShader::Release()
 {
 	if (m_pVertexShader)
@@ -27,7 +30,7 @@ void TShader::Release()
 		PS_Bytecode = nullptr;
 	}
 }
-bool TShader::Load(ID3D11Device* pd3dDevice, std::wstring filename)
+bool TShader::Load(std::wstring filename)
 {
 	m_csName = filename;
 	HRESULT hr;
@@ -40,7 +43,7 @@ bool TShader::Load(ID3D11Device* pd3dDevice, std::wstring filename)
 		"vs_5_0", // dx11 정점쉐이더 컴파일러
 		0,
 		0,
-		&VS_Bytecode,
+		VS_Bytecode.GetAddressOf(),
 		&errormsg
 	);
 	if (FAILED(hr))
@@ -56,7 +59,7 @@ bool TShader::Load(ID3D11Device* pd3dDevice, std::wstring filename)
 	// 오브젝트 파일의 크기
 	SIZE_T BytecodeLength = VS_Bytecode->GetBufferSize();
 
-	hr = pd3dDevice->CreateVertexShader(pShaderBytecode, BytecodeLength, nullptr, &m_pVertexShader);
+	hr = TDevice::m_pd3dDevice->CreateVertexShader(pShaderBytecode, BytecodeLength, nullptr, m_pVertexShader.GetAddressOf());
 
 	if (FAILED(hr))
 	{
@@ -73,7 +76,7 @@ bool TShader::Load(ID3D11Device* pd3dDevice, std::wstring filename)
 		"ps_5_0", // dx11 정점쉐이더 컴파일러
 		0,
 		0,
-		&PS_Bytecode,
+		PS_Bytecode.GetAddressOf(),
 		&errormsg
 	);
 	if (FAILED(hr))
@@ -86,8 +89,8 @@ bool TShader::Load(ID3D11Device* pd3dDevice, std::wstring filename)
 
 	pShaderBytecode = PS_Bytecode->GetBufferPointer();
 	BytecodeLength = PS_Bytecode->GetBufferSize();
-	hr = pd3dDevice->CreatePixelShader(PS_Bytecode->GetBufferPointer(),
-		PS_Bytecode->GetBufferSize(), nullptr, &m_pPixelShader);
+	hr = TDevice::m_pd3dDevice->CreatePixelShader(PS_Bytecode->GetBufferPointer(),
+		PS_Bytecode->GetBufferSize(), nullptr, m_pPixelShader.GetAddressOf());
 	if (FAILED(hr)) return false;
 	return true;
 };

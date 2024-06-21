@@ -1,6 +1,6 @@
 #pragma once
 #include "TBaseManager.h"
-class TShader : public TResouce
+class TShader : public TResource
 {
 public:
 

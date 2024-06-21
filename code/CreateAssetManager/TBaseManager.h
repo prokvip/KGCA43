@@ -1,29 +1,15 @@
 #pragma once
 #include "TStd.h"
-#include <tchar.h>
-// 텍스처, 사운드, 쉐이더등의 "리소스 통합관리자"( 생성, 소멸 전담)
 
 
-
-template<class T>
-class TSingleton
-{
-public:
-	static T& Get()
-	{
-		static T mgr;
-		return mgr;
-	}
-};
-
-
-class TResouce
+class TResource
 {
 public:
 	std::wstring m_csName = L"none";
 public:
+	virtual void Init(std::wstring name) = 0;
 	virtual void Release() = 0;
-	virtual bool Load(ID3D11Device* pd3dDevice, std::wstring filename) = 0;
+	virtual bool Load(std::wstring filename) = 0;
 };
 
 template <class T, class S>
@@ -32,18 +18,10 @@ class TBaseManager : public TSingleton<S>
 public:
 	std::wstring m_csName = L"none";
 public:
-	ID3D11Device* m_pd3dDevice = nullptr;
-	ID3D11DeviceContext* m_pContext = nullptr;
-	void Set(ID3D11Device* pd3dDevice,ID3D11DeviceContext* pContext)
-	{
-		m_pd3dDevice = pd3dDevice;
-		m_pContext = pContext;
-	}
-
 	std::map<std::wstring, std::shared_ptr<T>>  m_list;
 	virtual std::shared_ptr<T> Load(std::wstring filename);
 	std::shared_ptr<T> GetPtr(std::wstring key);
-	void   ReleaseAll();
+	void   Release();
 
 	std::wstring splitpath(std::wstring path, std::wstring filename);
 public:		
@@ -52,7 +30,7 @@ public:
 	}
 	virtual ~TBaseManager()
 	{
-		ReleaseAll();
+		Release();
 	}
 };
 template <class T, class S>
@@ -68,8 +46,8 @@ std::shared_ptr<T> TBaseManager<T,S>::Load(std::wstring fullpath)
 	}
 
 	std::shared_ptr<T>  pData = std::make_shared<T>();
-	pData->m_csName = name;
-	if (pData->Load(m_pd3dDevice, fullpath) == false)
+	pData->Init(name);
+	if (pData->Load(fullpath) == false)
 	{
 		//delete pData;
 		return nullptr;
@@ -88,7 +66,7 @@ std::shared_ptr<T> TBaseManager<T,S>::GetPtr(std::wstring key)
 	return nullptr;
 }
 template <class T, class S>
-void TBaseManager<T, S>::ReleaseAll()
+void TBaseManager<T, S>::Release()
 {
 	for (auto pData : m_list)
 	{

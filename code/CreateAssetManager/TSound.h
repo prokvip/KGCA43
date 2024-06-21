@@ -1,5 +1,8 @@
 #pragma once
-#include "TBaseManager.h"
+#include "TAssetManager.h"
+#include "fmod.hpp"
+#include "fmod_errors.h"
+#pragma comment(lib, "fmod_vc.lib")
 
 // https://www.fmod.com  fmod라이브러리
 // 인스톨 : C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core
@@ -10,20 +13,24 @@
 
 //    ../../fmod/lib/x64  폴더에서 fmod.dll -> output 폴더로 복사한다.
 
-#include "fmod.hpp"
-#include "fmod_errors.h"
-#pragma comment(lib, "fmod_vc.lib")
+//#include "fmod.hpp"
+//#include "fmod_errors.h"
+//#pragma comment(lib, "fmod_vc.lib")
 //1 > LINK : fatal error LNK1104 : 'fmod_vc.lib' 파일을 열 수 없습니다.
 
+class TBaseSound 
+{
+public:
+	static FMOD::System* m_pFmodSystem;
+	static void Init();
+	static void Release();
+};
 class TSound : public TResource
 {
-private:
-	FMOD::System*  m_pFmodSystem = nullptr;
+public:
+	RUNTIME_DECLARE(TSound);
+
 public:	
-	void           SetFmod(FMOD::System* pSystem)
-	{
-		m_pFmodSystem = pSystem;
-	}
 	FMOD::Sound*   m_pSound = nullptr;
 	FMOD::Channel* m_pChannel = nullptr;
 	float		   m_fVolume = 1.0f;
@@ -31,7 +38,7 @@ public:
 	wchar_t			m_msSound[MAX_PATH] = { 0, };
 	wchar_t			m_msPlay[MAX_PATH] = { 0, };
 public:	
-	bool   Load(std::wstring filename);
+	bool   Load(std::wstring filename)override;
 	FMOD::Channel*  Play(bool bLoop=false);
 	void   PlayEffect();
 	void   Stop();
@@ -39,10 +46,10 @@ public:
 	void   VolumeUp(float fVolume);
 	void   VolumeDown(float fVolume);
 public:
-	void   Init();
+	void   Init(std::wstring name) override;
 	void   Frame();
 	void   Render();
-	void   Release();
+	void   Release()override;
 };
 
 class TSoundMgr : public TBaseManager<TSound, TSoundMgr>
@@ -77,8 +84,8 @@ private:
 	std::shared_ptr<TSound>  CreateObject(std::wstring path, std::wstring name)
 	{
 		std::shared_ptr<TSound>  pData = std::make_shared<TSound>();
-		pData->SetFmod(m_pFmodSystem);
-		pData->m_csName = name;
+		
+		pData->Init(name);
 		if (pData->Load(path) == false)
 		{
 			return nullptr;

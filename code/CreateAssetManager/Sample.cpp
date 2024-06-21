@@ -1,5 +1,6 @@
 #include "Sample.h"
 #include "TTexMgr.h"
+#include "TSound.h"
 
 HRESULT  Sample::SetAlphaBlendState()
 {
@@ -37,22 +38,27 @@ HRESULT  Sample::SetAlphaBlendState()
 	bd.RenderTarget[0].RenderTargetWriteMask=
 		D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	hr=m_pd3dDevice->CreateBlendState(&bd , m_pAlphaBlend.GetAddressOf());
+	hr=TDevice::m_pd3dDevice->CreateBlendState(&bd , m_pAlphaBlend.GetAddressOf());
 	if (SUCCEEDED(hr))
 	{
-		m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0,-1);
+		TDevice::m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0,-1);
 	}
 	return hr;
 }
 void   Sample::Init()
 {
-	TAssetManager<TResouce>& mgr = TAssetManager<TResouce>::Get();
-	mgr.Set(m_pd3dDevice.Get(), m_pContext);
-	std::shared_ptr<TResouce> pTex1 = mgr.Load(L"../../data/1234.jpg",	RUNTIME_CLASS(TTexture));
-	std::shared_ptr<TResouce> pShader = mgr.Load(L"alphablend.hlsl",	RUNTIME_CLASS(TShader));
-	std::shared_ptr<TTexture> pTexturePoint = std::dynamic_pointer_cast<TTexture>(pTex1);
-	std::shared_ptr<TShader> pShaderPoint = std::dynamic_pointer_cast<TShader>(pShader);
-		
+	TBaseSound::Init();
+	TAssetManager<TResource>& mgr = TAssetManager<TResource>::Get();
+	std::shared_ptr<TResource> tex = mgr.Load(L"../../data/1234.jpg",	RUNTIME_CLASS(TTexture));
+	std::shared_ptr<TResource> shader = mgr.Load(L"alphablend.hlsl",	RUNTIME_CLASS(TShader));
+	std::shared_ptr<TResource> sound = mgr.Load(L"../../data/sound/romance.mid", RUNTIME_CLASS(TSound));
+
+	std::shared_ptr<TTexture>	pTexture	= std::dynamic_pointer_cast<TTexture>(tex);
+	std::shared_ptr<TShader>	pShader		= std::dynamic_pointer_cast<TShader>(shader);
+	std::shared_ptr<TSound>		pSound		= std::dynamic_pointer_cast<TSound>(sound);
+	
+	pSound->Play();
+
 	SetAlphaBlendState();
 
 	std::wstring iconList[] =
@@ -104,26 +110,18 @@ void   Sample::Init()
 	float fAngle = a.Angle(b);
 
 	RECT rtBk = { -1000, -1000, 1000.0f, 1000.0f };
-	objScreen.Create(m_pd3dDevice.Get(), m_pContext, rtBk, 
+	objScreen.Create(rtBk, 
 		L"../../data/1234.jpg",
 		L"../../data/shader/Default.txt");
 
 	m_UIList.resize(3);
 
-	m_UIList[0].Create(m_pd3dDevice.Get(), m_pContext, { 0, 0, 100, 100 }, 
-		L"../../data/kgca1.png",
-		L"Alphablend.hlsl");
-	m_UIList[1].Create(m_pd3dDevice.Get(), m_pContext, { 700, 0, 800, 100 },
-		L"../../data/kgca1.png",
-		L"Alphablend.hlsl");
-	m_UIList[2].Create(m_pd3dDevice.Get(), m_pContext, { 700, 500, 800, 600 }, 
-		L"../../data/kgca1.png",
-		L"Alphablend.hlsl");
+	m_UIList[0].Create( { 0, 0, 100, 100 }, L"../../data/kgca1.png",L"Alphablend.hlsl");
+	m_UIList[1].Create( { 700, 0, 800, 100 },L"../../data/kgca1.png",	L"Alphablend.hlsl");
+	m_UIList[2].Create({ 700, 500, 800, 600 }, 	L"../../data/kgca1.png",	L"Alphablend.hlsl");
 	
 	//DrawRect = { 91, 1, 91+40, 1+60 }
-	hero.Create(m_pd3dDevice.Get(), m_pContext, { 380, 270, 420, 330 }, 
-		L"../../data/Sprite/bitmap1Alpha.bmp",
-		L"Alphablend.hlsl");
+	hero.Create({ 380, 270, 420, 330 }, L"../../data/Sprite/bitmap1Alpha.bmp",	L"Alphablend.hlsl");
 	hero.m_fSpeed = 500.0f;
 
 	for (int iNpc = 0; iNpc < 10; iNpc++)
@@ -132,8 +130,7 @@ void   Sample::Init()
 		T_Math::FVector2 pos;
 		pos.X = randstep(0.0f, g_xClientSize);
 		pos.Y = randstep(0.0f, g_yClientSize);
-		npc.Create(m_pd3dDevice.Get(), m_pContext,
-			{ (LONG)pos.X, (LONG)pos.Y,(LONG)(pos.X + 67.0f), (LONG)(pos.Y + 78.0f) }, 
+		npc.Create(	{ (LONG)pos.X, (LONG)pos.Y,(LONG)(pos.X + 67.0f), (LONG)(pos.Y + 78.0f) }, 
 			L"../../data/Sprite/bitmap1Alpha.bmp",
 			L"Alphablend.hlsl");
 		m_npcList.push_back(npc);
@@ -218,26 +215,26 @@ void    Sample::Frame()
 }
 void    Sample::Render() 
 { 		
-	m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
+	TDevice::m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
 
 	objScreen.SetViewTransform(m_Cam.GetMatrix());
-	objScreen.Render(m_pContext);
+	objScreen.Render(TDevice::m_pContext.Get());
 
 	// 화면 고정( 뷰 변환 생략 )
 	//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
-	m_UIList[0].PreRender(m_pContext);
-	m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter - 1].GetAddressOf());
-	m_UIList[0].PostRender(m_pContext);
+	m_UIList[0].PreRender(TDevice::m_pContext.Get());
+	TDevice::m_pContext->PSSetShaderResources(0, 1, m_pNumber[m_iNpcCounter - 1].GetAddressOf());
+	m_UIList[0].PostRender(TDevice::m_pContext.Get());
 
 	for (int iNpc = 1; iNpc < m_UIList.size(); iNpc++)
 	{
 		// 화면 고정( 뷰 변환 생략 )
 		//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
-		m_UIList[iNpc].Render(m_pContext);		
+		m_UIList[iNpc].Render(TDevice::m_pContext.Get());
 	}	
 
 	hero.SetViewTransform(m_Cam.GetMatrix());
-	hero.Render(m_pContext);
+	hero.Render(TDevice::m_pContext.Get());
 
 	bool bGameEnding = true;
 	
@@ -246,7 +243,7 @@ void    Sample::Render()
 			if (!obj.m_bDead)
 			{
 				obj.SetViewTransform(m_Cam.GetMatrix());
-				obj.Render(m_pContext);
+				obj.Render(TDevice::m_pContext.Get());
 				bGameEnding = false;
 			}
 		});
@@ -264,6 +261,9 @@ void    Sample::Release()
 	{
 		m_npcList[iNpc].Release();
 	}
+
+	TAssetManager<TResource>::Get().Release();
+	TBaseSound::Release();
 }
 
 T_GAME_START(800, 600);

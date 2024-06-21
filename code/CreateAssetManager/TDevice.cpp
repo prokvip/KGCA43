@@ -1,6 +1,13 @@
 #include "TDevice.h"
 
-bool  TDevice::CreateDevice(HWND hWnd)
+ComPtr<ID3D11Device>			TDevice::TDevice::m_pd3dDevice = nullptr;
+//관리, 운영
+ComPtr<ID3D11DeviceContext>		TDevice::TDevice::m_pContext = nullptr;
+ComPtr<IDXGISwapChain>			TDevice::TDevice::m_pSwapChain = nullptr;
+ComPtr<ID3D11RenderTargetView>	TDevice::m_pRTV = nullptr;
+D3D11_VIEWPORT					TDevice::m_ViewPort;
+
+bool  TDevice::CreateDevice(HWND hWnd, UINT xSize, UINT ySize)
 {
 	// DWRITE 연동에 필요함.
 	UINT Flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -8,8 +15,8 @@ bool  TDevice::CreateDevice(HWND hWnd)
 	CONST D3D_FEATURE_LEVEL pFeatureLevels = D3D_FEATURE_LEVEL_11_0;
 	DXGI_SWAP_CHAIN_DESC pSwapChainDesc;
 	ZeroMemory(&pSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-	pSwapChainDesc.BufferDesc.Width = g_xClientSize;
-	pSwapChainDesc.BufferDesc.Height = g_yClientSize;
+	pSwapChainDesc.BufferDesc.Width  = xSize;
+	pSwapChainDesc.BufferDesc.Height = ySize;
 	pSwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	pSwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	pSwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -29,10 +36,10 @@ bool  TDevice::CreateDevice(HWND hWnd)
 		D3D11_SDK_VERSION,
 		&pSwapChainDesc,
 
-		&m_pSwapChain,
-		m_pd3dDevice.GetAddressOf(),
+		TDevice::m_pSwapChain.GetAddressOf(),
+		TDevice::m_pd3dDevice.GetAddressOf(),
 		nullptr,
-		&m_pContext);
+		TDevice::m_pContext.GetAddressOf());
 
 	if (FAILED(hr))
 	{
@@ -40,60 +47,40 @@ bool  TDevice::CreateDevice(HWND hWnd)
 	}
 
 	//ID3D11RenderTargetView* m_pRTV = nullptr;
-	if (m_pd3dDevice != nullptr && m_pSwapChain != nullptr)
+	if (TDevice::m_pd3dDevice != nullptr && TDevice::m_pSwapChain != nullptr)
 	{
 		ComPtr<ID3D11Texture2D> pBackBuffer = nullptr;
-		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
+		TDevice::m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
 			(void**)pBackBuffer.GetAddressOf());
 
 		D3D11_RENDER_TARGET_VIEW_DESC* pDesc = nullptr;
-		hr = m_pd3dDevice->CreateRenderTargetView(
+		hr = TDevice::m_pd3dDevice->CreateRenderTargetView(
 			pBackBuffer.Get(),
 			pDesc,
-			&m_pRTV);
+			m_pRTV.GetAddressOf());
 		if (FAILED(hr))
 		{
 			return false;
 		}
 	}
 	
-	SetViewport();
+	SetViewport(xSize, ySize);
 
 	return true;
 }
 void  TDevice::DeleteDevice()
-{
-	if (m_pSwapChain)
-	{
-		m_pSwapChain->Release();
-		m_pSwapChain = nullptr;
-	}
-	/*if (m_pd3dDevice)
-	{
-		m_pd3dDevice->Release();
-		m_pd3dDevice = nullptr;
-	}*/
-	if (m_pContext)
-	{
-		m_pContext->Release();
-		m_pContext = nullptr;
-	}
-	if (m_pRTV)
-	{
-		m_pRTV->Release();
-		m_pRTV = nullptr;
-	}
+{	
 }
 
-void  TDevice::SetViewport()
+void  TDevice::SetViewport(UINT xSize, UINT ySize)
 {
 	//DXGI_SWAP_CHAIN_DESC cd;
-	//m_pSwapChain->GetDesc(&cd);
+	//TDevice::m_pSwapChain->GetDesc(&cd);
 	m_ViewPort.TopLeftX = 0;
 	m_ViewPort.TopLeftY = 0;
-	m_ViewPort.Width = g_xClientSize;
-	m_ViewPort.Height = g_yClientSize;
+	m_ViewPort.Width = xSize;
+	m_ViewPort.Height = ySize;
 	m_ViewPort.MinDepth = 0;
 	m_ViewPort.MaxDepth = 1;
-	m_pContext->RSSetViewports(1, &m_ViewPort);
+	TDevice::m_pContext->RSSetViewports(1, &m_ViewPort);
 }

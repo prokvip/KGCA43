@@ -1,6 +1,6 @@
 #pragma once
 #include "TBaseManager.h"
-class TShader : public TResouce
+class TShader : public TResource
 {
 	ID3D11Device* m_pd3dDevice = nullptr;
 public:

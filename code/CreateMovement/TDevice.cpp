@@ -28,11 +28,10 @@ bool  TDevice::CreateDevice(HWND hWnd)
 		1,
 		D3D11_SDK_VERSION,
 		&pSwapChainDesc,
-
-		&m_pSwapChain,
+		m_pSwapChain.GetAddressOf(),
 		m_pd3dDevice.GetAddressOf(),
 		nullptr,
-		&m_pContext);
+		m_pContext.GetAddressOf());
 
 	if (FAILED(hr))
 	{
@@ -63,26 +62,6 @@ bool  TDevice::CreateDevice(HWND hWnd)
 }
 void  TDevice::DeleteDevice()
 {
-	if (m_pSwapChain)
-	{
-		m_pSwapChain->Release();
-		m_pSwapChain = nullptr;
-	}
-	/*if (m_pd3dDevice)
-	{
-		m_pd3dDevice->Release();
-		m_pd3dDevice = nullptr;
-	}*/
-	if (m_pContext)
-	{
-		m_pContext->Release();
-		m_pContext = nullptr;
-	}
-	if (m_pRTV)
-	{
-		m_pRTV->Release();
-		m_pRTV = nullptr;
-	}
 }
 
 void  TDevice::SetViewport()

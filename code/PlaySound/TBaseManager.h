@@ -16,7 +16,7 @@ public:
 	}
 };
 
-class TResouce
+class TResource
 {
 public:
 	std::wstring m_csName = L"none";
