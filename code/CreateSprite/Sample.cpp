@@ -165,7 +165,7 @@ void   Sample::Init()
 	m_UIList[0].Create(m_pd3dDevice.Get(), m_pContext, { 0, 0, 100, 100 }, 
 		L"../../data/kgca1.png",
 		L"Alphablend.hlsl");
-	m_UIList[0].m_pSprite = m_EffectList[2].get();
+	m_UIList[0].m_pSprite = m_EffectList[0].get();
 
 	m_UIList[1].Create(m_pd3dDevice.Get(), m_pContext, { 700, 0, 800, 100 },
 		L"../../data/kgca1.png",
@@ -175,7 +175,7 @@ void   Sample::Init()
 		{ 400, 300, 800, 600 }, 
 		L"../../data/kgca1.png",
 		L"Alphablend.hlsl");
-	m_UIList[2].m_pSprite = m_EffectList[0].get();
+	m_UIList[2].m_pSprite = m_EffectList[2].get();
 
 	m_UIList[3].Create(m_pd3dDevice.Get(), m_pContext,
 		{ 0, 300, 400, 600 },
