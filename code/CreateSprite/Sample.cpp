@@ -46,22 +46,96 @@ HRESULT  Sample::SetAlphaBlendState()
 }
 void   Sample::Init()
 {
+	std::wstring iconList0[] =
+	{
+		L"../../data/Number/숫자0.png",
+		L"../../data/Number/숫자1.png",
+		L"../../data/Number/숫자2.png",
+		L"../../data/Number/숫자3.png",
+		L"../../data/Number/숫자4.png",
+		L"../../data/Number/숫자5.png",
+		L"../../data/Number/숫자6.png",
+		L"../../data/Number/숫자7.png",
+		L"../../data/Number/숫자8.png",
+		L"../../data/Number/숫자9.png",		
+	};
+	std::wstring iconList1[] =
+	{
+		L"../../data/Icons/S_KBSJoint.PNG",
+		L"../../data/Icons/S_KHinge.PNG",
+		L"../../data/Icons/S_KPrismatic.PNG",
+		L"../../data/Icons/S_LevelSequence.PNG",
+		L"../../data/Icons/S_NavP.PNG",
+
+		L"../../data/Icons/S_Note.PNG",
+		L"../../data/Icons/S_Pawn.PNG",
+		L"../../data/Icons/S_Player.PNG",
+		L"../../data/Icons/S_PortalActorIcon2.PNG",
+		L"../../data/Icons/S_RadForce.PNG",
+
+		L"../../data/Icons/S_SkyAtmosphere.PNG",
+		L"../../data/Icons/S_SceneCaptureIcon.PNG",
+		L"../../data/Icons/S_LevelSequence.PNG",
+		L"../../data/Icons/S_SkyLight.PNG",
+		L"../../data/Icons/S_Solver.PNG",
+
+		L"../../data/Icons/S_TargetPoint.PNG",
+		L"../../data/Icons/S_Terrain.PNG",
+		L"../../data/Icons/S_Thruster.PNG",
+		L"../../data/Icons/S_VectorFieldVol.PNG",
+	};
+	std::wstring iconList2[] =
+	{
+		L"../../data/Effect/wik00.dds",
+		L"../../data/Effect/wik01.dds",
+		L"../../data/Effect/wik02.dds",
+		L"../../data/Effect/wik03.dds",
+		L"../../data/Effect/wik04.dds",
+		L"../../data/Effect/wik05.dds",
+		L"../../data/Effect/wik06.dds",
+		L"../../data/Effect/wik07.dds",
+		L"../../data/Effect/wik08.dds",
+		L"../../data/Effect/wik09.dds",
+		L"../../data/Effect/wik10.dds",
+		L"../../data/Effect/wik11.dds",
+		L"../../data/Effect/wik12.dds",
+		L"../../data/Effect/wik13.dds",
+		L"../../data/Effect/wik14.dds",
+		L"../../data/Effect/wik15.dds",
+		L"../../data/Effect/wik16.dds",
+		L"../../data/Effect/wik17.dds",
+		L"../../data/Effect/wik18.dds",
+
+		L"../../data/Effect/wik19.dds",
+		L"../../data/Effect/wik20.dds",
+		L"../../data/Effect/wik21.dds",
+		L"../../data/Effect/wik22.dds",
+		L"../../data/Effect/wik23.dds",
+	};
+
+	UINT size0 = _countof(iconList0); 
+	UINT size1 = _countof(iconList1);
+	UINT size2 = _countof(iconList2);
+
 	auto sprite1 = std::make_shared<TSprite>();
-	sprite1->LoadA(L"../../data/Number/");
+	sprite1->Load(iconList0, size0);
+	sprite1->SetAnim(10.0f);
 	m_EffectList.emplace_back(sprite1);
 
 	auto sprite2 = std::make_shared<TSprite>();
-	sprite2->LoadB(L"../../data/Icons/");
+	sprite2->Load(iconList1, size1);
+	sprite2->SetAnim(26.0f);
 	m_EffectList.emplace_back(sprite2);
 
 	auto sprite3 = std::make_shared<TSprite>();
-	sprite3->LoadC(L"../../data/Effect/");
+	sprite3->Load(iconList2, size2);
+	sprite3->SetAnim(1.0f);
 	m_EffectList.emplace_back(sprite3);
 
 	auto sprite4 = std::make_shared<TSprite>();
-	sprite4->LoadD(L"../../data/Effect/rivival_01.dds");
+	sprite4->Load(L"../../data/Effect/rivival_01.dds", 4, 4);
+	sprite4->SetAnim(0.5f);
 	m_EffectList.emplace_back(sprite4);
-
 
 
 	I_Sound.Set(nullptr, nullptr);
@@ -91,18 +165,24 @@ void   Sample::Init()
 	m_UIList[0].Create(m_pd3dDevice.Get(), m_pContext, { 0, 0, 100, 100 }, 
 		L"../../data/kgca1.png",
 		L"Alphablend.hlsl");
+	m_UIList[0].m_pSprite = m_EffectList[2].get();
+
 	m_UIList[1].Create(m_pd3dDevice.Get(), m_pContext, { 700, 0, 800, 100 },
 		L"../../data/kgca1.png",
 		L"Alphablend.hlsl");
+	m_UIList[1].m_pSprite = m_EffectList[1].get();
 	m_UIList[2].Create(m_pd3dDevice.Get(), m_pContext,
 		{ 400, 300, 800, 600 }, 
 		L"../../data/kgca1.png",
 		L"Alphablend.hlsl");
+	m_UIList[2].m_pSprite = m_EffectList[0].get();
+
 	m_UIList[3].Create(m_pd3dDevice.Get(), m_pContext,
 		{ 0, 300, 400, 600 },
-		L"../../data/Effect/bul.DDS",
+		L"../../data/Effect/slashFire_4x4.png",
 		L"Alphablend.hlsl");
-	
+	m_UIList[3].m_pSprite = m_EffectList[3].get();
+
 	//DrawRect = { 91, 1, 91+40, 1+60 }
 	hero.Create(m_pd3dDevice.Get(), m_pContext, { 380, 270, 420, 330 }, 
 		L"../../data/Sprite/bitmap1Alpha.bmp",
@@ -241,54 +321,16 @@ void    Sample::Render()
 	objScreen.SetViewTransform(m_Cam.GetMatrix());
 	objScreen.Render(m_pContext);
 
-	// 화면 고정( 뷰 변환 생략 )
-	//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
-	m_UIList[0].PreRender(m_pContext);
-	m_pContext->PSSetShaderResources(0, 1, 
-		m_EffectList[0]->m_pSRVList[m_iNpcCounter - 1].GetAddressOf());
-	m_UIList[0].PostRender(m_pContext);
-
-	static int m_iAnimIndex = 0;
-	static float fAnimationTimer = 0.0f;
-	fAnimationTimer += g_fSecondPerFrame;
-	float ftime = 1.0f / 24.0f;
-	if (fAnimationTimer > ftime)
+	for (auto obj : m_UIList)
 	{
-		m_iAnimIndex++;
-		fAnimationTimer -= ftime;
-		if (m_iAnimIndex >= m_EffectList[1]->m_pSRVList.size())
-		{
-			m_iAnimIndex = 0;
-		}
-	}
-	m_UIList[1].PreRender(m_pContext);
-	m_pContext->PSSetShaderResources(0, 1,
-		m_EffectList[1]->m_pSRVList[m_iAnimIndex].GetAddressOf());
-	m_UIList[1].PostRender(m_pContext);
-
-	// 화면 고정( 뷰 변환 생략 )
-		//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
-	m_UIList[2].PreRender(m_pContext);
-	m_pContext->PSSetShaderResources(0, 1,
-		m_EffectList[2]->m_pSRVList[m_iAnimIndex].GetAddressOf());
-	m_UIList[2].PostRender(m_pContext);
-
-
-	// 화면 고정( 뷰 변환 생략 )
-	//m_UIList[0].SetViewTransform(m_Cam.GetMatrix());
-	m_EffectList[3]->Update();
+		// 화면 고정( 뷰 변환 생략 )
+		//obj.SetViewTransform(m_Cam.GetMatrix());
+		obj.Render(m_pContext);
+	}	
 	
-	
-
-	for (int iV = 0; iV < 6; iV++)
-	{
-		m_UIList[3].m_vList[iV].t =
-			m_EffectList[3]->m_vList[iV].t;
-	}
-
-	m_UIList[3].PreRender(m_pContext);
-	m_UIList[3].PostRender(m_pContext);
-
+	/// <summary>
+	/// 
+	/// </summary>
 	hero.SetViewTransform(m_Cam.GetMatrix());
 	hero.Render(m_pContext);
 

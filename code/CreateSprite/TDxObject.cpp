@@ -177,8 +177,11 @@ void     TDxObject::PreRender(ID3D11DeviceContext* pContext)
 	pContext->PSSetShader(m_pShader->m_pPixelShader, nullptr, 0);
 }
 void     TDxObject::PostRender(ID3D11DeviceContext* pContext)
-{
+{	
 	pContext->Draw(m_vListScreen.size(), 0);
+}
+void     TDxObject::InRender(ID3D11DeviceContext* pContext)
+{
 }
 void     TDxObject::Render(ID3D11DeviceContext* pContext)
 {

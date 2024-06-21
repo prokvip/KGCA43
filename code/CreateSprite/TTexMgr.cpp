@@ -16,7 +16,15 @@ bool TTexture::Load(std::wstring filename)
 
 	if (FAILED(hr))
 	{
-		return false;
+		hr =DirectX::CreateDDSTextureFromFile(
+				m_pd3dDevice,
+				filename.c_str(),
+				m_pTexture.GetAddressOf(),//&m_pTexture
+				m_pSRV.GetAddressOf());
+		if (FAILED(hr))
+		{
+			return false;
+		}		
 	}
 
 	ID3D11Texture2D* pTex = (ID3D11Texture2D*)m_pTexture.Get();

@@ -12,6 +12,7 @@
 #include <wrl.h> // windows runtime c++ template library
 //../../dxtk/include  기본경로로 설정한다. (속성)
 #include "WicTextureLoader.h"
+#include "DDSTextureLoader.h"
 #include "TMath.h"
 #include <atlconv.h> // A2W
 

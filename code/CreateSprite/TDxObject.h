@@ -60,6 +60,7 @@ public:
 
 	virtual void     Frame();
 	virtual void     PreRender(ID3D11DeviceContext* pContext);
+	virtual void     InRender(ID3D11DeviceContext* pContext);
 	virtual void     Render(ID3D11DeviceContext* pContext);
 	virtual void     PostRender(ID3D11DeviceContext* pContext);
 	virtual void     Release();

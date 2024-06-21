@@ -1,10 +1,13 @@
 #pragma once
 #include "TDxObject.h"
 #include "TCollision.h"
+#include "TSprite.h"
 // 씬에 배치 가능한 오브젝트 
 // 움직임 기능이 없는 오브젝트
 class TActor : public TDxObject
 {
+public:
+	TSprite*			m_pSprite = nullptr;
 	//TDxObject   m_dxObject;
 	// 포함관계
 	// 1) 렌더링 관리 컴포넌트
@@ -41,6 +44,8 @@ public:
 	virtual void	SetViewTransform(T_Math::FMatrix& matCamera);
 	virtual TActor&	SetWorldTransform();
 	virtual TActor&	SetWorldTransform(T_Math::FMatrix& m);
+
+	virtual void    Render(ID3D11DeviceContext* pContext) override;
 };
 
 

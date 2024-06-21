@@ -1,9 +1,31 @@
 #include "TActor.h"
+void    TActor::Render(ID3D11DeviceContext* pContext)
+{
+	TDxObject::PreRender(pContext);
+	if (m_pSprite != nullptr && m_pSprite->m_pSRVList.size() > 1)
+	{
+		pContext->PSSetShaderResources(0, 1,
+			m_pSprite->GetSRV().GetAddressOf());
+	}
+	TDxObject::PostRender(pContext);
+}
 void    TActor::Frame()
 {
 	m_matWorld = m_matCenter * m_matScale * m_matRotate * m_matTrans;
 	SetWorldTransform();
 	m_vOffset = { 0.0f,0.0f };
+
+	if (m_pSprite != nullptr)
+	{
+		m_pSprite->Update();	
+		if (m_pSprite->m_vList.size() > 0)
+		{
+			for (int iV = 0; iV < 6; iV++)
+			{
+				m_vList[iV].t = m_pSprite->m_vList[iV].t;
+			}
+		}
+	}	
 }
 void    TActor::SetTrans(T_Math::FVector2& p)
 {

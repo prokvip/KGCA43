@@ -1,110 +1,46 @@
 #include "TSprite.h"
 
-
-void  TSprite::LoadA(std::wstring path)
+ComPtr<ID3D11ShaderResourceView> TSprite::GetSRV()
+{
+	return m_pSRVList[m_iAnimIndex];
+}
+ComPtr<ID3D11ShaderResourceView> TSprite::GetSRV(UINT index)
+{
+	return m_pSRVList[index];
+}
+void  TSprite::Load( std::wstring* iconList, UINT iCount )
 {	
-	for (int iTex = 0; iTex < 10; iTex++)
-	{
-		std::wstring texFileName = path + L"¼ýÀÚ";
-		texFileName += std::to_wstring(iTex) + L".png";
-		TTexture* pTex = I_Tex.Load(texFileName).get();
-		m_pSRVList.push_back(pTex->m_pSRV);
-	}
-}
-void  TSprite::LoadB(std::wstring path)
-{
-	std::wstring iconList[] =
-	{
-		L"../../data/Icons/S_KBSJoint.PNG",
-		L"../../data/Icons/S_KHinge.PNG",
-		L"../../data/Icons/S_KPrismatic.PNG",
-		L"../../data/Icons/S_LevelSequence.PNG",
-		L"../../data/Icons/S_NavP.PNG",
-
-		L"../../data/Icons/S_Note.PNG",
-		L"../../data/Icons/S_Pawn.PNG",
-		L"../../data/Icons/S_Player.PNG",
-		L"../../data/Icons/S_PortalActorIcon2.PNG",
-		L"../../data/Icons/S_RadForce.PNG",
-
-		L"../../data/Icons/S_SkyAtmosphere.PNG",
-		L"../../data/Icons/S_SceneCaptureIcon.PNG",
-		L"../../data/Icons/S_LevelSequence.PNG",
-		L"../../data/Icons/S_SkyLight.PNG",
-		L"../../data/Icons/S_Solver.PNG",
-
-		L"../../data/Icons/S_TargetPoint.PNG",
-		L"../../data/Icons/S_Terrain.PNG",
-		L"../../data/Icons/S_Thruster.PNG",
-		L"../../data/Icons/S_VectorFieldVol.PNG",
-	};
-
-
-	UINT iNumberIcons = _countof(iconList);
-	std::wstring texPath;
-	texPath = L"../../data/Icons/";
-	for (int iTex = 0; iTex < iNumberIcons; iTex++)
+	for (int iTex = 0; iTex < iCount; iTex++)
 	{
 		TTexture* pTex = I_Tex.Load(iconList[iTex]).get();
-		m_pSRVList.push_back(pTex->m_pSRV);
+		if (pTex)
+		{
+			m_pSRVList.push_back(pTex->m_pSRV);
+		}
 	}
+	m_fTexCounter = iCount;
 }
-void  TSprite::LoadC(std::wstring path)
+
+void  TSprite::Load(std::wstring path, UINT xSize, UINT ySize)
 {
-	std::wstring iconList[] =
-	{
-		L"../../data/Effect/bla00.dds",
-		L"../../data/Effect/bla01.dds",
-		L"../../data/Effect/bla02.dds",
-		L"../../data/Effect/bla03.dds",
-		L"../../data/Effect/bla04.dds",
-		L"../../data/Effect/bla05.dds",
-		L"../../data/Effect/bla06.dds",
-		L"../../data/Effect/bla07.dds",
-		L"../../data/Effect/bla08.dds",
-		L"../../data/Effect/bla09.dds",
-		L"../../data/Effect/bla10.dds",
-		L"../../data/Effect/bla11.dds",
-		L"../../data/Effect/bla12.dds",
-		L"../../data/Effect/bla13.dds",
-		L"../../data/Effect/bla14.dds",
-		L"../../data/Effect/bla15.dds",
-		L"../../data/Effect/bla16.dds",
-		L"../../data/Effect/bla17.dds",
-		L"../../data/Effect/bla18.dds",
+	m_pTex = I_Tex.Load(path).get();
+	m_pSRVList.push_back(m_pTex->m_pSRV);
 
-		L"../../data/Effect/bla19.dds",
-		L"../../data/Effect/bla20.dds",
-		L"../../data/Effect/bla21.dds",
-		L"../../data/Effect/bla22.dds",
-		L"../../data/Effect/bla23.dds",
-	};
-	UINT iNumberIcons = _countof(iconList);
-	for (int iTex = 0; iTex < iNumberIcons; iTex++)
+	UINT wSize = m_pTex->td.Width;
+	UINT hSize = m_pTex->td.Height;
+	m_fTexCounter = xSize * ySize;
+	UINT offsetX = wSize / xSize;;
+	UINT offsetY = hSize / xSize;;
+	for (int iRow = 0; iRow < ySize; iRow++)
 	{
-		TTexture* pTex = I_Tex.Load(iconList[iTex]).get();
-		m_pSRVList.push_back(pTex->m_pSRV);
-	}
-}
-void  TSprite::LoadD(std::wstring path)
-{
-	pTex = I_Tex.Load(path).get();
-	m_pSRVList.push_back(pTex->m_pSRV);
-
-	UINT wSize = pTex->td.Width;
-	UINT hSize = pTex->td.Height;
-
-	UINT Count = 4;
-	for (int iRow = 0; iRow < Count; iRow++)
-	{
-		for (int iCol = 0; iCol < Count; iCol++)
+		for (int iCol = 0; iCol < xSize; iCol++)
 		{
 			RECT rt;
 			tRECT tRT;
-			rt.left = iCol * pTex->td.Width/ Count;
-			rt.top = iRow * pTex->td.Width / Count;
-			rt.right = rt.left  + pTex->td.Width / Count;
-			rt.bottom = rt.top + pTex->td.Width / Count;
+			rt.left		= iCol * offsetX;
+			rt.top		= iRow * offsetY;
+			rt.right	= rt.left  + offsetX;
+			rt.bottom	= rt.top + offsetY;
 			m_pUVList.push_back(rt);
 
 			tRT.left = (float)rt.left / (float)wSize;
@@ -115,49 +51,41 @@ void  TSprite::LoadD(std::wstring path)
 			m_tUVList.push_back(tRT);
 		}
 	}
+	m_vList.resize(6);
 }
 
 void   TSprite::Update()
 {
-	UINT wSize = pTex->td.Width;
-	UINT hSize = pTex->td.Height;
-	static int m_iAnimIndex = 0;
-	static float fAnimationTimer = 0.0f;
-	fAnimationTimer += g_fSecondPerFrame;
-	float ftime = 1.0f / (4.0f * 4.0f);
-	if (fAnimationTimer > ftime)
+	m_fPlayTimer += g_fSecondPerFrame;
+	if (m_fPlayTimer > m_fChangeTime)
 	{
 		m_iAnimIndex++;
-		fAnimationTimer -= ftime;
-		if (m_iAnimIndex >= (4.0f * 4.0f-1))
+		m_fPlayTimer -= m_fChangeTime;
+		if (m_iAnimIndex >= m_fTexCounter)
 		{
 			m_iAnimIndex = 0;
 		}
 	}
 
-	m_vList[0].t.X = m_tUVList[m_iAnimIndex].left;
-	m_vList[0].t.Y = m_tUVList[m_iAnimIndex].top;
-	m_vList[1].t.X = m_tUVList[m_iAnimIndex].right;
-	m_vList[1].t.Y = m_tUVList[m_iAnimIndex].top;
-	m_vList[2].t.X = m_tUVList[m_iAnimIndex].right;
-	m_vList[2].t.Y = m_tUVList[m_iAnimIndex].bottom;
-
-	m_vList[3].t = m_vList[2].t;
-
-	m_vList[4].t.X = m_tUVList[m_iAnimIndex].left;
-	m_vList[4].t.Y = m_tUVList[m_iAnimIndex].bottom;
-
-	m_vList[5].t = m_vList[0].t;
-
-
-
-	/*if (m_pVertexBuffer != nullptr)
+	if (m_tUVList.size() > 0)
 	{
-		m_pContext->UpdateSubresource(m_pVertexBuffer, 0, NULL, &m_vListNDC.at(0), 0, 0);
-	}*/
+		m_vList[0].t.X = m_tUVList[m_iAnimIndex].left;
+		m_vList[0].t.Y = m_tUVList[m_iAnimIndex].top;
+		m_vList[1].t.X = m_tUVList[m_iAnimIndex].right;
+		m_vList[1].t.Y = m_tUVList[m_iAnimIndex].top;
+		m_vList[2].t.X = m_tUVList[m_iAnimIndex].right;
+		m_vList[2].t.Y = m_tUVList[m_iAnimIndex].bottom;
+
+		m_vList[3].t = m_vList[2].t;
+
+		m_vList[4].t.X = m_tUVList[m_iAnimIndex].left;
+		m_vList[4].t.Y = m_tUVList[m_iAnimIndex].bottom;
+
+		m_vList[5].t = m_vList[0].t;
+	}
 }
 
 TSprite::TSprite()
 {
-	m_vList.resize(6);
+	
 }
