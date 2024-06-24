@@ -44,6 +44,7 @@ HRESULT  Sample::SetAlphaBlendState()
 	}
 	return hr;
 }
+
 void   Sample::Init()
 {
 	I_Sound.Set(nullptr, nullptr);
