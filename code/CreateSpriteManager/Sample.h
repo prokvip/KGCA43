@@ -24,7 +24,7 @@ public:
 	void Up()
 	{
 		T_Math::FVector2 vCamDirection = { 0.0f, 1.0f };
-		m_vCameraPos = m_vCameraPos + vCamDirection * 100.0f * g_fSecondPerFrame;
+		m_vCameraPos = m_vCameraPos + vCamDirection * 5.0f * g_fSecondPerFrame;
 	}
 	void Down()
 	{
@@ -42,6 +42,7 @@ public:
 };
 class Sample : public TCore
 {
+	UINT		m_iLevel = 0;
 	using T_Effect = std::shared_ptr<TSprite>;
 	std::vector<T_Effect>  m_EffectList;
 
@@ -56,6 +57,8 @@ class Sample : public TCore
 	
 	ComPtr<ID3D11BlendState> m_pAlphaBlend=nullptr;
 	HRESULT SetAlphaBlendState();
+
+	void    LevelUp(UINT iNpc);
 public:
 	void   Init() override;
 	void   Frame() override;
