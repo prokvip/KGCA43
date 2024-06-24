@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="TCamera" Collapsed="true">
+    <Position X="14.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAABAAAAAAAAAACAAAAAAAAAAACACAAAQAABM=</HashCode>
+      <FileName>Sample.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sample" Collapsed="true">
+    <Position X="6.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAABIAAEAAAACAAEAAAIAAAAAAAAAACBCiABAAACE=</HashCode>
+      <FileName>Sample.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TActor" Collapsed="true">
+    <Position X="1.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAEIAABCsAAAAAECAAAEAAAAAAMAgAAIBFQggCAGAE=</HashCode>
+      <FileName>TActor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TSingleton&lt;T&gt;" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TBaseManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TResource" Collapsed="true">
+    <Position X="8" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAABAAAAAAAAAAAAAAACAAAAAAAABAAAAA=</HashCode>
+      <FileName>TBaseManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TBaseManager&lt;T, S&gt;" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAgAAAAAAAhAAAAAAAAAAEBAAACgADAAAACBAAAAA=</HashCode>
+      <FileName>TBaseManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TCollision" Collapsed="true">
+    <Position X="16.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>TCollision.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TCore" Collapsed="true">
+    <Position X="6.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAQCAIAAAAAAAQAAAAAAAAAAhCAARABACABCIAEU=</HashCode>
+      <FileName>TCore.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TDevice" Collapsed="true">
+    <Position X="9.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CRAAAAAAAAAAICAAAAAAAAAAAAAAAAAEAAAACAgAAAA=</HashCode>
+      <FileName>TDevice.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TDxObject" Collapsed="true">
+    <Position X="1.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AJAECACAAIAAAAAgAAAAAAAAAAAhgEAAARBAiBgCCBE=</HashCode>
+      <FileName>TDxObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="THero" Collapsed="true">
+    <Position X="2.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAAAAAAAAAAAAAAIAAAAAAAAAAAACADAAAAAAAA=</HashCode>
+      <FileName>THero.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TInput" Collapsed="true">
+    <Position X="12.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgCAEAAAAAAgAAAAAAAAAAAAAEAAAAAACABAAE=</HashCode>
+      <FileName>TInput.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TNpc" Collapsed="true">
+    <Position X="0.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAE=</HashCode>
+      <FileName>TNpc.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TPawn" Collapsed="true">
+    <Position X="1.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TPawn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TShader" Collapsed="true">
+    <Position X="8" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAgAAAAAAABAAAAAAAAAAAAQAICAAAAAAAIBAAAAA=</HashCode>
+      <FileName>TShaderMgr.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TShaderMgr" Collapsed="true">
+    <Position X="5.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TShaderMgr.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TSound" Collapsed="true">
+    <Position X="5.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgggAAAAAAAAAAAAAAAAAAAAgQAECACoBQiMBAAAAE=</HashCode>
+      <FileName>TSound.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TSoundMgr" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAABAAEBAAAAE=</HashCode>
+      <FileName>TSound.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TSprite" Collapsed="true">
+    <Position X="14.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIwAgACAgAAAAQCAAQACAAAAAAABAACAAAAAAQACAAA=</HashCode>
+      <FileName>TSprite.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TBaseCore" Collapsed="true">
+    <Position X="6.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABACABAAAAE=</HashCode>
+      <FileName>TStd.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TTexture" Collapsed="true">
+    <Position X="10.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAgAAAAIAABAAgAAAAAAAAAAAACAAAAAAAABAAQAA=</HashCode>
+      <FileName>TTexMgr.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TTexMgr" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TTexMgr.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TTimer" Collapsed="true">
+    <Position X="16.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAwAAAABIAAACAAAAACQAABAQACAAAEABE=</HashCode>
+      <FileName>TTimer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TWindow" Collapsed="true">
+    <Position X="9.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAACAAAAQAEAAAABAAAAAAAAAAAAAAAAAkAAQ=</HashCode>
+      <FileName>TWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TWriterFont" Collapsed="true">
+    <Position X="9" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAwAAAAAAACAAAAAAAAAAgAAAAAJAKABAAAIE=</HashCode>
+      <FileName>TWriterFont.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="T_Math::FMatrix" Collapsed="true">
+    <Position X="0.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAACAAIQAAAAAAAAAAAAAEAgAAAAAAA=</HashCode>
+      <FileName>TMath.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="T_Math::FVector2" Collapsed="true">
+    <Position X="3.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAEAAAAQBACAAAAAAAAEAiAAAAACA=</HashCode>
+      <FileName>TMath.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="T_Math::FVector4" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAIYAE=</HashCode>
+      <FileName>TMath.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="TVertex" Collapsed="true">
+    <Position X="14.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAEQAAAQAAAA=</HashCode>
+      <FileName>TDxObject.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="tRECT" Collapsed="true">
+    <Position X="12.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAAAAAAgAAAAIAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>TSprite.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="T_Math::float2" Collapsed="true">
+    <Position X="3.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TMath.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="T_Math::float3x3" Collapsed="true">
+    <Position X="0.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TMath.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="KeyState" Collapsed="true">
+    <Position X="12.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAgAAAAAAAAAAAAAAgAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TInput.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>
