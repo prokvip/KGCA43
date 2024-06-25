@@ -1,6 +1,7 @@
 #pragma once
 #include "TScene.h"
-class TSceneTitle
+class TSceneTitle : public TScene
 {
+
 };
 

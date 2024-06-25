@@ -1,5 +1,5 @@
 #include "TCore.h"
-
+bool		 g_bGameRun = true;
 
 HRESULT  TCore::SetAlphaBlendState()
 {
@@ -37,10 +37,10 @@ HRESULT  TCore::SetAlphaBlendState()
 	bd.RenderTarget[0].RenderTargetWriteMask =
 		D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	hr = m_pd3dDevice->CreateBlendState(&bd, m_pAlphaBlend.GetAddressOf());
+	hr = TDevice::m_pd3dDevice->CreateBlendState(&bd, m_pAlphaBlend.GetAddressOf());
 	if (SUCCEEDED(hr))
 	{
-		m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
+		TDevice::m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
 	}
 	return hr;
 }
@@ -71,16 +71,16 @@ void   TCore::GamePostFrame()
 void  TCore::GamePreRender()
 {
 	float clearColor[] = { 0.3640f, 0.4543545322f, 0.645672321f, 1.0f };
-	m_pContext->ClearRenderTargetView(m_pRTV, clearColor);
+	TDevice::m_pContext->ClearRenderTargetView(TDevice::m_pRTV, clearColor);
 
-	m_pContext->OMSetRenderTargets(1, &m_pRTV, nullptr);
-	m_pContext->RSSetViewports(1, &m_ViewPort);
-	m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
+	TDevice::m_pContext->OMSetRenderTargets(1, &TDevice::m_pRTV, nullptr);
+	TDevice::m_pContext->RSSetViewports(1, &TDevice::m_ViewPort);
+	TDevice::m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
 }
 void  TCore::GamePostRender()
 {
 	m_font.DrawText(m_Timer.m_csBuffer, { 0,0 });
-	m_pSwapChain->Present(0, 0);
+	TDevice::m_pSwapChain->Present(0, 0);
 }
 void   TCore::GameRender()
 {
@@ -101,8 +101,8 @@ void   TCore::GameInit()
 	// 그래픽 처리를 위한 초기화 작업
 	if (TDevice::CreateDevice(m_hWnd))
 	{
-		I_Tex.Set(m_pd3dDevice.Get(), m_pContext);
-		I_Shader.Set(m_pd3dDevice.Get(), m_pContext);
+		I_Tex.Set(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext);
+		I_Shader.Set(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext);
 		SetAlphaBlendState();
 
 		I_Sprite.Load(L"../../data/Sprite/SpriteInfo.txt");
@@ -110,7 +110,7 @@ void   TCore::GameInit()
 		m_font.Init();
 		// 3D 백버퍼를 얻어서 전달해야 한다.
 		IDXGISurface* dxgiSurface = nullptr;
-		m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface),
+		TDevice::m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface),
 			(void**)&dxgiSurface);
 		m_font.ResetDevice(dxgiSurface);
 		dxgiSurface->Release();
@@ -120,7 +120,7 @@ void   TCore::GameInit()
 void   TCore::GameRun()
 {
 	GameInit();
-	while(m_bGameRun)
+	while(g_bGameRun)
 	{
 		if(TWindow::WindowRun()==false)
 		{
@@ -141,5 +141,5 @@ void   TCore::GameRelease()
 	I_Tex.Release();
 
 	m_font.Release();
-	DeleteDevice();
+	TDevice::DeleteDevice();
 }

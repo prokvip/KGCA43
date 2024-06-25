@@ -1,5 +1,8 @@
 #pragma once
 #include "TBaseManager.h"
+#include "WicTextureLoader.h"
+#include "DDSTextureLoader.h"
+
 class TTexture : public TResource
 {
 	ID3D11Device* m_pd3dDevice = nullptr;

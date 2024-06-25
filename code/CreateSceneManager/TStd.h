@@ -6,29 +6,24 @@
 #include <list>
 #include <memory>
 #include <algorithm>
-#include <d3d11.h>
-#include <d3dcompiler.h> 
 #include <tchar.h>
-#include <wrl.h> // windows runtime c++ template library
-//../../dxtk/include  기본경로로 설정한다. (속성)
-#include "WicTextureLoader.h"
-#include "DDSTextureLoader.h"
-#include "TMath.h"
 #include <atlconv.h> // A2W
 
-#pragma comment ( lib, "d3dcompiler.lib")
+#include "TMath.h"
+#include "TDevice.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTK_D.lib")
 #else
 #pragma comment(lib, "DirectXTK_R.lib")
 #endif
-using namespace Microsoft::WRL;
+
 
 extern UINT		g_xClientSize;
 extern UINT		g_yClientSize;
 extern double   g_fSecondPerFrame;
 extern double   g_fGameTime;
+extern bool     g_bGameRun;
 
 typedef std::basic_string<TCHAR>				T_STR;
 typedef std::basic_string<wchar_t>				W_STR; // std::wstring

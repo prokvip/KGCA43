@@ -1,4 +1,10 @@
 #include "TDevice.h"
+#include "TStd.h"
+ComPtr<ID3D11Device>		TDevice::m_pd3dDevice = nullptr;
+ID3D11DeviceContext*		TDevice::m_pContext = nullptr;
+IDXGISwapChain*				TDevice::m_pSwapChain = nullptr;
+ID3D11RenderTargetView*		TDevice::m_pRTV = nullptr;
+D3D11_VIEWPORT				TDevice::m_ViewPort;
 
 bool  TDevice::CreateDevice(HWND hWnd)
 {
@@ -57,7 +63,7 @@ bool  TDevice::CreateDevice(HWND hWnd)
 		}
 	}
 	
-	SetViewport();
+	TDevice::SetViewport();
 
 	return true;
 }

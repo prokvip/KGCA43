@@ -36,6 +36,9 @@
     <ClCompile Include="TScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="TSceneTitle.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sample.h" />
@@ -69,6 +72,9 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="TScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneTitle.h">
       <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>

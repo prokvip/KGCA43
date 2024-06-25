@@ -1,26 +1,26 @@
 #pragma once
-#include "TWindow.h"
-#include <d3d11.h> // DirectX 기능
+#include <d3d11.h>
+#include <d3dcompiler.h> 
+#include <wrl.h> // windows runtime c++ template library
+//../../dxtk/include  기본경로로 설정한다. (속성)
 //1번방법 : 속성->링커->입력->추가종속성->d3d11.lib 추가
 //2번방법
 #pragma comment ( lib, "d3d11.lib")
+#pragma comment ( lib, "d3dcompiler.lib")
 
-class TDevice : public TWindow
+using namespace Microsoft::WRL;
+
+class TDevice 
 {
 public:
-	//할당, 생성
-	ComPtr<ID3D11Device>   m_pd3dDevice = nullptr;
-	//ID3D11Device*			m_pd3dDevice = nullptr;
-	//관리, 운영
-	ID3D11DeviceContext*	m_pContext = nullptr;
+	static ComPtr<ID3D11Device>		m_pd3dDevice;
+	static ID3D11DeviceContext*		m_pContext;
+	static IDXGISwapChain*			m_pSwapChain;
+	static ID3D11RenderTargetView*	m_pRTV ;
 
-	IDXGISwapChain*			m_pSwapChain = nullptr;
-	ID3D11RenderTargetView* m_pRTV = nullptr;
-
-	D3D11_VIEWPORT			m_ViewPort;
+	static D3D11_VIEWPORT			m_ViewPort;
 public:
-	bool			CreateDevice(HWND hWnd);
-	void			DeleteDevice();
-
-	void            SetViewport();
+	static bool			CreateDevice(HWND hWnd);
+	static void			DeleteDevice();
+	static void         SetViewport();
 };
