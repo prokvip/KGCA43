@@ -44,30 +44,27 @@ HRESULT  Sample::SetAlphaBlendState()
 	}
 	return hr;
 }
-
-void   Sample::Init()
+void   Sample::SetSound()
 {
 	I_Sound.Set(nullptr, nullptr);
-	m_pBGSound  = I_Sound.Load(L"../../data/sound/romance.mid");
+	m_pBGSound = I_Sound.Load(L"../../data/sound/romance.mid");
 	if (m_pBGSound)
 	{
 		m_pBGSound->Play(true);
 	}
 	m_pEffectSound = I_Sound.Load(L"../../data/sound/GunShot.mp3").get();
 
-	SetAlphaBlendState();
-
-
-	I_Sprite.Load(L"../../data/Sprite/SpriteInfo.txt");
-
+}
+void   Sample::SetUI()
+{
 	RECT rtBk = { -1000, -1000, 1000.0f, 1000.0f };
-	objScreen.Create(m_pd3dDevice.Get(), m_pContext, rtBk, 
+	objScreen.Create(m_pd3dDevice.Get(), m_pContext, rtBk,
 		L"../../data/1234.jpg",
 		L"../../data/shader/Default.txt");
 	objScreen.m_pSprite = nullptr;
 
 	m_UIList.resize(4);
-	m_UIList[0].Create(m_pd3dDevice.Get(), m_pContext, { 0, 0, 100, 100 }, 
+	m_UIList[0].Create(m_pd3dDevice.Get(), m_pContext, { 0, 0, 100, 100 },
 		L"../../data/kgca1.png",
 		L"Alphablend.hlsl");
 	m_UIList[0].SetAnim(1.0f, I_Sprite.GetPtr(L"DefalultNumber"));
@@ -78,28 +75,26 @@ void   Sample::Init()
 	m_UIList[1].SetAnim(20.0f, I_Sprite.GetPtr(L"IconList"));
 
 	m_UIList[2].Create(m_pd3dDevice.Get(), m_pContext,
-		{ 700, 500, 800, 600 }, 
+		{ 700, 500, 800, 600 },
 		L"../../data/kgca1.png",
 		L"Alphablend.hlsl");
-	m_UIList[2].SetAnim(1.0f, I_Sprite.GetPtr(L"rtClash"));
+	m_UIList[2].SetAnim(1.0f, I_Sprite.GetPtr(L"Fog"));
 
 	m_UIList[3].Create(m_pd3dDevice.Get(), m_pContext,
 		{ 0, 500, 100, 600 },
 		L"../../data/Effect/slashFire_4x4.png",
 		L"Alphablend.hlsl");
 	m_UIList[3].SetAnim(1.0f, I_Sprite.GetPtr(L"wik"));
-
+}
+void   Sample::SetPlayer()
+{
 	//DrawRect = { 91, 1, 91+40, 1+60 }
-	hero.Create(m_pd3dDevice.Get(), m_pContext, { 380, 270, 420, 330 }, 
+	hero.Create(m_pd3dDevice.Get(), m_pContext, { 380, 270, 420, 330 },
 		L"../../data/Sprite/bitmap1Alpha.bmp",
 		L"Alphablend.hlsl");
 	hero.m_fSpeed = 500.0f;
-
-
-	
-	
-	LevelUp(m_iLevel);
 }
+
 
 void    Sample::LevelUp(UINT iLevel)
 {
@@ -132,11 +127,22 @@ void    Sample::LevelUp(UINT iLevel)
 	}
 	m_iNpcCounter = m_npcList.size();
 }
+void   Sample::Init()
+{
+	I_Sprite.Load(L"../../data/Sprite/SpriteInfo.txt");
+	SetSound();
+	SetAlphaBlendState();
+	SetUI();
+	SetPlayer();
+	LevelUp(m_iLevel);
+}
+
 void    Sample::Frame()
 {
+	I_Sound.Frame();
 	if (m_iNpcCounter <= 9)
 	{
-		if (m_Input.KeyCheck(VK_F1) == KEY_PUSH)
+		if (I_Input.KeyCheck(VK_F1) == KEY_PUSH)
 		{
 			TNpc npc;
 			T_Math::FVector2 pos;
@@ -150,75 +156,35 @@ void    Sample::Frame()
 			m_npcList.push_back(npc);
 			m_iNpcCounter = m_npcList.size();
 		}
-	}
+	}	
 	
+	//T_Math::FVector2 vPos = objScreen.m_vPos;
+	//T_Math::FVector2 vScale = { (float)cos(g_fGameTime) * 0.5f + 0.5f, (float)cos(g_fGameTime) * 0.5f + 0.5f };
+	//T_Math::FVector2 vCenter = { -800.0f * 0.5f, -600.0f * 0.5f };
 
-	if (m_Input.KeyCheck(VK_PRIOR) == KEY_PUSH)
-	{
-		if (m_pEffectSound)
-		{
-			m_pEffectSound->PlayEffect();
-		}
-	}
-
-	if (m_Input.KeyCheck(VK_HOME) == KEY_PUSH)
-	{
-		if (m_pBGSound)
-		{
-			m_pBGSound->Paused();
-		}		
-	}
-	if (m_Input.KeyCheck(VK_INSERT) == KEY_HOLD)
-	{
-		if (m_pBGSound)
-		{
-			m_pBGSound->VolumeUp(g_fSecondPerFrame * 0.3f);
-		}
-		//m_Sound.VolumeUp(g_fSecondPerFrame*0.3f);
-	}
-	if (m_Input.KeyCheck(VK_DELETE) == KEY_HOLD)
-	{
-		if (m_pBGSound)
-		{
-			m_pBGSound->VolumeDown(g_fSecondPerFrame * 0.3f);
-		}
-		//m_Sound.VolumeDown(g_fSecondPerFrame * 0.3f);
-	}
-
-
-	I_Sound.Frame();
-	T_Math::FVector2 vCameraPos;
-	m_Cam.SetTransform(vCameraPos);
-
-
-	T_Math::FVector2 vPos = objScreen.m_vPos;
-	T_Math::FVector2 vScale = { (float)cos(g_fGameTime) * 0.5f + 0.5f, (float)cos(g_fGameTime) * 0.5f + 0.5f };
-	T_Math::FVector2 vCenter = { -800.0f * 0.5f, -600.0f * 0.5f };
-
-	//objScreen.SetCenterMove(vCenter);
-	//objScreen.SetScale(vScale);
-	//objScreen.SetRotate(g_fGameTime);
-	//objScreen.SetTrans(vPos);
+	////objScreen.SetCenterMove(vCenter);
+	////objScreen.SetScale(vScale);
+	////objScreen.SetRotate(g_fGameTime);
+	////objScreen.SetTrans(vPos);
 	objScreen.Frame();
 
 
 	for (auto& ui : m_UIList)
 	{
-		if(TCollision::RectToPt(ui.m_rt, m_Input.m_ptMousePos))
+		if(TCollision::RectToPt(ui.m_rt, I_Input.m_ptMousePos))
 		{
 			T_Math::FVector2 vScale = { 0.7f+(float)cos(g_fGameTime*5) * 0.5f + 0.5f, 
 										0.7f+(float)cos(g_fGameTime*5) * 0.5f + 0.5f };
 			ui.SetScale(vScale);
-			//ui.SetRotate(g_fGameTime);
+			ui.SetRotate(g_fGameTime);
 			ui.SetTrans(ui.m_vPos);
 		}
 		ui.Frame();
 	}
 
-	
-
 	for (auto& npc : m_npcList)
 	{
+		npc.Frame();
 		if (npc.m_bDead==false && TCollision::RectToRect(npc.m_rt, hero.m_rt))
 		{
 			npc.m_bDead = true;
@@ -238,42 +204,12 @@ void    Sample::Frame()
 	}
 
 	m_Cam.Up();
+	hero.Frame();
 	
-	if (m_Input.KeyCheck('W') == KEY_HOLD)
-	{
-		//m_Cam.Up();
-		hero.Move({ 0.0f, -1.0f });
-		//hero.Front();
-	}
-	if (m_Input.KeyCheck('S') == KEY_HOLD)
-	{
-		//m_Cam.Down();
-		hero.Move({ 0.0f, 1.0f });
-		//hero.Back();
-	}
-	
-	if (m_Input.KeyCheck('D') == KEY_HOLD)
-	{
-		hero.Move({ 1.0f, 0.0f });
-		//hero.Right();		
-		//m_Cam.Right(-hero.m_vOffset.X);
-	}	
-	if (m_Input.KeyCheck('A') == KEY_HOLD)
-	{
-		hero.Move({ -1.0f, 0.0f });
-		//hero.Left();		
-	}
 	m_Cam.Left(-hero.m_vOffset.X);// +hero.m_vOffset;
 	m_Cam.m_vCameraPos.Y = m_Cam.m_vCameraPos.Y + -hero.m_vOffset.Y;
 	m_Cam.Frame();
 	
-
-	hero.Frame();
-	
-	/*for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
-	{
-		m_npcList[iNpc].Frame();
-	}*/
 }
 void    Sample::Render() 
 { 		
@@ -291,6 +227,7 @@ void    Sample::Render()
 	//for (auto obj : m_UIList)
 	for ( int iUI = 1; iUI < m_UIList.size(); iUI++)
 	{
+		m_UIList[iUI].UpdateSprite();
 		// 화면 고정( 뷰 변환 생략 )
 		//obj.SetViewTransform(m_Cam.GetMatrix());
 		m_UIList[iUI].Render(m_pContext);
@@ -308,7 +245,7 @@ void    Sample::Render()
 		{
 			if (!obj.m_bDead)
 			{				
-				obj.Frame();
+				obj.UpdateSprite();
 				obj.SetViewTransform(m_Cam.GetMatrix());
 				obj.Render(m_pContext);
 				bGameEnding = false;			

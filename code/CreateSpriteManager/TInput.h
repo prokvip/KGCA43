@@ -9,8 +9,14 @@ enum KeyState
 	KEY_HOLD,		// 누루고 있을 때(이전도 눌렀고 지금도 눌렀다.)
 };
 
-class TInput
+class TInput 
 {
+public:
+	static TInput& Get()
+	{
+		static TInput mgr;
+		return mgr;
+	}
 private:
 	DWORD   g_dwKeyState[256];
 public:	
@@ -21,10 +27,11 @@ public:
 	void    Frame(HWND hWnd);
 	DWORD   KeyCheck(DWORD dwKey);
 	void    KeyTest();
-public:
+private:
 	TInput()
 	{
 		ZeroMemory(&g_dwKeyState, sizeof(DWORD) * 256);
 	}
 };
 
+#define I_Input TInput::Get()

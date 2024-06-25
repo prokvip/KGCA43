@@ -1,4 +1,5 @@
 #include "THero.h"
+#include "TInput.h"
 void   THero::SetVertexData(RECT rt)
 {
 	TDxObject::SetVertexData(rt);
@@ -67,6 +68,36 @@ void  THero::Right()
 	T_Math::FVector2 vOffset = d * m_fSpeed * g_fSecondPerFrame;
 	m_vPos = m_vPos + vOffset;
 	m_vOffset += vOffset;
+}
+void  THero::Frame()
+{	
+	m_vOffset = { 0.0f,0.0f };
+	if (I_Input.KeyCheck('W') == KEY_HOLD)
+	{
+		//m_Cam.Up();
+		Move({ 0.0f, -1.0f });
+		//Front();
+	}
+	if (I_Input.KeyCheck('S') == KEY_HOLD)
+	{
+		//m_Cam.Down();
+		Move({ 0.0f, 1.0f });
+		//Back();
+	}
+
+	if (I_Input.KeyCheck('D') == KEY_HOLD)
+	{
+		Move({ 1.0f, 0.0f });
+		//Right();		
+		//m_Cam.Right(-hero.m_vOffset.X);
+	}
+	if (I_Input.KeyCheck('A') == KEY_HOLD)
+	{
+		Move({ -1.0f, 0.0f });
+		//hero.Left();		
+	}
+
+	TPawn::Frame();
 }
 THero::THero()
 {

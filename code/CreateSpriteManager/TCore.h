@@ -9,7 +9,6 @@
 class TCore : public TDevice, TBaseCore
 {
 public:
-	TInput m_Input;
 	TTimer m_Timer;
 	TWriterFont  m_font;
 	bool		 m_bGameRun = true;

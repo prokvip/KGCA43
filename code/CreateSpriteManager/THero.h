@@ -3,6 +3,7 @@
 class THero : public TPawn
 {
 public:
+	virtual void  Frame() override;
 	virtual void  Front();
 	virtual void  Back();
 	virtual void  Left();

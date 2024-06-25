@@ -42,7 +42,7 @@ public:
 };
 class Sample : public TCore
 {
-	UINT		m_iLevel = 0;
+	UINT		m_iLevel = 1;
 	using T_Effect = std::shared_ptr<TSprite>;
 	std::vector<T_Effect>  m_EffectList;
 
@@ -64,4 +64,8 @@ public:
 	void   Frame() override;
 	void   Render() override;
 	void   Release() override;
+public:
+	void  SetSound();
+	void  SetUI();
+	void  SetPlayer();
 };

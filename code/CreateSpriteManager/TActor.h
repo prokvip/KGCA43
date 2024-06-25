@@ -57,6 +57,7 @@ public:
 	virtual TActor&	SetWorldTransform();
 	virtual TActor&	SetWorldTransform(T_Math::FMatrix& m);
 
+	virtual void    UpdateSprite();
 	virtual void    Render(ID3D11DeviceContext* pContext) override;
 };
 

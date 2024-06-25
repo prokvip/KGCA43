@@ -50,7 +50,40 @@ class TSoundMgr : public TBaseManager<TSound, TSoundMgr>
 	friend class TSingleton<TSoundMgr>;
 public:
 	FMOD::System* m_pFmodSystem = nullptr;
-	void   Frame() { m_pFmodSystem->update(); };
+	void   Frame() { 
+		m_pFmodSystem->update(); 
+		//if (I_Input.KeyCheck(VK_PRIOR) == KEY_PUSH)
+		//{
+		//	if (m_pEffectSound)
+		//	{
+		//		m_pEffectSound->PlayEffect();
+		//	}
+		//}
+
+		//if (I_Input.KeyCheck(VK_HOME) == KEY_PUSH)
+		//{
+		//	if (m_pBGSound)
+		//	{
+		//		m_pBGSound->Paused();
+		//	}
+		//}
+		//if (I_Input.KeyCheck(VK_INSERT) == KEY_HOLD)
+		//{
+		//	if (m_pBGSound)
+		//	{
+		//		m_pBGSound->VolumeUp(g_fSecondPerFrame * 0.3f);
+		//	}
+		//	//m_Sound.VolumeUp(g_fSecondPerFrame*0.3f);
+		//}
+		//if (I_Input.KeyCheck(VK_DELETE) == KEY_HOLD)
+		//{
+		//	if (m_pBGSound)
+		//	{
+		//		m_pBGSound->VolumeDown(g_fSecondPerFrame * 0.3f);
+		//	}
+		//	//m_Sound.VolumeDown(g_fSecondPerFrame * 0.3f);
+		//}
+	};
 	void   Render() {};
 	void   Release() {	
 		TBaseManager<TSound, TSoundMgr>::Release();

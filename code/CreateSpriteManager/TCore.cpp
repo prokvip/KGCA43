@@ -9,7 +9,7 @@ void   TCore::GamePreFrame()
 	m_Timer.Frame();
 	if (m_isActive)
 	{
-		m_Input.Frame(m_hWnd);
+		I_Input.Frame(m_hWnd);
 	}
 }
 void   TCore::GameFrame()
@@ -44,8 +44,8 @@ void   TCore::GameRender()
 void   TCore::DebugRender()
 {
 	/*m_Timer.DebugTimer();
-	m_Input.DebugMousePos();
-	m_Input.KeyTest();*/
+	I_Input.DebugMousePos();
+	I_Input.KeyTest();*/
 }
 void   TCore::GameInit()
 {

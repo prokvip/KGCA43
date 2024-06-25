@@ -12,21 +12,14 @@ void    TActor::Frame()
 {
 	m_matWorld = m_matCenter * m_matScale * m_matRotate * m_matTrans;
 	SetWorldTransform();
-	m_vOffset = { 0.0f,0.0f };
+	//m_vOffset = { 0.0f,0.0f };
 
+	
+}
+void    TActor::UpdateSprite()
+{
 	if (m_pSprite != nullptr)
 	{
-		/*data.m_fPlayTimer += g_fSecondPerFrame;
-		if (data.m_fPlayTimer > m_fChangeTime)
-		{
-			data.m_iAnimIndex++;
-			data.m_fPlayTimer -= m_fChangeTime;
-			if (data.m_iAnimIndex >= m_fTexCounter)
-			{
-				data.m_iAnimIndex = 0;
-			}
-		}*/
-
 		m_pSprite->Update(m_SpriteData);
 		if (m_pSprite->m_vList.size() > 0)
 		{
@@ -35,7 +28,7 @@ void    TActor::Frame()
 				m_vList[iV].t = m_pSprite->m_vList[iV].t;
 			}
 		}
-	}	
+	}
 }
 void    TActor::SetTrans(T_Math::FVector2& p)
 {
