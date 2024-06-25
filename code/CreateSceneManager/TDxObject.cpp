@@ -53,7 +53,7 @@ void   TDxObject::SetVertexData(RECT rt)
 					T_Math::FVector4(1, 1, 1, 1),
 					T_Math::FVector2(0, 1) };
 	m_vListScreen[5].p = T_Math::FVector2(rt.left, rt.top);
-	m_vListScreen[5].c = T_Math::FVector4(0, 0, 1, 1);
+	m_vListScreen[5].c = T_Math::FVector4(1, 1, 1, 1),
 	m_vListScreen[5].t = T_Math::FVector2(0, 0);
 
 	// 화면좌표계를  NDC좌표 변경한다.

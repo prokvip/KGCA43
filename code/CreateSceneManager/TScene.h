@@ -7,6 +7,9 @@
 class TScene
 {
 public:
+	bool	m_bSceneChange = false;
+	std::shared_ptr<TSound>				m_pBGSound = nullptr;
+public:
 	virtual void    Init() {};
 	virtual void    Frame() {};
 	virtual void    Render() {};

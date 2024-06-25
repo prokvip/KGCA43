@@ -2,12 +2,11 @@
 #include "TStd.h"
 #include "TInput.h"
 void   TSceneIngame::SetSound()
-{
-	I_Sound.Set(nullptr, nullptr);
+{	
 	m_pBGSound = I_Sound.Load(L"../../data/sound/romance.mid");
 	if (m_pBGSound)
 	{
-		m_pBGSound->Play(true);
+		//m_pBGSound->Play(true);
 	}
 	m_pEffectSound = I_Sound.Load(L"../../data/sound/GunShot.mp3").get();
 

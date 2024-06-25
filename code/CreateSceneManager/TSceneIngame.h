@@ -6,8 +6,7 @@ public:
 	UINT		m_iLevel = 1;
 	using T_Effect = std::shared_ptr<TSprite>;
 	std::vector<T_Effect>  m_EffectList;
-
-	std::shared_ptr<TSound>				m_pBGSound = nullptr;
+	
 	TSound* m_pEffectSound = nullptr;
 	TCamera				m_Cam;
 	TActor				objScreen; // »ï°¢Çü

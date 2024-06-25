@@ -105,6 +105,7 @@ void   TCore::GameInit()
 		I_Shader.Set(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext);
 		SetAlphaBlendState();
 
+		I_Sound.Set(nullptr, nullptr);
 		I_Sprite.Load(L"../../data/Sprite/SpriteInfo.txt");
 
 		m_font.Init();

@@ -219,6 +219,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\data\Sprite\SpriteInfo.txt" />
+    <Text Include="intro.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

@@ -83,6 +83,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\data\Sprite\SpriteInfo.txt" />
+    <Text Include="intro.txt">
+      <Filter>Scene</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scene">

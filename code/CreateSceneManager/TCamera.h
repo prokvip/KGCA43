@@ -21,9 +21,9 @@ public:
 	void Up()
 	{
 		T_Math::FVector2 vCamDirection = { 0.0f, 1.0f };
-		m_vCameraPos = m_vCameraPos + vCamDirection * 5.0f * g_fSecondPerFrame;
+		m_vCameraPos = m_vCameraPos + vCamDirection * 15.0f * g_fSecondPerFrame;
 	}
-	void Down()
+	void Down(
 	{
 		T_Math::FVector2 vCamDirection = { 0.0f, -1.0f };
 		m_vCameraPos = m_vCameraPos + vCamDirection * 100.0f * g_fSecondPerFrame;
