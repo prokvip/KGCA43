@@ -102,16 +102,20 @@ void  TSprite::Load(std::wstring path, UINT xSize, UINT ySize)
 	m_vList.resize(6);
 }
 
-void   TSprite::Update(TSpriteData& data)
+void   TSprite::Update(TSpriteData& data, float fReverse )
 {
 	data.m_fPlayTimer += g_fSecondPerFrame;
 	if (data.m_fPlayTimer > data.m_fChangeTime)
 	{
-		data.m_iAnimIndex++;
+		data.m_iAnimIndex = data.m_iAnimIndex + fReverse;
 		data.m_fPlayTimer -= data.m_fChangeTime;
 		if (data.m_iAnimIndex >= data.m_fTexCounter)
 		{
 			data.m_iAnimIndex = 0;
+		}
+		if (data.m_iAnimIndex < 0)
+		{
+			data.m_iAnimIndex = data.m_fTexCounter-1;
 		}
 	}
 	if (m_tUVList.size() > 0)

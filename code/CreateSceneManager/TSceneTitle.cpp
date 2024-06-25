@@ -59,13 +59,13 @@ void    TSceneTitle::Frame()
 	}
 	objScreen.UpdateVertexBuffer();
 
-	if (alpha > 2.0f && m_bFadeOut ==false)
+	if (alpha > 0.5f && m_bFadeOut ==false)
 	{
 		m_bFadeOut = true;
 		alpha = 0.0f;
 	}
 
-	if (alpha > 2.0f && m_bFadeOut)
+	if (alpha > 0.5f && m_bFadeOut)
 	{
 		m_bSceneChange = true;
 		m_pBGSound->Stop();

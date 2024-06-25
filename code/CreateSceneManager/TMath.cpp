@@ -2,6 +2,13 @@
 namespace T_Math
 {
 	FVector2 FVector2::ZeroVector2(0.0f, 0.0f);
+	FVector2 FVector2::operator -(void)
+	{
+		FVector2 ret = *this;
+		ret.X *= -1.0f;
+		ret.Y *= -1.0f;
+		return ret;
+	}
 	FVector2 FVector2::operator *(const FMatrix& matrix)
 	{
 		FVector2 ret;

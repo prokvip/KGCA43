@@ -27,6 +27,7 @@ public:
 	TTexture*		m_pTex = nullptr;
 public:
 	TSpriteData		m_SpriteData;
+	
 public:
 	std::vector<ComPtr<ID3D11ShaderResourceView>> m_pSRVList;
 	std::vector<RECT> m_pUVList;
@@ -40,7 +41,7 @@ public:
 		m_SpriteData.m_fAnimationTimer = fAnimationTimer;
 		m_SpriteData.m_fChangeTime = m_SpriteData.m_fAnimationTimer / m_SpriteData.m_fTexCounter;
 	}
-	void   Update(TSpriteData& data);
+	void   Update(TSpriteData& data, float fReverse=1.0f);
 public:
 	void  Load(STRING_VECTOR& iconList);
 	void  Load(std::wstring path, RECT_ARRAY& list);

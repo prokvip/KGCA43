@@ -9,6 +9,7 @@ class TScene
 public:
 	bool	m_bSceneChange = false;
 	std::shared_ptr<TSound>				m_pBGSound = nullptr;
+	float   m_fSceneTime = 0.0f;
 public:
 	virtual void    Init() {};
 	virtual void    Frame() {};

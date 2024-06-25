@@ -41,6 +41,20 @@ void   TSceneIngame::SetUI()
 		L"../../data/Effect/slashFire_4x4.png",
 		L"Alphablend.hlsl");
 	m_UIList[3].SetAnim(1.0f, I_Sprite.GetPtr(L"wik"));
+
+	// game timer
+	m_UISceneTimer.resize(2);
+	m_UISceneTimer[0].Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext,
+		{ 300, 0, 400, 100 },
+		L"../../data/Effect/slashFire_4x4.png",
+		L"Alphablend.hlsl");
+	m_UISceneTimer[0].SetAnim(100.0f, I_Sprite.GetPtr(L"DefalultNumber"));
+
+	m_UISceneTimer[1].Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext,
+		{ 400, 0, 500, 100 },
+		L"../../data/Effect/slashFire_4x4.png",
+		L"Alphablend.hlsl");
+	m_UISceneTimer[1].SetAnim(10.0f, I_Sprite.GetPtr(L"DefalultNumber"));
 }
 void   TSceneIngame::SetPlayer()
 {
@@ -61,10 +75,7 @@ void    TSceneIngame::LevelUp(UINT iLevel)
 		L"IconList",
 		L"rtBomb",
 		L"rtExplosion",
-	};
-
-	hero.SetVertexData({ 380, 270, 420, 330 });
-	m_Cam.m_vCameraPos = { 0.0f,0.0f };
+	};	
 	for (int iNpc = 0; iNpc < iLevel; iNpc++)
 	{
 		TNpc npc;
@@ -80,10 +91,19 @@ void    TSceneIngame::LevelUp(UINT iLevel)
 		m_npcList.push_back(npc);
 	}
 	m_iNpcCounter = m_npcList.size();
+
+
+	m_UISceneTimer[0].ResetSpriteData();
+	m_UISceneTimer[1].ResetSpriteData();
+	m_UISceneTimer[0].m_SpriteData.m_iAnimIndex = 2;
+	m_UISceneTimer[1].m_SpriteData.m_iAnimIndex = 9;
+
+	m_fSceneTime = 0.0f;
+	hero.SetVertexData({ 380, 270, 420, 330 });
+	m_Cam.m_vCameraPos = { 0.0f, 0.0f };
 }
 void   TSceneIngame::Init()
 {
-
 	SetSound();
 	SetUI();
 	SetPlayer();
@@ -91,6 +111,7 @@ void   TSceneIngame::Init()
 }
 void    TSceneIngame::Frame()
 {
+	m_fSceneTime += g_fSecondPerFrame;
 
 	if (m_iNpcCounter <= 9)
 	{
@@ -133,6 +154,18 @@ void    TSceneIngame::Frame()
 		}
 		ui.Frame();
 	}
+	for (auto& ui : m_UISceneTimer)
+	{
+		if (TCollision::RectToPt(ui.m_rt, I_Input.m_ptMousePos))
+		{
+			T_Math::FVector2 vScale = { 0.7f + (float)cos(g_fGameTime * 5) * 0.5f + 0.5f,
+										0.7f + (float)cos(g_fGameTime * 5) * 0.5f + 0.5f };
+			ui.SetScale(vScale);
+			ui.SetRotate(g_fGameTime);
+			ui.SetTrans(ui.m_vPos);
+		}
+		ui.Frame();
+	}
 
 	for (auto& npc : m_npcList)
 	{
@@ -155,13 +188,10 @@ void    TSceneIngame::Frame()
 		}
 	}
 
-	m_Cam.Up();
+	//m_Cam.Up();
 	hero.Frame();
-
-	m_Cam.Left(-hero.m_vOffset.X);// +hero.m_vOffset;
-	m_Cam.m_vCameraPos.Y = m_Cam.m_vCameraPos.Y + -hero.m_vOffset.Y;
+	m_Cam.Move(hero.m_vOffset);
 	m_Cam.Frame();
-
 }
 void    TSceneIngame::Render()
 {
@@ -180,6 +210,13 @@ void    TSceneIngame::Render()
 		// 화면 고정( 뷰 변환 생략 )
 		//obj.SetViewTransform(m_Cam.GetMatrix());
 		m_UIList[iUI].Render(TDevice::m_pContext);
+	}
+	for (auto& obj : m_UISceneTimer)
+	{
+		obj.UpdateSprite(-1.0f);
+		// 화면 고정( 뷰 변환 생략 )
+		//obj.SetViewTransform(m_Cam.GetMatrix());
+		obj.Render(TDevice::m_pContext);
 	}
 
 	/// <summary>
@@ -203,14 +240,17 @@ void    TSceneIngame::Render()
 	//g_bGameRun = !bGameEnding;
 
 	// 하단 화면을 벗어나면.
-	if (g_yClientSize <= hero.m_vList[2].p.Y)
+	//if (g_yClientSize <= hero.m_vList[2].p.Y)
+	if(m_fSceneTime > 30.0f)
 	{
 		g_bGameRun = false;
+		m_fSceneTime = 0.0f;
 	}
 
 	// 적 격퇴
 	if (bGameEnding)
 	{
+		m_fSceneTime = 0.0f;
 		m_iLevel++;
 		LevelUp(m_iLevel);
 	}
@@ -222,12 +262,14 @@ void    TSceneIngame::Release()
 	{
 		obj.Release();
 	}
+	for (auto& obj : m_UISceneTimer)
+	{
+		obj.Release();
+	}
 	hero.Release();
 	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
 	{
 		m_npcList[iNpc].Release();
 	}
-
-
 }
 

@@ -12,15 +12,13 @@ void    TActor::Frame()
 {
 	m_matWorld = m_matCenter * m_matScale * m_matRotate * m_matTrans;
 	SetWorldTransform();
-	//m_vOffset = { 0.0f,0.0f };
-
-	
+	//m_vOffset = { 0.0f,0.0f };	
 }
-void    TActor::UpdateSprite()
+void    TActor::UpdateSprite(float fReverse)
 {
 	if (m_pSprite != nullptr)
 	{
-		m_pSprite->Update(m_SpriteData);
+		m_pSprite->Update(m_SpriteData, fReverse);
 		if (m_pSprite->m_vList.size() > 0)
 		{
 			for (int iV = 0; iV < 6; iV++)

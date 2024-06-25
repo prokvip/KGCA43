@@ -10,6 +10,11 @@ public:
 	TSprite*			m_pSprite = nullptr;
 public:
 	TSpriteData		    m_SpriteData;
+	void			ResetSpriteData()
+	{
+		m_SpriteData.m_iAnimIndex = 0;
+		m_SpriteData.m_fPlayTimer = 0.0f;
+	}
 	void   SetAnim(float fAnimationTimer, TSprite* pSprite)
 	{
 		_ASSERT(pSprite);
@@ -57,7 +62,7 @@ public:
 	virtual TActor&	SetWorldTransform();
 	virtual TActor&	SetWorldTransform(T_Math::FMatrix& m);
 
-	virtual void    UpdateSprite();
+	virtual void    UpdateSprite(float fReverse=1.0f);
 	virtual void    Render(ID3D11DeviceContext* pContext) override;
 };
 

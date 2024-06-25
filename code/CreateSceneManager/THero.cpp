@@ -72,31 +72,43 @@ void  THero::Right()
 void  THero::Frame()
 {	
 	m_vOffset = { 0.0f,0.0f };
+	
+	
 	if (I_Input.KeyCheck('W') == KEY_HOLD)
 	{
-		//m_Cam.Up();
-		Move({ 0.0f, -1.0f });
-		//Front();
+		if (-900.0f  < m_vPos.Y)
+		{			
+			//m_Cam.Up();
+			Move({ 0.0f, -1.0f });
+			//Front();
+		}		
 	}
 	if (I_Input.KeyCheck('S') == KEY_HOLD)
 	{
-		//m_Cam.Down();
-		Move({ 0.0f, 1.0f });
-		//Back();
+		if (900.0f > m_vPos.Y)
+		{			
+			//m_Cam.Down();
+			Move({ 0.0f, 1.0f });
+			//Back();
+		}
 	}
-
 	if (I_Input.KeyCheck('D') == KEY_HOLD)
 	{
-		Move({ 1.0f, 0.0f });
-		//Right();		
-		//m_Cam.Right(-hero.m_vOffset.X);
+		if (900.0f  > m_vPos.X)
+		{			
+			Move({ 1.0f, 0.0f });
+			//Right();		
+			//m_Cam.Right(-hero.m_vOffset.X);
+		}
 	}
 	if (I_Input.KeyCheck('A') == KEY_HOLD)
 	{
-		Move({ -1.0f, 0.0f });
-		//hero.Left();		
+		if (-900.0f  < m_vPos.X)
+		{			
+			Move({ -1.0f, 0.0f });
+			//hero.Left();		
+		}
 	}
-
 	TPawn::Frame();
 }
 THero::THero()

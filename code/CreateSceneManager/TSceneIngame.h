@@ -10,6 +10,7 @@ public:
 	TSound* m_pEffectSound = nullptr;
 	TCamera				m_Cam;
 	TActor				objScreen; // »ï°¢Çü
+	std::vector<TActor> m_UISceneTimer;
 	std::vector<TActor> m_UIList;
 	std::vector<TNpc>	m_npcList;
 	THero hero;

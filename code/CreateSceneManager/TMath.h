@@ -29,6 +29,7 @@ namespace T_Math
 	public:
 		static FVector2 ZeroVector2;
 	public:
+		FVector2 operator -(void);
 		FVector2 operator *(const FMatrix& v);
 
 		FVector2 operator +(const FVector2& v) const;
