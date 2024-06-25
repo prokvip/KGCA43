@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FxCompile Include="Alphablend.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="TActor.cpp" />
+    <ClCompile Include="TBaseManager.cpp" />
+    <ClCompile Include="TCollision.cpp" />
+    <ClCompile Include="TCore.cpp" />
+    <ClCompile Include="TDevice.cpp" />
+    <ClCompile Include="TDxObject.cpp" />
+    <ClCompile Include="THero.cpp" />
+    <ClCompile Include="TInput.cpp" />
+    <ClCompile Include="TMath.cpp" />
+    <ClCompile Include="TNpc.cpp" />
+    <ClCompile Include="TPawn.cpp" />
+    <ClCompile Include="TShaderMgr.cpp" />
+    <ClCompile Include="TSound.cpp" />
+    <ClCompile Include="TSprite.cpp" />
+    <ClCompile Include="TTexMgr.cpp" />
+    <ClCompile Include="TTimer.cpp" />
+    <ClCompile Include="TWindow.cpp" />
+    <ClCompile Include="TWriterFont.cpp" />
+    <ClCompile Include="TCamera.cpp" />
+    <ClCompile Include="TSceneResult.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TSceneLobby.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TSceneIngame.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sample.h" />
+    <ClInclude Include="TActor.h" />
+    <ClInclude Include="TBaseManager.h" />
+    <ClInclude Include="TCollision.h" />
+    <ClInclude Include="TCore.h" />
+    <ClInclude Include="TDevice.h" />
+    <ClInclude Include="TDxObject.h" />
+    <ClInclude Include="THero.h" />
+    <ClInclude Include="TInput.h" />
+    <ClInclude Include="TMath.h" />
+    <ClInclude Include="TNpc.h" />
+    <ClInclude Include="TPawn.h" />
+    <ClInclude Include="TShaderMgr.h" />
+    <ClInclude Include="TSound.h" />
+    <ClInclude Include="TSprite.h" />
+    <ClInclude Include="TStd.h" />
+    <ClInclude Include="TTexMgr.h" />
+    <ClInclude Include="TTimer.h" />
+    <ClInclude Include="TWindow.h" />
+    <ClInclude Include="TWriterFont.h" />
+    <ClInclude Include="TCamera.h" />
+    <ClInclude Include="TSceneResult.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneLobby.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneIngame.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\data\Sprite\SpriteInfo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{16f9fb74-4c30-4a1e-8a16-5daf7bfac98c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
