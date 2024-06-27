@@ -1,12 +1,10 @@
 #pragma once
 #include "TScene.h"
-class TSceneResult : public TScene
+class TSceneStart :  public TScene
 {
 public:
 	float				m_fEventTimer = 0.0f;
-	TActor				objScreen; 
-	TActor				m_StartBtn;
-
+	TActor				objScreen; // »ï°¢Çü
 public:
 	void    Init();
 	void    Frame();
@@ -14,6 +12,7 @@ public:
 	void    Release();
 public:
 	void    Execute() override;
-	TSceneResult(TGame* pGame);
+
+	TSceneStart(TGame* pGame);
 };
 

@@ -26,11 +26,8 @@ public:
 	void  SetSound();
 	void  SetUI();
 	void  SetPlayer();
-	void    Execute() override;
+	void  Execute() override;
 public:
-	TSceneIngame(TGameObj* pGame) : TScene(pGame)
-	{
-		m_iStateIndex = GAME_INGAME;
-	}
+	TSceneIngame(TGame* pGame);
 };
 

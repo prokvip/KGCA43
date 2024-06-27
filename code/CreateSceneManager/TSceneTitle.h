@@ -5,6 +5,7 @@ class TSceneTitle : public TScene
 	TActor				objScreen; // »ï°¢Çü
 	bool				m_bFadeOut = false;
 	TActor				m_StartBtn;
+	float				m_fEventTimer = 0.0f;
 	std::vector<TActor> m_UIList;
 public:
 	virtual void    Init() override;
@@ -13,7 +14,7 @@ public:
 	virtual void    Release() override;
 	void    Execute() override;
 public:
-	TSceneTitle(TGameObj* pGame) : TScene(pGame)
+	TSceneTitle(TGame* pGame) : TScene(pGame)
 	{
 		m_iStateIndex = GAME_TITLE;
 	}

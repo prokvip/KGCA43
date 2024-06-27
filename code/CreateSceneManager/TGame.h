@@ -1,7 +1,7 @@
 #pragma once
 #include "TScene.h"
 
-class TGameObj :  public TActor
+class TGame :  public TBaseCore
 {
 public:
 	std::shared_ptr<TFiniteStateMachine> m_pSceneFSM = nullptr;
@@ -13,11 +13,11 @@ public:
 	std::shared_ptr<TScene>		m_pStartScene = nullptr;
 	std::shared_ptr<TScene>		m_pEndScene = nullptr;
 	TScene* m_SceneList[6];
-
+	int		Transition(TScene* pScene, int iEvent);
 public:
 	void   Init() override;
 	void   Frame() override;
-	void   Render(ID3D11DeviceContext* pContext) override;
+	void   Render() override;
 	void   Release() override;
 };
 

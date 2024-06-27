@@ -7,10 +7,7 @@ void    TSceneIngame::Execute()
 	m_fEventTimer += g_fSecondPerFrame;
 	if (m_fEventTimer > 30.0f)
 	{
-		int iOutState =
-			m_pSceneFSM->GetTransition(
-				m_iStateIndex, EVENT_TIMER);
-		m_pGame->m_pCurrentScene = m_pGame->m_SceneList[iOutState];
+		int iOutState = m_pGame->Transition(this, EVENT_TIMER);
 		m_fEventTimer = 0.0f;
 	}
 }
@@ -279,3 +276,7 @@ void    TSceneIngame::Release()
 	}
 }
 
+TSceneIngame::TSceneIngame(TGame* pGame) : TScene(pGame)
+{
+	m_iStateIndex = GAME_INGAME;
+}

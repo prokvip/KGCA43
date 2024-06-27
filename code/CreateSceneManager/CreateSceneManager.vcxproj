@@ -175,9 +175,11 @@
     <ClCompile Include="TNpc.cpp" />
     <ClCompile Include="TPawn.cpp" />
     <ClCompile Include="TScene.cpp" />
+    <ClCompile Include="TSceneEnd.cpp" />
     <ClCompile Include="TSceneIngame.cpp" />
     <ClCompile Include="TSceneLobby.cpp" />
     <ClCompile Include="TSceneResult.cpp" />
+    <ClCompile Include="TSceneStart.cpp" />
     <ClCompile Include="TSceneTitle.cpp" />
     <ClCompile Include="TShaderMgr.cpp" />
     <ClCompile Include="TSound.cpp" />
@@ -205,9 +207,11 @@
     <ClInclude Include="TNpc.h" />
     <ClInclude Include="TPawn.h" />
     <ClInclude Include="TScene.h" />
+    <ClInclude Include="TSceneEnd.h" />
     <ClInclude Include="TSceneIngame.h" />
     <ClInclude Include="TSceneLobby.h" />
     <ClInclude Include="TSceneResult.h" />
+    <ClInclude Include="TSceneStart.h" />
     <ClInclude Include="TSceneTitle.h" />
     <ClInclude Include="TShaderMgr.h" />
     <ClInclude Include="TSound.h" />

@@ -4,7 +4,7 @@
 #include "TFiniteState.h"
 class Sample : public TCore
 {
-	TGameObj		   m_Game;	
+	TGame		   m_Game;	
 public:
 	void   Init() override;
 	void   Frame() override;

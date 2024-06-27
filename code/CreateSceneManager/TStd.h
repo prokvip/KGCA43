@@ -33,6 +33,7 @@ typedef std::vector<DWORD>						DWORD_VECTOR;
 typedef std::vector<RECT>						RECT_ARRAY;
 class TBaseCore
 {
+public:
 	virtual void Init() = 0;
 	virtual void Frame() = 0;
 	virtual void Render() = 0;

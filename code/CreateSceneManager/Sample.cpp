@@ -11,7 +11,7 @@ void    Sample::Frame()
 }
 void    Sample::Render() 
 { 		
-	m_Game.Render(TDevice::m_pContext);
+	m_Game.Render();
 }
 void    Sample::Release() 
 {			

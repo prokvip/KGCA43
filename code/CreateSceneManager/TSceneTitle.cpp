@@ -5,6 +5,13 @@
 // GAME_TITLE	-> EVENT_TIMER:3		-> GAME_INGAME
 void    TSceneTitle::Execute()
 {	
+	m_fEventTimer += g_fSecondPerFrame;
+	if (m_fEventTimer > 3.0f)
+	{
+		int iOutState = m_pGame->Transition(this, EVENT_TIMER);
+		m_fEventTimer = 0.0f;
+	}
+
 	if (TCollision::RectToPt(m_StartBtn.m_rt, I_Input.m_ptMousePos))
 	{			
 		if (I_Input.KeyCheck(VK_LBUTTON) == KEY_PUSH)
@@ -15,10 +22,7 @@ void    TSceneTitle::Execute()
 
 	if (m_bSceneChange)
 	{
-		int iOutState =
-			m_pSceneFSM->GetTransition(
-				m_iStateIndex, EVENT_CLICK);
-		m_pGame->m_pCurrentScene = m_pGame->m_SceneList[iOutState];	
+		int iOutState = m_pGame->Transition(this, EVENT_CLICK);
 		m_bSceneChange = false;
 	}
 }
@@ -34,7 +38,7 @@ void   TSceneTitle::Init()
 	RECT rtBk = { 0, 0, 800.0f, 600.0f };
 	objScreen.Create(TDevice::m_pd3dDevice.Get(), 
 		TDevice::m_pContext, rtBk,
-		L"../../data/title.png",
+		L"../../data/title.jpg",
 		L"intro.txt");
 	objScreen.m_pSprite = nullptr;
 
