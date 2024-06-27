@@ -166,6 +166,9 @@
     <ClCompile Include="TCore.cpp" />
     <ClCompile Include="TDevice.cpp" />
     <ClCompile Include="TDxObject.cpp" />
+    <ClCompile Include="TFiniteState.cpp" />
+    <ClCompile Include="TFiniteStateMachine.cpp" />
+    <ClCompile Include="TGame.cpp" />
     <ClCompile Include="THero.cpp" />
     <ClCompile Include="TInput.cpp" />
     <ClCompile Include="TMath.cpp" />
@@ -193,6 +196,9 @@
     <ClInclude Include="TCore.h" />
     <ClInclude Include="TDevice.h" />
     <ClInclude Include="TDxObject.h" />
+    <ClInclude Include="TFiniteState.h" />
+    <ClInclude Include="TFiniteStateMachine.h" />
+    <ClInclude Include="TGame.h" />
     <ClInclude Include="THero.h" />
     <ClInclude Include="TInput.h" />
     <ClInclude Include="TMath.h" />

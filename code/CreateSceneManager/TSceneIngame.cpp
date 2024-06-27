@@ -1,6 +1,19 @@
 #include "TSceneIngame.h"
 #include "TStd.h"
 #include "TInput.h"
+#include "TGame.h"
+void    TSceneIngame::Execute()
+{
+	m_fEventTimer += g_fSecondPerFrame;
+	if (m_fEventTimer > 30.0f)
+	{
+		int iOutState =
+			m_pSceneFSM->GetTransition(
+				m_iStateIndex, EVENT_TIMER);
+		m_pGame->m_pCurrentScene = m_pGame->m_SceneList[iOutState];
+		m_fEventTimer = 0.0f;
+	}
+}
 void   TSceneIngame::SetSound()
 {	
 	m_pBGSound = I_Sound.Load(L"../../data/sound/romance.mid");
@@ -66,7 +79,8 @@ void   TSceneIngame::SetPlayer()
 }
 void    TSceneIngame::LevelUp(UINT iLevel)
 {
-	Sleep(1000);
+	Sleep(100);
+	m_fEventTimer = 0.0f;
 	std::vector<std::wstring> spriteName =
 	{
 		L"DefalultNumber",
@@ -237,15 +251,7 @@ void    TSceneIngame::Render()
 				bGameEnding = false;
 			}
 		});
-	//g_bGameRun = !bGameEnding;
-
-	// 하단 화면을 벗어나면.
-	//if (g_yClientSize <= hero.m_vList[2].p.Y)
-	if(m_fSceneTime > 30.0f)
-	{
-		g_bGameRun = false;
-		m_fSceneTime = 0.0f;
-	}
+	//g_bGameRun = !bGameEnding;	
 
 	// 적 격퇴
 	if (bGameEnding)

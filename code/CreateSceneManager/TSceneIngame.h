@@ -7,6 +7,7 @@ public:
 	using T_Effect = std::shared_ptr<TSprite>;
 	std::vector<T_Effect>  m_EffectList;
 	
+	float				m_fEventTimer = 0.0f;
 	TSound* m_pEffectSound = nullptr;
 	TCamera				m_Cam;
 	TActor				objScreen; // »ï°¢Çü
@@ -25,5 +26,11 @@ public:
 	void  SetSound();
 	void  SetUI();
 	void  SetPlayer();
+	void    Execute() override;
+public:
+	TSceneIngame(TGameObj* pGame) : TScene(pGame)
+	{
+		m_iStateIndex = GAME_INGAME;
+	}
 };
 
