@@ -8,14 +8,16 @@ public:
 	std::vector<T_Effect>  m_EffectList;
 	
 	float				m_fEventTimer = 0.0f;
-	TSound* m_pEffectSound = nullptr;
+	TSound*				m_pEffectSound = nullptr;
 	TCamera				m_Cam;
-	TActor				objScreen; // »ï°¢Çü
+	TActor				m_bkScreen; // »ï°¢Çü
 	std::vector<TActor> m_UISceneTimer;
 	std::vector<TActor> m_UIList;
 	std::vector<TNpc>	m_npcList;
-	THero hero;
+	THero m_Hero;
 	UINT  m_iNpcCounter = 0;
+	bool  m_bMissionComplite = false;
+	bool  m_bWaveComplite = false;
 	void    LevelUp(UINT iNpc);
 public:
 	void   Init() override;
@@ -26,6 +28,7 @@ public:
 	void  SetSound();
 	void  SetUI();
 	void  SetPlayer();
+	void  Reset();
 	void  Execute() override;
 public:
 	TSceneIngame(TGame* pGame);

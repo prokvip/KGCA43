@@ -44,6 +44,7 @@ public:
 	virtual void    Frame();
 	virtual void    Render();
 	virtual void    Release();
+	virtual void    Reset() {};
 	virtual void    Execute() = 0;
 public:
 	TScene(TGame* pGame) : m_pGame(pGame) {}

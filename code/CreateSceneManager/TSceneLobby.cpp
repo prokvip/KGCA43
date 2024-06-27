@@ -12,33 +12,23 @@ void    TSceneLobby::Execute()
 	}
 	if (m_bSceneChange)
 	{
-		int iOutState = m_pGame->Transition(this, EVENT_CLICK);
+		TScene* pScene = m_pGame->Transition(this, EVENT_CLICK);
+		pScene->Reset();
 		m_bSceneChange = false;
 	}
 }
 void   TSceneLobby::Init()
 {
 	RECT rtBk = { 0, 0, 800.0f, 600.0f };
-	objScreen.Create(TDevice::m_pd3dDevice.Get(),
+	m_bkScreen.Create(TDevice::m_pd3dDevice.Get(),
 		TDevice::m_pContext, rtBk,
 		L"../../data/lobby.png",
 		L"intro.txt");
-	//objScreen.SetAnim(3.0f, I_Sprite.GetPtr(L"kgca"));
+	//m_bkScreen.SetAnim(3.0f, I_Sprite.GetPtr(L"kgca"));
 	m_StartBtn.Create(TDevice::m_pd3dDevice.Get(),
 		TDevice::m_pContext, { 500, 500, 600, 550 },
 		L"../../data/ui/Zosma/Stage/Gameplay.png",
 		L"Alphablend.hlsl");
-
-	if (TCollision::RectToPt(m_StartBtn.m_rt, I_Input.m_ptMousePos))
-	{
-		// hover			
-		T_Math::FVector2 vScale = { 0.7f + (0.3f * (float)cos(g_fGameTime * 10) * 0.5f + 0.5f),
-									0.7f + (0.3f * (float)cos(g_fGameTime * 10) * 0.5f + 0.5f) };
-		m_StartBtn.SetScale(vScale);
-		//m_StartBtn.SetRotate(g_fGameTime);
-		m_StartBtn.SetTrans(m_StartBtn.m_vPos);
-	}
-	m_StartBtn.Frame();
 }
 void    TSceneLobby::Frame()
 {
@@ -52,13 +42,13 @@ void    TSceneLobby::Frame()
 		m_StartBtn.SetTrans(m_StartBtn.m_vPos);
 	}
 	m_StartBtn.Frame();
-	objScreen.Frame();
+	m_bkScreen.Frame();
 }
 void    TSceneLobby::Render()
 {
-	objScreen.UpdateSprite();
-	//objScreen.SetViewTransform(m_Cam.GetMatrix());
-	objScreen.Render(TDevice::m_pContext);
+	m_bkScreen.UpdateSprite();
+	//m_bkScreen.SetViewTransform(m_Cam.GetMatrix());
+	m_bkScreen.Render(TDevice::m_pContext);
 
 	m_StartBtn.PreRender(TDevice::m_pContext);
 	/*TDevice::m_pContext->PSSetShaderResources(0, 1,
@@ -67,7 +57,7 @@ void    TSceneLobby::Render()
 }
 void    TSceneLobby::Release()
 {
-	objScreen.Release();
+	m_bkScreen.Release();
 	m_StartBtn.Release();
 }
 TSceneLobby::TSceneLobby(TGame* pGame) : TScene(pGame)

@@ -2,7 +2,7 @@
 #include "TScene.h"
 class TSceneTitle : public TScene
 {
-	TActor				objScreen; // »ï°¢Çü
+	TActor				m_bkScreen; // »ï°¢Çü
 	bool				m_bFadeOut = false;
 	TActor				m_StartBtn;
 	float				m_fEventTimer = 0.0f;

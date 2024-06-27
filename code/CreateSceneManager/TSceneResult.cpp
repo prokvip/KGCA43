@@ -6,7 +6,8 @@ void    TSceneResult::Execute()
 	m_fEventTimer += g_fSecondPerFrame;
 	if (m_fEventTimer > 10.0f)
 	{
-		int iOutState = m_pGame->Transition(this, EVENT_TIMER);
+		TScene* pScene = m_pGame->Transition(this, EVENT_TIMER);
+		pScene->Reset();		
 		m_fEventTimer = 0.0f;
 	}
 	if (TCollision::RectToPt(m_StartBtn.m_rt, I_Input.m_ptMousePos))
@@ -19,14 +20,15 @@ void    TSceneResult::Execute()
 
 	if (m_bSceneChange)
 	{
-		int iOutState = m_pGame->Transition(this, EVENT_CLICK);
+		TScene* pScene = m_pGame->Transition(this, EVENT_CLICK);
+		pScene->Reset();
 		m_bSceneChange = false;
 	}
 }
 void   TSceneResult::Init()
 {
 	RECT rtBk = { 0, 0, 800.0f, 600.0f };
-	objScreen.Create(TDevice::m_pd3dDevice.Get(),
+	m_bkScreen.Create(TDevice::m_pd3dDevice.Get(),
 		TDevice::m_pContext, rtBk,
 		L"../../data/result.png",
 		L"intro.txt");	
@@ -37,7 +39,7 @@ void   TSceneResult::Init()
 }
 void    TSceneResult::Frame()
 {
-	objScreen.Frame();
+	m_bkScreen.Frame();
 	if (TCollision::RectToPt(m_StartBtn.m_rt, I_Input.m_ptMousePos))
 	{
 		// hover			
@@ -51,9 +53,9 @@ void    TSceneResult::Frame()
 }
 void    TSceneResult::Render()
 {
-	objScreen.UpdateSprite();
-	//objScreen.SetViewTransform(m_Cam.GetMatrix());
-	objScreen.Render(TDevice::m_pContext);
+	m_bkScreen.UpdateSprite();
+	//m_bkScreen.SetViewTransform(m_Cam.GetMatrix());
+	m_bkScreen.Render(TDevice::m_pContext);
 
 	m_StartBtn.PreRender(TDevice::m_pContext);
 	/*TDevice::m_pContext->PSSetShaderResources(0, 1,
@@ -62,7 +64,7 @@ void    TSceneResult::Render()
 }
 void    TSceneResult::Release()
 {
-	objScreen.Release();
+	m_bkScreen.Release();
 }
 TSceneResult::TSceneResult(TGame* pGame) : TScene(pGame)
 {

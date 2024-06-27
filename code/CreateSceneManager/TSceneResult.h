@@ -4,7 +4,7 @@ class TSceneResult : public TScene
 {
 public:
 	float				m_fEventTimer = 0.0f;
-	TActor				objScreen; 
+	TActor				m_bkScreen; 
 	TActor				m_StartBtn;
 
 public:

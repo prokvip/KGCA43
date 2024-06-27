@@ -7,7 +7,14 @@ void    TSceneIngame::Execute()
 	m_fEventTimer += g_fSecondPerFrame;
 	if (m_fEventTimer > 30.0f)
 	{
-		int iOutState = m_pGame->Transition(this, EVENT_TIMER);
+		TScene* pScene = m_pGame->Transition(this, EVENT_TIMER);
+		pScene->Reset();
+		m_fEventTimer = 0.0f;
+	}
+	if (m_bMissionComplite)
+	{
+		TScene* pScene = m_pGame->Transition(this, EVENT_MISSION_COMPLETE);
+		pScene->Reset();
 		m_fEventTimer = 0.0f;
 	}
 }
@@ -24,10 +31,10 @@ void   TSceneIngame::SetSound()
 void   TSceneIngame::SetUI()
 {
 	RECT rtBk = { -1000, -1000, 1000.0f, 1000.0f };
-	objScreen.Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, rtBk,
+	m_bkScreen.Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, rtBk,
 		L"../../data/1234.jpg",
 		L"../../data/shader/Default.txt");
-	objScreen.m_pSprite = nullptr;
+	m_bkScreen.m_pSprite = nullptr;
 
 	m_UIList.resize(4);
 	m_UIList[0].Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, { 0, 0, 100, 100 },
@@ -69,10 +76,10 @@ void   TSceneIngame::SetUI()
 void   TSceneIngame::SetPlayer()
 {
 	//DrawRect = { 91, 1, 91+40, 1+60 }
-	hero.Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, { 380, 270, 420, 330 },
+	m_Hero.Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, { 380, 270, 420, 330 },
 		L"../../data/Sprite/bitmap1Alpha.bmp",
 		L"Alphablend.hlsl");
-	hero.m_fSpeed = 500.0f;
+	m_Hero.m_fSpeed = 500.0f;
 }
 void    TSceneIngame::LevelUp(UINT iLevel)
 {
@@ -110,8 +117,19 @@ void    TSceneIngame::LevelUp(UINT iLevel)
 	m_UISceneTimer[1].m_SpriteData.m_iAnimIndex = 9;
 
 	m_fSceneTime = 0.0f;
-	hero.SetVertexData({ 380, 270, 420, 330 });
+	m_Hero.SetVertexData({ 380, 270, 420, 330 });
 	m_Cam.m_vCameraPos = { 0.0f, 0.0f };
+}
+void   TSceneIngame::Reset()
+{	
+	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
+	{
+		m_npcList[iNpc].Release();
+	}
+	m_npcList.clear();
+	m_bMissionComplite = m_bWaveComplite = false;
+	m_iLevel = 1;
+	LevelUp(m_iLevel);
 }
 void   TSceneIngame::Init()
 {
@@ -142,15 +160,15 @@ void    TSceneIngame::Frame()
 		}
 	}
 
-	//T_Math::FVector2 vPos = objScreen.m_vPos;
+	//T_Math::FVector2 vPos = m_bkScreen.m_vPos;
 	//T_Math::FVector2 vScale = { (float)cos(g_fGameTime) * 0.5f + 0.5f, (float)cos(g_fGameTime) * 0.5f + 0.5f };
 	//T_Math::FVector2 vCenter = { -800.0f * 0.5f, -600.0f * 0.5f };
 
-	////objScreen.SetCenterMove(vCenter);
-	////objScreen.SetScale(vScale);
-	////objScreen.SetRotate(g_fGameTime);
-	////objScreen.SetTrans(vPos);
-	objScreen.Frame();
+	////m_bkScreen.SetCenterMove(vCenter);
+	////m_bkScreen.SetScale(vScale);
+	////m_bkScreen.SetRotate(g_fGameTime);
+	////m_bkScreen.SetTrans(vPos);
+	m_bkScreen.Frame();
 
 
 	for (auto& ui : m_UIList)
@@ -181,7 +199,7 @@ void    TSceneIngame::Frame()
 	for (auto& npc : m_npcList)
 	{
 		npc.Frame();
-		if (npc.m_bDead == false && TCollision::RectToRect(npc.m_rt, hero.m_rt))
+		if (npc.m_bDead == false && TCollision::RectToRect(npc.m_rt, m_Hero.m_rt))
 		{
 			npc.m_bDead = true;
 			m_iNpcCounter = max(0, m_iNpcCounter - 1);
@@ -191,6 +209,7 @@ void    TSceneIngame::Frame()
 	{
 		if ((*iter).m_bDead == true)
 		{
+			(*iter).Release();
 			iter = m_npcList.erase(iter);
 		}
 		else
@@ -200,14 +219,14 @@ void    TSceneIngame::Frame()
 	}
 
 	//m_Cam.Up();
-	hero.Frame();
-	m_Cam.Move(hero.m_vOffset);
+	m_Hero.Frame();
+	m_Cam.Move(m_Hero.m_vOffset);
 	m_Cam.Frame();
 }
 void    TSceneIngame::Render()
 {
-	objScreen.SetViewTransform(m_Cam.GetMatrix());
-	objScreen.Render(TDevice::m_pContext);
+	m_bkScreen.SetViewTransform(m_Cam.GetMatrix());
+	m_bkScreen.Render(TDevice::m_pContext);
 
 	m_UIList[0].PreRender(TDevice::m_pContext);
 	TDevice::m_pContext->PSSetShaderResources(0, 1,
@@ -233,10 +252,8 @@ void    TSceneIngame::Render()
 	/// <summary>
 	/// 
 	/// </summary>
-	hero.SetViewTransform(m_Cam.GetMatrix());
-	hero.Render(TDevice::m_pContext);
-
-	bool bGameEnding = true;
+	m_Hero.SetViewTransform(m_Cam.GetMatrix());
+	m_Hero.Render(TDevice::m_pContext);	
 
 	for_each(begin(m_npcList), end(m_npcList), [&](auto& obj)
 		{
@@ -245,22 +262,28 @@ void    TSceneIngame::Render()
 				obj.UpdateSprite();
 				obj.SetViewTransform(m_Cam.GetMatrix());
 				obj.Render(TDevice::m_pContext);
-				bGameEnding = false;
 			}
 		});
-	//g_bGameRun = !bGameEnding;	
 
 	// Àû °ÝÅð
-	if (bGameEnding)
+	if (m_npcList.size() == 0 )
 	{
+		m_bWaveComplite = true;
 		m_fSceneTime = 0.0f;
-		m_iLevel++;
-		LevelUp(m_iLevel);
+
+		if (m_iLevel >= 2)
+		{
+			m_bMissionComplite = true;
+		}
+		else
+		{
+			m_iLevel++;
+			LevelUp(m_iLevel);
+		}
 	}
 }
 void    TSceneIngame::Release()
-{
-	objScreen.Release();
+{	
 	for (auto& obj : m_UIList)
 	{
 		obj.Release();
@@ -268,12 +291,17 @@ void    TSceneIngame::Release()
 	for (auto& obj : m_UISceneTimer)
 	{
 		obj.Release();
-	}
-	hero.Release();
+	}	
 	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
 	{
 		m_npcList[iNpc].Release();
 	}
+
+	m_bkScreen.Release();
+	m_Hero.Release();
+	m_UIList.clear();
+	m_UISceneTimer.clear();
+	m_npcList.clear();
 }
 
 TSceneIngame::TSceneIngame(TGame* pGame) : TScene(pGame)

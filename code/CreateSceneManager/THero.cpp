@@ -98,7 +98,7 @@ void  THero::Frame()
 		{			
 			Move({ 1.0f, 0.0f });
 			//Right();		
-			//m_Cam.Right(-hero.m_vOffset.X);
+			//m_Cam.Right(-m_Hero.m_vOffset.X);
 		}
 	}
 	if (I_Input.KeyCheck('A') == KEY_HOLD)
@@ -106,7 +106,7 @@ void  THero::Frame()
 		if (-900.0f  < m_vPos.X)
 		{			
 			Move({ -1.0f, 0.0f });
-			//hero.Left();		
+			//m_Hero.Left();		
 		}
 	}
 	TPawn::Frame();

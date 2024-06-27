@@ -8,7 +8,8 @@ void    TSceneTitle::Execute()
 	m_fEventTimer += g_fSecondPerFrame;
 	if (m_fEventTimer > 3.0f)
 	{
-		int iOutState = m_pGame->Transition(this, EVENT_TIMER);
+		TScene* pScene = m_pGame->Transition(this, EVENT_TIMER);
+		pScene->Reset();
 		m_fEventTimer = 0.0f;
 	}
 
@@ -22,7 +23,8 @@ void    TSceneTitle::Execute()
 
 	if (m_bSceneChange)
 	{
-		int iOutState = m_pGame->Transition(this, EVENT_CLICK);
+		TScene* pScene = m_pGame->Transition(this, EVENT_CLICK);
+		pScene->Reset();
 		m_bSceneChange = false;
 	}
 }
@@ -36,11 +38,11 @@ void   TSceneTitle::Init()
 	}
 
 	RECT rtBk = { 0, 0, 800.0f, 600.0f };
-	objScreen.Create(TDevice::m_pd3dDevice.Get(), 
+	m_bkScreen.Create(TDevice::m_pd3dDevice.Get(), 
 		TDevice::m_pContext, rtBk,
 		L"../../data/title.jpg",
 		L"intro.txt");
-	objScreen.m_pSprite = nullptr;
+	m_bkScreen.m_pSprite = nullptr;
 
 	m_StartBtn.Create(TDevice::m_pd3dDevice.Get(),
 		TDevice::m_pContext, { 280, 370, 520, 430 },
@@ -86,7 +88,7 @@ void    TSceneTitle::Frame()
 
 	static float alpha = 0.0f;
 	alpha += g_fSecondPerFrame*0.33f;
-	for (auto& v : objScreen.m_vList)
+	for (auto& v : m_bkScreen.m_vList)
 	{
 		if (m_bFadeOut)
 		{
@@ -103,7 +105,7 @@ void    TSceneTitle::Frame()
 			v.c.W = min(1.0f, alpha); //fade in
 		}
 	}
-	objScreen.UpdateVertexBuffer();
+	m_bkScreen.UpdateVertexBuffer();
 
 	if (alpha > 0.5f && m_bFadeOut ==false)
 	{
@@ -118,8 +120,8 @@ void    TSceneTitle::Frame()
 }
 void    TSceneTitle::Render()
 {
-	//objScreen.SetViewTransform(m_Cam.GetMatrix());
-	objScreen.Render(TDevice::m_pContext);
+	//m_bkScreen.SetViewTransform(m_Cam.GetMatrix());
+	m_bkScreen.Render(TDevice::m_pContext);
 	
 	m_StartBtn.PreRender(TDevice::m_pContext);
 	/*TDevice::m_pContext->PSSetShaderResources(0, 1,
@@ -128,7 +130,7 @@ void    TSceneTitle::Render()
 }
 void    TSceneTitle::Release()
 {
-	objScreen.Release();
+	m_bkScreen.Release();
 	m_StartBtn.Release();
 
 	for (auto& obj : m_UIList)
