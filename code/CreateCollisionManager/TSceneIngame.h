@@ -19,9 +19,13 @@ public:
 	TSound*				m_pEffectSound = nullptr;
 	TCamera				m_Cam;
 	TActor				m_bkScreen; // »ï°¢Çü
-	std::vector<TActor> m_UISceneTimer;
-	std::vector<TUI>    m_UIList;
-	std::vector<TNpc>	m_npcList;
+	
+	
+	std::vector<TActor>								m_UISceneTimer;
+	std::shared_ptr<TUI>							m_pNpcCounterObj = nullptr;
+	std::map<std::wstring, std::shared_ptr<TUI>>    m_UIList;
+	std::map<UINT, std::shared_ptr<TNpc>>			m_npcList;
+
 	THero m_Hero;
 	UINT  m_iNpcCounter = 0;
 	bool  m_bMissionComplite = false;
