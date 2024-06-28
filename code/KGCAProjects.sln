@@ -85,6 +85,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateSceneManager", "Creat
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateSpriteManager", "CreateSpriteManager\CreateSpriteManager.vcxproj", "{EB8F5ACC-EA0A-499B-BA55-2140509CC1A2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateCollisionManager", "CreateCollisionManager\CreateCollisionManager.vcxproj", "{D77F3A47-EF48-4CA8-90EC-8997D95051F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -381,6 +383,14 @@ Global
 		{EB8F5ACC-EA0A-499B-BA55-2140509CC1A2}.Release|x64.Build.0 = Release|x64
 		{EB8F5ACC-EA0A-499B-BA55-2140509CC1A2}.Release|x86.ActiveCfg = Release|Win32
 		{EB8F5ACC-EA0A-499B-BA55-2140509CC1A2}.Release|x86.Build.0 = Release|Win32
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Debug|x64.ActiveCfg = Debug|x64
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Debug|x64.Build.0 = Debug|x64
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Debug|x86.ActiveCfg = Debug|Win32
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Debug|x86.Build.0 = Debug|Win32
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Release|x64.ActiveCfg = Release|x64
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Release|x64.Build.0 = Release|x64
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Release|x86.ActiveCfg = Release|Win32
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -420,6 +430,7 @@ Global
 		{1DE0C705-42D4-405F-A5C1-A1265D433D37} = {BF9160B1-54D4-4181-B928-4D9586FD8698}
 		{FE431D69-881C-4A22-B42D-BC267DADCC5D} = {BF9160B1-54D4-4181-B928-4D9586FD8698}
 		{EB8F5ACC-EA0A-499B-BA55-2140509CC1A2} = {BF9160B1-54D4-4181-B928-4D9586FD8698}
+		{D77F3A47-EF48-4CA8-90EC-8997D95051F8} = {BF9160B1-54D4-4181-B928-4D9586FD8698}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {760E8DCA-1EDC-41D9-8CDF-C65DDEE5F915}
