@@ -2,6 +2,7 @@
 #include "TStd.h"
 #include "TInput.h"
 #include "TGame.h"
+#include "TObjectMgr.h"
 void    TSceneIngame::Execute()
 {
 	m_fEventTimer += g_fSecondPerFrame;
@@ -83,7 +84,8 @@ void   TSceneIngame::SetPlayer()
 }
 void    TSceneIngame::LevelUp(UINT iLevel)
 {
-	Sleep(100);
+	Sleep(100);	
+
 	m_fEventTimer = 0.0f;
 	std::vector<std::wstring> spriteName =
 	{
@@ -94,22 +96,28 @@ void    TSceneIngame::LevelUp(UINT iLevel)
 		L"rtBomb",
 		L"rtExplosion",
 	};	
+
+	m_npcList.resize(iLevel);
+
 	for (int iNpc = 0; iNpc < iLevel; iNpc++)
 	{
-		TNpc npc;
+		//TNpc npc;
 		T_Math::FVector2 pos;
 		pos.X = randstep(0.0f, g_xClientSize);
 		pos.Y = randstep(0.0f, g_yClientSize);
-		npc.Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext,
+		m_npcList[iNpc].Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext,
 			{ (LONG)pos.X, (LONG)pos.Y,(LONG)(pos.X + 67.0f), (LONG)(pos.Y + 78.0f) },
 			L"../../data/Sprite/bitmap1Alpha.bmp",
-			L"Alphablend.hlsl");
-
-		npc.SetAnim(1.0f, I_Sprite.GetPtr(spriteName[m_iLevel % spriteName.size()]));
-		m_npcList.push_back(npc);
+			L"Alphablend.hlsl");		
+		m_npcList[iNpc].SetAnim(1.0f, I_Sprite.GetPtr(spriteName[m_iLevel % spriteName.size()]));
+		m_npcList[iNpc].SetCollision();
+		//m_npcList.push_back(npc);
 	}
 	m_iNpcCounter = m_npcList.size();
-
+	/*for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
+	{
+		m_npcList[iNpc].SetCollision();
+	}*/
 
 	m_UISceneTimer[0].ResetSpriteData();
 	m_UISceneTimer[1].ResetSpriteData();
@@ -121,15 +129,29 @@ void    TSceneIngame::LevelUp(UINT iLevel)
 	m_Cam.m_vCameraPos = { 0.0f, 0.0f };
 }
 void   TSceneIngame::Reset()
-{	
+{		
+	I_ObjMgr.Release();
+
 	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
 	{
 		m_npcList[iNpc].Release();
 	}
 	m_npcList.clear();
 	m_bMissionComplite = m_bWaveComplite = false;
+
 	m_iLevel = 1;
-	LevelUp(m_iLevel);
+
+	LevelUp(m_iLevel);	
+
+	m_Hero.SetCollision();
+	for (auto& ui : m_UIList)
+	{
+		ui.SetSelect();
+	}
+	for (int iNpc = 0; iNpc < m_npcList.size(); iNpc++)
+	{
+		m_npcList[iNpc].SetCollision();
+	}
 }
 void   TSceneIngame::Init()
 {
@@ -140,12 +162,13 @@ void   TSceneIngame::Init()
 }
 void    TSceneIngame::Frame()
 {
+	I_ObjMgr.Frame();
 	m_fSceneTime += g_fSecondPerFrame;
 
 	if (m_iNpcCounter <= 9)
 	{
 		if (I_Input.KeyCheck(VK_F1) == KEY_PUSH)
-		{
+		{			
 			TNpc npc;
 			T_Math::FVector2 pos;
 			pos.X = randstep(0.0f, g_xClientSize);
@@ -158,6 +181,7 @@ void    TSceneIngame::Frame()
 			m_npcList.push_back(npc);
 			m_iNpcCounter = m_npcList.size();
 		}
+		m_npcList[m_npcList.size()].SetCollision();
 	}
 
 	//T_Math::FVector2 vPos = m_bkScreen.m_vPos;
@@ -173,7 +197,7 @@ void    TSceneIngame::Frame()
 
 	for (auto& ui : m_UIList)
 	{
-		if (TCollision::RectToPt(ui.m_rt, I_Input.m_ptMousePos))
+		if (ui.m_dwSelectState == T_ACTIVE )//TCollision::RectToPt(ui.m_rt, I_Input.m_ptMousePos))
 		{
 			T_Math::FVector2 vScale = { 0.7f + (float)cos(g_fGameTime * 5) * 0.5f + 0.5f,
 										0.7f + (float)cos(g_fGameTime * 5) * 0.5f + 0.5f };
@@ -185,23 +209,22 @@ void    TSceneIngame::Frame()
 	}
 	for (auto& ui : m_UISceneTimer)
 	{
-		if (TCollision::RectToPt(ui.m_rt, I_Input.m_ptMousePos))
+		/*if (TCollision::RectToPt(ui.m_rt, I_Input.m_ptMousePos))
 		{
 			T_Math::FVector2 vScale = { 0.7f + (float)cos(g_fGameTime * 5) * 0.5f + 0.5f,
 										0.7f + (float)cos(g_fGameTime * 5) * 0.5f + 0.5f };
 			ui.SetScale(vScale);
 			ui.SetRotate(g_fGameTime);
 			ui.SetTrans(ui.m_vPos);
-		}
+		}*/
 		ui.Frame();
 	}
 
 	for (auto& npc : m_npcList)
 	{
 		npc.Frame();
-		if (npc.m_bDead == false && TCollision::RectToRect(npc.m_rt, m_Hero.m_rt))
+		if (npc.m_bDead == true)//&& TCollision::RectToRect(npc.m_rt, m_Hero.m_rt))
 		{
-			npc.m_bDead = true;
 			m_iNpcCounter = max(0, m_iNpcCounter - 1);
 		}
 	}
@@ -271,7 +294,7 @@ void    TSceneIngame::Render()
 		m_bWaveComplite = true;
 		m_fSceneTime = 0.0f;
 
-		if (m_iLevel >= 2)
+		if (m_iLevel >= 9)
 		{
 			m_bMissionComplite = true;
 		}

@@ -21,6 +21,9 @@ public:
 public:
 	void AddCollisionExecute(TActor* pOwner, CollisionFunction func);
 	void AddSelectExecute(TActor* pOwner, CollisionFunction func);
+	void Release();
+	void DelCollisionExecute(TActor* pOwner);
+	void DelSelectExecute(TActor* pOwner);
 	void Frame();
 };
 #define I_ObjMgr TObjectMgr::Get()

@@ -9,7 +9,7 @@ public:
 	}
 	void   HitSelect(TActor* pActor, DWORD dwState)
 	{
-		m_dwSelectState = dwState;
+		m_dwSelectState = dwState;		
 	}
 };
 class TSceneTitle : public TScene

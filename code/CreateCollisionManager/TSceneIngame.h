@@ -1,5 +1,13 @@
 #pragma once
 #include "TScene.h"
+class TUI : public TActor
+{
+public:
+	void   HitSelect(TActor* pActor, DWORD dwState)
+	{
+		m_dwSelectState = dwState;
+	}
+};
 class TSceneIngame :   public TScene
 {
 public:
@@ -12,7 +20,7 @@ public:
 	TCamera				m_Cam;
 	TActor				m_bkScreen; // »ï°¢Çü
 	std::vector<TActor> m_UISceneTimer;
-	std::vector<TActor> m_UIList;
+	std::vector<TUI>    m_UIList;
 	std::vector<TNpc>	m_npcList;
 	THero m_Hero;
 	UINT  m_iNpcCounter = 0;

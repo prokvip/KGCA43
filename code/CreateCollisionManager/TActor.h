@@ -33,7 +33,7 @@ public:
 	// 3) 面倒贸府 包府 哪器惩飘
 	virtual void   HitOverlap(TActor* pActor, DWORD dwState);
 	virtual void   HitSelect(TActor* pActor, DWORD dwState);
-	virtual void   SetOverlap();
+	virtual void   SetCollision();
 	virtual void   SetSelect();
 public:
 	bool				m_bDead= false;
@@ -56,6 +56,7 @@ public:
 	T_Math::FVector2	m_vVelocity; // 加档
 public:
 	virtual void    Frame() override;
+	virtual void    Release() override;
 	virtual void	SetVertexData(RECT rt) override;
 	virtual TActor& Move(float dx, float dy);
 	virtual TActor& Move(T_Math::FVector2 d);

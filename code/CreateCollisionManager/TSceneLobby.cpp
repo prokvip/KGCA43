@@ -1,6 +1,7 @@
 #include "TSceneLobby.h"
 #include "TInput.h"
 #include "TGame.h"
+#include "TObjectMgr.h"
 void    TSceneLobby::Execute()
 {
 	if (TCollision::RectToPt(m_StartBtn.m_rt, I_Input.m_ptMousePos))
@@ -14,7 +15,7 @@ void    TSceneLobby::Execute()
 	{
 		TScene* pScene = m_pGame->Transition(this, EVENT_CLICK);
 		pScene->Reset();
-		m_bSceneChange = false;
+		m_bSceneChange = false;		
 	}
 }
 void   TSceneLobby::Init()
@@ -59,6 +60,7 @@ void    TSceneLobby::Release()
 {
 	m_bkScreen.Release();
 	m_StartBtn.Release();
+
 }
 TSceneLobby::TSceneLobby(TGame* pGame) : TScene(pGame)
 {

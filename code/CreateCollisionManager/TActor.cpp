@@ -1,9 +1,16 @@
 #include "TActor.h"
 #include "TObjectMgr.h"
-
-void   TActor::SetOverlap()
+void   TActor::Release()
 {
-
+	I_ObjMgr.DelSelectExecute(this);
+	I_ObjMgr.DelCollisionExecute(this);
+}
+void   TActor::SetCollision()
+{
+	I_ObjMgr.AddCollisionExecute(this,
+		std::bind(&TActor::HitOverlap, this,
+			std::placeholders::_1,
+			std::placeholders::_2));
 }
 void   TActor::SetSelect()
 {
@@ -14,7 +21,7 @@ void   TActor::SetSelect()
 }
 void   TActor::HitOverlap(TActor* pActor, DWORD dwState)
 {
-
+	int k = 0;
 }
 void   TActor::HitSelect(TActor* pActor, DWORD dwState)
 {

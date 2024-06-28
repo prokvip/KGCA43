@@ -1,5 +1,9 @@
 #include "THero.h"
 #include "TInput.h"
+void   THero::HitOverlap(TActor* pActor, DWORD dwState)
+{
+	pActor->m_bDead = true;	
+}
 void   THero::SetVertexData(RECT rt)
 {
 	TDxObject::SetVertexData(rt);

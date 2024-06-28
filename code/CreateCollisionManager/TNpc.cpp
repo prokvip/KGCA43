@@ -1,4 +1,9 @@
 #include "TNpc.h"
+void   TNpc::HitOverlap(TActor* pActor, DWORD dwState)
+{
+	int k = 0;
+	//pActor->m_bDead = true;
+}
 void   TNpc::SetVertexData(RECT rt)
 {
 	TDxObject::SetVertexData(rt);

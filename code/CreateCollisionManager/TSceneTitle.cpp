@@ -6,8 +6,6 @@
 // GAME_TITLE	-> EVENT_TIMER:3		-> GAME_INGAME
 void    TSceneTitle::Execute()
 {	
-	I_ObjMgr.Frame();
-
 	/*m_fEventTimer += g_fSecondPerFrame;
 	if (m_fEventTimer > 3.0f)
 	{
@@ -27,6 +25,8 @@ void    TSceneTitle::Execute()
 	{
 		TScene* pScene = m_pGame->Transition(this, EVENT_CLICK);
 		pScene->Reset();
+		I_ObjMgr.Release();
+		m_bSceneChange = false;
 	}
 
 	/*if (m_bSceneChange)
@@ -63,6 +63,7 @@ void   TSceneTitle::Init()
 }
 void    TSceneTitle::Frame()
 {
+	I_ObjMgr.Frame();
 	//if (TCollision::RectToPt(m_StartBtn.m_rt, I_Input.m_ptMousePos))
 	//if (m_StartBtn.m_dwSelectState == T_HOVER)
 	//{
@@ -139,7 +140,7 @@ void    TSceneTitle::Render()
 			m_StartBtn.m_dwSelectState).GetAddressOf());	
 	m_StartBtn.PostRender(TDevice::m_pContext);
 
-	m_StartBtn.m_dwSelectState = TSelectState::T_DEFAULT;
+	
 }
 void    TSceneTitle::Release()
 {

@@ -9,5 +9,6 @@ public:
 	virtual void  Left();
 	virtual void  Right();
 	void	SetVertexData(RECT rt) override;
+	void    HitOverlap(TActor* pActor, DWORD dwState)override;
 	THero();
 };
