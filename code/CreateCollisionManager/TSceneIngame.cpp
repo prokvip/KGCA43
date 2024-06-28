@@ -180,8 +180,8 @@ void    TSceneIngame::Frame()
 			npc.SetAnim(1.0f, I_Sprite.GetPtr(L"DefalultNumber"));
 			m_npcList.push_back(npc);
 			m_iNpcCounter = m_npcList.size();
-		}
-		m_npcList[m_npcList.size()].SetCollision();
+			m_npcList[m_npcList.size()-1].SetCollision();
+		}		
 	}
 
 	//T_Math::FVector2 vPos = m_bkScreen.m_vPos;

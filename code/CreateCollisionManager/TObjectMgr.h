@@ -12,10 +12,6 @@ class TObjectMgr : public TSingleton<TObjectMgr>
 public:
 	std::map<int, TActor*>  m_ObjectList; // obj
 	std::map<int, TActor*>  m_SelectList; // ui
-	//virtual void   HitOverlap(TActor* pActor, THitResult dwState);
-	//virtual void   HitSelect(TActor* pActor, DWORD dwState);
-	
-
 	std::map<int, CollisionFunction>  m_fnCollisionExecute; // obj
 	std::map<int, SelectionFunction>  m_fnSelectExecute; // ui
 public:
