@@ -37,11 +37,16 @@ void   TSceneIngame::SetUI()
 		L"../../data/shader/Default.txt");
 	m_bkScreen.m_pSprite = nullptr;
 
-	m_pNpcCounterObj = std::make_shared<TUI>();
-	m_pNpcCounterObj->Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, { 0, 0, 100, 100 },
+	auto cnt10 = std::make_shared<TUI>();
+	cnt10->Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, { 0, 0, 50, 50 },
 		L"../../data/kgca1.png",L"Alphablend.hlsl");
-	m_pNpcCounterObj->SetAnim(1.0f, I_Sprite.GetPtr(L"DefalultNumber"));
-
+	cnt10->SetAnim(1.0f, I_Sprite.GetPtr(L"DefalultNumber"));	
+	auto cnt01 = std::make_shared<TUI>();
+	cnt01->Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, { 50, 0, 100, 50 },
+		L"../../data/kgca1.png", L"Alphablend.hlsl");
+	cnt01->SetAnim(1.0f, I_Sprite.GetPtr(L"DefalultNumber"));
+	m_pNpcCounterObj.push_back(cnt10);
+	m_pNpcCounterObj.push_back(cnt01);
 
 	auto ui1 = std::make_shared<TUI>();
 	ui1->Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext, { 700, 0, 800, 100 },
@@ -56,7 +61,7 @@ void   TSceneIngame::SetUI()
 		L"../../data/kgca1.png",
 		L"Alphablend.hlsl");
 	ui2->SetAnim(1.0f, I_Sprite.GetPtr(L"Fog"));
-	m_UIList.insert(std::make_pair(L"IconList", ui2));
+	m_UIList.insert(std::make_pair(L"Fog", ui2));
 
 	auto ui3 = std::make_shared<TUI>();
 	ui3->Create(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext,
@@ -64,7 +69,7 @@ void   TSceneIngame::SetUI()
 		L"../../data/Effect/slashFire_4x4.png",
 		L"Alphablend.hlsl");
 	ui3->SetAnim(1.0f, I_Sprite.GetPtr(L"wik"));
-	m_UIList.insert(std::make_pair(L"IconList", ui3));
+	m_UIList.insert(std::make_pair(L"wik", ui3));
 
 	// game timer
 	m_UISceneTimer.resize(2);
@@ -160,7 +165,6 @@ void    TSceneIngame::Frame()
 {
 	I_ObjMgr.Frame();
 	m_fSceneTime += g_fSecondPerFrame;
-
 	
 	if (I_Input.KeyCheck(VK_F1) == KEY_PUSH)
 	{			
@@ -225,10 +229,14 @@ void    TSceneIngame::Render()
 	m_bkScreen.SetViewTransform(m_Cam.GetMatrix());
 	m_bkScreen.Render(TDevice::m_pContext);
 
-	m_pNpcCounterObj->PreRender(TDevice::m_pContext);
-	TDevice::m_pContext->PSSetShaderResources(0, 1,
-		m_pNpcCounterObj->m_pSprite->GetSRV(m_iNpcCounter).GetAddressOf());
-	m_pNpcCounterObj->PostRender(TDevice::m_pContext);
+	m_pNpcCounterObj[0]->PreRender(TDevice::m_pContext);
+	TDevice::m_pContext->PSSetShaderResources(0, 1, m_pNpcCounterObj[0]->m_pSprite->GetSRV(m_iNpcCounter/10).GetAddressOf());
+	m_pNpcCounterObj[0]->PostRender(TDevice::m_pContext);
+	
+	m_pNpcCounterObj[1]->PreRender(TDevice::m_pContext);
+	TDevice::m_pContext->PSSetShaderResources(0, 1,	m_pNpcCounterObj[1]->m_pSprite->GetSRV(m_iNpcCounter).GetAddressOf());
+	m_pNpcCounterObj[1]->PostRender(TDevice::m_pContext);
+
 
 	for_each(begin(m_UIList), end(m_UIList), [&](auto& obj)
 	{
@@ -253,14 +261,14 @@ void    TSceneIngame::Render()
 	m_Hero.Render(TDevice::m_pContext);	
 
 	for_each(begin(m_npcList), end(m_npcList), [&](auto& obj)
+	{
+		if (!obj.second->m_bDead)
 		{
-			if (!obj.second->m_bDead)
-			{
-				obj.second->UpdateSprite();
-				obj.second->SetViewTransform(m_Cam.GetMatrix());
-				obj.second->Render(TDevice::m_pContext);
-			}
-		});
+			obj.second->UpdateSprite();
+			obj.second->SetViewTransform(m_Cam.GetMatrix());
+			obj.second->Render(TDevice::m_pContext);
+		}
+	});
 
 	// Àû °ÝÅð
 	if (m_npcList.size() == 0 )
@@ -274,8 +282,7 @@ void    TSceneIngame::Render()
 		}
 		else
 		{
-			m_iLevel++;
-			LevelUp(m_iLevel);
+			LevelUp(++m_iLevel);
 		}
 	}
 }
@@ -283,8 +290,11 @@ void    TSceneIngame::Release()
 {	
 	m_bkScreen.Release();
 	m_Hero.Release();
-	m_pNpcCounterObj->Release();
-
+	
+	for (auto obj : m_pNpcCounterObj)
+	{
+		obj->Release();
+	}
 	for (auto& obj : m_UIList)
 	{
 		obj.second->Release();

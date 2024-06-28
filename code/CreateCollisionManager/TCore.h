@@ -12,10 +12,8 @@
 class TCore : public TWindow, public TBaseCore
 {
 public:
-	TTimer m_Timer;
-	TWriterFont  m_font;
-	
-
+	TTimer			m_Timer;
+	TWriterFont		m_font;
 	ComPtr<ID3D11BlendState> m_pAlphaBlend = nullptr;
 public:
 	virtual void Init();
