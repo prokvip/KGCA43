@@ -21,10 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{D77F3A47-EF48-4CA8-90EC-8997D95051F8}</ProjectGuid>
+    <ProjectGuid>{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}</ProjectGuid>
     <RootNamespace>CreateWindow</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>CreateCollisionManager</ProjectName>
+    <ProjectName>SampleFSM</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,7 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../output/</OutDir>
-    <IntDir>../../output/CreateSceneManager</IntDir>
+    <IntDir>../../output/SampleFSM</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -232,7 +232,6 @@
   <ItemGroup>
     <Text Include="..\..\data\Sprite\SpriteInfo.txt" />
     <Text Include="intro.txt" />
-    <Text Include="SpriteInfo.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

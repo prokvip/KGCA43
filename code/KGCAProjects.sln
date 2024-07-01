@@ -87,6 +87,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateSpriteManager", "Crea
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateCollisionManager", "CreateCollisionManager\CreateCollisionManager.vcxproj", "{D77F3A47-EF48-4CA8-90EC-8997D95051F8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleFSM", "SampleFSM\SampleFSM.vcxproj", "{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -391,6 +393,14 @@ Global
 		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Release|x64.Build.0 = Release|x64
 		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Release|x86.ActiveCfg = Release|Win32
 		{D77F3A47-EF48-4CA8-90EC-8997D95051F8}.Release|x86.Build.0 = Release|Win32
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}.Debug|x64.ActiveCfg = Debug|x64
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}.Debug|x64.Build.0 = Debug|x64
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}.Debug|x86.ActiveCfg = Debug|Win32
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}.Debug|x86.Build.0 = Debug|Win32
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}.Release|x64.ActiveCfg = Release|x64
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}.Release|x64.Build.0 = Release|x64
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}.Release|x86.ActiveCfg = Release|Win32
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -431,6 +441,7 @@ Global
 		{FE431D69-881C-4A22-B42D-BC267DADCC5D} = {BF9160B1-54D4-4181-B928-4D9586FD8698}
 		{EB8F5ACC-EA0A-499B-BA55-2140509CC1A2} = {BF9160B1-54D4-4181-B928-4D9586FD8698}
 		{D77F3A47-EF48-4CA8-90EC-8997D95051F8} = {BF9160B1-54D4-4181-B928-4D9586FD8698}
+		{C603B5E9-F5F8-44B5-A390-CE96BE6FE139} = {BF9160B1-54D4-4181-B928-4D9586FD8698}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {760E8DCA-1EDC-41D9-8CDF-C65DDEE5F915}
