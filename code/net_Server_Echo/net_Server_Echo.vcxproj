@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{C603B5E9-F5F8-44B5-A390-CE96BE6FE139}</ProjectGuid>
-    <RootNamespace>CreateWindow</RootNamespace>
+    <ProjectGuid>{2bd0d431-66a9-472b-a464-94572d4e032d}</ProjectGuid>
+    <RootNamespace>netServerEcho</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>SampleFSM</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,7 +79,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../output/</OutDir>
-    <IntDir>../../output/SampleFSM</IntDir>
+    <IntDir>../../output/net_Server_Echo</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -89,11 +88,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -103,11 +102,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -117,29 +116,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../dxtk/include;../../fmod/inc;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../dxtk/lib;../../fmod/lib/x64;</AdditionalLibraryDirectories>
     </Link>
-    <FxCompile>
-      <EntryPointName>main</EntryPointName>
-    </FxCompile>
-    <FxCompile>
-      <ShaderType>Vertex</ShaderType>
-    </FxCompile>
-    <FxCompile>
-      <ShaderModel>5.0</ShaderModel>
-      <DisableOptimizations>false</DisableOptimizations>
-      <EnableDebuggingInformation>false</EnableDebuggingInformation>
-      <AssemblerOutput>AssemblyCodeAndHex</AssemblerOutput>
-      <AssemblerOutputFile>alphablend.txt</AssemblerOutputFile>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -147,91 +130,18 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Sample.cpp" />
-    <ClCompile Include="TActor.cpp" />
-    <ClCompile Include="TBaseManager.cpp" />
-    <ClCompile Include="TCamera.cpp" />
-    <ClCompile Include="TCollision.cpp" />
-    <ClCompile Include="TCore.cpp" />
-    <ClCompile Include="TDevice.cpp" />
-    <ClCompile Include="TDxObject.cpp" />
-    <ClCompile Include="TFiniteState.cpp" />
-    <ClCompile Include="TFiniteStateMachine.cpp" />
-    <ClCompile Include="TGame.cpp" />
-    <ClCompile Include="THero.cpp" />
-    <ClCompile Include="TInput.cpp" />
-    <ClCompile Include="TMath.cpp" />
-    <ClCompile Include="TNpc.cpp" />
-    <ClCompile Include="TObjectMgr.cpp" />
-    <ClCompile Include="TPawn.cpp" />
-    <ClCompile Include="TScene.cpp" />
-    <ClCompile Include="TSceneEnd.cpp" />
-    <ClCompile Include="TSceneIngame.cpp" />
-    <ClCompile Include="TSceneLobby.cpp" />
-    <ClCompile Include="TSceneResult.cpp" />
-    <ClCompile Include="TSceneStart.cpp" />
-    <ClCompile Include="TSceneTitle.cpp" />
-    <ClCompile Include="TShaderMgr.cpp" />
-    <ClCompile Include="TSound.cpp" />
-    <ClCompile Include="TSprite.cpp" />
-    <ClCompile Include="TTexMgr.cpp" />
-    <ClCompile Include="TTimer.cpp" />
-    <ClCompile Include="TWindow.cpp" />
-    <ClCompile Include="TWriterFont.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Sample.h" />
-    <ClInclude Include="TActor.h" />
-    <ClInclude Include="TBaseManager.h" />
-    <ClInclude Include="TCamera.h" />
-    <ClInclude Include="TCollision.h" />
-    <ClInclude Include="TCore.h" />
-    <ClInclude Include="TDevice.h" />
-    <ClInclude Include="TDxObject.h" />
-    <ClInclude Include="TFiniteState.h" />
-    <ClInclude Include="TFiniteStateMachine.h" />
-    <ClInclude Include="TGame.h" />
-    <ClInclude Include="THero.h" />
-    <ClInclude Include="TInput.h" />
-    <ClInclude Include="TMath.h" />
-    <ClInclude Include="TNpc.h" />
-    <ClInclude Include="TObjectMgr.h" />
-    <ClInclude Include="TPawn.h" />
-    <ClInclude Include="TScene.h" />
-    <ClInclude Include="TSceneEnd.h" />
-    <ClInclude Include="TSceneIngame.h" />
-    <ClInclude Include="TSceneLobby.h" />
-    <ClInclude Include="TSceneResult.h" />
-    <ClInclude Include="TSceneStart.h" />
-    <ClInclude Include="TSceneTitle.h" />
-    <ClInclude Include="TShaderMgr.h" />
-    <ClInclude Include="TSound.h" />
-    <ClInclude Include="TSprite.h" />
-    <ClInclude Include="TStd.h" />
-    <ClInclude Include="TTexMgr.h" />
-    <ClInclude Include="TTimer.h" />
-    <ClInclude Include="TWindow.h" />
-    <ClInclude Include="TWriterFont.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Alphablend.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\data\Sprite\SpriteInfo.txt" />
-    <Text Include="intro.txt" />
+    <ClCompile Include="net_Server_Echo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
