@@ -41,25 +41,45 @@ int main()
     SOCKET clientSock;
     // 수회기 들었다.접속 된 정보 반환.
     clientSock = accept(sock, (sockaddr*)&addr, &addrlen);
-    if (ret)
+    if (clientSock == INVALID_SOCKET)
     {
-        std::cout << "접속 ip=" <<
+        return 0;
+    }
+    std::cout << "접속 ip=" <<
             inet_ntoa(addr.sin_addr) << "port="
             << ntohs(addr.sin_port) << std::endl;
-    }
+    
 
     int iMsgCounter = 0;
     while (1)
     {
         char buf[256] = { 0, };        
         // 받고
-        ret = recv(clientSock,
+        int RecvByte = recv(clientSock,
               buf,
               sizeof(char)*256,
                 0);
+        if (RecvByte == 0)
+        {
+            closesocket(clientSock);
+            std::cout << "정상 접속종료 : " << inet_ntoa(addr.sin_addr) <<std::endl;
+            break;
+        }
+        if (RecvByte < 0)
+        {
+            closesocket(clientSock);
+            std::cout << "비정상 서버 종료!" << std::endl;
+            break;
+        }
         std::cout << "받고" << ret << buf << std::endl;
         // 보내고
-        ret = send(clientSock, buf, strlen(buf), 0);
+        int SendByte = send(clientSock, buf, strlen(buf), 0);
+        if (SendByte < 0)
+        {
+            closesocket(clientSock);
+            std::cout << "비정상 서버 종료!" << std::endl;
+            break;
+        }
         std::cout << iMsgCounter++ <<"보내고" << ret << buf << std::endl;
     }
 

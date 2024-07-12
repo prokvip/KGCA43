@@ -31,14 +31,26 @@ int main()
     if (ret != 0) return 1;
 
     char buf[256] = "안녕하세여~";
-    while (1)
+    
+    int iSendCounter = 10;
+    while (iSendCounter-- > 0)
     {
         Sleep(1000);
-        ret  = send(sock, buf,strlen(buf),0);
-        std::cout << "보내고" << ret << buf << std::endl;
+        int SendByte  = send(sock, buf,strlen(buf),0);
+        std::cout << "보내고" << SendByte << buf << std::endl;
 
-        ret = recv(sock, buf, sizeof(char) * 256,0);
-        std::cout << "받고" << ret << buf << std::endl;
+        int RecvByte = recv(sock, buf, sizeof(char) * 256,0);
+        if (RecvByte == 0)
+        {
+            std::cout << "서버 종료!" << std::endl;
+            break;
+        }
+        if (RecvByte < 0)
+        {
+            std::cout << "비정상 서버 종료!" << std::endl;
+            break;
+        }
+        std::cout << "받고" << RecvByte << buf << std::endl;
     }
     closesocket(sock);
     DelWinSock();
