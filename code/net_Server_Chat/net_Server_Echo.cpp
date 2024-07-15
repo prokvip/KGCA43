@@ -117,6 +117,11 @@ int main()
 
             // 정상적인 데이터 수신
             session.RecvByte = RecvByte;
+            if (session.RecvByte > 0)
+            {
+                std::cout << session.buf.c_str() << std::endl;
+            }
+
             for (auto iter = g_sockList.begin();
                 iter != g_sockList.end();
                 )
@@ -125,8 +130,6 @@ int main()
                 SOCKET sock = user.sock;
                 if (session.RecvByte > 0)
                 {
-                    std::cout << "받고" << session.RecvByte << session.buf.c_str() << std::endl;
-                    // 보내고
                     int SendByte = send(sock, session.buf.c_str(), session.RecvByte, 0);
                     if (SendByte < 0)
                     {
@@ -141,7 +144,7 @@ int main()
                     }                    
                 }
                 iter++;
-            }            
+            }      
             
         }        
    }

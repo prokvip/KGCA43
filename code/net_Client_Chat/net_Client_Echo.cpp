@@ -2,6 +2,8 @@
 #include <WinSock2.h>
 #include <iostream>
 #include <string>
+#include <thread>
+
 #pragma comment(lib,"ws2_32.lib")
 bool InitWinSock()
 {
@@ -15,10 +17,45 @@ void DelWinSock()
 {
     WSACleanup();
 }
+SOCKET sock;
+void SenderThread()
+{
+    std::string UserName = "[홍길동]";
+    std::string Sendbuf;
+    Sendbuf.reserve(256);
+    std::string KeyDatabuf;
+    KeyDatabuf.reserve(256);
+
+    int iSendCounter = 10;
+    while (iSendCounter-- > 0)
+    {
+        Sendbuf.clear();
+        Sendbuf = UserName;
+        std::cout << "데이터입력(종료:엔터) : ";
+        std::getline(std::cin, KeyDatabuf);
+        if (KeyDatabuf.empty())
+        {
+            break;
+        }
+        Sendbuf += KeyDatabuf;
+
+        int SendByte = send(sock, Sendbuf.c_str(), Sendbuf.size(), 0);
+        if (SendByte < 0)
+        {
+            int iError = WSAGetLastError();
+            if (iError != WSAEWOULDBLOCK)
+            {
+                break;
+            }
+            continue;
+        }
+        std::cout << "보내고" << SendByte << Sendbuf.c_str() << std::endl;
+    }
+}
 int main()
 {
     InitWinSock();
-    SOCKET sock = socket(AF_INET, // IP
+    sock = socket(AF_INET, // IP
         SOCK_STREAM,  //SOCK_DGRAM
         IPPROTO_TCP); //,IPPROTO_TCP,IPPROTO_UDP
 
@@ -35,40 +72,14 @@ int main()
     u_long iNonSocket = TRUE;
     int iMode = ioctlsocket(sock, FIONBIO, &iNonSocket);
 
-   std::string UserName = "[홍길동]";
-   std::string Sendbuf;
-   Sendbuf.reserve(256);
-   std::string KeyDatabuf;
-   KeyDatabuf.reserve(256);
-
+    // 종업원 1명
+    std::thread sendThread(SenderThread);
+   
    std::string Recvbuf;
    Recvbuf.resize(256);
     
-    int iSendCounter = 100;
-    while (iSendCounter-- > 0)
+    while (1)
     {
-        Sendbuf.clear();
-        Sendbuf = UserName;
-        std::cout << "데이터입력(종료:엔터) : ";
-        std::getline(std::cin, KeyDatabuf);
-        if (KeyDatabuf.empty())
-        {
-            break;
-        }
-        Sendbuf += KeyDatabuf;
-
-        int SendByte  = send(sock, Sendbuf.c_str(), Sendbuf.size(),0);
-        if (SendByte < 0)
-        {
-            int iError = WSAGetLastError();
-            if (iError != WSAEWOULDBLOCK)
-            {
-                break;
-            }
-            continue;
-        }
-        std::cout << "보내고" << SendByte << Sendbuf.c_str() << std::endl;
-
         int RecvByte = recv(sock, &Recvbuf[0],Recvbuf.size(),0);
         if (RecvByte == 0)
         {
@@ -86,9 +97,13 @@ int main()
         }
         else
         {
-            std::cout << "받고" << RecvByte << Recvbuf.c_str() << std::endl;
+            Recvbuf[RecvByte] = 0;
+            std::cout << Recvbuf.c_str() << std::endl;
         }
     }
+
+    sendThread.join();
+
     closesocket(sock);
     DelWinSock();
     std::cout << "Hello World!\n";
