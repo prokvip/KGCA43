@@ -99,9 +99,14 @@ int main()
                 {
                     closesocket(sock);
                     std::cout << "비정상 서버 종료!" << std::endl;
-                    iter = g_sockList.erase(iter);                    
+                    iter = g_sockList.erase(iter); 
+                    continue;
                 }
-                continue;
+                else
+                {
+                    iter++;
+                    continue;
+                }
             }
             if (RecvByte > 0)
             {
@@ -121,6 +126,7 @@ int main()
                 }
                 //std::cout << iMsgCounter++ << "보내고" << ret << buf << std::endl;
             }
+            iter++;
         }
    }
 
