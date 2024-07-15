@@ -105,7 +105,7 @@ int main()
             }
             if (RecvByte > 0)
             {
-                std::cout << "받고" << ret << buf << std::endl;
+                std::cout << "받고" << RecvByte << buf << std::endl;
                 // 보내고
                 int SendByte = send(sock, buf, strlen(buf), 0);
                 if (SendByte < 0)

@@ -1,6 +1,7 @@
 ﻿#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <WinSock2.h>
 #include <iostream>
+#include <string>
 #pragma comment(lib,"ws2_32.lib")
 bool InitWinSock()
 {
@@ -30,16 +31,45 @@ int main()
     int ret = connect(sock,  (sockaddr*)&sa,    namelen);
     if (ret != 0) return 1;
 
-    char buf[256] = "안녕하세여~";
+    // 넌블록형 소켓으로 전환
+    u_long iNonSocket = TRUE;
+    int iMode = ioctlsocket(sock, FIONBIO, &iNonSocket);
+
+   std::string UserName = "[홍길동]";
+   std::string Sendbuf;
+   Sendbuf.reserve(256);
+   std::string KeyDatabuf;
+   KeyDatabuf.reserve(256);
+
+   std::string Recvbuf;
+   Recvbuf.resize(256);
     
-    int iSendCounter = 10;
+    int iSendCounter = 100;
     while (iSendCounter-- > 0)
     {
-        Sleep(1000);
-        int SendByte  = send(sock, buf,strlen(buf),0);
-        std::cout << "보내고" << SendByte << buf << std::endl;
+        Sendbuf.clear();
+        Sendbuf = UserName;
+        std::cout << "데이터입력(종료:엔터) : ";
+        std::getline(std::cin, KeyDatabuf);
+        if (KeyDatabuf.empty())
+        {
+            break;
+        }
+        Sendbuf += KeyDatabuf;
 
-        int RecvByte = recv(sock, buf, sizeof(char) * 256,0);
+        int SendByte  = send(sock, Sendbuf.c_str(), Sendbuf.size(),0);
+        if (SendByte < 0)
+        {
+            int iError = WSAGetLastError();
+            if (iError != WSAEWOULDBLOCK)
+            {
+                break;
+            }
+            continue;
+        }
+        std::cout << "보내고" << SendByte << Sendbuf.c_str() << std::endl;
+
+        int RecvByte = recv(sock, &Recvbuf[0],Recvbuf.size(),0);
         if (RecvByte == 0)
         {
             std::cout << "서버 종료!" << std::endl;
@@ -47,10 +77,17 @@ int main()
         }
         if (RecvByte < 0)
         {
-            std::cout << "비정상 서버 종료!" << std::endl;
-            break;
+            int iError = WSAGetLastError();
+            if (iError != WSAEWOULDBLOCK)
+            {
+                std::cout << "비정상 서버 종료!" << std::endl;
+                break;
+            }
         }
-        std::cout << "받고" << RecvByte << buf << std::endl;
+        else
+        {
+            std::cout << "받고" << RecvByte << Recvbuf.c_str() << std::endl;
+        }
     }
     closesocket(sock);
     DelWinSock();
