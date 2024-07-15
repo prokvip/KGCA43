@@ -26,8 +26,8 @@ void SenderThread()
     std::string KeyDatabuf;
     KeyDatabuf.reserve(256);
 
-    int iSendCounter = 10;
-    while (iSendCounter-- > 0)
+    //int iSendCounter = 10;
+    while (1)
     {
         Sendbuf.clear();
         Sendbuf = UserName;
@@ -35,7 +35,7 @@ void SenderThread()
         std::getline(std::cin, KeyDatabuf);
         if (KeyDatabuf.empty())
         {
-            break;
+            continue;
         }
         Sendbuf += KeyDatabuf;
 

@@ -76,9 +76,7 @@ int main()
             g_sockList.emplace_back(clientSock, addr);
         }
 
-        for( auto iter = g_sockList.begin();
-             iter != g_sockList.end();
-              )
+        for( auto iter = g_sockList.begin(); iter != g_sockList.end();)
         {
             TSession& session = (*iter); 
             session.RecvByte = 0;
@@ -86,11 +84,7 @@ int main()
             SOCKET sock = session.sock;
             char buf[256] = { 0, };
             // 받고
-            int RecvByte = recv(sock,
-                &session.buf[0],
-                session.buf.size(),
-                0);
-
+            int RecvByte = recv(sock,&session.buf[0],session.buf.size(),0);
             if (RecvByte == 0)
             {
                 closesocket(sock);
@@ -122,28 +116,27 @@ int main()
                 std::cout << session.buf.c_str() << std::endl;
             }
 
-            for (auto iter = g_sockList.begin();
-                iter != g_sockList.end();
+            for (auto iterSend = g_sockList.begin();
+                iterSend != g_sockList.end();
                 )
             {
-                TSession& user = (*iter);
-                SOCKET sock = user.sock;
+                TSession& user = (*iterSend);
                 if (session.RecvByte > 0)
                 {
-                    int SendByte = send(sock, session.buf.c_str(), session.RecvByte, 0);
+                    int SendByte = send(user.sock, session.buf.c_str(), session.RecvByte, 0);
                     if (SendByte < 0)
                     {
                         int iError = WSAGetLastError();
                         if (iError != WSAEWOULDBLOCK)
                         {
-                            closesocket(sock);
+                            closesocket(user.sock);
                             std::cout << "비정상 서버 종료!" << std::endl;
-                            iter = g_sockList.erase(iter);
+                            iterSend = g_sockList.erase(iterSend);
                             continue;
                         }
                     }                    
                 }
-                iter++;
+                iterSend++;
             }      
             
         }        
