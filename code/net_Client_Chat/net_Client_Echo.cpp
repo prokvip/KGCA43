@@ -26,16 +26,15 @@ void SenderThread()
     std::string KeyDatabuf;
     KeyDatabuf.reserve(256);
 
-    //int iSendCounter = 10;
     while (1)
     {
         Sendbuf.clear();
         Sendbuf = UserName;
-        std::cout << "데이터입력(종료:엔터) : ";
+        //std::cout << "데이터입력(종료:엔터) : ";
         std::getline(std::cin, KeyDatabuf);
         if (KeyDatabuf.empty())
         {
-            continue;
+            break;
         }
         Sendbuf += KeyDatabuf;
 
@@ -49,8 +48,10 @@ void SenderThread()
             }
             continue;
         }
-        std::cout << "보내고" << SendByte << Sendbuf.c_str() << std::endl;
+        //std::cout << "보내고" << SendByte << Sendbuf.c_str() << std::endl;
     }
+
+    closesocket(sock);
 }
 int main()
 {
@@ -74,7 +75,8 @@ int main()
 
     // 종업원 1명
     std::thread sendThread(SenderThread);
-   
+    sendThread.detach();
+
    std::string Recvbuf;
    Recvbuf.resize(256);
     
@@ -82,7 +84,7 @@ int main()
     {
         int RecvByte = recv(sock, &Recvbuf[0],Recvbuf.size(),0);
         if (RecvByte == 0)
-        {
+        {           
             std::cout << "서버 종료!" << std::endl;
             break;
         }
@@ -98,11 +100,11 @@ int main()
         else
         {
             Recvbuf[RecvByte] = 0;
-            std::cout << Recvbuf.c_str() << std::endl;
-        }
+            std::cout << Recvbuf << std::endl;
+        }                
     }
 
-    sendThread.join();
+    //sendThread.join();
 
     closesocket(sock);
     DelWinSock();

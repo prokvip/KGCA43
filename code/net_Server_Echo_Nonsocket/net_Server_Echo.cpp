@@ -7,7 +7,6 @@
 #pragma comment(lib,"ws2_32.lib")
 bool InitWinSock()
 {
-    //_In_ WORD wVersionRequested,
     WSADATA WSAData;
     int ret = WSAStartup(MAKEWORD(2,2),&WSAData);
     if (ret != 0) return false;
@@ -20,10 +19,7 @@ void DelWinSock()
 int main()
 {
     InitWinSock();
-    // 전화기, 블록형 소켓 -> 넌블록형 소켓으로 전환
-    SOCKET g_hListenSock = socket(AF_INET, // IP
-           SOCK_STREAM,  //SOCK_DGRAM
-            IPPROTO_TCP); //,IPPROTO_TCP,IPPROTO_UDP
+    SOCKET g_hListenSock = socket(AF_INET, SOCK_STREAM,IPPROTO_TCP); 
 
     SOCKADDR_IN sa;
     ZeroMemory(&sa, sizeof(sa));
@@ -32,11 +28,8 @@ int main()
     sa.sin_port = htons(10000);
     sa.sin_family = AF_INET;
     int namelen = sizeof(sa);
-    // 소켓과  IP+PORT 연결한다. 전화번호 부여 받는다.
     int ret = bind(g_hListenSock,(sockaddr*)&sa,namelen);
-    // 전화개통
     ret  = listen(g_hListenSock, SOMAXCONN);
-
     // 넌블록형 소켓으로 전환
     u_long iNonSocket = TRUE;
     int iMode = ioctlsocket(g_hListenSock, FIONBIO, &iNonSocket);
@@ -51,11 +44,6 @@ int main()
     SOCKET clientSock;
     while (1)
     {        
-        // 수회기 들었다.접속 된 정보 반환.
-        // 넌블록형 함수
-        // 1)해당 이벤트가 발생하면 반환한다.
-        // 2)해당 이벤트가 발생하지 않아도 반환한다.
-        // 3)에러가 발생시 반환.
         clientSock = accept(g_hListenSock, (sockaddr*)&addr, &addrlen);
         if (clientSock == INVALID_SOCKET)
         {
@@ -74,9 +62,7 @@ int main()
             g_sockList.emplace_back(clientSock);
         }
 
-        for( auto iter = g_sockList.begin();
-             iter != g_sockList.end();
-              )
+        for( auto iter = g_sockList.begin(); iter != g_sockList.end();)
         {
             SOCKET sock = *iter;
             char buf[256] = { 0, };

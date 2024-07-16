@@ -23,17 +23,25 @@ struct TSession
     SOCKADDR_IN addr;
     std::string buf;
     UINT        RecvByte;
+    bool        bDisConnected;
     TSession(SOCKET sock, SOCKADDR_IN addr)
     {
         RecvByte = 0;
         this->sock = sock;
         this->addr = addr;
         buf.resize(256);
+        bDisConnected = false;
     }
 };
 
 std::list<TSession> g_sockList;
 
+void DisConnected(TSession& session)
+{
+    closesocket(session.sock);
+    std::cout << "접속종료 : " << 
+        inet_ntoa(session.addr.sin_addr) << std::endl;
+}
 int main()
 {
     InitWinSock();
@@ -69,14 +77,11 @@ int main()
         }
         else
         {
-            std::cout << "접속 ip=" <<
-                inet_ntoa(addr.sin_addr) << "port="
-                << ntohs(addr.sin_port) << std::endl;
-
+            std::cout << "접속 ip=" << inet_ntoa(addr.sin_addr) << "port=" << ntohs(addr.sin_port) << std::endl;
             g_sockList.emplace_back(clientSock, addr);
         }
 
-        for( auto iter = g_sockList.begin(); iter != g_sockList.end();)
+        for( auto iter = g_sockList.begin(); iter != g_sockList.end(); iter++)
         {
             TSession& session = (*iter); 
             session.RecvByte = 0;
@@ -89,7 +94,7 @@ int main()
             {
                 closesocket(sock);
                 std::cout << "정상 접속종료 : " << inet_ntoa(addr.sin_addr) << std::endl;
-                iter = g_sockList.erase(iter);
+                session.bDisConnected = true;
                 continue;
             }
             if (RecvByte < 0)
@@ -99,29 +104,22 @@ int main()
                 {
                     closesocket(sock);
                     std::cout << "비정상 서버 종료!" << std::endl;
-                    iter = g_sockList.erase(iter); 
-                    continue;
+                    session.bDisConnected = true;                    
                 }
-                else
-                {
-                    iter++;
-                    continue;
-                }
+                continue;
             }
-
             // 정상적인 데이터 수신
             session.RecvByte = RecvByte;
+            session.buf[RecvByte] = 0;
             if (session.RecvByte > 0)
             {
                 std::cout << session.buf.c_str() << std::endl;
             }
-
-            for (auto iterSend = g_sockList.begin();
-                iterSend != g_sockList.end();
-                )
+            // 브로드케스팅
+            for (auto iterSend = g_sockList.begin();iterSend != g_sockList.end(); iterSend++)
             {
                 TSession& user = (*iterSend);
-                if (session.RecvByte > 0)
+                if (session.RecvByte > 0 && user.bDisConnected ==false)
                 {
                     int SendByte = send(user.sock, session.buf.c_str(), session.RecvByte, 0);
                     if (SendByte < 0)
@@ -131,18 +129,33 @@ int main()
                         {
                             closesocket(user.sock);
                             std::cout << "비정상 서버 종료!" << std::endl;
-                            iterSend = g_sockList.erase(iterSend);
-                            continue;
+                            session.bDisConnected = true;                            
                         }
                     }                    
-                }
-                iterSend++;
-            }      
-            
-        }        
-   }
+                }              
+            }                  
+        }
+        // 종료
+        for (auto iter = g_sockList.begin(); iter != g_sockList.end(); )
+        {
+            if ((*iter).bDisConnected)
+            {
+                DisConnected(*iter);
+                iter = g_sockList.erase(iter);
+            }
+            else
+            {
+                iter++;
+            }
+        }
+    }
 
-    closesocket(clientSock);
+    for (auto iter = g_sockList.begin(); iter != g_sockList.end(); iter++)
+    {
+        DisConnected(*iter);
+    }
+    g_sockList.clear();
+
     closesocket(g_hListenSock);
     DelWinSock();
     std::cout << "Hello World!\n";
