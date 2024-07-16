@@ -85,11 +85,13 @@ int main()
     std::thread sendThread(SenderThread);
     sendThread.detach();
 
-   std::string Recvbuf;
-   Recvbuf.resize(256);
+    std::string Recvbuf;
+    Recvbuf.resize(256);
     
-   UINT  iBeginPos = 0;
-    while (1)
+    UINT  iBeginPos = 0;
+    bool  bRun = true;
+
+    while (bRun)
     {
         UPACKET packet;
         ZeroMemory(&packet, sizeof(packet));
@@ -118,16 +120,34 @@ int main()
             memcpy(&packet, &Recvbuf[0], PACKET_HEADER_SIZE);
             while (packet.ph.len > iBeginPos)
             {
-                int dataByte = recv(sock,
-                    &Recvbuf[0], packet.ph.len - iBeginPos, 0);
+                int dataByte = recv(sock,&Recvbuf[0], packet.ph.len - iBeginPos, 0);
+                if (RecvByte == 0)
+                {
+                    std::cout << "서버 종료!" << std::endl;
+                    bRun = false;
+                    break;
+                }
+                if (dataByte < 0)
+                {
+                    int iError = WSAGetLastError();
+                    if (iError != WSAEWOULDBLOCK)
+                    {
+                        std::cout << "비정상 서버 종료!" << std::endl;
+                        bRun = false;
+                        break;
+                    }                    
+                }
                 iBeginPos += dataByte;
             }
-            if (iBeginPos == packet.ph.len)
+            if (bRun)
             {
-                memcpy(&packet.msg, &Recvbuf[0], packet.ph.len - PACKET_HEADER_SIZE);
+                if (iBeginPos == packet.ph.len)
+                {
+                    memcpy(&packet.msg, &Recvbuf[0], packet.ph.len - PACKET_HEADER_SIZE);
+                }
+                std::cout << packet.msg << std::endl;
+                iBeginPos = 0;
             }
-            std::cout << packet.msg << std::endl;
-            iBeginPos = 0;
         }        
     }
 
