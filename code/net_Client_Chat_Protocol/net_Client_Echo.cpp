@@ -88,51 +88,15 @@ int main()
    std::string Recvbuf;
    Recvbuf.resize(256);
     
+   UINT  iBeginPos = 0;
     while (1)
     {
-        //UPACKET packet;
-        //ZeroMemory(&packet, sizeof(packet));
+        UPACKET packet;
+        ZeroMemory(&packet, sizeof(packet));
 
-        //int RecvByte = recv(sock, &session.buf[session.iBeginPos], PACKET_HEADER_SIZE - session.iBeginPos, 0);
-        //if (RecvByte == 0)
-        //{
-        //    closesocket(sock);
-        //    std::cout << "정상 접속종료 : " << inet_ntoa(addr.sin_addr) << std::endl;
-        //    session.bDisConnected = true;
-        //    continue;
-        //}
-        //if (RecvByte < 0)
-        //{
-        //    int iError = WSAGetLastError();
-        //    if (iError != WSAEWOULDBLOCK)
-        //    {
-        //        closesocket(sock);
-        //        std::cout << "비정상 서버 종료!" << std::endl;
-        //        session.bDisConnected = true;
-        //    }
-        //    continue;
-        //}
-
-        //session.iBeginPos += RecvByte;
-
-        //if (session.iBeginPos == PACKET_HEADER_SIZE)
-        //{
-        //    memcpy(&packet, &session.buf[0], PACKET_HEADER_SIZE);
-        //    while (packet.ph.len > session.iBeginPos)
-        //    {
-        //        int dataByte = recv(sock,
-        //            &session.buf[0], packet.ph.len - session.iBeginPos, 0);
-        //        session.iBeginPos += dataByte;
-        //    }
-        //    if (session.iBeginPos == packet.ph.len)
-        //    {
-        //        memcpy(&packet.msg, &session.buf[0], packet.ph.len - PACKET_HEADER_SIZE);
-        //    }
-        //}
-
-        int RecvByte = recv(sock, &Recvbuf[0],Recvbuf.size(),0);
+        int RecvByte = recv(sock, &Recvbuf[iBeginPos], PACKET_HEADER_SIZE - iBeginPos, 0);
         if (RecvByte == 0)
-        {           
+        {
             std::cout << "서버 종료!" << std::endl;
             break;
         }
@@ -144,15 +108,28 @@ int main()
                 std::cout << "비정상 서버 종료!" << std::endl;
                 break;
             }
+            continue;
         }
-        else
-        {
-            Recvbuf[RecvByte] = 0;
-            std::cout << Recvbuf << std::endl;
-        }                
-    }
 
-    //sendThread.join();
+        iBeginPos += RecvByte;
+
+        if (iBeginPos == PACKET_HEADER_SIZE)
+        {
+            memcpy(&packet, &Recvbuf[0], PACKET_HEADER_SIZE);
+            while (packet.ph.len > iBeginPos)
+            {
+                int dataByte = recv(sock,
+                    &Recvbuf[0], packet.ph.len - iBeginPos, 0);
+                iBeginPos += dataByte;
+            }
+            if (iBeginPos == packet.ph.len)
+            {
+                memcpy(&packet.msg, &Recvbuf[0], packet.ph.len - PACKET_HEADER_SIZE);
+            }
+            std::cout << packet.msg << std::endl;
+            iBeginPos = 0;
+        }        
+    }
 
     closesocket(sock);
     DelWinSock();
