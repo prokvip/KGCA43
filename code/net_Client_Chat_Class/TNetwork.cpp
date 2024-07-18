@@ -12,7 +12,7 @@ bool    TNetwork::CheckError()
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
             (LPSTR)&lpMsgBuffer,
             0, NULL);
-        std::cout << "ERROR(" << iError << "):" << lpMsgBuffer << std::endl;
+        std::cout << "ERROR(" << iError << "):" << (char*)lpMsgBuffer << std::endl;
         LocalFree(lpMsgBuffer);
         //exit(-1);
         return true;
@@ -177,7 +177,15 @@ void TNetwork::Create(std::string ip, USHORT port)
     sa.sin_family = AF_INET;
     int namelen = sizeof(sa);
     int ret = bind(g_hSock, (sockaddr*)&sa, namelen);
+    if (ret < 0)
+    {
+        CheckError();
+    }
     ret = listen(g_hSock, SOMAXCONN);
+    if (ret < 0)
+    {
+        CheckError();
+    }
     // 넌블록형 소켓으로 전환
     u_long iNonSocket = TRUE;
     int iMode = ioctlsocket(g_hSock, FIONBIO, &iNonSocket);
@@ -193,7 +201,11 @@ bool TNetwork::Connected(std::string ip, USHORT port)
     sa.sin_family = AF_INET;
     int namelen = sizeof(sa);
     int ret = connect(g_hSock, (sockaddr*)&sa, namelen);
-    if (ret != 0) return false;
+    if (ret != 0)
+    {
+        CheckError();
+        return false;
+    }
 
     // 넌블록형 소켓으로 전환
     u_long iNonSocket = TRUE;
