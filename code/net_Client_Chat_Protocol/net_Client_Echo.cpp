@@ -145,7 +145,10 @@ int main()
                 {
                     memcpy(&packet.msg, &Recvbuf[0], packet.ph.len - PACKET_HEADER_SIZE);
                 }
-                std::cout << packet.msg << std::endl;
+                if (packet.ph.type == PACKET_CHAT_MSG)
+                {
+                    std::cout << packet.msg << std::endl;
+                }             
                 iBeginPos = 0;
             }
         }        

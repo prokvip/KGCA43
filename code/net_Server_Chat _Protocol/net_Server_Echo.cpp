@@ -122,7 +122,7 @@ int main()
                 memcpy(&packet, &session.buf[0], PACKET_HEADER_SIZE);
                 while (packet.ph.len > session.iBeginPos)
                 {
-                    int dataByte = recv(sock,
+                  int dataByte = recv(sock,
                         &session.buf[0], packet.ph.len - session.iBeginPos, 0);
                     session.iBeginPos += dataByte;
                 }
@@ -183,6 +183,8 @@ int main()
                 iter++;
             }
         }
+
+        // 서버의 작업
     }
 
     for (auto iter = g_sockList.begin(); iter != g_sockList.end(); iter++)
