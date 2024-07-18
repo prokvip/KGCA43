@@ -3,41 +3,41 @@
 bool        TSession::Recv()
 {
     // 받고       
-    ZeroMemory(&packet, sizeof(packet));
+    ZeroMemory(&m_packet, sizeof(m_packet));
 
-    int RecvByte = recv(sock, &buf[iBeginPos], PACKET_HEADER_SIZE - iBeginPos, 0);
+    int RecvByte = recv(m_sock, &m_buf[m_iBeginPos], PACKET_HEADER_SIZE - m_iBeginPos, 0);
     if (RecvByte == 0)
     {
-        closesocket(sock);
-        std::cout << "정상 접속종료 : " << inet_ntoa(addr.sin_addr) << std::endl;
-        bDisConnected = true;
+        closesocket(m_sock);
+        std::cout << "정상 접속종료 : " << inet_ntoa(m_addr.sin_addr) << std::endl;
+        m_bDisConnected = true;
         return false;
     }
     if (RecvByte < 0)
     {
         if (TNetwork::CheckError())
         {
-            closesocket(sock);
+            closesocket(m_sock);
             std::cout << "비정상 서버 종료!" << std::endl;
-            bDisConnected = true;
+            m_bDisConnected = true;
         }
         return false;
     }
 
-    iBeginPos += RecvByte;
+    m_iBeginPos += RecvByte;
 
-    if (iBeginPos == PACKET_HEADER_SIZE)
+    if (m_iBeginPos == PACKET_HEADER_SIZE)
     {
-        memcpy(&packet, &buf[0], PACKET_HEADER_SIZE);
-        while (packet.ph.len > iBeginPos)
+        memcpy(&m_packet, &m_buf[0], PACKET_HEADER_SIZE);
+        while (m_packet.ph.len > m_iBeginPos)
         {
-            int dataByte = recv(sock, &buf[0], packet.ph.len - iBeginPos, 0);
-            iBeginPos += dataByte;
+            int dataByte = recv(m_sock, &m_buf[0], m_packet.ph.len - m_iBeginPos, 0);
+            m_iBeginPos += dataByte;
         }
-        if (iBeginPos == packet.ph.len)
+        if (m_iBeginPos == m_packet.ph.len)
         {
-            memcpy(&packet.msg, &buf[0], packet.ph.len - PACKET_HEADER_SIZE);
-            iBeginPos = 0;
+            memcpy(&m_packet.msg, &m_buf[0], m_packet.ph.len - PACKET_HEADER_SIZE);
+            m_iBeginPos = 0;
         }
     }
     else
@@ -48,16 +48,16 @@ bool        TSession::Recv()
 }
 void        TSession::SendPacket(UPACKET& packet)
 {
-    if (bDisConnected == false)
+    if (m_bDisConnected == false)
     {
-        int SendByte = send(sock, (char*)&packet, packet.ph.len, 0);
+        int SendByte = send(m_sock, (char*)&packet, packet.ph.len, 0);
         if (SendByte < 0)
         {
             if (TNetwork::CheckError())
             {
-                closesocket(sock);
+                closesocket(m_sock);
                 std::cout << "비정상 서버 종료!" << std::endl;
-                bDisConnected = true;
+                m_bDisConnected = true;
             }
         }
     }
@@ -65,8 +65,8 @@ void        TSession::SendPacket(UPACKET& packet)
 TSession::TSession(SOCKET sock, SOCKADDR_IN addr)
 {
     //RecvByte = 0;
-    this->sock = sock;
-    this->addr = addr;
-    buf.resize(256);
-    bDisConnected = false;
+    this->m_sock = sock;
+    this->m_addr = addr;
+    m_buf.resize(256);
+    m_bDisConnected = false;
 }

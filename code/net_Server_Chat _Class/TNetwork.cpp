@@ -71,14 +71,14 @@ int  TNetwork::SendPacket(TSession& user, UPACKET& packet)
     int SendByte = 0;
     if (m_bRun)
     {
-        SendByte = send(user.sock, (char*)&packet, packet.ph.len, 0);
+        SendByte = send(user.m_sock, (char*)&packet, packet.ph.len, 0);
         if (SendByte < 0)
         {
             if (CheckError())
             {
-                closesocket(user.sock);
+                closesocket(user.m_sock);
                 std::cout << "비정상 서버 종료!" << std::endl;
-                user.bDisConnected = false;
+                user.m_bDisConnected = false;
             }
         }
     }
@@ -145,7 +145,7 @@ void TNetwork::Run()
                 continue;
             }
             // 정상적인 데이터 수신            
-            PacketProcess(session.packet);
+            PacketProcess(session.m_packet);
         }
         CheckConnected();
     }
@@ -155,7 +155,7 @@ void TNetwork::CheckConnected()
     // 종료
     for (auto iter = g_sockList.begin(); iter != g_sockList.end(); )
     {
-        if ((*iter).bDisConnected)
+        if ((*iter).m_bDisConnected)
         {
             DisConnected(*iter);
             iter = g_sockList.erase(iter);
@@ -225,9 +225,9 @@ void TNetwork::DelWinSock()
 }
 void TNetwork::DisConnected(TSession& session)
 {
-    closesocket(session.sock);
+    closesocket(session.m_sock);
     std::cout << "접속종료 : " <<
-        inet_ntoa(session.addr.sin_addr) << std::endl;
+        inet_ntoa(session.m_addr.sin_addr) << std::endl;
 }
 TNetwork::TNetwork()
 {

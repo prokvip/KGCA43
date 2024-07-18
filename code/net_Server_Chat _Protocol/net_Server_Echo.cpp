@@ -20,19 +20,19 @@ void DelWinSock()
 
 struct TSession
 {
-    SOCKET      sock;
-    SOCKADDR_IN addr;
-    std::string buf;
-    UINT        iBeginPos = 0;
-    UINT        RecvByte;
-    bool        bDisConnected;
+    SOCKET      m_sock;
+    SOCKADDR_IN m_addr;
+    std::string m_buf;
+    UINT        m_iBeginPos = 0;
+    UINT        m_RecvByte;
+    bool        m_bDisConnected;
     TSession(SOCKET sock, SOCKADDR_IN addr)
     {
-        RecvByte = 0;
-        this->sock = sock;
-        this->addr = addr;
-        buf.resize(256);
-        bDisConnected = false;
+        m_RecvByte = 0;
+        this->m_sock = sock;
+        this->m_addr = addr;
+        m_buf.resize(256);
+        m_bDisConnected = false;
     }
 };
 
@@ -40,9 +40,9 @@ std::list<TSession> g_sockList;
 
 void DisConnected(TSession& session)
 {
-    closesocket(session.sock);
+    closesocket(session.m_sock);
     std::cout << "접속종료 : " << 
-        inet_ntoa(session.addr.sin_addr) << std::endl;
+        inet_ntoa(session.m_addr.sin_addr) << std::endl;
 }
 int main()
 {
@@ -86,21 +86,21 @@ int main()
         for( auto iter = g_sockList.begin(); iter != g_sockList.end(); iter++)
         {
             TSession& session = (*iter); 
-            session.RecvByte = 0;
+            session.m_RecvByte = 0;
 
-            SOCKET sock = session.sock;
+            SOCKET sock = session.m_sock;
             char buf[256] = { 0, };
             // 받고
 
             UPACKET packet;
             ZeroMemory(&packet, sizeof(packet));
 
-            int RecvByte = recv(sock,&session.buf[session.iBeginPos], PACKET_HEADER_SIZE- session.iBeginPos,0);
+            int RecvByte = recv(sock,&session.m_buf[session.m_iBeginPos], PACKET_HEADER_SIZE- session.m_iBeginPos,0);
             if (RecvByte == 0)
             {
                 closesocket(sock);
                 std::cout << "정상 접속종료 : " << inet_ntoa(addr.sin_addr) << std::endl;
-                session.bDisConnected = true;
+                session.m_bDisConnected = true;
                 continue;
             }
             if (RecvByte < 0)
@@ -110,26 +110,26 @@ int main()
                 {
                     closesocket(sock);
                     std::cout << "비정상 서버 종료!" << std::endl;
-                    session.bDisConnected = true;
+                    session.m_bDisConnected = true;
                 }
                 continue;
             }
             
-            session.iBeginPos += RecvByte;
+            session.m_iBeginPos += RecvByte;
 
-            if (session.iBeginPos == PACKET_HEADER_SIZE)
+            if (session.m_iBeginPos == PACKET_HEADER_SIZE)
             {
-                memcpy(&packet, &session.buf[0], PACKET_HEADER_SIZE);
-                while (packet.ph.len > session.iBeginPos)
+                memcpy(&packet, &session.m_buf[0], PACKET_HEADER_SIZE);
+                while (packet.ph.len > session.m_iBeginPos)
                 {
                   int dataByte = recv(sock,
-                        &session.buf[0], packet.ph.len - session.iBeginPos, 0);
-                    session.iBeginPos += dataByte;
+                        &session.m_buf[0], packet.ph.len - session.m_iBeginPos, 0);
+                    session.m_iBeginPos += dataByte;
                 }
-                if (session.iBeginPos == packet.ph.len )
+                if (session.m_iBeginPos == packet.ph.len )
                 {
-                    memcpy(&packet.msg, &session.buf[0], packet.ph.len - PACKET_HEADER_SIZE);
-                    session.iBeginPos = 0;
+                    memcpy(&packet.msg, &session.m_buf[0], packet.ph.len - PACKET_HEADER_SIZE);
+                    session.m_iBeginPos = 0;
                 }
             }
 
@@ -141,9 +141,9 @@ int main()
             packet.ph.type = PACKET_CHAT_MSG;
             memcpy(packet.msg, Sendbuf.c_str(), Sendbuf.size());*/
 
-            session.RecvByte = RecvByte;
-            session.buf[RecvByte] = 0;
-            if (session.RecvByte > 0)
+            session.m_RecvByte = RecvByte;
+            session.m_buf[RecvByte] = 0;
+            if (session.m_RecvByte > 0)
             {
                 if (packet.ph.type == PACKET_CHAT_MSG)
                 {
@@ -154,17 +154,17 @@ int main()
             for (auto iterSend = g_sockList.begin();iterSend != g_sockList.end(); iterSend++)
             {
                 TSession& user = (*iterSend);
-                if (user.bDisConnected ==false)
+                if (user.m_bDisConnected ==false)
                 {
-                    int SendByte = send(user.sock, (char*)&packet, packet.ph.len, 0);
+                    int SendByte = send(user.m_sock, (char*)&packet, packet.ph.len, 0);
                     if (SendByte < 0)
                     {
                         int iError = WSAGetLastError();
                         if (iError != WSAEWOULDBLOCK)
                         {
-                            closesocket(user.sock);
+                            closesocket(user.m_sock);
                             std::cout << "비정상 서버 종료!" << std::endl;
-                            session.bDisConnected = true;                            
+                            session.m_bDisConnected = true;
                         }
                     }                    
                 }              
@@ -173,7 +173,7 @@ int main()
         // 종료
         for (auto iter = g_sockList.begin(); iter != g_sockList.end(); )
         {
-            if ((*iter).bDisConnected)
+            if ((*iter).m_bDisConnected)
             {
                 DisConnected(*iter);
                 iter = g_sockList.erase(iter);
