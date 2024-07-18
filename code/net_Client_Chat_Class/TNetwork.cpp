@@ -1,4 +1,24 @@
 #include "TNetwork.h"
+bool    TNetwork::CheckError()
+{
+    int iError = WSAGetLastError();
+    if (iError != WSAEWOULDBLOCK)
+    {
+        LPVOID lpMsgBuffer;
+        FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
+            FORMAT_MESSAGE_FROM_SYSTEM, NULL,
+            iError,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPSTR)&lpMsgBuffer,
+            0, NULL);
+        std::cout << "ERROR(" << iError << "):" << lpMsgBuffer << std::endl;
+        LocalFree(lpMsgBuffer);
+        //exit(-1);
+        return true;
+    }
+    return false;
+}
 UPACKET TNetwork::MakePacket(
     short  		sDataSize,
     short    	type,
@@ -19,11 +39,10 @@ int  TNetwork::SendPacket(SOCKET sock, UPACKET& packet)
         SendByte = send(sock, (char*)&packet, packet.ph.len, 0);
         if (SendByte < 0)
         {
-            int iError = WSAGetLastError();
-            if (iError != WSAEWOULDBLOCK)
+            if (CheckError())
             {
                 closesocket(sock);
-                std::cout << "비정상 서버 종료!" << std::endl;       
+                std::cout << "비정상 서버 종료!" << std::endl;
             }
         }
 
@@ -38,8 +57,7 @@ int  TNetwork::SendPacket(UPACKET& packet)
         SendByte = send(g_hSock, (char*)&packet, packet.ph.len, 0);
         if (SendByte < 0)
         {
-            int iError = WSAGetLastError();
-            if (iError != WSAEWOULDBLOCK)
+            if (CheckError())
             {
                 closesocket(g_hSock);
                 std::cout << "비정상 서버 종료!" << std::endl;
@@ -56,8 +74,7 @@ int  TNetwork::SendPacket(TSession& user, UPACKET& packet)
         SendByte = send(user.sock, (char*)&packet, packet.ph.len, 0);
         if (SendByte < 0)
         {
-            int iError = WSAGetLastError();
-            if (iError != WSAEWOULDBLOCK)
+            if (CheckError())
             {
                 closesocket(user.sock);
                 std::cout << "비정상 서버 종료!" << std::endl;
@@ -110,8 +127,7 @@ void TNetwork::Run()
         clientSock = accept(g_hSock, (sockaddr*)&addr, &addrlen);
         if (clientSock == INVALID_SOCKET)
         {
-            int iError = WSAGetLastError();
-            if (iError != WSAEWOULDBLOCK)
+            if (CheckError())
             {
                 break;
             }
@@ -127,12 +143,12 @@ void TNetwork::Run()
             if (session.Recv() == false)
             {
                 continue;
-            }            
+            }
             // 정상적인 데이터 수신            
-            PacketProcess(session.packet);            
-        }   
+            PacketProcess(session.packet);
+        }
         CheckConnected();
-    }    
+    }
 }
 void TNetwork::CheckConnected()
 {

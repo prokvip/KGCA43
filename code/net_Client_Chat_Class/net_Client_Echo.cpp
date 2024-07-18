@@ -1,5 +1,5 @@
-﻿#include "TNetwork.h"
-void SenderThread(TNetworkClient& net)
+﻿#include "TNetClient.h"
+void SenderThread(TNetClient& net)
 {
     std::string UserName = "[홍길동]";
     std::string Sendbuf;
@@ -30,7 +30,7 @@ void SenderThread(TNetworkClient& net)
 }
 int main()
 {
-    TNetworkClient net;
+    TNetClient net;
     net.Connected("192.168.0.12", 10000);
     
     // 종업원 1명

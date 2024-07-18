@@ -142,12 +142,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="net_Server_Echo.cpp" />
+    <ClCompile Include="TNetClient.cpp" />
+    <ClCompile Include="TNetServer.cpp" />
     <ClCompile Include="TNetwork.cpp" />
+    <ClCompile Include="TSession.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TNetClient.h" />
+    <ClInclude Include="TNetServer.h" />
     <ClInclude Include="TNetStd.h" />
     <ClInclude Include="TNetwork.h" />
     <ClInclude Include="TProtocol.h" />
+    <ClInclude Include="TSession.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
