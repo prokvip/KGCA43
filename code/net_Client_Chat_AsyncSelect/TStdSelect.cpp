@@ -45,7 +45,8 @@ bool TStdSelect::Run()
 	{
 		if (FD_ISSET(session.m_hSock, &m_eSet))
 		{
-			return false;
+			session.m_bDisConnected = true;
+			continue;
 		}
 
 		if (FD_ISSET(session.m_hSock, &m_rSet))
