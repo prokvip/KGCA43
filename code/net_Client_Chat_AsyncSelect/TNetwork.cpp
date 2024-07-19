@@ -59,7 +59,7 @@ int  TNetwork::SendPacket(UPACKET& packet)
     int SendByte = 0;
     if (m_bRun)
     {
-        SendByte = send(m_hSock, (char*)&packet, packet.ph.len, MSG_OOB);
+        SendByte = send(m_hSock, (char*)&packet, packet.ph.len, 0);
         if (SendByte < 0)
         {
             if (CheckError())

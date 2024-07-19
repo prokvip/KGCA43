@@ -45,6 +45,10 @@ bool TStdSelect::Run()
 	{
 		if (FD_ISSET(session.m_hSock, &m_eSet))
 		{
+			if (session.Recv() == true)
+			{
+				m_pNet->AddPacket(session.m_packet);
+			}
 			return false;
 		}
 
