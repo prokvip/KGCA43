@@ -8,7 +8,6 @@ bool        TSession::Recv()
     int RecvByte = recv(m_hSock, &m_buf[m_iBeginPos], PACKET_HEADER_SIZE - m_iBeginPos, 0);
     if (RecvByte == 0)
     {
-        closesocket(m_hSock);
         std::cout << "정상 접속종료 : " << inet_ntoa(m_addr.sin_addr) << std::endl;
         m_bDisConnected = true;
         return false;
@@ -17,7 +16,6 @@ bool        TSession::Recv()
     {
         if (TNetwork::CheckError())
         {
-            closesocket(m_hSock);
             std::cout << "비정상 서버 종료!" << std::endl;
             m_bDisConnected = true;
         }
@@ -46,21 +44,22 @@ bool        TSession::Recv()
     }
     return true;
 }
-void        TSession::SendPacket(UPACKET& packet)
+int        TSession::SendPacket(UPACKET& packet)
 {
+    int SendByte = 0;
     if (m_bDisConnected == false)
     {
-        int SendByte = send(m_hSock, (char*)&packet, packet.ph.len, MSG_OOB);
+        SendByte = send(m_hSock, (char*)&packet, packet.ph.len, MSG_OOB);
         if (SendByte < 0)
         {
             if (TNetwork::CheckError())
             {
-                closesocket(m_hSock);
                 std::cout << "비정상 서버 종료!" << std::endl;
                 m_bDisConnected = true;
             }
         }
     }
+    return SendByte;
 }
 TSession::TSession(SOCKET sock, SOCKADDR_IN addr)
 {

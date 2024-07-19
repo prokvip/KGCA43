@@ -13,7 +13,7 @@ public:
     UPACKET     m_packet;
 public:
     bool        Recv();
-    void        SendPacket(UPACKET& packet);
+    int         SendPacket(UPACKET& packet);
     TSession(SOCKET sock, SOCKADDR_IN addr);
 };
 

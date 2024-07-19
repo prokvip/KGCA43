@@ -81,7 +81,6 @@ int  TNetwork::SendPacket(TSession& user, UPACKET& packet)
         {
             if (CheckError())
             {
-                closesocket(user.m_hSock);
                 std::cout << "비정상 서버 종료!" << std::endl;
                 user.m_bDisConnected = false;
             }
