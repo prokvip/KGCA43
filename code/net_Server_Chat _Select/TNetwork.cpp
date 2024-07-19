@@ -146,7 +146,7 @@ bool TNetwork::Recv()
         TSession& session = (*iter);
         if (session.Recv() == false)
         {
-            return false;
+            continue;
         }
         AddPacket(session.m_packet);
     }

@@ -59,7 +59,7 @@ int  TNetwork::SendPacket(UPACKET& packet)
     int SendByte = 0;
     if (m_bRun)
     {
-        SendByte = send(m_hSock, (char*)&packet, packet.ph.len, 0);
+        SendByte = send(m_hSock, (char*)&packet, packet.ph.len, MSG_OOB);
         if (SendByte < 0)
         {
             if (CheckError())
@@ -146,7 +146,7 @@ bool TNetwork::Recv()
         TSession& session = (*iter);
         if (session.Recv() == false)
         {
-            return false;
+            continue;
         }
         AddPacket(session.m_packet);
     }

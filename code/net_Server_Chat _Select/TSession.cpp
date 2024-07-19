@@ -50,7 +50,7 @@ void        TSession::SendPacket(UPACKET& packet)
 {
     if (m_bDisConnected == false)
     {
-        int SendByte = send(m_hSock, (char*)&packet, packet.ph.len, 0);
+        int SendByte = send(m_hSock, (char*)&packet, packet.ph.len, MSG_OOB);
         if (SendByte < 0)
         {
             if (TNetwork::CheckError())
