@@ -5,10 +5,12 @@
 #else
 #pragma comment(lib, "TNetwork.lib")
 #endif
+// TNetwork 폴더 -> inc, lib 폴더를 먼저 생성 후 작업한다.
+ 
 // 라이브러리 프로젝트 속성->빌드이벤트->빌드 후 이벤트
 // copy "소스대상" "목적지 복사"
-// copy "*.h" "../../TNetwork/Inc/"
-// copy "..\\..\\output\\TNetworkLib.lib" "../../TNetwork/lib/"
+// copy "*.h" "..\\..\\TNetwork\\Inc\\"
+// copy "..\\..\\output\\TNetworkLib.lib" "..\\..\\TNetwork\\lib\\"
 int main()
 {
     std::cout << "Select Server starting!" << std::endl;
