@@ -26,7 +26,7 @@ public:
     virtual void AddSession(SOCKET sock, SOCKADDR_IN addr);
     virtual void Broadcast(UPACKET& packet);
     virtual void DisConnected(TSession& session);
-    virtual void Create(std::string ip, USHORT port = 10000);
+    virtual void CreateServer(std::string ip, USHORT port = 10000);
     virtual bool Connected(std::string ip, USHORT port = 10000);
     virtual bool Accept();
     virtual bool Recv();

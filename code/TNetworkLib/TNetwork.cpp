@@ -196,7 +196,7 @@ void TNetwork::CheckConnected()
         }
     }
 }
-void TNetwork::Create(std::string ip, USHORT port)
+void TNetwork::CreateServer(std::string ip, USHORT port)
 {
     m_hSock = socket(AF_INET, SOCK_STREAM, 0);
     SOCKADDR_IN sa;
@@ -218,7 +218,7 @@ void TNetwork::Create(std::string ip, USHORT port)
     }
     // 넌블록형 소켓으로 전환
     u_long iNonSocket = TRUE;
-    int iMode = ioctlsocket(m_hSock, FIONBIO, &iNonSocket);
+    int iMode = ioctlsocket(m_hSock, FIONBIO, &iNonSocket);    
 }
 bool TNetwork::Connected(std::string ip, USHORT port)
 {

@@ -1,4 +1,9 @@
 ﻿#include "TNetClient.h"
+#ifdef _DEBUG
+#pragma comment(lib, "TNetwork_d.lib")
+#else
+#pragma comment(lib, "TNetwork.lib")
+#endif
 void SenderThread(TNetClient& net)
 {
     std::string UserName = "[홍길동]";
