@@ -2,28 +2,15 @@
 #include "TNetwork.h"
 bool TAsyncSelect::Set(HWND hWnd)
 {
+    _ASSERT(m_pNet);
     WSAAsyncSelect(m_pNet->m_hSock, hWnd, WM_SOCKET,
         FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
     return true;
 }
 
-bool TAsyncSelect::Run()
-{
-    // 메세지큐에 담겨있는 모든 메세지를 수작업으로 프로시져에 전달한다.
-    MSG msg = { };
-    while (WM_QUIT != msg.message)
-    {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-    return true;
-}
-
 LRESULT TAsyncSelect::MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam)
 {
+    _ASSERT(m_pNet);
     int iEvent = WSAGETSELECTEVENT(lParam);
     int iSock = WSAGETSELECTEVENT(wParam);
 

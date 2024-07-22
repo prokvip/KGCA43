@@ -69,8 +69,14 @@ int main()
     std::thread sendThread(SenderThread, std::ref(net));
     sendThread.detach();
     
-    pAsync->Run();
-    //net.Run();
-
+    MSG msg = { };
+    while (WM_QUIT != msg.message)
+    {
+        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
     net.Release();    
 }
