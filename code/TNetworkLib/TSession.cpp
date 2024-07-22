@@ -69,3 +69,10 @@ TSession::TSession(SOCKET sock, SOCKADDR_IN addr)
     m_buf.resize(256);
     m_bDisConnected = false;
 }
+
+void TSession::Disconnect()
+{ 
+    closesocket(m_hSock);
+    m_bDisConnected = true;
+    std::cout << "접속종료 : " << inet_ntoa(m_addr.sin_addr) << std::endl;
+}

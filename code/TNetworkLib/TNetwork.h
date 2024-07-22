@@ -21,13 +21,13 @@ public:
     int  SendPacket(SOCKET sock, UPACKET& packet);
     int  SendPacket(UPACKET& packet);
     int  SendPacket(TSession& user, UPACKET& packet);
-    virtual void Connected(bool connect);
+   
 public:
     virtual void PacketProcess(UPACKET& packet);
     virtual void CheckConnected();
     virtual void AddSession(SOCKET sock, SOCKADDR_IN addr);
     virtual void Broadcast(UPACKET& packet);
-    virtual void DisConnected(TSession& session);
+    
     virtual void CreateServer(std::string ip, USHORT port = 10000);
     virtual bool Connected(std::string ip, USHORT port = 10000);
     virtual bool Accept();
@@ -36,6 +36,10 @@ public:
     virtual void AddPacket(UPACKET& packet);
     virtual void Run();
     virtual void Release();
+
+    virtual void Connected();
+    virtual void DisConnected();
+    virtual void DisConnected(TSession& session);    
      
 public:
     TNetwork();

@@ -14,6 +14,7 @@ public:
 public:
     bool        Recv();
     int         SendPacket(UPACKET& packet);
+    void        Disconnect();
     TSession(SOCKET sock, SOCKADDR_IN addr);
 };
 

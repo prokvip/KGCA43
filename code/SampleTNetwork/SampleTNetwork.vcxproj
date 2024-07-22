@@ -149,6 +149,11 @@
   <ItemGroup>
     <ClCompile Include="SampleTNetwork.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TNetworkLib\TNetworkLib.vcxproj">
+      <Project>{aa2b189f-d440-4de9-a012-f46642b95319}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

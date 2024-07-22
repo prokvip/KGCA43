@@ -6,6 +6,7 @@ class TAsyncSelect : public TSelectModel
 public:
 	LRESULT MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam);
 	bool    Set(HWND hWnd);
+	
 public:
 	TAsyncSelect() = default;
 	TAsyncSelect(TNetwork * net);

@@ -1,8 +1,27 @@
 #include "TNetwork.h"
-void TNetwork::Connected(bool connect)
+void TNetwork::Connected()
 {
-    m_bConnect = connect;
+    m_bConnect = true;
+    if (m_bConnect)
+    {
+        std::cout << "서버 접속 성공 : " << std::endl;
+    }
+    else
+    {
+        DisConnected();
+        std::cout << "서버 종료 : " << std::endl;
+    }
 }
+void TNetwork::DisConnected(TSession& session)
+{
+    session.Disconnect();
+}
+void TNetwork::DisConnected()
+{
+    closesocket(m_hSock);
+    m_bConnect = false;   
+}
+
 void    TNetwork::AddPacket(UPACKET& packet)
 {
    m_PacketPool.emplace_back(packet);
@@ -259,12 +278,7 @@ void TNetwork::DelWinSock()
 {
     WSACleanup();
 }
-void TNetwork::DisConnected(TSession& session)
-{
-    closesocket(session.m_hSock);
-    std::cout << "접속종료 : " <<
-        inet_ntoa(session.m_addr.sin_addr) << std::endl;
-}
+
 TNetwork::TNetwork()
 {
     InitWinSock();

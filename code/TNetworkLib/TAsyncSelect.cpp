@@ -3,8 +3,7 @@
 bool TAsyncSelect::Set(HWND hWnd)
 {
     _ASSERT(m_pNet);
-    WSAAsyncSelect(m_pNet->m_hSock, hWnd, WM_SOCKET,
-        FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
+    WSAAsyncSelect(m_pNet->m_hSock, hWnd, WM_SOCKET, FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
     return true;
 }
 
@@ -22,12 +21,15 @@ LRESULT TAsyncSelect::MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam
         {
         case  FD_CONNECT:
         {
-            m_pNet->Connected(true);
+            m_pNet->Connected();
             int k = 0;
         }break;
         case  FD_READ:
         {
-            m_pNet->Run();
+            if (m_pNet->m_bConnect)
+            {
+                m_pNet->Recv();
+            }
         }break;
         case  FD_WRITE:
         {
@@ -35,7 +37,7 @@ LRESULT TAsyncSelect::MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam
         }break;
         case  FD_CLOSE:
         {
-            int k = 0;
+            m_pNet->DisConnected();
         }break;
         }
     }
