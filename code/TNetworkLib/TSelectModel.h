@@ -6,7 +6,7 @@ class TSelectModel
 public:
 	SOCKET   m_hSock;
 	TNetwork* m_pNet = nullptr;
-	virtual bool     Run() = 0;
+	virtual bool     Run() { return true; };
 public:
 	TSelectModel()  = default;
 	TSelectModel(SOCKET sock);

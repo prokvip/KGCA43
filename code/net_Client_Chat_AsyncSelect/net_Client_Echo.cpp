@@ -1,9 +1,12 @@
 ﻿#include "TNetClient.h"
+#include "TWindow.h"
 #ifdef _DEBUG
 #pragma comment(lib, "TNetwork_d.lib")
 #else
 #pragma comment(lib, "TNetwork.lib")
 #endif
+
+
 void SenderThread(TNetClient& net)
 {
     std::string UserName = "[홍길동]";
@@ -33,16 +36,41 @@ void SenderThread(TNetClient& net)
     }
     closesocket(net.m_hSock);
 }
+
+
+TNetClient net;
+
+class TWin : public TWindow
+{
+public:
+    LRESULT MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam)
+    {
+        if (net.m_pSelectIO != nullptr)
+        {
+            TAsyncSelect* pAsync = (TAsyncSelect*)net.m_pSelectIO.get();
+            pAsync->MsgProc(hwnd, uMsg, wParam, lParam);
+        }
+        return 0;
+    }
+};
 int main()
 {
-    TNetClient net;
-    net.Connected("192.168.0.12", 10000);
+    TWin win;
+    win.CreateWin(NULL);    
+    
     net.m_pSelectIO = std::make_shared<TAsyncSelect>(&net);
+    TAsyncSelect* pAsync = (TAsyncSelect*)net.m_pSelectIO.get();
+    pAsync->Set(win.m_hWnd);
+
+
+    net.Connected("192.168.0.12", 10000);
 
     // 종업원 1명
     std::thread sendThread(SenderThread, std::ref(net));
     sendThread.detach();
+    
+    pAsync->Run();
+    //net.Run();
 
-    net.Run();
     net.Release();    
 }

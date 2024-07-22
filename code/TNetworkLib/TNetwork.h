@@ -8,6 +8,7 @@ public:
     std::shared_ptr<TSelectModel> m_pSelectIO;
     SOCKET              m_hSock;
     bool                m_bRun = true;
+    bool                m_bConnect = false;
 public:
     std::list<TSession> m_SessionList;
     std::list<UPACKET>  m_PacketPool;
@@ -20,6 +21,7 @@ public:
     int  SendPacket(SOCKET sock, UPACKET& packet);
     int  SendPacket(UPACKET& packet);
     int  SendPacket(TSession& user, UPACKET& packet);
+    virtual void Connected(bool connect);
 public:
     virtual void PacketProcess(UPACKET& packet);
     virtual void CheckConnected();

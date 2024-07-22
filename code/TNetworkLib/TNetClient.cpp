@@ -1,4 +1,25 @@
 #include "TNetClient.h"
+
+
+bool TNetClient::Connected(std::string ip, USHORT port)
+{
+    SOCKADDR_IN sa;
+    ZeroMemory(&sa, sizeof(sa));
+    sa.sin_addr.s_addr = inet_addr(ip.c_str());
+    //inet_pton(AF_INET, ip.c_str(), &sa.sin_addr.s_addr);
+    sa.sin_port = htons(port);
+    sa.sin_family = AF_INET;
+    int namelen = sizeof(sa);
+    int ret = connect(m_hSock, (sockaddr*)&sa, namelen);
+    if (ret != 0)
+    {
+        if (CheckError() == true)
+        {
+            return false;
+        }
+    }
+    return true;
+}
 void   TNetClient::Run() 
 {
     std::string Recvbuf;
@@ -7,7 +28,7 @@ void   TNetClient::Run()
     UINT  iBeginPos = 0;
     bool  bRun = true;
 
-    while (bRun)
+    //while (bRun)
     {
         UPACKET packet;
         ZeroMemory(&packet, sizeof(packet));
@@ -16,16 +37,16 @@ void   TNetClient::Run()
         if (RecvByte == 0)
         {
             std::cout << "서버 종료!" << std::endl;
-            break;
+            //break;
         }
         if (RecvByte < 0)
         {
             if (CheckError())
             {
                 std::cout << "비정상 서버 종료!" << std::endl;
-                break;
+                //break;
             }
-            continue;
+            //continue;
         }
 
         iBeginPos += RecvByte;

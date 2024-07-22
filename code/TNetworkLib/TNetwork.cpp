@@ -1,4 +1,8 @@
 #include "TNetwork.h"
+void TNetwork::Connected(bool connect)
+{
+    m_bConnect = connect;
+}
 void    TNetwork::AddPacket(UPACKET& packet)
 {
    m_PacketPool.emplace_back(packet);
@@ -222,7 +226,7 @@ void TNetwork::CreateServer(std::string ip, USHORT port)
 }
 bool TNetwork::Connected(std::string ip, USHORT port)
 {
-    m_hSock = socket(AF_INET, SOCK_STREAM, 0);
+    
     SOCKADDR_IN sa;
     ZeroMemory(&sa, sizeof(sa));
     sa.sin_addr.s_addr = inet_addr(ip.c_str());
@@ -233,8 +237,10 @@ bool TNetwork::Connected(std::string ip, USHORT port)
     int ret = connect(m_hSock, (sockaddr*)&sa, namelen);
     if (ret != 0)
     {
-        CheckError();
-        return false;
+        if (CheckError() == true)
+        {
+            return false;
+        }
     }
 
     // 넌블록형 소켓으로 전환
