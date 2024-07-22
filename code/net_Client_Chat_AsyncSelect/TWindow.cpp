@@ -61,11 +61,7 @@ bool   TWindow::WindowRun()
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-		}
-		else
-		{
-			return true;
-		}
+		}		
 	}
 	return false;
 }

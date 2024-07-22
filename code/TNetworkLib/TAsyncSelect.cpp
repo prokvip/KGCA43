@@ -9,38 +9,39 @@ bool TAsyncSelect::Set(HWND hWnd)
 
 LRESULT TAsyncSelect::MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam)
 {
-    _ASSERT(m_pNet);
-    int iEvent = WSAGETSELECTEVENT(lParam);
-    int iSock = WSAGETSELECTEVENT(wParam);
+    _ASSERT(m_pNet);  
 
     switch (uMsg)
     {
-    case WM_SOCKET:
-    {
-        switch (iEvent)
+        case WM_SOCKET:
         {
-        case  FD_CONNECT:
-        {
-            m_pNet->Connected();
-            int k = 0;
-        }break;
-        case  FD_READ:
-        {
-            if (m_pNet->m_bConnect)
+            int iEvent = WSAGETSELECTEVENT(lParam);
+            int iSock = WSAGETSELECTEVENT(wParam);
+
+            switch (iEvent)
             {
-                m_pNet->Recv();
+                case  FD_CONNECT:
+                {
+                    m_pNet->Connected();
+                    int k = 0;
+                }break;
+                case  FD_READ:
+                {
+                    if (m_pNet->Recv()==false)
+                    {
+                        m_pNet->DisConnected();
+                    }
+                }break;
+                case  FD_WRITE:
+                {
+                    int k = 0;
+                }break;
+                case  FD_CLOSE:
+                {
+                    m_pNet->DisConnected();
+                }break;
             }
-        }break;
-        case  FD_WRITE:
-        {
-            int k = 0;
-        }break;
-        case  FD_CLOSE:
-        {
-            m_pNet->DisConnected();
-        }break;
         }
-    }
     }
     return  0;
 };

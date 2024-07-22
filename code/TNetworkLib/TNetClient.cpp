@@ -83,9 +83,10 @@ bool TNetClient::Recv()
 }
 void   TNetClient::Run() 
 {
+    _ASSERT(m_pSelectIO);
     while (m_bRun)
     {
-        if (Recv() == false)
+        if (!m_pSelectIO->Run())
         {
             break;
         }
