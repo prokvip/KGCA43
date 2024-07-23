@@ -77,6 +77,7 @@ int main()
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+        Sleep(1);
     }
     net.Release();    
 }

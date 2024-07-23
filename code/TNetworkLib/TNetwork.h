@@ -2,6 +2,7 @@
 #include "TSession.h"
 #include "TStdSelect.h"
 #include "TAsyncSelect.h"
+#include "TEventSelect.h"
 class TNetwork
 {
 public:
