@@ -70,12 +70,16 @@ int main()
     sendThread.detach();
     
     MSG msg = { };
-    while (WM_QUIT != msg.message)
+    while (WM_QUIT != msg.message )
     {
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+        }
+        else
+        {
+            net.m_pSelectIO->Run();
         }
         Sleep(1);
     }

@@ -6,7 +6,15 @@ bool TAsyncSelect::Set(HWND hWnd)
     WSAAsyncSelect(m_pNet->m_hSock, hWnd, WM_SOCKET, FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE);
     return true;
 }
-
+bool TAsyncSelect::Run()
+{
+    if (m_pNet->PacketProcess() == false)
+    {
+        return false;
+    }
+    m_pNet->CheckConnected();
+    return true;
+}
 LRESULT TAsyncSelect::MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam)
 {
     _ASSERT(m_pNet);  

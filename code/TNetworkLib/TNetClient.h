@@ -5,7 +5,6 @@ class TNetClient :   public TNetwork
     std::string Recvbuf;   
     UINT  iBeginPos = 0;
 public:
-    bool   Connected(std::string ip, USHORT port);
     void   Run() override;
     bool   Recv() override;
 

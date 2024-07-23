@@ -244,8 +244,7 @@ void TNetwork::CreateServer(std::string ip, USHORT port)
     int iMode = ioctlsocket(m_hSock, FIONBIO, &iNonSocket);    
 }
 bool TNetwork::Connected(std::string ip, USHORT port)
-{
-    
+{    
     SOCKADDR_IN sa;
     ZeroMemory(&sa, sizeof(sa));
     sa.sin_addr.s_addr = inet_addr(ip.c_str());
