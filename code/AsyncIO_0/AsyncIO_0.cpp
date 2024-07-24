@@ -2,16 +2,16 @@
 #include <iostream>
 #include <assert.h>
 
-TCHAR* pFileBuffer = 0;
-OVERLAPPED readOV;
-OVERLAPPED writeOV;
-LARGE_INTEGER FileSize;
+//byte* g_pDataBuffer = 0;
+//OVERLAPPED g_ReadOV;
+//OVERLAPPED g_WriteOV;
+//LARGE_INTEGER FileSize;
 // OV
 // 중요
 OVERLAPPED g_ReadOV;
 OVERLAPPED g_WriteOV;
-TCHAR* g_pOffsetData = nullptr;
-TCHAR* g_pDataBuffer = nullptr;
+byte* g_pOffsetData = nullptr;
+byte* g_pDataBuffer = nullptr;
 LARGE_INTEGER g_FileSize;
 LARGE_INTEGER g_LargeRead;
 LARGE_INTEGER g_LargeWrite;
@@ -25,14 +25,11 @@ DWORD Load(const TCHAR* filename)
 		NULL);
 
 	DWORD dwRead = 0;
-	LARGE_INTEGER FileSize;
 	if (hReadFile != INVALID_HANDLE_VALUE)
 	{
-		GetFileSizeEx(hReadFile, &FileSize);
-		pFileBuffer = new TCHAR[FileSize.QuadPart];
-		DWORD dwLength = FileSize.QuadPart;
-		BOOL ret = ReadFile(hReadFile, pFileBuffer, dwLength,
-			&dwRead, NULL);
+		GetFileSizeEx(hReadFile, &g_FileSize);
+		g_pDataBuffer = new byte[g_FileSize.QuadPart];
+		BOOL ret = ReadFile(hReadFile, g_pDataBuffer, g_FileSize.QuadPart,	&dwRead, NULL);
 		if (ret == TRUE)
 		{
 			INT KKK = 0;
@@ -49,19 +46,20 @@ DWORD Copy(const TCHAR* filename, DWORD dwLength)
 	DWORD dwWritten = 0;
 	if (hWriteFile != NULL)
 	{
-		BOOL ret = WriteFile(hWriteFile, pFileBuffer,
-			dwLength, &dwWritten, NULL);
+		BOOL ret = WriteFile(hWriteFile, g_pDataBuffer,	dwLength, &dwWritten, NULL);
 		if (ret == TRUE)
 		{
 			std::cout << "출력완료" << std::endl;
 		}
 	}
+
 	CloseHandle(hWriteFile);
+	delete [] g_pDataBuffer;
 	return dwWritten;
 }
 DWORD AsyncLoad(const TCHAR* filename)
 {	
-	ZeroMemory(&readOV, sizeof(OVERLAPPED));
+	ZeroMemory(&g_ReadOV, sizeof(OVERLAPPED));
 	HANDLE hReadFile = CreateFile(filename,
 		GENERIC_READ , 0,
 		NULL, OPEN_EXISTING,
@@ -72,14 +70,13 @@ DWORD AsyncLoad(const TCHAR* filename)
 		NULL);
 
 	DWORD dwRead = 0;
-	LARGE_INTEGER FileSize;
 	bool  bPending =false;
 	if (hReadFile != INVALID_HANDLE_VALUE)
 	{
-		GetFileSizeEx(hReadFile, &FileSize);
-		pFileBuffer = new TCHAR[FileSize.LowPart];
-		DWORD dwLength = FileSize.LowPart;
-		BOOL ret = ReadFile(hReadFile, pFileBuffer, dwLength,&dwRead, &readOV);
+		GetFileSizeEx(hReadFile, &g_FileSize);
+		g_pDataBuffer = new byte[g_FileSize.LowPart];
+		DWORD dwLength = g_FileSize.LowPart;
+		BOOL ret = ReadFile(hReadFile, g_pDataBuffer, dwLength,&dwRead, &g_ReadOV);
 		if (ret == FALSE)
 		{
 			if (GetLastError() == ERROR_IO_PENDING)
@@ -96,7 +93,7 @@ DWORD AsyncLoad(const TCHAR* filename)
 		{
 			// 원하는 작업
 			// 비동기 입출력의 결과를 조회
-			BOOL bRet = GetOverlappedResult(hReadFile, &readOV, &dwRead, FALSE);
+			BOOL bRet = GetOverlappedResult(hReadFile, &g_ReadOV, &dwRead, FALSE);
 			if (bRet == TRUE)
 			{
 				std::cout << "로딩완료" << std::endl;
@@ -122,7 +119,7 @@ DWORD AsyncLoad(const TCHAR* filename)
 DWORD AsyncCopy(const TCHAR* filename, DWORD dwLength)
 {
 	bool bPending = false;
-	ZeroMemory(&writeOV, sizeof(OVERLAPPED));
+	ZeroMemory(&g_WriteOV, sizeof(OVERLAPPED));
 	HANDLE hWriteFile = CreateFile(filename, GENERIC_WRITE, 0,
 		NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, 
@@ -130,7 +127,7 @@ DWORD AsyncCopy(const TCHAR* filename, DWORD dwLength)
 	DWORD dwWritten = 0;
 	if (hWriteFile != NULL)
 	{
-		BOOL ret = WriteFile(hWriteFile, pFileBuffer,dwLength, &dwWritten, &writeOV);
+		BOOL ret = WriteFile(hWriteFile, g_pDataBuffer,dwLength, &dwWritten, &g_WriteOV);
 		if (ret == FALSE)
 		{
 			if (GetLastError() == ERROR_IO_PENDING)
@@ -147,7 +144,7 @@ DWORD AsyncCopy(const TCHAR* filename, DWORD dwLength)
 		{
 			// 원하는 작업
 			// 비동기 입출력의 결과를 조회
-			BOOL bRet = GetOverlappedResult(hWriteFile, &writeOV, &dwWritten, FALSE);
+			BOOL bRet = GetOverlappedResult(hWriteFile, &g_WriteOV, &dwWritten, TRUE);
 			if (bRet == TRUE)
 			{
 				std::cout << "출력완료" << std::endl;
@@ -168,73 +165,83 @@ DWORD AsyncCopy(const TCHAR* filename, DWORD dwLength)
 		}
 	}
 	CloseHandle(hWriteFile);
+	delete [] g_pDataBuffer;
 	return dwWritten;
 }
 
 DWORD FileRead(HANDLE hHandle, DWORD offset)
 {
 	g_LargeRead.QuadPart += offset;
-	readOV.Offset = g_LargeRead.LowPart;
-	readOV.OffsetHigh = g_LargeRead.HighPart;
+	g_ReadOV.Offset = g_LargeRead.LowPart;
+	g_ReadOV.OffsetHigh = g_LargeRead.HighPart;
 	g_pOffsetData = &g_pDataBuffer[g_LargeRead.QuadPart];
 
 	DWORD dwReadByte = 0;
-	BOOL bResult = ReadFile(hHandle,
-		g_pOffsetData, g_dwMaxReadSize,
-		&dwReadByte, &readOV);
+	DWORD dwOffset = 0;
+	if ((g_FileSize.QuadPart - g_LargeRead.QuadPart) < g_dwMaxReadSize)
+	{
+		dwOffset = g_dwMaxReadSize - (g_FileSize.QuadPart - g_LargeRead.QuadPart);
+	}
+
+	// 주의 : 버퍼의 잔여량이 g_dwMaxReadSize 보다 적을 때는 [998] Invalid access to memory location. 발생한다.
+	//        충분한 버퍼의 용량을 확보하고 작업하면 된다. 또는 위 처럼 정확한 잔여량만 로드하면 된다.
+	BOOL bResult = ReadFile(hHandle,g_pOffsetData, g_dwMaxReadSize- dwOffset,	&dwReadByte, &g_ReadOV);
 
 	if (bResult == FALSE)
 	{
-		if (GetLastError() == ERROR_IO_PENDING)
+		int iError = GetLastError();
+		if (iError == ERROR_IO_PENDING)
 		{
-			//std::cout << "읽기 중!" << std::endl;
-			//bPending = TRUE;
+			std::cout << "로딩 중" << std::endl;
+			return true;
+		}		
+		else
+		{			
+			std::cout << iError << std::endl; //ERROR_NOACCESS
+			exit(1);
 		}
 	};
 	if (bResult == TRUE)
 	{
 		std::cout << " 로딩완료" << std::endl;
 	}
-	return 1;
+	return true;
 }
 DWORD FileWrite(HANDLE hHandle, DWORD offset)
-{
+{	
 	g_LargeWrite.QuadPart += offset;
-	writeOV.Offset = g_LargeWrite.LowPart;
-	writeOV.OffsetHigh = g_LargeWrite.HighPart;
+	g_WriteOV.Offset = g_LargeWrite.LowPart;
+	g_WriteOV.OffsetHigh = g_LargeWrite.HighPart;
 	g_pOffsetData = &g_pDataBuffer[g_LargeWrite.QuadPart];
 
 	DWORD dwOffset = 0;
 	if ((g_FileSize.QuadPart - g_LargeWrite.QuadPart) < g_dwMaxReadSize)
 	{
-		dwOffset = g_dwMaxReadSize - (g_FileSize.LowPart - g_LargeWrite.LowPart);
+		dwOffset = g_dwMaxReadSize - (g_FileSize.QuadPart - g_LargeWrite.QuadPart);
 	}
 
 	DWORD dwWriteByte = 0;
-	BOOL bResult = WriteFile(hHandle,
-		g_pOffsetData, g_dwMaxReadSize - dwOffset,
-		&dwWriteByte, &writeOV);
+	BOOL bResult = WriteFile(hHandle,g_pOffsetData, g_dwMaxReadSize - dwOffset,	&dwWriteByte, &g_WriteOV);
 	return bResult;
 }
 DWORD AsyncLoadOverlapped(const TCHAR* filename)
 {
 	g_LargeRead.QuadPart = 0;
+	ZeroMemory(&g_ReadOV, sizeof(OVERLAPPED));
 
-	DWORD dwTrans = 0;
+	
 	HANDLE hFile = CreateFile(filename,
-		GENERIC_READ | GENERIC_WRITE, 0,
+		GENERIC_READ, 0,
 		NULL, OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED,
 		NULL);
 
-
-	ZeroMemory(&readOV, sizeof(OVERLAPPED));
-
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
 		GetFileSizeEx(hFile, &g_FileSize);
-		g_pDataBuffer = new TCHAR[g_FileSize.QuadPart];
+		g_pDataBuffer = new byte[g_FileSize.QuadPart];
 		DWORD dwCnt = g_FileSize.QuadPart / g_dwMaxReadSize;
+
 		FileRead(hFile, 0);
 
 		BOOL bPending = TRUE;
@@ -245,7 +252,8 @@ DWORD AsyncLoadOverlapped(const TCHAR* filename)
 			bResult = WaitForSingleObject(hFile, 0);
 			if (bResult == WAIT_OBJECT_0)
 			{
-				bResult = GetOverlappedResult(hFile, &readOV, &dwTrans, TRUE);
+				DWORD dwTrans = 0;
+				bResult = GetOverlappedResult(hFile, &g_ReadOV, &dwTrans, TRUE);
 				if (bResult == TRUE)
 				{
 					if (g_LargeRead.QuadPart + dwTrans < g_FileSize.QuadPart)
@@ -273,13 +281,15 @@ DWORD AsyncLoadOverlapped(const TCHAR* filename)
 DWORD AsyncWriteOverlapped(const TCHAR* filename)
 {
 	g_LargeWrite.QuadPart = 0;
+	ZeroMemory(&g_WriteOV, sizeof(OVERLAPPED));
+
 	DWORD dwTrans = 0;
 	HANDLE hFile = CreateFile(filename,
-		GENERIC_READ | GENERIC_WRITE, 0,
+		GENERIC_WRITE, 0,
 		NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED,
 		NULL);
-	ZeroMemory(&writeOV, sizeof(OVERLAPPED));
+	
 
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
@@ -293,7 +303,7 @@ DWORD AsyncWriteOverlapped(const TCHAR* filename)
 			bResult = WaitForSingleObject(hFile, 0);
 			if (bResult == WAIT_OBJECT_0)
 			{
-				bResult = GetOverlappedResult(hFile, &writeOV, &dwTrans, TRUE);
+				bResult = GetOverlappedResult(hFile, &g_WriteOV, &dwTrans, TRUE);
 				if (bResult == TRUE)
 				{
 					if (g_LargeWrite.QuadPart + dwTrans < g_FileSize.QuadPart)
@@ -316,21 +326,23 @@ DWORD AsyncWriteOverlapped(const TCHAR* filename)
 		}
 	}
 	CloseHandle(hFile);
+	delete[] g_pDataBuffer;
 	return g_FileSize.QuadPart;
 }
 int main()
 {
 	// 동기 파일 입출력
-	//DWORD dwFileSize = Load(L"mssql.ISO");
-	//Copy(L"mssqlCopy.ISO", dwFileSize);
+	//DWORD dwFileSize = Load(L"data.7z");
+	//Copy(L"data1.7z", dwFileSize);
 	// 비동기 파일 입출력
-	//DWORD dwFileSize = AsyncLoad(L"3dsmax.zip");
-	//AsyncCopy(L"Copy3dsmax.zip", dwFileSize);
+	//DWORD dwFileSize = AsyncLoad(L"data.7z");
+	//AsyncCopy(L"data2.7z", dwFileSize);
+	// 
 	// 대용량 파일을   쪼개서 입출력
 	DWORD dwFileSize = AsyncLoadOverlapped(L"data.7z");
-	AsyncWriteOverlapped(L"Copydata.7z");
+	AsyncWriteOverlapped(L"data3.7z");
 
-	/*pFileBuffer = g_pDataBuffer;
-	AsyncCopy(L"Copydata.7z", dwFileSize);*/
+	//g_pDataBuffer = g_pDataBuffer;
+	//Copy(L"data4.7z", dwFileSize);
     std::cout << "Hello World!\n";
 }
