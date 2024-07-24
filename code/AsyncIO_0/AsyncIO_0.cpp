@@ -218,6 +218,8 @@ DWORD FileWrite(HANDLE hHandle, DWORD offset)
 }
 DWORD AsyncLoadOverlapped(const TCHAR* filename)
 {
+	g_LargeRead.QuadPart = 0;
+
 	DWORD dwTrans = 0;
 	HANDLE hFile = CreateFile(filename,
 		GENERIC_READ | GENERIC_WRITE, 0,
@@ -231,8 +233,8 @@ DWORD AsyncLoadOverlapped(const TCHAR* filename)
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
 		GetFileSizeEx(hFile, &g_FileSize);
-		g_pDataBuffer = new TCHAR[g_FileSize.LowPart];
-		DWORD dwCnt = g_FileSize.LowPart / g_dwMaxReadSize;
+		g_pDataBuffer = new TCHAR[g_FileSize.QuadPart];
+		DWORD dwCnt = g_FileSize.QuadPart / g_dwMaxReadSize;
 		FileRead(hFile, 0);
 
 		BOOL bPending = TRUE;
@@ -246,7 +248,7 @@ DWORD AsyncLoadOverlapped(const TCHAR* filename)
 				bResult = GetOverlappedResult(hFile, &readOV, &dwTrans, TRUE);
 				if (bResult == TRUE)
 				{
-					if (g_LargeRead.QuadPart + dwTrans < g_FileSize.LowPart)
+					if (g_LargeRead.QuadPart + dwTrans < g_FileSize.QuadPart)
 					{
 						std::cout << ".";
 						FileRead(hFile, dwTrans);
@@ -266,11 +268,11 @@ DWORD AsyncLoadOverlapped(const TCHAR* filename)
 		}
 	}
 	CloseHandle(hFile);
-	return g_FileSize.LowPart;
+	return g_FileSize.QuadPart;
 }
 DWORD AsyncWriteOverlapped(const TCHAR* filename)
 {
-	g_LargeRead.QuadPart = 0;
+	g_LargeWrite.QuadPart = 0;
 	DWORD dwTrans = 0;
 	HANDLE hFile = CreateFile(filename,
 		GENERIC_READ | GENERIC_WRITE, 0,
@@ -294,7 +296,7 @@ DWORD AsyncWriteOverlapped(const TCHAR* filename)
 				bResult = GetOverlappedResult(hFile, &writeOV, &dwTrans, TRUE);
 				if (bResult == TRUE)
 				{
-					if (g_LargeWrite.QuadPart + dwTrans < g_FileSize.LowPart)
+					if (g_LargeWrite.QuadPart + dwTrans < g_FileSize.QuadPart)
 					{
 						std::cout << ".";
 						FileWrite(hFile, dwTrans);
@@ -314,7 +316,7 @@ DWORD AsyncWriteOverlapped(const TCHAR* filename)
 		}
 	}
 	CloseHandle(hFile);
-	return g_FileSize.LowPart;
+	return g_FileSize.QuadPart;
 }
 int main()
 {
