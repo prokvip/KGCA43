@@ -2,27 +2,18 @@
 #include <iostream>
 #include <assert.h>
 
-//byte* g_pDataBuffer = 0;
-//OVERLAPPED g_ReadOV;
-//OVERLAPPED g_WriteOV;
-//LARGE_INTEGER FileSize;
-// OV
-// 중요
-OVERLAPPED g_ReadOV;
-OVERLAPPED g_WriteOV;
-byte* g_pOffsetData = nullptr;
-byte* g_pDataBuffer = nullptr;
-LARGE_INTEGER g_FileSize;
-LARGE_INTEGER g_LargeRead;
-LARGE_INTEGER g_LargeWrite;
-const DWORD   g_dwMaxReadSize = 8192 * 8192;
+OVERLAPPED		g_ReadOV;
+OVERLAPPED		g_WriteOV;
+byte*			g_pOffsetData = nullptr;
+byte*			g_pDataBuffer = nullptr;
+LARGE_INTEGER	g_FileSize;
+LARGE_INTEGER	g_LargeRead;
+LARGE_INTEGER	g_LargeWrite;
+const DWORD		g_dwMaxReadSize = 8192 * 8192;
 
 DWORD Load(const TCHAR* filename)
 {
-	HANDLE hReadFile = CreateFile(filename,
-		GENERIC_READ, 0,
-		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
-		NULL);
+	HANDLE hReadFile = CreateFile(filename,	GENERIC_READ, 0,NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,	NULL);
 
 	DWORD dwRead = 0;
 	if (hReadFile != INVALID_HANDLE_VALUE)
