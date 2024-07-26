@@ -1,7 +1,10 @@
 ﻿#include <windows.h>
 #include <iostream>
 #include <assert.h>
-
+// 비동기 입출력
+// 단점 : 작업을 시작한 스레드만 결과 확인이 가능하다.
+// 해결 : -> 어떤 스레드에서 비동기 작업을 시작하더라도
+//        -> 원하는 스레드에서 작업의 결과를 확인해야 한다.
 OVERLAPPED		g_ReadOV;
 OVERLAPPED		g_WriteOV;
 byte*			g_pOffsetData = nullptr;
@@ -244,7 +247,7 @@ DWORD AsyncLoadOverlapped(const TCHAR* filename)
 			if (bResult == WAIT_OBJECT_0)
 			{
 				DWORD dwTrans = 0;
-				bResult = GetOverlappedResult(hFile, &g_ReadOV, &dwTrans, TRUE);
+				bResult = GetOverlappedResult(hFile, &g_ReadOV, &dwTrans, FALSE);
 				if (bResult == TRUE)
 				{
 					if (g_LargeRead.QuadPart + dwTrans < g_FileSize.QuadPart)
@@ -294,7 +297,7 @@ DWORD AsyncWriteOverlapped(const TCHAR* filename)
 			bResult = WaitForSingleObject(hFile, 0);
 			if (bResult == WAIT_OBJECT_0)
 			{
-				bResult = GetOverlappedResult(hFile, &g_WriteOV, &dwTrans, TRUE);
+				bResult = GetOverlappedResult(hFile, &g_WriteOV, &dwTrans, FALSE);
 				if (bResult == TRUE)
 				{
 					if (g_LargeWrite.QuadPart + dwTrans < g_FileSize.QuadPart)
@@ -326,14 +329,13 @@ int main()
 	//DWORD dwFileSize = Load(L"data.7z");
 	//Copy(L"data1.7z", dwFileSize);
 	// 비동기 파일 입출력
-	//DWORD dwFileSize = AsyncLoad(L"data.7z");
+	DWORD dwFileSize = AsyncLoad(L"data.7z");
 	//AsyncCopy(L"data2.7z", dwFileSize);
 	// 
 	// 대용량 파일을   쪼개서 입출력
 	DWORD dwFileSize = AsyncLoadOverlapped(L"data.7z");
 	AsyncWriteOverlapped(L"data3.7z");
-
-	//g_pDataBuffer = g_pDataBuffer;
+		
 	//Copy(L"data4.7z", dwFileSize);
     std::cout << "Hello World!\n";
 }

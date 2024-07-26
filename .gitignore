@@ -375,3 +375,7 @@ FodyWeavers.xsd
 /TNetwork
 /code/AsyncIO_0/Copydata.7z
 /code/AsyncIO_0/data.7z
+/code/IOCP_FILE/data.7z
+/code/IOCP_FILE/copy.7z
+/code/threadWin/data.7z
+/code/threadWin/copy.7z
