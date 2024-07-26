@@ -3,7 +3,10 @@
 #include <assert.h>
 #include <thread>
 #include <vector>
-#define MAX_NUM_WORKDER_THREAD 4
+#define MAX_NUM_WORKDER_THREAD 3
+
+UINT 	    KKK = 0;
+
 // 비동기 입출력
 // 단점 : 작업을 시작한 스레드만 결과 확인이 가능하다.
 // 해결 : -> 어떤 스레드에서 비동기 작업[10]을 시작하더라도
@@ -12,18 +15,56 @@
 //        -> 작업스레드(3스레드)의 임의의 스레드가 작업의 결과를 확인 할 수 있다.
 OVERLAPPED		g_ReadOV;
 OVERLAPPED		g_WriteOV;
-byte* g_pOffsetData = nullptr;
-byte* g_pDataBuffer = nullptr;
+byte*			g_pOffsetData = nullptr;
+byte*			g_pDataBuffer = nullptr;
 LARGE_INTEGER	g_FileSize;
 LARGE_INTEGER	g_LargeRead;
 LARGE_INTEGER	g_LargeWrite;
 const DWORD		g_dwMaxReadSize = 8192 * 8192;
 HANDLE			g_hReadFile;
 HANDLE			g_hWriteFile;
+HANDLE			g_hIOCP;// input, output, completion , port
+HANDLE			g_hWorkerThread[MAX_NUM_WORKDER_THREAD];
+bool			g_bRun = true;
 
-HANDLE   g_hIOCP;// input, output, completion , port
-HANDLE   g_hWorkerThread[2];
 
+
+struct  TFileOffset
+{
+	LARGE_INTEGER	m_LargeRead;
+	OVERLAPPED		m_ReadOV;
+	TFileOffset(LARGE_INTEGER	LargeRead)
+	{
+		ZeroMemory(&m_ReadOV, sizeof(OVERLAPPED));
+		m_LargeRead = LargeRead;
+	}
+	TFileOffset()
+	{
+		ZeroMemory(&m_ReadOV, sizeof(OVERLAPPED));
+		m_LargeRead.QuadPart = 0;
+	}
+};
+
+
+DWORD Copy(const TCHAR* filename, DWORD dwLength)
+{
+	HANDLE hWriteFile = CreateFile(filename, GENERIC_WRITE, 0,
+		NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL,
+		NULL);
+	DWORD dwWritten = 0;
+	if (hWriteFile != NULL)
+	{
+		BOOL ret = WriteFile(hWriteFile, g_pDataBuffer, dwLength, &dwWritten, NULL);
+		if (ret == TRUE)
+		{
+			std::cout << "출력완료" << std::endl;
+		}
+	}
+
+	CloseHandle(hWriteFile);
+	delete[] g_pDataBuffer;
+	return dwWritten;
+}
 // * 비동기 작업 당 오버랩드 구조체는 1개씩 배정되어야 한다.
 
 bool DispatchRead(DWORD dwTransfer, LPOVERLAPPED  Overlapped)
@@ -73,39 +114,40 @@ bool DispatchWrite(DWORD dwTransfer, LPOVERLAPPED  Overlapped)
 	return true;
 }
 
-bool g_bRun = true;
-DWORD  WINAPI  WorkerProc(LPVOID lpThreadParameter)
+
+
+DWORD  WINAPI  ReadWorkerProc(LPVOID lpThreadParameter)
 {
+	TFileOffset FileOffset = *((TFileOffset*)lpThreadParameter);
+
+	FileOffset.m_ReadOV.Offset		= FileOffset.m_LargeRead.LowPart;
+	FileOffset.m_ReadOV.OffsetHigh	= FileOffset.m_LargeRead.HighPart;
+	g_pOffsetData = &g_pDataBuffer[FileOffset.m_LargeRead.QuadPart];
+
+	DWORD dwOffset = 0;
+	if ((g_FileSize.QuadPart - FileOffset.m_LargeRead.QuadPart) < g_dwMaxReadSize)
+	{
+		dwOffset = g_dwMaxReadSize - (g_FileSize.QuadPart - FileOffset.m_LargeRead.QuadPart);
+	}
+
+	DWORD dwReadByte = 0;
+	BOOL bResult = ReadFile(g_hReadFile, g_pOffsetData, 
+		g_dwMaxReadSize-dwOffset, &dwReadByte, &FileOffset.m_ReadOV);
+
+
 	DWORD		dwTransfer;
 	ULONG_PTR	CompletionKey;
 	OVERLAPPED  Overlapped;
 	LPOVERLAPPED lpOverlapped = nullptr;
-	while (g_bRun)
+	//while (g_bRun)
 	{
-		// 비동기 작업이 마치면 IOCP 큐에 저장된다. 이때. 반환한다.
-		/*_In_ HANDLE CompletionPort,
-		_Out_ LPDWORD lpNumberOfBytesTransferred,
-		_Out_ PULONG_PTR lpCompletionKey,
-		_Out_ LPOVERLAPPED* lpOverlapped,
-		_In_ DWORD dwMilliseconds*/
 		BOOL ret = GetQueuedCompletionStatus(g_hIOCP,
 			&dwTransfer, &CompletionKey,
-			&lpOverlapped, 1000);
+			&lpOverlapped, INFINITE);
 
 		if (ret == TRUE)
-		{
-			if (CompletionKey == 1000)
-			{
-				DispatchRead(dwTransfer, lpOverlapped);
-			}
-			if (CompletionKey == 2000)
-			{
-				if (DispatchWrite(dwTransfer, lpOverlapped) == false)
-				{
-					g_bRun = false;
-					break;
-				}
-			}
+		{		
+			KKK++;
 		}
 		else
 		{
@@ -113,7 +155,7 @@ DWORD  WINAPI  WorkerProc(LPVOID lpThreadParameter)
 			if (iError != WAIT_TIMEOUT)
 			{
 				g_bRun = false;
-				break;
+				return FALSE;
 			}
 		}
 	}
@@ -162,23 +204,24 @@ int main()
 	::CreateIoCompletionPort(g_hWriteFile, g_hIOCP, 2000, 0);
 
 	DWORD threadID;
+	LARGE_INTEGER	LargeRead;
+	LargeRead.QuadPart = 0;
+	TFileOffset g_offset[3];
 	for (int iThread = 0; iThread < MAX_NUM_WORKDER_THREAD; iThread++)
-	{
-		g_hWorkerThread[iThread] = CreateThread(0, 0, WorkerProc,
-			nullptr, 0, &threadID);
+	{		
+		g_offset[iThread].m_LargeRead = LargeRead;
+		g_hWorkerThread[iThread] = CreateThread(0, 0, ReadWorkerProc,
+			&g_offset[iThread], 0, &threadID);
+		LargeRead.QuadPart += g_dwMaxReadSize;
 	}
 
 
-	g_LargeRead.QuadPart = 0;
-	g_ReadOV.Offset = g_LargeRead.LowPart;
-	g_ReadOV.OffsetHigh = g_LargeRead.HighPart;
-	g_pOffsetData = &g_pDataBuffer[g_LargeRead.QuadPart];
-
-	DWORD dwReadByte = 0;
-	BOOL bResult = ReadFile(g_hReadFile, g_pOffsetData, g_dwMaxReadSize, &dwReadByte, &g_ReadOV);
-
+	
 	WaitForMultipleObjects(MAX_NUM_WORKDER_THREAD, g_hWorkerThread, TRUE, INFINITE);
 	// th.join();
+
+	Copy(L"aaa.7z", g_FileSize.LowPart);
+
 
 	for (int iThread = 0; iThread < MAX_NUM_WORKDER_THREAD; iThread++)
 	{
