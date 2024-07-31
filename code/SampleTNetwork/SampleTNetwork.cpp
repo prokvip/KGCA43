@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include "TNetServer.h"
+#include "TNetIOCPServer.h"
 #ifdef _DEBUG
 #pragma comment(lib, "TNetwork_d.lib")
 #else
@@ -12,13 +13,23 @@
 // copy "*.h" "..\\..\\TNetwork\\Inc\\"
 // copy "..\\..\\output\\TNetworkLib.lib" "..\\..\\TNetwork\\lib\\"
 int main()
-{
+{ 
+    bool bSelectModel = false;
     std::cout << "Select Server starting!" << std::endl;
-    TNetServer net;
+    if (bSelectModel)
+    {        
+        TNetServer net;
+        net.CreateServer("192.168.0.12", 10000);
+        net.m_pSelectIO = std::make_shared<TStdSelect>(&net);        
+        net.Run();
+        net.Release();
+    }
+    else
+    {
+        TNetIOCPServer net;
+        net.CreateServer("192.168.0.12", 10000);        
+        net.Run();
+        net.Release();
+    }
 
-    net.CreateServer("192.168.0.12", 10000);
-
-    net.m_pSelectIO = std::make_shared<TStdSelect>(&net);
-    net.Run();
-    net.Release();
 }

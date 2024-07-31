@@ -39,6 +39,9 @@
     <ClCompile Include="TEventSelect.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="TNetIOCPServer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TAsyncSelect.h">
@@ -69,6 +72,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TEventSelect.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TNetIOCPServer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

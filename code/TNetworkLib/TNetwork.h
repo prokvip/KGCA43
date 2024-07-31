@@ -33,6 +33,7 @@ public:
     virtual bool Connected(std::string ip, USHORT port = 10000);
     virtual bool Accept();
     virtual bool Recv();
+  
     virtual bool PacketProcess();
     virtual void AddPacket(UPACKET& packet);
     virtual void Run();
@@ -42,6 +43,7 @@ public:
     virtual void DisConnected();
     virtual void DisConnected(TSession& session);    
      
+
 public:
     TNetwork();
     virtual ~TNetwork();

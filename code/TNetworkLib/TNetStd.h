@@ -9,3 +9,9 @@
 #include <thread>
 #include "TProtocol.h"
 #pragma comment(lib,"ws2_32.lib")
+
+struct tOV : public OVERLAPPED
+{
+	enum { t_READ, t_SEND, };
+	int iIOFlag = t_READ;
+};

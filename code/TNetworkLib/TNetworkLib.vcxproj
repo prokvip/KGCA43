@@ -160,6 +160,7 @@ copy "..\\..\\output\\Release\\TNetwork.lib" "../../TNetwork/lib/"</Command>
     <ClCompile Include="TAsyncSelect.cpp" />
     <ClCompile Include="TEventSelect.cpp" />
     <ClCompile Include="TNetClient.cpp" />
+    <ClCompile Include="TNetIOCPServer.cpp" />
     <ClCompile Include="TNetServer.cpp" />
     <ClCompile Include="TNetwork.cpp" />
     <ClCompile Include="TSelectModel.cpp" />
@@ -170,6 +171,7 @@ copy "..\\..\\output\\Release\\TNetwork.lib" "../../TNetwork/lib/"</Command>
     <ClInclude Include="TAsyncSelect.h" />
     <ClInclude Include="TEventSelect.h" />
     <ClInclude Include="TNetClient.h" />
+    <ClInclude Include="TNetIOCPServer.h" />
     <ClInclude Include="TNetServer.h" />
     <ClInclude Include="TNetStd.h" />
     <ClInclude Include="TNetwork.h" />
