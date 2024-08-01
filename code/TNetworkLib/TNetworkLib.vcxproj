@@ -163,6 +163,7 @@ copy "..\\..\\output\\Release\\TNetwork.lib" "../../TNetwork/lib/"</Command>
     <ClCompile Include="TNetIOCPServer.cpp" />
     <ClCompile Include="TNetServer.cpp" />
     <ClCompile Include="TNetwork.cpp" />
+    <ClCompile Include="TObjectPool.cpp" />
     <ClCompile Include="TSelectModel.cpp" />
     <ClCompile Include="TSession.cpp" />
     <ClCompile Include="TStdSelect.cpp" />
@@ -175,6 +176,7 @@ copy "..\\..\\output\\Release\\TNetwork.lib" "../../TNetwork/lib/"</Command>
     <ClInclude Include="TNetServer.h" />
     <ClInclude Include="TNetStd.h" />
     <ClInclude Include="TNetwork.h" />
+    <ClInclude Include="TObjectPool.h" />
     <ClInclude Include="TProtocol.h" />
     <ClInclude Include="TSelectModel.h" />
     <ClInclude Include="TSession.h" />

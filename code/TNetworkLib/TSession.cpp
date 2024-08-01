@@ -83,13 +83,13 @@ bool        TSession::AsyncRecv()
 {
     DWORD dwReadByte = 0;
     DWORD Flags = 0;
-
-    ZeroMemory(&m_ov, sizeof(tOV));
-    m_ov.iIOFlag = tOV::t_READ;
+    tOV* tov = new tOV;
+    ZeroMemory(tov, sizeof(tOV));
+    tov->iIOFlag = tOV::t_READ;
     m_wsaDataBuffer.len = sizeof(char) * MAX_NUM_RECV_BUFFER;
     m_wsaDataBuffer.buf = m_szDataBuffer;
     int iRet = WSARecv(m_hSock, &m_wsaDataBuffer, 1, &Flags, &dwReadByte,
-        &m_ov, nullptr);
+        &tov->ov, nullptr);
     if (iRet < 0)
     {
         if (WSAGetLastError() == ERROR_IO_PENDING)
@@ -116,6 +116,7 @@ bool        TSession::Dispatch(DWORD dwTransfer, tOV* ov)
     {
 
     }
+    delete ov;
     AsyncRecv();
     return true;
 }
@@ -143,6 +144,7 @@ bool TSession::Put(DWORD dwSize)
         {
             // 1개 이상의 패킷을 처리하기 위해서
             do {
+                //UPACKET newPacket;
                 m_pNet->AddPacket(*packet);
                 m_dwReadPos -= packet->ph.len;
                 m_dwStartPacketPos += packet->ph.len;

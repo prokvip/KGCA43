@@ -3,6 +3,11 @@
 #include "TStdSelect.h"
 #include "TAsyncSelect.h"
 #include "TEventSelect.h"
+struct tPacket
+{
+    UINT     userid;
+    UPACKET  packet;
+};
 class TNetwork
 {
 public:
@@ -13,6 +18,10 @@ public:
 public:
     std::list<TSession> m_SessionList;
     std::list<UPACKET>  m_PacketPool;
+
+   /* TSession             m_TotalSession[2000];
+    std::map<UINT, UINT> m_SessionList2;
+    std::list<tPacket>   m_PacketPool2;*/
 public:
     bool InitWinSock();
     void DelWinSock();

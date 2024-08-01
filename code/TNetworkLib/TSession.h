@@ -2,6 +2,8 @@
 #include "TNetStd.h"
 #define MAX_NUM_RECV_BUFFER 1024
 #define MAX_NUM_PACKET_BUFFER 10000
+
+
 class TNetwork;
 class TSession
 {
@@ -14,7 +16,8 @@ public:
     bool        m_bDisConnected;
     UPACKET     m_packet;
 public:
-    tOV           m_ov;
+    tOV           m_ovRecv;
+    tOV           m_ovSend;
     char          m_szDataBuffer[MAX_NUM_RECV_BUFFER] = { 0, };
     WSABUF        m_wsaDataBuffer;
 public:

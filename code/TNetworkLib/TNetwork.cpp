@@ -125,7 +125,7 @@ void TNetwork::PacketProcess(UPACKET& packet)
     {
         std::cout << packet.msg << std::endl;
         Broadcast(packet);
-    }
+    }    
 }
 
 void TNetwork::Broadcast(UPACKET& packet)
