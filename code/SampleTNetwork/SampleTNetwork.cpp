@@ -14,6 +14,12 @@
 // copy "..\\..\\output\\TNetworkLib.lib" "..\\..\\TNetwork\\lib\\"
 int main()
 { 
+    const int volatile k = 0;
+    if (0)
+    {
+        std::cout << "true";
+    }
+
     bool bSelectModel = false;
     std::cout << "Select Server starting!" << std::endl;
     if (bSelectModel)

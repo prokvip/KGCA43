@@ -15,7 +15,7 @@
 
 struct tOV : TObjectPool<tOV>
 {
-	enum { t_READ, t_SEND, };
+	enum { t_READ, t_SEND, t_END };
 	OVERLAPPED ov;
 	int iIOFlag = t_READ;
 };

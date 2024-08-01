@@ -12,7 +12,7 @@ class TObjectPool
 public:
 	enum
 	{
-		POOL_MAX_SIZE = 8,
+		POOL_MAX_SIZE = 1024,// 2의 승수
 		POOL_SIZE_MASK = POOL_MAX_SIZE - 1
 	};
 	static void prepareAllocation()
@@ -71,16 +71,17 @@ public:
 		}				
 	}
 private:
-	static void* m_Pool[POOL_MAX_SIZE];
-	static long long m_HeadPos;
-	static long long m_TailPos;
+	// 컴파일러의 최적화 방지
+	static void* volatile m_Pool[POOL_MAX_SIZE];
+	static long long volatile m_HeadPos;
+	static long long volatile m_TailPos;
 };
 
 template <class T>
-void* TObjectPool<T>::m_Pool[POOL_MAX_SIZE] = {};
+void* volatile TObjectPool<T>::m_Pool[POOL_MAX_SIZE] = {};
 
 template <class T>
-long long TObjectPool<T>::m_HeadPos(0);
+long long volatile TObjectPool<T>::m_HeadPos(0);
 
 template <class T>
-long long TObjectPool<T>::m_TailPos(0);
+long long volatile TObjectPool<T>::m_TailPos(0);

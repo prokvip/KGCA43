@@ -16,8 +16,8 @@ public:
     bool        m_bDisConnected;
     UPACKET     m_packet;
 public:
-    tOV           m_ovRecv;
-    tOV           m_ovSend;
+    //tOV           m_ovRecv;
+    //tOV           m_ovSend;
     char          m_szDataBuffer[MAX_NUM_RECV_BUFFER] = { 0, };
     WSABUF        m_wsaDataBuffer;
 public:

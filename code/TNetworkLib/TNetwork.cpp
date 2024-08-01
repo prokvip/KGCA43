@@ -24,7 +24,10 @@ void TNetwork::DisConnected()
 
 void    TNetwork::AddPacket(UPACKET& packet)
 {
-   m_PacketPool.emplace_back(packet);
+    //임계영역
+    EnterCriticalSection(&m_hPacketCS);
+        m_PacketPool.emplace_back(packet);
+    LeaveCriticalSection(&m_hPacketCS);
 }
 bool    TNetwork::CheckError()
 {
@@ -123,6 +126,7 @@ void TNetwork::PacketProcess(UPACKET& packet)
 {
     if (packet.ph.type == PACKET_CHAT_MSG)
     {
+        packet.msg[packet.ph.len-PACKET_HEADER_SIZE] = 0;
         std::cout << packet.msg << std::endl;
         Broadcast(packet);
     }    
@@ -139,8 +143,13 @@ void TNetwork::Broadcast(UPACKET& packet)
 }
 void TNetwork::AddSession(SOCKET sock, SOCKADDR_IN addr)
 {
-    std::cout << "접속 ip=" << inet_ntoa(addr.sin_addr) << "port=" << ntohs(addr.sin_port) << std::endl;
-    m_SessionList.emplace_back(sock, addr);
+    //임계영역
+    EnterCriticalSection(&m_hSessionCS);
+    
+        std::cout << "접속 ip=" << inet_ntoa(addr.sin_addr) << "port=" << ntohs(addr.sin_port) << std::endl;
+        m_SessionList.emplace_back(sock, addr);
+    
+    LeaveCriticalSection(&m_hSessionCS);
 }
 bool TNetwork::Accept()
 {
@@ -206,6 +215,8 @@ void TNetwork::Run()
 void TNetwork::CheckConnected()
 {
     // 종료
+    //임계영역
+    EnterCriticalSection(&m_hSessionCS);
     for (auto iter = m_SessionList.begin(); iter != m_SessionList.end(); )
     {
         if ((*iter).m_bDisConnected)
@@ -218,6 +229,7 @@ void TNetwork::CheckConnected()
             iter++;
         }
     }
+    LeaveCriticalSection(&m_hSessionCS);
 }
 void TNetwork::CreateServer(std::string ip, USHORT port)
 {
@@ -242,6 +254,10 @@ void TNetwork::CreateServer(std::string ip, USHORT port)
     // 넌블록형 소켓으로 전환
     u_long iNonSocket = TRUE;
     int iMode = ioctlsocket(m_hSock, FIONBIO, &iNonSocket);    
+
+    // 객체생성
+    InitializeCriticalSection(&m_hSessionCS);
+
 }
 bool TNetwork::Connected(std::string ip, USHORT port)
 {    
@@ -281,9 +297,14 @@ void TNetwork::DelWinSock()
 TNetwork::TNetwork()
 {
     InitWinSock();
+    //TObjectPool<tOV>::prepareAllocation();
 }
 TNetwork::~TNetwork()
 {
+    // 객체생성
+    DeleteCriticalSection(&m_hSessionCS);
+
     closesocket(m_hSock);
     DelWinSock();
+    TObjectPool<tOV>::allFree();
 }

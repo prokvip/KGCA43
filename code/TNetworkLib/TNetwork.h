@@ -15,6 +15,10 @@ public:
     SOCKET              m_hSock;
     bool                m_bRun = true;
     bool                m_bConnect = false;
+    HANDLE              m_hKillEvent;
+    HANDLE              m_hRunning;
+    CRITICAL_SECTION    m_hSessionCS;
+    CRITICAL_SECTION    m_hPacketCS;
 public:
     std::list<TSession> m_SessionList;
     std::list<UPACKET>  m_PacketPool;
