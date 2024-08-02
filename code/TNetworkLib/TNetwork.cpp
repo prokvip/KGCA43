@@ -29,6 +29,25 @@ void    TNetwork::AddPacket(UPACKET& packet)
         m_PacketPool.emplace_back(packet);
     LeaveCriticalSection(&m_hPacketCS);
 }
+void    TNetwork::AddPacket(PACKET_HEADER ph, byte* data)
+{
+    //烙拌康开
+    EnterCriticalSection(&m_hPacketCS);
+        UPACKET packet = { 0, };
+        packet.ph = ph;
+        memcpy(packet.msg, data, packet.ph.len - PACKET_HEADER_SIZE);
+        m_PacketPool.emplace_back(packet);
+    LeaveCriticalSection(&m_hPacketCS);
+}
+//void    TNetwork::AddPacket(UPACKET& packet)
+//{
+//    //烙拌康开
+//    EnterCriticalSection(&m_hPacketCS);
+//    m_PacketPool.emplace_back(
+//        MakePacket(packet.ph.len - PACKET_HEADER_SIZE, packet.ph.type, packet.msg));
+//    LeaveCriticalSection(&m_hPacketCS);
+//}
+
 bool    TNetwork::CheckError()
 {
     int iError = WSAGetLastError();
@@ -126,8 +145,8 @@ void TNetwork::PacketProcess(UPACKET& packet)
 {
     if (packet.ph.type == PACKET_CHAT_MSG)
     {
-        packet.msg[packet.ph.len-PACKET_HEADER_SIZE] = 0;
-        std::cout << packet.msg << std::endl;
+        std::string msg(packet.msg);       
+        std::cout << msg.substr(0, packet.ph.len - PACKET_HEADER_SIZE) << std::endl;
         Broadcast(packet);
     }    
 }
@@ -257,6 +276,7 @@ void TNetwork::CreateServer(std::string ip, USHORT port)
 
     // 按眉积己
     InitializeCriticalSection(&m_hSessionCS);
+    InitializeCriticalSection(&m_hPacketCS);
 
 }
 bool TNetwork::Connected(std::string ip, USHORT port)
@@ -303,7 +323,8 @@ TNetwork::~TNetwork()
 {
     // 按眉积己
     DeleteCriticalSection(&m_hSessionCS);
-
+    DeleteCriticalSection(&m_hPacketCS);
+    
     closesocket(m_hSock);
     DelWinSock();
     TObjectPool<tOV>::allFree();

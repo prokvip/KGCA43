@@ -123,7 +123,7 @@ bool        TSession::Dispatch(DWORD dwTransfer, tOV* ov)
 bool TSession::Put(DWORD dwSize)
 {
     _ASSERT(m_pNet);
-    if (m_dwWritePos + dwSize >= MAX_NUM_PACKET_BUFFER)
+    if (m_dwWritePos + dwSize >= MAX_NUM_PACKET_BUFFER- PACKET_SIZE)
     {
         // 받은 잔여량 있는 경우
         if (m_dwReadPos > 0)

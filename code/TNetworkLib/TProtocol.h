@@ -19,6 +19,7 @@ typedef struct {
 }UPACKET, * P_UPACKET;
 
 #define PACKET_HEADER_SIZE 8
+#define PACKET_SIZE (PACKET_HEADER_SIZE+MAX_MSG_SIZE)
 
 typedef struct {
 	short	user_idx;

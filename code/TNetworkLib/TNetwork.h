@@ -49,6 +49,7 @@ public:
   
     virtual bool PacketProcess();
     virtual void AddPacket(UPACKET& packet);
+    virtual void AddPacket(PACKET_HEADER ph, byte* data);
     virtual void Run();
     virtual void Release();
 
