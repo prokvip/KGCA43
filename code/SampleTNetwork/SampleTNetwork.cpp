@@ -2,6 +2,7 @@
 #include <chrono>
 #include "TNetServer.h"
 #include "TNetIOCPServer.h"
+#include "TPacket.h"
 #ifdef _DEBUG
 #pragma comment(lib, "TNetwork_d.lib")
 #else
@@ -111,7 +112,26 @@ void memoryTest()
     }
 }
 int main()
-{     
+{        
+    TPacket data(PACKET_USER_POSITION);
+    short	user_idx  = 100;
+    short	posX=200;
+    short	posY=300;
+    short	direction=400; //0 ~7 8방향
+    data << user_idx;
+    data << posX;
+    data << posY << direction;
+    
+    data.reset();
+
+    user_idx = 0;
+    posX = 0;
+    posY = 0;
+    direction = 0; 
+    data >> user_idx >> posX >> posY >> direction;
+   
+
+
     memoryTest();
 
     bool bSelectModel = false;
