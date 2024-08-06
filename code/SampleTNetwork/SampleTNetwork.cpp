@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <chrono>
+#include <sstream>
 #include "TNetServer.h"
 #include "TNetIOCPServer.h"
 #include "TPacket.h"
@@ -111,28 +112,81 @@ void memoryTest()
         std::cout << "true";
     }
 }
-int main()
-{        
-    TPacket data(PACKET_USER_POSITION);
-    short	user_idx  = 100;
-    short	posX=200;
-    short	posY=300;
-    short	direction=400; //0 ~7 8방향
-    data << user_idx;
-    data << posX;
-    data << posY << direction;
-    
-    data.reset();
 
-    user_idx = 0;
-    posX = 0;
-    posY = 0;
-    direction = 0; 
-    data >> user_idx >> posX >> posY >> direction;
+std::ostream& operator << (std::ostream& out, PACKET_HEADER& h)
+{
+    out.write(reinterpret_cast<char*>(&h), sizeof(PACKET_HEADER));
+    return out;
+}
+std::istream& operator >> (std::istream& in, PACKET_HEADER& h)
+{
+    in.read(reinterpret_cast<char*>(&h), sizeof(PACKET_HEADER));
+    return in;
+}
+std::stringstream MakePacket(int iType, std::stringstream* data)
+{
+    std::stringstream SendStream;
+    PACKET_HEADER	ph;
+    ph.type = iType;
+    ph.len = PACKET_HEADER_SIZE + data->str().length();
+    SendStream << ph;
+    SendStream << data->str();
+    return std::move(SendStream);
+}
+int main()
+{  
+    PACKET_HEADER	ph;
+    ph.len = 100;
+    ph.type = 1000;
+    std::stringstream ssData;
+    ssData << ph << "kgca";
+    std::string szData = ssData.str();
+    int isize = ssData.str().length();
+    ssData << "kgca" << 100 << 10.04f;
+
+    std::stringstream SendMsg;
+    SendMsg << 1000 << "홍길동";
+    std::stringstream SendPacket = MakePacket(1000, &SendMsg);
+    
+    int iData = 0;
+    std::string iName;
+    PACKET_HEADER	readPH;
+    SendPacket >> readPH;
+    SendPacket >> iData;
+    SendPacket >> iName;
+
+
+    std::stringstream retSS;
+    retSS << readPH << iData << iName;
+
+    int iData2 = 0;
+    std::string iName2;
+    PACKET_HEADER	readPH2;
+    retSS >> readPH2;
+    retSS >> iData2;
+    retSS >> iName2;
+
+    //ssData >>  100 >> 10.04f;
+    //TPacket data(PACKET_USER_POSITION);
+    //short	user_idx  = 100;
+    //short	posX=200;
+    //short	posY=300;
+    //short	direction=400; //0 ~7 8방향
+    //data << user_idx;
+    //data << posX;
+    //data << posY << direction;
+    //
+    //data.reset();
+
+    //user_idx = 0;
+    //posX = 0;
+    //posY = 0;
+    //direction = 0; 
+    //data >> user_idx >> posX >> posY >> direction;
    
 
 
-    memoryTest();
+    //memoryTest();
 
     bool bSelectModel = false;
     std::cout << "Select Server starting!" << std::endl;
