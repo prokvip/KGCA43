@@ -66,7 +66,6 @@ void main()
 	ZeroMemory(&serveradd, sizeof(serveradd));
 	serveradd.sin_family = AF_INET;
 	serveradd.sin_port = htons(9000);
-	// 멀티케스트 그룹에 가입하려면 반드시 INADDR_ANY를 사용해야 한다.
 	serveradd.sin_addr.s_addr = htonl(INADDR_ANY);
 	int iRet = bind(sock, (SOCKADDR*)&serveradd, sizeof(serveradd));
 	if (iRet == SOCKET_ERROR)
@@ -107,6 +106,12 @@ void main()
 	mreqsrc.imr_interface = mreq.imr_interface;
 	mreqsrc.imr_multiaddr = mreq.imr_multiaddr;
 	mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.92");
+	iRet = setsockopt(sock, IPPROTO_IP, IP_BLOCK_SOURCE, (char*)&mreqsrc, sizeof(mreqsrc));
+	if (iRet == SOCKET_ERROR)
+	{
+		Error("sock invalid");
+	}
+	mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.32");
 	iRet = setsockopt(sock, IPPROTO_IP, IP_BLOCK_SOURCE, (char*)&mreqsrc, sizeof(mreqsrc));
 	if (iRet == SOCKET_ERROR)
 	{

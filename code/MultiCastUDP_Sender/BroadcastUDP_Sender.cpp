@@ -67,13 +67,18 @@ void main()
 	ULONG addr = inet_addr("192.168.0.12");
 	setsockopt(sock, IPPROTO_IP, IP_MULTICAST_IF, (char*)&addr, sizeof(addr));
 
+	/*SOCKADDR_IN serverAddr;
+	ZeroMemory(&serverAddr, sizeof(serverAddr));
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_port = htons(9000);
+	serverAddr.sin_addr.s_addr = inet_addr("192.168.0.12");*/
 
 	SOCKADDR_IN serveradd;
 	ZeroMemory(&serveradd, sizeof(serveradd));
 	serveradd.sin_family = AF_INET;
 	serveradd.sin_port = htons(9000);
 	// 멀티케스트 그룹에 가입하려면 반드시 INADDR_ANY를 사용해야 한다.
-	serveradd.sin_addr.s_addr = htonl(INADDR_ANY);
+	serveradd.sin_addr.s_addr = inet_addr("192.168.0.12"); //htonl(INADDR_ANY);
 	int iRet = bind(sock, (SOCKADDR*)&serveradd, sizeof(serveradd));
 	if (iRet == SOCKET_ERROR)
 	{
@@ -84,20 +89,16 @@ void main()
 	ZeroMemory(&multicastAddr, sizeof(multicastAddr));
 	multicastAddr.sin_family = AF_INET;
 	multicastAddr.sin_port = htons(9000);
-	multicastAddr.sin_addr.s_addr = inet_addr("235.7.8.9");
+	multicastAddr.sin_addr.s_addr = inet_addr("235.7.8.9");	
 
-	SOCKADDR_IN serverAddr;
-	ZeroMemory(&serverAddr, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(9000);
-	serverAddr.sin_addr.s_addr = inet_addr("112.216.123.139");
+	bool bMulticastSourcing = false;
+	struct ip_mreq mreq;
+	struct ip_mreq_source mreqsrc;
 
-	bool bMulticastSourcing = true;
 	if (bMulticastSourcing)
 	{
 		// INCLUDE 대상 포함 
 		// IP_ADD_SOURCE_MEMBERSHIP <->IP_DROP_SOURCE_MEMBERSHIP
-		struct ip_mreq_source mreqsrc;
 		mreqsrc.imr_interface.s_addr = htonl(INADDR_ANY);
 		mreqsrc.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
 		mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.40");
@@ -110,17 +111,14 @@ void main()
 	else
 	{
 		// EXCLUDE 대상 삭제
-		// IP_ADD_MEMBERSHIP <-> IP_BLOCK_SOURCE
-		struct ip_mreq mreq;
+		// IP_ADD_MEMBERSHIP <-> IP_BLOCK_SOURCE		
 		mreq.imr_multiaddr.s_addr = inet_addr("235.7.8.9");
 		mreq.imr_interface.s_addr = inet_addr("192.168.0.12");
 		iRet = setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
 		if (iRet == SOCKET_ERROR)
 		{
 			Error("sock invalid");
-		}
-
-		struct ip_mreq_source mreqsrc;
+		}	
 		mreqsrc.imr_interface = mreq.imr_interface;
 		mreqsrc.imr_multiaddr = mreq.imr_multiaddr;
 		mreqsrc.imr_sourceaddr.s_addr = inet_addr("192.168.0.33");
@@ -135,7 +133,7 @@ void main()
 	SOCKADDR_IN clientAddr;
 	int addlen = sizeof(clientAddr);
 	char buf[256] = "kgca";
-	iRet = sendto(sock, buf, strlen(buf), 0, (SOCKADDR*)&serverAddr, sizeof(serverAddr));
+	iRet = sendto(sock, buf, strlen(buf), 0, (SOCKADDR*)&multicastAddr, sizeof(multicastAddr));
 	if (iRet == SOCKET_ERROR)
 	{
 		Error("sock invalid");
@@ -169,6 +167,6 @@ void main()
 
 	}
 	// 응용프로그램을 종료하거나 소켓을 닫으면 그룹 설정이 지워진다.
-	//setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
+	setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
 	WSACleanup();
 }
