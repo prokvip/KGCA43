@@ -35,64 +35,65 @@ public:
         }
     }
 };
-class TThread
+class Runnable
 {
 public:
-    std::thread             m_thread;
-    std::atomic<bool>       m_bStop =false; // interlock
-    virtual void run(int iStart, int iEnd) = 0;
+    Runnable() : m_stop(), m_thread() {}
+    virtual ~Runnable() { stop(); }
+
+    Runnable(Runnable const&) = delete;
+    Runnable& operator = (Runnable const&) = delete;
+
     void start()
     {
-        m_thread = std::thread(&TThread::run, this, 0, 10);
+        m_thread = std::thread(&Runnable::run, this);
     }
     void stop()
     {
-        m_bStop = true;
+        m_stop = true;
         if (m_thread.joinable())
         {
             m_thread.join();
         }
     }
-    void suspend()
-    {
-        // win api
-        // HANDLE hThread = CreateThread()
-        SuspendThread(m_thread.native_handle());
-    }
-    void resume()
-    {
-        // win api
-        ResumeThread(m_thread.native_handle());
-    }
-};
-class TThreadJob : public TThread
-{
+    void suspend() { SuspendThread(m_thread.native_handle()); }
+    void resume() { ResumeThread(m_thread.native_handle()); }
+    bool isStop() { return m_stop; }
+protected:
+    virtual void run() = 0;
+    std::atomic<bool> m_stop;
 public:
-    void run(int iStart, int iEnd)
+    std::thread m_thread;
+};
+
+class myThread : public Runnable
+{
+protected:
+    void run()
     {
-        while (!m_bStop)
-        {            
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            //std::cout << "ID:" << std::this_thread::get_id() ;
-            std::cout << ".";
+        while (!m_stop)
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(1000));
+            std::cout << "." ;
         }
-    };
+    }
 };
 int main()
 {
     std::cout.sync_with_stdio(true);
 
-    TThreadJob thArray[1];
-    thArray[0].start();
-    //CloseHandle( thArray[0].m_thread.native_handle()) ;
-    thArray[0].m_thread.detach();
+    myThread t;
+    t.start();
+    //HANDLE threadID = t.m_thread.native_handle();
+    std::this_thread::sleep_for(std::chrono::seconds(3));
 
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    thArray[0].suspend();
+    t.suspend();
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    thArray[0].resume();
+
+    t.resume();
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    thArray[0].stop();
+
+    t.stop();
     
 
     std::thread t1(Counter, 0, 10); // 1CORE
