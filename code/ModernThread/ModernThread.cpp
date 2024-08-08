@@ -72,7 +72,7 @@ protected:
     {
         while (!m_stop)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(1000));
+            std::this_thread::sleep_for(std::chrono::microseconds(10000));
             std::cout << "." ;
         }
     }
@@ -86,14 +86,16 @@ int main()
     //HANDLE threadID = t.m_thread.native_handle();
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
+    std::cout << "t.suspend()" << std::endl;
     t.suspend();
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
+    std::cout << "t.resume()" << std::endl;
     t.resume();
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
     t.stop();
-    
+    std::cout << "t.stop()" << std::endl;
 
     std::thread t1(Counter, 0, 10); // 1CORE
     std::thread t2(&tCounter::prcv, 0, 10);// 2CORE
