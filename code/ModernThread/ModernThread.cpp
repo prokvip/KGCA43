@@ -9,8 +9,10 @@ void Counter(int iStart, int iEnd)
 {    
     while (iStart++ < iEnd)
     {        
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+       std::this_thread::sleep_for(std::chrono::seconds(1));
+       mtx.lock();
        std::cout << "ID:"  << std::this_thread::get_id() << std::endl;
+       mtx.unlock();
     }    
 }
 class tCounter
@@ -21,8 +23,10 @@ public:
         while (iStart++ < iEnd)
         {
             std::this_thread::sleep_for(std::chrono::seconds(1));
+            mtx.lock();
             std::cout << "ID:" << std::this_thread::get_id() <<
                 std::endl;
+            mtx.unlock();
         }
     }
     void loop(int iStart, int iEnd)
@@ -30,8 +34,10 @@ public:
         while (iStart++ < iEnd)
         {
             std::this_thread::sleep_for(std::chrono::seconds(1));
+            mtx.lock();
             std::cout << "ID:" << std::this_thread::get_id() <<
                 std::endl;
+            mtx.unlock();
         }
     }
 };
@@ -39,7 +45,10 @@ class Runnable
 {
 public:
     Runnable() : m_stop(), m_thread() {}
-    virtual ~Runnable() { stop(); }
+    virtual ~Runnable() { 
+        
+        stop();
+    }
 
     Runnable(Runnable const&) = delete;
     Runnable& operator = (Runnable const&) = delete;
@@ -73,30 +82,35 @@ protected:
         while (!m_stop)
         {
             std::this_thread::sleep_for(std::chrono::microseconds(10000));
+            mtx.lock();
             std::cout << "." ;
+            mtx.unlock();
         }
     }
 };
 int main()
 {
-    std::cout.sync_with_stdio(true);
+    std::cout.sync_with_stdio(false);
 
-    myThread t;
-    t.start();
-    //HANDLE threadID = t.m_thread.native_handle();
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+    {
+        myThread t;
+        t.start();
+       // HANDLE threadID = t.m_thread.native_handle();
+        //t.m_thread.detach();
 
-    std::cout << "t.suspend()" << std::endl;
-    t.suspend();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    std::cout << "t.resume()" << std::endl;
-    t.resume();
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::cout << "t.suspend()" << std::endl;
+        t.suspend();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    t.stop();
-    std::cout << "t.stop()" << std::endl;
+        std::cout << "t.resume()" << std::endl;
+        t.resume();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
+        t.stop();
+        std::cout << "t.stop()" << std::endl;
+    }
     std::thread t1(Counter, 0, 10); // 1CORE
     std::thread t2(&tCounter::prcv, 0, 10);// 2CORE
     tCounter c;
@@ -107,19 +121,20 @@ int main()
         while (iStart++ < iEnd)
         {
             std::this_thread::sleep_for(std::chrono::seconds(1));
+            mtx.lock();
             std::cout << "ID:" << std::this_thread::get_id() << std::endl;
+            mtx.unlock();
         }
     };
     std::thread t4(lambda, 0, 10);
 
     std::thread t5(lambda, 0, 10);
     t5.detach();
-    //t5.join();
-    // CloseHandle( CreateThread() ) // free thread
+    ////t5.join();== // CloseHandle( CreateThread() ) // free thread
 
     t1.join();
     t2.join();
     t3.join();
     t4.join();
-    //std::cout << "Sum= " << iSum << std::endl;
+    std::cout << "Sum= " << iSum << std::endl;
 }
