@@ -65,7 +65,6 @@ protected:
 public:
     std::thread m_thread;
 };
-
 class myThread : public Runnable
 {
 protected:
