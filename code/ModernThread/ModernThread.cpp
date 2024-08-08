@@ -70,12 +70,11 @@ class TThreadJob : public TThread
 public:
     void run(int iStart, int iEnd)
     {
-        while (iStart++ < iEnd)
-        {
-            if (m_bStop) break;
+        while (!m_bStop)
+        {            
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            std::cout << "ID:" << std::this_thread::get_id() <<
-                std::endl;
+            //std::cout << "ID:" << std::this_thread::get_id() ;
+            std::cout << ".";
         }
     };
 };
@@ -83,14 +82,14 @@ int main()
 {
     std::cout.sync_with_stdio(true);
 
-    TThreadJob thArray[3];
+    TThreadJob thArray[1];
     thArray[0].start();
     //CloseHandle( thArray[0].m_thread.native_handle()) ;
     thArray[0].m_thread.detach();
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
     thArray[0].suspend();
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+    std::this_thread::sleep_for(std::chrono::seconds(10));
     thArray[0].resume();
     std::this_thread::sleep_for(std::chrono::seconds(3));
     thArray[0].stop();
