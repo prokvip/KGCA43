@@ -159,31 +159,38 @@ public:
         std::cout << this_thread::get_id() << std::endl;
     }   
     // write 전용
-    int add()
+    int add(int id)
     {
         //// 오직 1개의 스레드만 접근 가능하다.
         ////  대기 중인 스레드가 존재하면 모든 스레드가 처리될 때까지 read 할수 없다.
         {
             std::lock_guard lg{ smtx };
             g_iCnt++;
+            std::cout << id << "->write" << "[" << g_iCnt << "]" << std::endl;
             return g_iCnt;
         }
     }
     // read 전용
-    int getValue()
+    int getValue(int id)
     {
         // 다수의 스레드가 접근 가능하다.
         std::shared_lock sl{ smtx };
+        std::cout << id << "->read" << "[" << g_iCnt << "]" << std::endl;
         return g_iCnt;
     }
 
-    static void threadFun(tData& data)
+    static void threadFunWrite(tData& data, int id)
     {
-        while(1)
-        {            
-            data.getValue();
-            data.add();
-            std::cout <<  this_thread::get_id() << std::endl;
+        for( int i=0; i < 3; i++)
+        {          
+            data.add(id);
+        }
+    }
+    static void threadFunRead(tData& data, int id)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            data.getValue(id);
         }
     }
 };
@@ -283,15 +290,16 @@ int main()
 
 
 
-  /*  tData data;
+    tData data;
     std::vector < std::thread>  thList1;
-    thList1.emplace_back(tData::threadFun, std::ref(data));
-    thList1.emplace_back(tData::threadFun, std::ref(data));
-    thList1.emplace_back(tData::threadFun, std::ref(data));
+    thList1.emplace_back(tData::threadFunWrite, std::ref(data), 0);    
+    thList1.emplace_back(tData::threadFunRead, std::ref(data),1);
+    thList1.emplace_back(tData::threadFunWrite, std::ref(data), 2);
+    thList1.emplace_back(tData::threadFunRead, std::ref(data),3);
     for (auto& th : thList1)
     {
         th.join();
-    }*/
+    }
 
     std::this_thread::sleep_for(std::chrono::seconds(10));
     
