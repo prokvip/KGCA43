@@ -155,6 +155,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModernThread", "ModernThrea
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FalseSharingTest", "FalseSharingTest\FalseSharingTest.vcxproj", "{1E48D32D-A0BD-4631-833C-5F82FA32A5A7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModernMutex", "ModernMutex\ModernMutex.vcxproj", "{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -675,6 +677,14 @@ Global
 		{1E48D32D-A0BD-4631-833C-5F82FA32A5A7}.Release|x64.Build.0 = Release|x64
 		{1E48D32D-A0BD-4631-833C-5F82FA32A5A7}.Release|x86.ActiveCfg = Release|Win32
 		{1E48D32D-A0BD-4631-833C-5F82FA32A5A7}.Release|x86.Build.0 = Release|Win32
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}.Debug|x64.ActiveCfg = Debug|x64
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}.Debug|x64.Build.0 = Debug|x64
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}.Debug|x86.ActiveCfg = Debug|Win32
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}.Debug|x86.Build.0 = Debug|Win32
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}.Release|x64.ActiveCfg = Release|x64
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}.Release|x64.Build.0 = Release|x64
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}.Release|x86.ActiveCfg = Release|Win32
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -747,6 +757,7 @@ Global
 		{A76D1C40-0B8B-4F0D-83B6-1BA96A4CC3F5} = {09BE48CB-4FA1-4B3B-AA53-6F03B2490000}
 		{CFDD6047-ED1A-4DAC-8B48-01A3197C0A0F} = {A6630CE6-95AE-4813-A0D9-2F5F23CFAD83}
 		{1E48D32D-A0BD-4631-833C-5F82FA32A5A7} = {A6630CE6-95AE-4813-A0D9-2F5F23CFAD83}
+		{0F9FAAAB-84C0-4113-BE35-22F43F7CC26A} = {A6630CE6-95AE-4813-A0D9-2F5F23CFAD83}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {760E8DCA-1EDC-41D9-8CDF-C65DDEE5F915}
