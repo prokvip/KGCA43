@@ -135,7 +135,7 @@ std::stringstream MakePacket(int iType, std::stringstream* data)
 }
 int main()
 {  
-    PACKET_HEADER	ph;
+    /*PACKET_HEADER	ph;
     ph.len = 100;
     ph.type = 1000;
     std::stringstream ssData;
@@ -164,7 +164,7 @@ int main()
     PACKET_HEADER	readPH2;
     retSS >> readPH2;
     retSS >> iData2;
-    retSS >> iName2;
+    retSS >> iName2;*/
 
     //ssData >>  100 >> 10.04f;
     //TPacket data(PACKET_USER_POSITION);
@@ -188,11 +188,13 @@ int main()
 
     //memoryTest();
 
+
     bool bSelectModel = false;
     std::cout << "Select Server starting!" << std::endl;
     if (bSelectModel)
     {        
         TNetServer net;
+        net.tLog("aaa");
         net.CreateServer("192.168.0.12", 10000);
         net.m_pSelectIO = std::make_shared<TStdSelect>(&net);        
         net.Run();
@@ -201,9 +203,12 @@ int main()
     else
     {
         TNetIOCPServer net;
+        net.tLog("1)net.CreateServer(\"192.168.0.12\", 10000);   ");
         net.CreateServer("192.168.0.12", 10000);        
+        net.tLog("2)net.Run();");
         net.Run();
-        net.Release();
+        net.tLog("3)net.Release();");
+        net.Release(); 
     }
 
 }

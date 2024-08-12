@@ -3,6 +3,7 @@
 #include "TStdSelect.h"
 #include "TAsyncSelect.h"
 #include "TEventSelect.h"
+#include "TLog.h"
 struct tPacket
 {
     UINT     userid;
@@ -10,7 +11,13 @@ struct tPacket
 };
 class TNetwork
 {
+private:
+    TLog  m_tLog;
 public:
+    void  tLog(std::string data)
+    {
+        m_tLog.log(data);
+    }
     std::shared_ptr<TSelectModel> m_pSelectIO;
     SOCKET              m_hSock;
     bool                m_bRun = true;

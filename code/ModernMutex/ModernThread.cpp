@@ -164,6 +164,9 @@ public:
         //// 오직 1개의 스레드만 접근 가능하다.
         ////  대기 중인 스레드가 존재하면 모든 스레드가 처리될 때까지 read 할수 없다.
         {
+            //smtx.lock();
+            //smtx.unlock();
+
             std::lock_guard lg{ smtx };
             g_iCnt++;
             std::cout << id << "->write" << "[" << g_iCnt << "]" << std::endl;
@@ -174,6 +177,7 @@ public:
     int getValue(int id)
     {
         // 다수의 스레드가 접근 가능하다.
+        //smtx.lock_shared();
         std::shared_lock sl{ smtx };
         std::cout << id << "->read" << "[" << g_iCnt << "]" << std::endl;
         return g_iCnt;
@@ -213,6 +217,7 @@ int main()
     {
         std::timed_mutex tMutex;
         std::unique_lock<std::timed_mutex> lock(tMutex, std::chrono::seconds(1));
+        //if(lock)
     }
 
     // 1초 동안 lock() 시도함.
@@ -240,43 +245,7 @@ int main()
         std::mutex m1, m2;
         std::unique_lock<std::mutex> lock1(m1, std::try_to_lock);
         if(lock1){}
-    }
-
-    {
-        using namespace std::chrono_literals;
-        std::timed_mutex mux;
-        // 2초 동안 잠금을 유지함.
-        auto t = std::jthread([&mux]
-            {
-                std::unique_lock lock(mux);
-                std::this_thread::sleep_for(2s);
-            });
-
-        auto runner = [&mux]
-        {
-            // 잠금을 얻으려고 시도하고 200ms 후에 포기한다. 
-            std::unique_lock lock(mux, 200ms);
-            // 내부적으로 다음이 호출된다.
-            // for a time point: mux.try_lock_until()
-            // for a duration:   mux.try_lock_for()
-            if (!lock.owns_lock()) {
-                std::cout << "Unable to obtain lock" << std::endl;
-                return;
-            }
-            std::cout <<"Lock was obtained" << std::endl;
-        };
-
-        std::this_thread::sleep_for(100ms);
-        // t 스레드가 점유하고 있어서 0,1, 번은 시간초과 , 2, 3 번은 lock() 획득
-        for (size_t i = 0; i < 4; ++i) {
-            auto r = std::jthread(runner);
-            std::this_thread::sleep_for(1s);
-        }
-    }
-
-
-
-    
+    }   
 
     std::vector < std::thread>  thList2;
     thList2.emplace_back(Counter, 0, 3);
@@ -301,6 +270,38 @@ int main()
         th.join();
     }
 
+    /// std::jthread
+    {
+        using namespace std::chrono_literals;
+        std::timed_mutex mux;
+        // 2초 동안 잠금을 유지함.
+        auto t = std::jthread([&mux]
+            {
+                std::unique_lock lock(mux);
+                std::this_thread::sleep_for(2s);
+            });
+
+        auto runner = [&mux]
+        {
+            // 잠금을 얻으려고 시도하고 200ms 후에 포기한다. 
+            std::unique_lock lock(mux, 200ms);
+            // 내부적으로 다음이 호출된다.
+            // for a time point: mux.try_lock_until()
+            // for a duration:   mux.try_lock_for()
+            if (!lock.owns_lock()) {
+                std::cout << "Unable to obtain lock" << std::endl;
+                return;
+            }
+            std::cout << "Lock was obtained" << std::endl;
+        };
+
+        std::this_thread::sleep_for(100ms);
+        // t 스레드가 점유하고 있어서 0,1, 번은 시간초과 , 2, 3 번은 lock() 획득
+        for (size_t i = 0; i < 4; ++i) {
+            auto r = std::jthread(runner);
+            std::this_thread::sleep_for(1s);
+        }
+    }
     std::this_thread::sleep_for(std::chrono::seconds(10));
     
 }
