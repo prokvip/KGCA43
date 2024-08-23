@@ -288,9 +288,15 @@ namespace T_Math
 
 		void Translation(const FVector3& v)
 		{
-			_31 = v.X;
-			_32 = v.Y;
-			_33 = v.Z;
+			_41 = v.X;
+			_42 = v.Y;
+			_43 = v.Z;
+		}
+		void Translation(float x, float y, float z)
+		{
+			_41 = x;
+			_42 = y;
+			_43 = z;
 		}
 		void Scale(const FVector3& v)
 		{
