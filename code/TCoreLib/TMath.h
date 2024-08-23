@@ -53,7 +53,7 @@ namespace T_Math
 		bool     IsZero();
 		bool     IsZero(float& fLentgh);
 		// float fDot = a.Dot(b);
-		float    Dot(const FVector2 & v)
+		float    Dot(const FVector2& v)
 		{
 			return X * v.X + Y * v.Y;
 		}
@@ -63,7 +63,7 @@ namespace T_Math
 			return X * v.X + Y * v.Y;
 		}
 		// À°½ÊºÐ¹ý(degree)
-		float Angle( FVector2& v)
+		float Angle(FVector2& v)
 		{
 			FVector2 a = Normalize();
 			FVector2 b = v.Normalize();
@@ -113,7 +113,14 @@ namespace T_Math
 		// a = b | c;
 		float operator | (const FVector3& v) const
 		{
-			return X * v.X + Y * v.Y;
+			return X * v.X + Y * v.Y + Z * v.Z;
+		}
+		FVector3 operator ^ (const FVector3& v) const
+		{
+			float x = (Y * v.Z - Z * v.Y);
+			float y = (Z * v.X - X * v.Z);
+			float z = (X * v.Y - Y * v.X);
+			return FVector3(x, y, z);
 		}
 		// À°½ÊºÐ¹ý(degree)
 		float Angle(FVector3& v)
@@ -218,17 +225,17 @@ namespace T_Math
 			// m[1][0], m[1][1]  1.0f
 			// m[2][0], m[2][1]  1.0f
 			FMatrix3x3 ret;
-			for (int iColumn=0; iColumn < 2; iColumn++)
+			for (int iColumn = 0; iColumn < 2; iColumn++)
 			{
 				for (int iRow = 0; iRow < 3; iRow++)
 				{
 					// m[0][0], m[0][1], m[0][2] 
 					//            dot
 					// matrix.m[0][0], matrix.m[1][0], matrix.m[2][0]
-					ret.m[iRow][iColumn] = 
+					ret.m[iRow][iColumn] =
 						m[iRow][0] * matrix.m[0][iColumn] +
 						m[iRow][1] * matrix.m[1][iColumn] +
-						m[iRow][2] * matrix.m[2][iColumn] ;
+						m[iRow][2] * matrix.m[2][iColumn];
 				}
 			}
 			return ret;
@@ -279,7 +286,7 @@ namespace T_Math
 					ret.m[iRow][iColumn] =
 						m[iRow][0] * matrix.m[0][iColumn] +
 						m[iRow][1] * matrix.m[1][iColumn] +
-						m[iRow][2] * matrix.m[2][iColumn] + 
+						m[iRow][2] * matrix.m[2][iColumn] +
 						m[iRow][3] * matrix.m[3][iColumn];
 				}
 			}
@@ -333,6 +340,39 @@ namespace T_Math
 			ret._21 = _12; ret._22 = _22; ret._23 = _32; ret._24 = _42;
 			ret._31 = _13; ret._32 = _23; ret._33 = _33; ret._34 = _43;
 			ret._41 = _14; ret._42 = _24; ret._43 = _34; ret._44 = _44;
+			return ret;
+		}
+		static FMatrix CreateViewTransform(FVector3 p, FVector3 t, FVector3 up)
+		{
+			FMatrix ret;
+			FVector3 vLook = (t-p).Normalize();
+			FVector3 vRight = (up ^ vLook).Normalize();
+			FVector3 vUp = (vLook ^ vRight).Normalize();
+			ret._11 = vRight.X; ret._12 = vUp.X; ret._13 = vLook.X;
+			ret._21 = vRight.Y; ret._22 = vUp.Y; ret._23 = vLook.Y;
+			ret._31 = vRight.Z; ret._32 = vUp.Z; ret._33 = vLook.Z;
+
+			ret._41 = -(p | vRight);
+			ret._42 = -(p | vUp);
+			ret._43 = -(p | vLook);
+			return ret;
+		}
+		static FMatrix CreateProjTransform(float fNear, float fFar, float fFov,
+			float fAspect)
+		{
+			FMatrix ret;
+			float h, w, q;
+			h = 1.0f / tan(fFov * 0.5f);
+			w = h / fAspect;
+			q = fFar / (fFar - fNear);
+
+			ret._44 = 0.0f;
+			ret._34 = 1.0f;
+
+			ret._11 = w;
+			ret._22 = h;
+			ret._33 = q;
+			ret._43 = -q * fNear;
 			return ret;
 		}
 	};

@@ -33,7 +33,7 @@ void   Sample::Init()
 
 void    Sample::Frame()
 {
-
+	this->m_obj.Frame();
 }
 void    Sample::Render()
 {

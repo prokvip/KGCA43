@@ -13,6 +13,9 @@ class TObj3D : public TDxObject3D
 {
 	ComPtr<ID3D11Buffer>   m_pConstantBuffer;
 	cb					   m_cb;
+	FMatrix					m_matWorld;
+	FMatrix					m_matView;
+	FMatrix					m_matProj;
 public:
 	virtual bool     CreateConstantBuffer(ID3D11Device* pd3dDevice);
 	virtual void	 SetVertexData()
@@ -84,8 +87,18 @@ public:
 			Release();
 			return false;
 		}
-		m_cb.g_matWorld.Translation(0.1f, 0.0f, 0);
-		m_cb.g_matWorld.Transpose();
+		m_matWorld.Translation(0.0f, 0.0f, 0);	
+
+		FVector3 eye = { 0.0f, 0.0f, -50.0f };
+		FVector3 target = { 0.0f, 0.0f, 0.0f };
+		FVector3 up = { 0.0f, 1.0f, 0.0f };
+		m_matView = FMatrix::CreateViewTransform(eye, target, up);
+		m_matProj = FMatrix::CreateProjTransform(1.0f, 100.0f, 		
+			TBASIS_PI * 0.25f, (float)g_xClientSize / (float)g_yClientSize );
+		m_cb.g_matWorld =m_matWorld.Transpose();
+		m_cb.g_matView = m_matView.Transpose();
+		m_cb.g_matProj = m_matProj.Transpose();
+
 		if (CreateConstantBuffer(m_pd3dDevice) == false)
 		{
 			Release();
@@ -97,6 +110,28 @@ public:
 	{
 		TDxObject3D::PreRender(pContext);
 		pContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer.GetAddressOf());
+	}
+	void   Frame() override
+	{
+		static FVector3 vPos = { 0, 0, 0};
+		vPos.X = cosf(g_fGameTime) * 2.0f;
+		m_matWorld.Translation(vPos);
+
+		FVector3 eye = { 0.0f, 0.0f, -10.0f };// cosf(g_fGameTime) * 10.0f - 10.0f
+		FVector3 target = { 0.0f, 0.0f, 10.0f };
+		FVector3 up = { 0.0f, 1.0f, 0.0f };
+		m_matView = FMatrix::CreateViewTransform(eye, target, up);
+		m_matProj = FMatrix::CreateProjTransform(0.1f, 100.0f,
+			TBASIS_PI * 0.25f, (float)g_xClientSize / (float)g_yClientSize);
+
+		m_cb.g_matWorld = m_matWorld.Transpose();
+		m_cb.g_matView = m_matView.Transpose();
+		m_cb.g_matProj = m_matProj.Transpose();
+		if (m_pConstantBuffer != nullptr)
+		{
+			m_pContext->UpdateSubresource(m_pConstantBuffer.Get(), 0,
+				NULL, &m_cb, 0, 0);
+		}
 	}
 };
 class Sample : public TCore
