@@ -1,0 +1,124 @@
+#SPRITE 
+rtExplosion 12 0 ../../data/sprite/bitmap1.bmp ../../data/sprite/bitmap2.bmp Alphablend.hlsl
+0	4	142 41 40 
+1	43 142 38 42 
+2	82 142 35 42 
+3	119 142 35 45
+4	155 142 34 45
+5	190 142 34 41
+6	225 142 33 37
+7	259 142 31 35
+8	291 142 29 31
+9	321 142 27 25
+10	349 142 24 23
+11	374 142 22 18	
+DefalultNumber 10 1 ../../data/ui/0.png nullptr Alphablend.hlsl
+0 ../../data/Number/0.png
+1 ../../data/Number/1.png
+2 ../../data/Number/2.png
+3 ../../data/Number/3.png
+4 ../../data/Number/4.png
+5 ../../data/Number/5.png
+6 ../../data/Number/6.png
+7 ../../data/Number/7.png
+8 ../../data/Number/8.png
+9 ../../data/Number/9.png
+rtBomb 9 0 ../../data/sprite/bitmap1.bmp ../../data/sprite/bitmap2.bmp Alphablend.hlsl
+0	161 85 11 12
+1	173 85 22 20
+2	196 85 26 24
+3	223 85 28 24
+4	252 85 30 24
+5	283 85 29 22
+6	313 85 22 20
+7	336 85 16 15
+8	353 85 4 6
+rtClash 6 0 ../../data/sprite/sprite/bitmap1.bmp ../../data/sprite/bitmap2.bmp Alphablend.hlsl
+0 161 62 12 11
+1 174 62 20 20
+2 195 62 22 21
+3 219 62 18 19
+4 238 62 14 13
+5 253 62 11 10
+rtProjectile 6 0 ../../data/sprite/bitmap1.bmp ../../data/sprite/bitmap2.bmp Alphablend.hlsl
+0 269 1 5 23
+1 276 1 8 23
+2 269 1 5 23
+3 276 1 8 23
+4 269 1 5 23
+5 276 1 8 23
+rtUserLeft 3 0 ../../data/sprite/bitmap1.bmp ../../data/sprite/bitmap2.bmp Alphablend.hlsl
+0 1 1 28 60
+1 29 1 27 60
+2 56 1 36 60
+rtUserRight 3 0 ../../data/sprite/bitmap1.bmp ../../data/sprite/bitmap2.bmp Alphablend.hlsl
+0 219 62 18 19
+1 238 62 14 13
+2 253 62 11 10
+rtUserFrontBack 2 0 ../../data/sprite/bitmap1.bmp ../../data/sprite/bitmap2.bmp Alphablend.hlsl
+0 219 62 18 19
+1 219 62 18 19
+IconList 20 1 ../../data/Icons/S_KBSJoint.PNG nullptr Alphablend.hlsl
+0 ../../data/Icons/S_KBSJoint.PNG
+1 ../../data/Icons/S_KBSJoint.PNG
+2 ../../data/Icons/S_KHinge.PNG
+3 ../../data/Icons/S_KPrismatic.PNG
+4 ../../data/Icons/S_LevelSequence.PNG
+5 ../../data/Icons/S_NavP.PNG
+6 ../../data/Icons/S_Note.PNG
+7 ../../data/Icons/S_Pawn.PNG
+8 ../../data/Icons/S_Player.PNG
+9 ../../data/Icons/S_PortalActorIcon2.PNG
+10 ../../data/Icons/S_RadForce.PNG
+11 ../../data/Icons/S_SkyAtmosphere.PNG
+12 ../../data/Icons/S_SceneCaptureIcon.PNG
+13 ../../data/Icons/S_LevelSequence.PNG
+14 ../../data/Icons/S_SkyLight.PNG
+15 ../../data/Icons/S_Solver.PNG
+16 ../../data/Icons/S_TargetPoint.PNG
+17 ../../data/Icons/S_Terrain.PNG
+18 ../../data/Icons/S_Thruster.PNG
+19 ../../data/Icons/S_VectorFieldVol.PNG
+wik 24 1 ../../data/Effect/wik00.dds nullptr Alphablend.hlsl
+0 ../../data/Effect/alpha/wik00.dds
+1 ../../data/Effect/alpha/wik01.dds
+2 ../../data/Effect/alpha/wik02.dds
+3 ../../data/Effect/alpha/wik03.dds
+4 ../../data/Effect/alpha/wik04.dds
+5 ../../data/Effect/alpha/wik05.dds
+6 ../../data/Effect/alpha/wik06.dds
+7 ../../data/Effect/alpha/wik07.dds
+8 ../../data/Effect/alpha/wik08.dds
+9 ../../data/Effect/alpha/wik09.dds
+10 ../../data/Effect/alpha/wik10.dds
+11 ../../data/Effect/alpha/wik11.dds
+12 ../../data/Effect/alpha/wik12.dds
+13 ../../data/Effect/alpha/wik13.dds
+14 ../../data/Effect/alpha/wik14.dds
+15 ../../data/Effect/alpha/wik15.dds
+16 ../../data/Effect/alpha/wik16.dds
+17 ../../data/Effect/alpha/wik17.dds
+18 ../../data/Effect/alpha/wik18.dds
+19 ../../data/Effect/alpha/wik19.dds
+20 ../../data/Effect/alpha/wik20.dds
+21 ../../data/Effect/alpha/wik21.dds
+22 ../../data/Effect/alpha/wik22.dds
+23 ../../data/Effect/alpha/wik23.dds
+rivival 1 2 ../../data/Effect/alpha/rivival_01.dds nullptr Alphablend.hlsl
+0 4 4
+AttackDamage 1 2 ../../data/Effect/alpha/attack_damage.dds nullptr Alphablend.hlsl
+0 4 4
+Fog 1 2 ../../data/Effect/alpha/Fog.dds nullptr Alphablend.hlsl
+0 8 8
+kgca 3 1 ../../data/Effect/wik00.dds nullptr Alphablend.hlsl
+0 ../../data/kgca1.png
+1 ../../data/kgca2.png
+2 ../../data/kgca3.png
+DefaultButton 6 1 ../../data/ui/main_start_nor.png nullptr Alphablend.hlsl
+0 ../../data/ui/main_start_nor.png
+1 ../../data/ui/main_start_sel.png
+2 ../../data/ui/main_start_pus.png
+3 ../../data/ui/main_start_pus.png
+4 ../../data/ui/main_start_sel.png
+5 ../../data/ui/main_start_dis.png
+#END

@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{a6f12c3d-f4b2-4281-8ebd-276532019a24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="object">
+      <UniqueIdentifier>{2eefec07-0273-4186-be99-58728f019f82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="manager">
+      <UniqueIdentifier>{6eb8aa75-bf2c-4f66-9421-05a342b68b02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="object2D">
+      <UniqueIdentifier>{6f7d69bc-d4e6-41dc-9fa0-74fb0766f648}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{2fb62482-3c82-4dbe-a9ab-f2865ad16089}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sample.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TDevice.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TDxObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TGame.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TInput.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TSound.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TStd.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TTimer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TWindow.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TWriterFont.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TCamera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TCollision.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TCore.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TMath.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="TActor.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="TPawn.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="TNpc.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="THero.h">
+      <Filter>object</Filter>
+    </ClInclude>
+    <ClInclude Include="TBaseManager.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TObjectMgr.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TShaderMgr.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TTexMgr.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TSprite.h">
+      <Filter>object2D</Filter>
+    </ClInclude>
+    <ClInclude Include="TFiniteState.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TFiniteStateMachine.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneEnd.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneIngame.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneResult.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneTitle.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneStart.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TSceneLobby.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sample.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TDevice.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TDxObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TGame.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TInput.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TSound.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TTimer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TWindow.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TWriterFont.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TCamera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TCollision.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TCore.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TMath.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="TActor.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="TPawn.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="TNpc.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="THero.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="TBaseManager.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TObjectMgr.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TTexMgr.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TShaderMgr.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TSprite.cpp">
+      <Filter>object2D</Filter>
+    </ClCompile>
+    <ClCompile Include="TFiniteState.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TFiniteStateMachine.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TSceneEnd.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TSceneIngame.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TSceneLobby.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TSceneResult.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TSceneStart.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TSceneTitle.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="SpriteInfo.txt" />
+  </ItemGroup>
+</Project>
