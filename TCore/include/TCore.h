@@ -16,8 +16,12 @@ public:
 	ComPtr<ID3D11BlendState> m_pAlphaBlend = nullptr;
 public:
 	virtual void Init();
-	virtual void Frame();
-	virtual void Render();
+	virtual void PreFrame() {};
+		virtual void Frame();
+	virtual void PostFrame() {};
+	virtual void PreRender() {};
+		virtual void Render();
+	virtual void PostRender() {};
 	virtual void Release();
 
 	HRESULT  SetAlphaBlendState();

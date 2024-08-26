@@ -19,6 +19,8 @@ public:
 	static ID3D11RenderTargetView*	m_pRTV ;
 
 	static D3D11_VIEWPORT			m_ViewPort;
+
+	static DXGI_SWAP_CHAIN_DESC		m_SwapChainDesc;
 public:
 	static bool			CreateDevice(HWND hWnd);
 	static void			DeleteDevice();

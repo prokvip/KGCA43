@@ -5,7 +5,7 @@ ID3D11DeviceContext*		TDevice::m_pContext = nullptr;
 IDXGISwapChain*				TDevice::m_pSwapChain = nullptr;
 ID3D11RenderTargetView*		TDevice::m_pRTV = nullptr;
 D3D11_VIEWPORT				TDevice::m_ViewPort;
-
+DXGI_SWAP_CHAIN_DESC		TDevice::m_SwapChainDesc;
 bool  TDevice::CreateDevice(HWND hWnd)
 {
 	// DWRITE 연동에 필요함.
@@ -65,6 +65,8 @@ bool  TDevice::CreateDevice(HWND hWnd)
 	
 	TDevice::SetViewport();
 
+	if(m_pSwapChain)
+		m_pSwapChain->GetDesc(&m_SwapChainDesc);
 	return true;
 }
 void  TDevice::DeleteDevice()

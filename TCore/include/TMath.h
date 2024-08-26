@@ -311,6 +311,12 @@ namespace T_Math
 			_22 = v.Y;
 			_33 = v.Z;
 		}
+		void Scale(float x, float y, float z)
+		{
+			_11 = x;
+			_22 = y;
+			_33 = z;
+		}
 		void rotateX(float fRadian)
 		{
 			float fCosTheta = (float)cos(fRadian);

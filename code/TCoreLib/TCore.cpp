@@ -58,6 +58,7 @@ void   TCore::GamePreFrame()
 		I_Input.Frame(m_hWnd);
 	}
 	I_Sound.Frame();
+	PreFrame();
 }
 void   TCore::GameFrame()
 {
@@ -67,6 +68,7 @@ void   TCore::GameFrame()
 }
 void   TCore::GamePostFrame()
 {
+	PostFrame();
 }
 void  TCore::GamePreRender()
 {
@@ -76,9 +78,12 @@ void  TCore::GamePreRender()
 	TDevice::m_pContext->OMSetRenderTargets(1, &TDevice::m_pRTV, nullptr);
 	TDevice::m_pContext->RSSetViewports(1, &TDevice::m_ViewPort);
 	TDevice::m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
+
+	PreRender();
 }
 void  TCore::GamePostRender()
 {
+	PostRender();
 	m_font.DrawText(m_Timer.m_csBuffer, { 0,0 });
 	TDevice::m_pSwapChain->Present(0, 0);
 }
