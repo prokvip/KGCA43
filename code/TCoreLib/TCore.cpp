@@ -44,7 +44,65 @@ HRESULT  TCore::SetAlphaBlendState()
 	}
 	return hr;
 }
+HRESULT TCore::CreateDepthBuffer()
+{
+	HRESULT hr;
+	/// <summary>
+	/// 텍스처 생성
+	/// </summary>
+	/// <returns></returns>
+	ComPtr<ID3D11Texture2D> tex;
+	D3D11_TEXTURE2D_DESC td;
+	ZeroMemory(&td, sizeof(td));
+	td.Width = TDevice::m_SwapChainDesc.BufferDesc.Width;
+	td.Height = TDevice::m_SwapChainDesc.BufferDesc.Height;
+	td.MipLevels = 1;
+	td.ArraySize = 1;
+	td.Format = DXGI_FORMAT_R24G8_TYPELESS; // D,S
+	td.SampleDesc.Count = 1;
+	td.Usage = D3D11_USAGE_DEFAULT;
+	td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	hr = TDevice::m_pd3dDevice->CreateTexture2D(&td, nullptr, tex.GetAddressOf());
+	if (FAILED(hr)) return hr;
 
+	/// <summary>
+	/// DepthStencilView 생성
+	/// </summary>
+	/// <returns></returns>
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
+	ZeroMemory(&dsvd, sizeof(dsvd));
+	dsvd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	//dsvd.Texture2D.MipSlice  -> ShaderResourceVie에서 사용됨.
+	hr = TDevice::m_pd3dDevice->CreateDepthStencilView(tex.Get(), &dsvd, m_pDSV.GetAddressOf());
+	if (FAILED(hr)) return hr;
+
+	/// <summary>
+	/// ID3D11DepthStencilState 생성
+	/// </summary>
+	/// <returns></returns>
+	D3D11_DEPTH_STENCIL_DESC dsd;
+	ZeroMemory(&dsd, sizeof(dsd));
+	dsd.DepthEnable = TRUE;
+	dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsd.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	/*
+	*   스텐실 버퍼에서 사용된다.
+	*
+	BOOL StencilEnable;
+	UINT8 StencilReadMask;
+	UINT8 StencilWriteMask;
+	D3D11_DEPTH_STENCILOP_DESC FrontFace;
+	D3D11_DEPTH_STENCILOP_DESC BackFace;*/
+	hr = TDevice::m_pd3dDevice->CreateDepthStencilState(&dsd, m_pDepthEnable.GetAddressOf());
+	if (FAILED(hr)) return hr;
+
+	dsd.DepthEnable = FALSE;
+	hr = TDevice::m_pd3dDevice->CreateDepthStencilState(&dsd, m_pDepthDisable.GetAddressOf());
+	if (FAILED(hr)) return hr;
+
+	return hr;
+}
 void TCore::Init(){}
 void TCore::Frame() {}
 void TCore::Render() {}
@@ -58,6 +116,11 @@ void   TCore::GamePreFrame()
 		I_Input.Frame(m_hWnd);
 	}
 	I_Sound.Frame();
+
+	if (I_Input.KeyCheck(VK_HOME) == KEY_PUSH)
+	{
+		m_bDepthEnable = !m_bDepthEnable;
+	}
 	PreFrame();
 }
 void   TCore::GameFrame()
@@ -74,11 +137,14 @@ void  TCore::GamePreRender()
 {
 	float clearColor[] = { 0.3640f, 0.4543545322f, 0.645672321f, 1.0f };
 	TDevice::m_pContext->ClearRenderTargetView(TDevice::m_pRTV, clearColor);
-
-	TDevice::m_pContext->OMSetRenderTargets(1, &TDevice::m_pRTV, nullptr);
-	TDevice::m_pContext->RSSetViewports(1, &TDevice::m_ViewPort);
-	TDevice::m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
-
+	TDevice::m_pContext->ClearDepthStencilView(m_pDSV.Get(),
+							D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f, 0);
+	TDevice::m_pContext->OMSetRenderTargets(1, &TDevice::m_pRTV,m_pDSV.Get());
+	if (m_bDepthEnable)
+		TDevice::m_pContext->OMSetDepthStencilState(m_pDepthEnable.Get(), 0);		
+	else
+		TDevice::m_pContext->OMSetDepthStencilState(m_pDepthDisable.Get(), 0);		
+	
 	PreRender();
 }
 void  TCore::GamePostRender()
@@ -106,13 +172,13 @@ void   TCore::GameInit()
 	// 그래픽 처리를 위한 초기화 작업
 	if (TDevice::CreateDevice(m_hWnd))
 	{
+		SetAlphaBlendState();
+		CreateDepthBuffer();
+
 		I_Tex.Set(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext);
 		I_Shader.Set(TDevice::m_pd3dDevice.Get(), TDevice::m_pContext);
-		SetAlphaBlendState();
-
 		I_Sound.Set(nullptr, nullptr);
 		//I_Sprite.Load(L"../../data/Sprite/SpriteInfo.txt");
-
 		m_font.Init();
 		// 3D 백버퍼를 얻어서 전달해야 한다.
 		IDXGISurface* dxgiSurface = nullptr;
