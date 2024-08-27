@@ -1,6 +1,7 @@
 #pragma once
 #include "TTexMgr.h"
 #include "TShaderMgr.h"
+using namespace T_Math;
 // p, n, c, t
 struct P2C4T2_Vertex
 {
@@ -47,6 +48,13 @@ struct PNCT_Vertex
 		this->t = { u, v };
 	}
 };
+
+struct FRAME_CB // 상수버퍼
+{
+	FMatrix g_matWorld;
+	FMatrix g_matView;
+	FMatrix g_matProj;
+};
 class TDxObject 
 {
 protected:
@@ -62,15 +70,20 @@ public:
 	std::wstring		  m_szShaderFilename;
 public:	
 	virtual void   UpdateVertexBuffer();
-	virtual bool   Create(ID3D11Device* pd3dDevice,
-		ID3D11DeviceContext* pContext,
-		RECT rt, std::wstring texName,
-		std::wstring hlsl);
+	// 2D
+	virtual bool   Create(RECT rt, std::wstring texName,std::wstring hlsl);
+	// 3D
+	virtual bool   Create(std::wstring texName,	std::wstring hlsl);
 
 	// GPU 메모리에 할당된 버퍼.
 	ID3D11Buffer* m_pVertexBuffer=nullptr;
-	bool     CreateVertexBuffer(ID3D11Device* pd3dDevice);
-	
+	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice);
+	ID3D11Buffer* m_pIndexBuffer = nullptr;
+	virtual bool     CreateIndexBuffer(ID3D11Device* pd3dDevice);
+	FRAME_CB			 m_cb;
+	ComPtr<ID3D11Buffer>   m_pConstantBuffer;
+	virtual bool  CreateConstantBuffer(ID3D11Device* pd3dDevice);
+
 	TShader* m_pShader = nullptr;
 	
 	virtual bool     LoadShader(std::wstring filename);
@@ -81,59 +94,14 @@ public:
 	virtual void     Init() {};
 	virtual void     Frame();
 	virtual void     PreRender(ID3D11DeviceContext* pContext);
-	virtual void     InRender(ID3D11DeviceContext* pContext);
 	virtual void     Render(ID3D11DeviceContext* pContext);
 	virtual void     PostRender(ID3D11DeviceContext* pContext);
 	virtual void     Release();
 	virtual void	 SetVertexData(RECT rt);
 	virtual void	 SetVertexData() {};
+	virtual void	 SetIndexData() {};
+	
 };
-class TDxObject2D : public TDxObject
-{
-public:
-	std::vector<P2C4T2_Vertex>  m_vListScreen; // 초기 화면 정보
-	std::vector<P2C4T2_Vertex>  m_vList;		 // 프레임 화면 정보
-	std::vector<P2C4T2_Vertex>  m_vListNDC;	 // NDC
-public:
-	T_Math::FVector2 ConvertScreenToNDC(T_Math::FVector2 v);
-	virtual void   UpdateVertexBuffer();
-	virtual bool   Create(	ID3D11Device* pd3dDevice,
-							ID3D11DeviceContext* pContext,
-							RECT rt, std::wstring texName,
-							std::wstring hlsl);
 
-	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice);
-	virtual bool     LoadShader(std::wstring filename);
-	virtual	bool     CreateInputLayout(ID3D11Device* pd3dDevice);
 
-	virtual void     Init() {};
-	virtual void     Frame();
-	virtual void     PreRender(ID3D11DeviceContext* pContext);
-	virtual void     InRender(ID3D11DeviceContext* pContext);
-	virtual void     Render(ID3D11DeviceContext* pContext);
-	virtual void     PostRender(ID3D11DeviceContext* pContext);
-	virtual void     Release();
-	virtual void	 SetVertexData(RECT rt);
-};
-class TDxObject3D : public TDxObject
-{
-public:
-	std::vector<PNCT_Vertex>  m_vList;		 // 프레임 화면 정보
-public:
-	virtual void   UpdateVertexBuffer();
-	virtual bool   Create(ID3D11Device* pd3dDevice,
-		ID3D11DeviceContext* pContext,
-		RECT rt, std::wstring texName,
-		std::wstring hlsl);
-	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice);
-	virtual	bool     CreateInputLayout(ID3D11Device* pd3dDevice);
-
-	virtual void     Init() {};
-	virtual void     Frame();
-	virtual void     PreRender(ID3D11DeviceContext* pContext);
-	virtual void     InRender(ID3D11DeviceContext* pContext);
-	virtual void     Render(ID3D11DeviceContext* pContext);
-	virtual void     PostRender(ID3D11DeviceContext* pContext);
-	virtual void     Release();
-};
 

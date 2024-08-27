@@ -153,6 +153,8 @@
   <ItemGroup>
     <ClInclude Include="Sample.h" />
     <ClInclude Include="TBoxObj.h" />
+    <ClInclude Include="TDxObj2D.h" />
+    <ClInclude Include="TDxObj3D.h" />
     <ClInclude Include="TDxObject.h" />
     <ClInclude Include="TPlaneObj.h" />
     <ClInclude Include="TShapeObj.h" />
@@ -160,6 +162,8 @@
   <ItemGroup>
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="TBoxObj.cpp" />
+    <ClCompile Include="TDxObj2D.cpp" />
+    <ClCompile Include="TDxObj3D.cpp" />
     <ClCompile Include="TDxObject.cpp" />
     <ClCompile Include="TPlaneObj.cpp" />
     <ClCompile Include="TShapeObj.cpp" />
@@ -175,6 +179,9 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

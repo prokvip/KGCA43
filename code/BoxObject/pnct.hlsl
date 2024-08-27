@@ -14,7 +14,7 @@ struct VS_Out
 	float4 c  :COLOR0;//COLOR1;
 	float2 t  :TEXCOORD0; // ~ TEXCOORD15
 };
-cbuffer cb : register(b0)// 상수버퍼
+cbuffer FRAME_CB : register(b0)// 상수버퍼
 {
 	matrix g_matWorld;
 	matrix g_matView;

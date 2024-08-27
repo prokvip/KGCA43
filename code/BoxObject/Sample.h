@@ -1,11 +1,11 @@
 #pragma once
 #include "TCore.h"
 #include "TPlaneObj.h"
-
+#include "TBoxObj.h"
 class Sample : public TCore
 {
-	TPlaneObj	m_obj;
-	TPlaneObj	m_objFar;
+	TPlaneObj	m_Plane;
+	TBoxObj		m_Box;
 	FMatrix		m_matView;
 	FMatrix		m_matProj;
 public:
