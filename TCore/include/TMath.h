@@ -5,6 +5,7 @@
 #define randf2(x,off) (off+x*rand()/(float)RAND_MAX)
 #define randstep(fMin,fMax) (fMin+((float)fMax-(float)fMin)*rand()/(float)RAND_MAX)
 #define clamp(x,MinX,MaxX) if (x>MaxX) x=MaxX; else if (x<MinX) x=MinX;
+
 #define TBASIS_EPSILON		((float)  0.001f)
 #define TBASIS_PI			((float)  3.141592654f)
 #define DegreeToRadian( degree ) ((degree) * (TBASIS_PI / 180.0f))

@@ -24,7 +24,6 @@
 #pragma comment(lib, "TCore.lib")
 #endif
 
-
 extern UINT		g_xClientSize;
 extern UINT		g_yClientSize;
 extern double   g_fSecondPerFrame;
