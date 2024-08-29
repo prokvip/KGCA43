@@ -25,4 +25,5 @@ public:
 	static bool			CreateDevice(HWND hWnd);
 	static void			DeleteDevice();
 	static void         SetViewport();
+	static bool			CreateRTV();
 };

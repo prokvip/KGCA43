@@ -20,7 +20,8 @@ public:
 	virtual void Frame()override;
 	virtual void Render()override;
 	virtual void Release()override;
-
+	virtual bool ResizeDevice();
+	void ResourceRelease();
 	void ResetDevice(IDXGISurface* dxgiSurface);
 	void DrawText(std::wstring msg, POINT pos);
 };

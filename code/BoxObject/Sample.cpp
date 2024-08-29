@@ -38,9 +38,13 @@ void   Sample::Init()
 	FVector3 target = { 0.0f, 0.0f, 0.0f };
 	FVector3 up = { 0.0f, 1.0f, 0.0f };
 	m_matView = FMatrix::CreateViewTransform(eye, target, up);
+	Reset();
+	
+}
+void  Sample::Reset()
+{
 	m_matProj = FMatrix::CreateProjTransform(1.0f, 100.0f,
 		TBASIS_PI * 0.25f, (float)g_xClientSize / (float)g_yClientSize);
-	
 }
 void  Sample::PreRender()
 {

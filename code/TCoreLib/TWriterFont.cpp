@@ -27,6 +27,12 @@ void TWriterFont::Init() {
 
 	
 }
+void TWriterFont::ResourceRelease()
+{
+	if (m_pDefaultColor)	m_pDefaultColor->Release();
+	if (m_pd2dRT)	m_pd2dRT->Release();
+}
+// 장치종속적, 비종속적(독립적)
 void TWriterFont::ResetDevice(IDXGISurface* dxgiSurface)
 {	
 	D2D1_RENDER_TARGET_PROPERTIES rtp;
@@ -47,15 +53,20 @@ void TWriterFont::ResetDevice(IDXGISurface* dxgiSurface)
 	{
 		
 	}
+	ResizeDevice();	
+}
+bool TWriterFont::ResizeDevice()
+{
+	HRESULT hr;
 	D2D1_COLOR_F color = { 1,0,0,1 };//D2D1::ColorF::Yellow;
 	hr = m_pd2dRT->CreateSolidColorBrush(
 		color,
 		&m_pDefaultColor);
 	if (FAILED(hr))
 	{
-
+		return false;
 	}
-	
+	return true;
 }
 void TWriterFont::Frame() {
 	int k = 0;

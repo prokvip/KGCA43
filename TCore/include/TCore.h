@@ -12,12 +12,21 @@ class TCore : public TWindow, public TBaseCore
 {
 public:
 	bool			m_bDepthEnable = true;
+	bool			m_bSolidEnable = true;
+	bool			m_bLinearEnable = true;
 	TTimer			m_Timer;
 	TWriterFont		m_font;
-	ComPtr<ID3D11DepthStencilView> m_pDSV = nullptr;
+	ComPtr<ID3D11DepthStencilView>  m_pDSV = nullptr;
 	ComPtr<ID3D11DepthStencilState> m_pDepthEnable = nullptr;
 	ComPtr<ID3D11DepthStencilState> m_pDepthDisable = nullptr;
-	ComPtr<ID3D11BlendState> m_pAlphaBlend = nullptr;
+	ComPtr<ID3D11BlendState>		m_pAlphaBlend = nullptr;
+	ComPtr<ID3D11RasterizerState>	m_pRSWireFrame = nullptr;
+	ComPtr<ID3D11RasterizerState>	m_pRSSolid = nullptr;
+	ComPtr<ID3D11SamplerState>		m_pSSPoint = nullptr;
+	ComPtr<ID3D11SamplerState>		m_pSSLinear= nullptr;
+public:
+	virtual void Resize(UINT w, UINT h) override;
+	virtual void SetFontRTV();
 public:
 	virtual void Init();
 	virtual void PreFrame() {};
@@ -27,9 +36,14 @@ public:
 		virtual void Render();
 	virtual void PostRender() {};
 	virtual void Release();
+	virtual void Reset() {};
 
-	HRESULT  SetAlphaBlendState();
+	
 	HRESULT  CreateDepthBuffer();
+	HRESULT  SetDepthStencilState();
+	HRESULT  SetAlphaBlendState();	
+	HRESULT  SetRasterizerState();
+	HRESULT  SetSamplerState();
 private:
 	void   GamePreFrame();
 	void   GameFrame();

@@ -4,8 +4,7 @@ TWindow* g_pWindow = nullptr;
 UINT		g_xClientSize;
 UINT		g_yClientSize;
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
-	lParam);
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam);
 void   TWindow::CreateRegisterClass(HINSTANCE hInstance)
 {
 	// 1)윈도우클래스를 운영제체에 등록해야 한다.
@@ -78,13 +77,16 @@ TWindow::TWindow()
 {
 	g_pWindow = this;
 }
+void TWindow::Resize(UINT w, UINT h)
+{
 
+}
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	lParam)
 {
 	switch (uMsg)
 	{
-		// 프로그램의 활성화(포커스)
+	// 프로그램의 활성화(포커스)
 	case WM_ACTIVATE:
 	{
 		if (LOWORD(wParam) == WA_INACTIVE)
@@ -100,6 +102,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 				g_pWindow->m_isActive = true;
 		}
 	}return 0;
+	case WM_SIZE:
+	{
+		UINT w = LOWORD(lParam);
+		UINT h = HIWORD(lParam);
+		GetClientRect(hwnd, &g_pWindow->m_rtClient);
+		GetWindowRect(hwnd, &g_pWindow->m_rtWindow);
+		g_xClientSize = w;
+		g_yClientSize = h;
+		g_pWindow->Resize(w, h);
+	}break;
 	case WM_DESTROY:
 		PostQuitMessage(0);// WM_QUIT
 		return 0;

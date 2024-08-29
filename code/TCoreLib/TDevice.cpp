@@ -45,11 +45,18 @@ bool  TDevice::CreateDevice(HWND hWnd)
 		return false;
 	}
 
+	TDevice::CreateRTV();
+	TDevice::SetViewport();	
+	return true;
+}
+bool  TDevice::CreateRTV()
+{
+	HRESULT hr;
 	//ID3D11RenderTargetView* m_pRTV = nullptr;
 	if (m_pd3dDevice != nullptr && m_pSwapChain != nullptr)
 	{
 		ComPtr<ID3D11Texture2D> pBackBuffer = nullptr;
-		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), 
+		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
 			(void**)pBackBuffer.GetAddressOf());
 
 		D3D11_RENDER_TARGET_VIEW_DESC* pDesc = nullptr;
@@ -62,10 +69,7 @@ bool  TDevice::CreateDevice(HWND hWnd)
 			return false;
 		}
 	}
-	
-	TDevice::SetViewport();
-
-	if(m_pSwapChain)
+	if (m_pSwapChain)
 		m_pSwapChain->GetDesc(&m_SwapChainDesc);
 	return true;
 }
@@ -98,8 +102,8 @@ void  TDevice::SetViewport()
 	//m_pSwapChain->GetDesc(&cd);
 	m_ViewPort.TopLeftX = 0;
 	m_ViewPort.TopLeftY = 0;
-	m_ViewPort.Width = g_xClientSize;
-	m_ViewPort.Height = g_yClientSize;
+	m_ViewPort.Width  = m_SwapChainDesc.BufferDesc.Width;
+	m_ViewPort.Height = m_SwapChainDesc.BufferDesc.Height;
 	m_ViewPort.MinDepth = 0;
 	m_ViewPort.MaxDepth = 1;
 	m_pContext->RSSetViewports(1, &m_ViewPort);

@@ -35,7 +35,8 @@ VS_Out VSMain(VS_In vsIn)
 }
 
 Texture2D g_txTexture : register(t0);
-SamplerState sampler0 : register(s0);
+SamplerState LinearPoint : register(s0);
+SamplerState Point  : register(s1);
 
 
 struct PS_In
@@ -51,7 +52,8 @@ struct PS_Out
 PS_Out PSMain(PS_In psIn)
 {
 	PS_Out  psOut = (PS_Out)0;
-	float4 pixel = g_txTexture.Sample(sampler0, psIn.t);
+	float4 pixel = g_txTexture.Sample(LinearPoint, psIn.t);
+	//float4 pixel = g_txTexture.Sample(Point, psIn.t);
 	psOut.c = pixel;
 	return psOut;	
 }
