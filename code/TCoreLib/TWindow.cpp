@@ -104,13 +104,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	}return 0;
 	case WM_SIZE:
 	{
-		UINT w = LOWORD(lParam);
-		UINT h = HIWORD(lParam);
-		GetClientRect(hwnd, &g_pWindow->m_rtClient);
-		GetWindowRect(hwnd, &g_pWindow->m_rtWindow);
-		g_xClientSize = w;
-		g_yClientSize = h;
-		g_pWindow->Resize(w, h);
+		if (wParam != SIZE_MINIMIZED) // ÃÖ¼ÒÈ­
+		{
+			UINT w = LOWORD(lParam);
+			UINT h = HIWORD(lParam);
+			GetClientRect(hwnd, &g_pWindow->m_rtClient);
+			GetWindowRect(hwnd, &g_pWindow->m_rtWindow);
+			g_xClientSize = w;
+			g_yClientSize = h;
+			g_pWindow->Resize(w, h);
+		}
 	}break;
 	case WM_DESTROY:
 		PostQuitMessage(0);// WM_QUIT

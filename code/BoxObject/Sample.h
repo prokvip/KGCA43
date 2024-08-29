@@ -22,5 +22,5 @@ public:
 	void   Frame() override;
 	void   Render() override;
 	void   Release() override;
-	void   Reset() override;
+	void   Reset() override;	
 };
