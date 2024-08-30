@@ -153,18 +153,22 @@
   <ItemGroup>
     <ClInclude Include="Sample.h" />
     <ClInclude Include="TBoxObj.h" />
+    <ClInclude Include="TCamera.h" />
     <ClInclude Include="TDxObj2D.h" />
     <ClInclude Include="TDxObj3D.h" />
     <ClInclude Include="TDxObject.h" />
+    <ClInclude Include="TLineObj.h" />
     <ClInclude Include="TPlaneObj.h" />
     <ClInclude Include="TShapeObj.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="TBoxObj.cpp" />
+    <ClCompile Include="TCamera.cpp" />
     <ClCompile Include="TDxObj2D.cpp" />
     <ClCompile Include="TDxObj3D.cpp" />
     <ClCompile Include="TDxObject.cpp" />
+    <ClCompile Include="TLineObj.cpp" />
     <ClCompile Include="TPlaneObj.cpp" />
     <ClCompile Include="TShapeObj.cpp" />
   </ItemGroup>
@@ -174,6 +178,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="line.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="pnct.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>

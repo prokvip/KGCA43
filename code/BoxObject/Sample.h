@@ -2,6 +2,8 @@
 #include "TCore.h"
 #include "TPlaneObj.h"
 #include "TBoxObj.h"
+#include "TLineObj.h"
+#include "TCamera.h"
 class TMapObj
 {
 public:
@@ -10,12 +12,18 @@ public:
 };
 class Sample : public TCore
 {
+	float m_fPitch = 0.0f;
+	float m_fYaw = 0.0f;
+	float m_fRoll = 0.0f;
+	float m_fDistance = 0.0f;
 	TBoxObj    m_Box;
 	TPlaneObj  m_Plane;
 
 	std::vector<std::shared_ptr<TMapObj>>	m_ShapeList;
-	FMatrix		m_matView;
+	TCamera		m_MainCamera;
 	FMatrix		m_matProj;
+
+	TLineObj    m_Line;
 public:
 	void   Init() override;
 	void   PreRender()override;

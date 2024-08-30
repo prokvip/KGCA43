@@ -185,7 +185,7 @@ void     TDxObject3D::PreRender(ID3D11DeviceContext* pContext)
 	pContext->IASetVertexBuffers(StartSlot, NumBuffers, &m_pVertexBuffer, &pStrides, &pOffsets);
 	pContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	pContext->IASetInputLayout(m_pVertexLayout);
-	pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pContext->VSSetShader(m_pShader->m_pVertexShader, nullptr, 0);
 	pContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer.GetAddressOf());
 	pContext->PSSetShaderResources(0, 1, m_pSRV.GetAddressOf());

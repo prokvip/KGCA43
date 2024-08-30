@@ -1,10 +1,11 @@
 #include "TInput.h"
+#include "TStd.h"
 /*
  * VK_0 - VK_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
  * 0x3A - 0x40 : unassigned
  * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
  */
-	void    TInput::DebugPrint(int iKey)
+void    TInput::DebugPrint(int iKey)
 	{
 #ifdef _DEBUG
 		static int iPushCounter = 0;
@@ -13,7 +14,7 @@
 		OutputDebugString(msgKey);
 #endif
 	}
-	void    TInput::DebugMousePos()
+void    TInput::DebugMousePos()
 	{
 #ifdef _DEBUG
 		TCHAR msgKey[MAX_PATH] = { 0, };
@@ -22,13 +23,33 @@
 		OutputDebugString(msgKey);
 #endif
 	}
-
+float   TInput::GetDeltaX()
+{
+	float retX;
+	retX = ((float)m_ptDeltaMouse.x / (float)g_xClientSize) * TBASIS_PI;
+	return retX;
+}
+float   TInput::GetDeltaY()
+{
+	float retY;
+	retY = ((float)m_ptDeltaMouse.y / (float)g_yClientSize) * TBASIS_PI;
+	return retY;
+}
 void    TInput::Frame(HWND hWnd)
 {
+	POINT ptOffset = m_ptMousePos;
 	// 화면좌표계를 반환한다.
 	GetCursorPos(&m_ptMousePos);
 	// 클라이언트 좌표계로 변환한다.
 	ScreenToClient(hWnd, &m_ptMousePos);
+	if (m_ptMousePos.x < 0 || m_ptMousePos.x > g_xClientSize ||
+		m_ptMousePos.y < 0 || m_ptMousePos.y > g_yClientSize )
+	{
+		m_bDrag = false;
+		m_ptDeltaMouse.x = 0.0f;
+		m_ptDeltaMouse.y = 0.0f;
+	}
+
 
 	for (int iKey = 0; iKey < 255; iKey++)
 	{
@@ -69,6 +90,21 @@ void    TInput::Frame(HWND hWnd)
 	m_dwMouseState[0] = g_dwKeyState[VK_LBUTTON];
 	m_dwMouseState[1] = g_dwKeyState[VK_RBUTTON];
 	m_dwMouseState[2] = g_dwKeyState[VK_MBUTTON];
+
+
+	if (m_dwMouseState[0] == KEY_PUSH)
+	{
+		m_bDrag = true;
+	}
+	if (m_dwMouseState[0] == KEY_UP)
+	{
+		m_bDrag = false;
+	}
+	if (m_bDrag == true)
+	{
+		m_ptDeltaMouse.x = m_ptMousePos.x - ptOffset.x;
+		m_ptDeltaMouse.y = m_ptMousePos.y - ptOffset.y;
+	}
 }
 void    TInput::KeyTest()
 {

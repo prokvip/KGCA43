@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <tchar.h>
+#include "TMath.h"
 enum KeyState
 {
 	KEY_FREE = 0,	// Æò»ó½Ã
@@ -17,7 +18,12 @@ public:
 		static TInput mgr;
 		return mgr;
 	}
+	POINT   m_ptDeltaMouse = { 0,0 };
+	float   GetDeltaX();
+	float   GetDeltaY();
 private:
+	bool	m_bDrag = false;
+
 	DWORD   g_dwKeyState[256];
 public:	
 	POINT   m_ptMousePos;

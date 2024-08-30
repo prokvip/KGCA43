@@ -237,6 +237,7 @@ void  TCore::GamePreRender()
 	{
 		TDevice::m_pContext->PSSetSamplers(0, 1, m_pSSPoint.GetAddressOf());
 	}
+	TDevice::m_pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	PreRender();
 }
 void  TCore::GamePostRender()
