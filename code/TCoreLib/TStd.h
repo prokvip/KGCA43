@@ -10,6 +10,7 @@
 #include <atlconv.h> // A2W
 #include <functional>
 #include "TMath.h"
+#include "FMath.h"
 #include "TDevice.h"
 
 #ifdef _DEBUG

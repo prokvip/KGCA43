@@ -153,9 +153,10 @@ copy "..\\..\\output\\Debug\\TCoreLib.lib" "..\\..\\TCore\\lib\\TCore_d.lib"</Co
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FMath.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="TBaseManager.h" />
-    <ClInclude Include="TCamera.h" />
+    <ClInclude Include="TCamera2D.h" />
     <ClInclude Include="TCollision.h" />
     <ClInclude Include="TCore.h" />
     <ClInclude Include="TDevice.h" />
@@ -170,8 +171,9 @@ copy "..\\..\\output\\Debug\\TCoreLib.lib" "..\\..\\TCore\\lib\\TCore_d.lib"</Co
     <ClInclude Include="TWriterFont.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FMath.cpp" />
     <ClCompile Include="TBaseManager.cpp" />
-    <ClCompile Include="TCamera.cpp" />
+    <ClCompile Include="TCamera2D.cpp" />
     <ClCompile Include="TCollision.cpp" />
     <ClCompile Include="TCore.cpp" />
     <ClCompile Include="TCoreLib.cpp" />

@@ -21,7 +21,7 @@
     <ClInclude Include="TBaseManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TCamera.h">
+    <ClInclude Include="TCamera2D.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TCollision.h">
@@ -60,6 +60,9 @@
     <ClInclude Include="TWriterFont.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="FMath.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TCoreLib.cpp">
@@ -68,7 +71,7 @@
     <ClCompile Include="TBaseManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TCamera.cpp">
+    <ClCompile Include="TCamera2D.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TCollision.cpp">
@@ -102,6 +105,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TWriterFont.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FMath.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
