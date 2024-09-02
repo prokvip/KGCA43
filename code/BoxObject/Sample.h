@@ -7,7 +7,7 @@
 class TMapObj
 {
 public:
-	FMatrix		m_matWorld;
+	T::TMatrix		m_matWorld;
 	TShapeObj*  m_pBaseShape = nullptr;
 };
 class Sample : public TCore
@@ -21,7 +21,7 @@ class Sample : public TCore
 
 	std::vector<std::shared_ptr<TMapObj>>	m_ShapeList;
 	TCamera		m_MainCamera;
-	FMatrix		m_matProj;
+	T::TMatrix	m_matProj;
 
 	TLineObj    m_Line;
 public:

@@ -15,10 +15,14 @@ void   Sample::Init()
 
 	for (int iObj = 0; iObj < 10; iObj++)
 	{
-		FMatrix matScale, matRotate, matTrans;
-		matScale.Scale(randstep(0.5f, 2.0f), randstep(0.5f, 2.0f), randstep(0.5f, 2.0f));
+		T::TMatrix matScale, matRotate, matTrans;
+		
+		T::D3DXMatrixScaling(&matScale, randstep(0.5f, 2.0f), randstep(0.5f, 2.0f), randstep(0.5f, 2.0f));
+		T::D3DXMatrixRotationY(&matRotate, randstep(0.0f, TBASIS_PI * 2.0f));
+		T::D3DXMatrixTranslation(&matTrans, -15.0f + iObj * 3.0f, 0, 0);
+		/*matScale.Scale(randstep(0.5f, 2.0f), randstep(0.5f, 2.0f), randstep(0.5f, 2.0f));
 		matRotate.rotateY(randstep(0.0f, TBASIS_PI* 2.0f));
-		matTrans.Translation(-15.0f + iObj * 3.0f, 0, 0);
+		matTrans.Translation(-15.0f + iObj * 3.0f, 0, 0);*/
 		auto pObj = std::make_shared<TMapObj>();
 		pObj->m_matWorld = matScale * matRotate * matTrans;
 		if (iObj % 2 == 0)
@@ -35,9 +39,10 @@ void   Sample::Init()
 	}
 
 
-	FVector3 eye = { 20.0f, 20.0f, -15.0f };
-	FVector3 target = { 0.0f, 0.0f, 0.0f };
-	FVector3 up = { 0.0f, 1.0f, 0.0f };
+	T::TVector3 eye = { 0.0f, 0.0f, -25.0f };
+	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
+	T::TVector3 up = { 0.0f, 1.0f, 0.0f };
+	// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
 	m_MainCamera.SetView(eye, target, up);
 	
 	Reset();
@@ -45,14 +50,41 @@ void   Sample::Init()
 }
 void  Sample::Reset()
 {
-	m_matProj = FMatrix::CreateProjTransform(1.0f, 100.0f,
-		TBASIS_PI * 0.25f, (float)g_xClientSize / (float)g_yClientSize);
+	T::D3DXMatrixPerspectiveFovLH(&m_matProj, TBASIS_PI * 0.25f,
+		(float)g_xClientSize / (float)g_yClientSize, 1.0f, 100.0f);
+	/*m_matProj = FMatrix::CreateProjTransform(1.0f, 100.0f,
+		TBASIS_PI * 0.25f, (float)g_xClientSize / (float)g_yClientSize);*/
 }
 void  Sample::PreRender()
 {
 }
 void    Sample::Frame()
 {	
+	if (TInput::Get().KeyCheck('W'))
+	{
+		m_MainCamera.MoveLook(g_fSecondPerFrame* 50.0f);
+	}
+	if (TInput::Get().KeyCheck('S'))
+	{
+		m_MainCamera.MoveLook(-g_fSecondPerFrame * 50.0f);
+	}
+	if (TInput::Get().KeyCheck('A'))
+	{
+		m_MainCamera.MoveSide(-g_fSecondPerFrame * 50.0f);
+	}
+	if (TInput::Get().KeyCheck('D'))
+	{
+		m_MainCamera.MoveSide(g_fSecondPerFrame * 50.0f);
+	}
+
+	if (TInput::Get().KeyCheck('Q'))
+	{
+		m_MainCamera.MoveUp(g_fSecondPerFrame * 50.0f);
+	}
+	if (TInput::Get().KeyCheck('E'))
+	{
+		m_MainCamera.MoveUp(-g_fSecondPerFrame * 50.0f);
+	}
 	m_MainCamera.Update(
 		TInput::Get().GetDeltaY(),
 		TInput::Get().GetDeltaX(), 
@@ -70,8 +102,10 @@ void    Sample::Render()
 
 	for (int iObj = 0; iObj < m_ShapeList.size(); iObj++)
 	{
-		FMatrix matWorld = m_ShapeList[iObj]->m_matWorld;
-		m_ShapeList[iObj]->m_pBaseShape->SetMatrix(&matWorld, &m_MainCamera.m_matView, &m_matProj);
+		T::TMatrix matWorld = m_ShapeList[iObj]->m_matWorld;
+		//인수 1을(를) 'T_Math::FMatrix *'에서 'T::TMatrix *'(으)로 변환할 수 없습니다.
+		m_ShapeList[iObj]->m_pBaseShape->SetMatrix(&matWorld, 
+			&m_MainCamera.m_matView, &m_matProj);
 		m_ShapeList[iObj]->m_pBaseShape->Render(TDevice::m_pContext);
 	}
 
