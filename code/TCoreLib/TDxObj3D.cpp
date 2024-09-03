@@ -45,14 +45,6 @@ bool   TDxObject3D::Create(std::wstring texName, std::wstring hlsl)
 		Release();
 		return false;
 	}
-
-	SetIndexData();
-	if (CreateIndexBuffer(m_pd3dDevice) == false)
-	{
-		Release();
-		return false;
-	}
-
 	if (LoadShader(m_szShaderFilename) == false)
 	{
 		Release();

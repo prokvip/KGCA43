@@ -7,9 +7,17 @@
 #include "TTexMgr.h"
 #include "TShaderMgr.h"
 #include "TSound.h"
+#include "TPlaneObj.h"
+#include "TBoxObj.h"
+#include "TLineObj.h"
+#include "TCamera.h"
 // 테스트를 완료하고  TCore에 포함한다.
 class TCore : public TWindow, public TBaseCore
 {
+public:
+	TCamera			m_MainCamera;
+	T::TMatrix		m_matProj;
+	TLineObj		m_Line;
 public:
 	bool			m_bDepthEnable = true;
 	bool			m_bSolidEnable = true;

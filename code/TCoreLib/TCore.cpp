@@ -26,6 +26,9 @@ void TCore::Resize(UINT Width, UINT Height)
 	TDevice::SetViewport();	
 	SetFontRTV();
 
+	T::D3DXMatrixPerspectiveFovLH(&m_matProj, TBASIS_PI * 0.25f,
+		(float)g_xClientSize / (float)g_yClientSize, 1.0f, 100.0f);
+
 	Reset();
 }
 HRESULT  TCore::SetDepthStencilState()
@@ -196,6 +199,9 @@ void   TCore::GamePreFrame()
 	{
 		m_bLinearEnable = !m_bLinearEnable;
 	}
+
+	m_MainCamera.Frame();
+
 	PreFrame();
 }
 void   TCore::GameFrame()
@@ -243,6 +249,7 @@ void  TCore::GamePreRender()
 void  TCore::GamePostRender()
 {
 	PostRender();
+	DebugRender();
 	m_font.DrawText(m_Timer.m_csBuffer, { 0,0 });
 	TDevice::m_pSwapChain->Present(0, 0);
 }
@@ -250,11 +257,21 @@ void   TCore::GameRender()
 {
 	GamePreRender();
 	Render();
-	GamePostRender();
-	DebugRender();
+	GamePostRender();	
 }
 void   TCore::DebugRender()
 {
+	m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+	m_Line.Draw(FVector3(0.0f, 0.0f, 0.0f),
+		FVector3(10000.0f, 0.0f, 0.0f),
+		FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	m_Line.Draw(FVector3(0.0f, 0.0f, 0.0f),
+		FVector3(0.0f, 10000.0f, 0.0f),
+		FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	m_Line.Draw(FVector3(0.0f, 0.0f, 0.0f),
+		FVector3(0.0f, 0.0f, 10000.0f),
+		FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+
 	/*m_Timer.DebugTimer();
 	I_Input.DebugMousePos();
 	I_Input.KeyTest();*/
@@ -278,6 +295,19 @@ void   TCore::GameInit()
 		//I_Sprite.Load(L"../../data/Sprite/SpriteInfo.txt");
 		m_font.Init();
 		SetFontRTV();
+
+		m_Line.Create(L"../../data/obj.jpg", L"../../data/shader/line.hlsl");
+
+		T::TVector3 eye = { 0.0f, 0.0f, -25.0f };
+		T::TVector3 target = { 0.0f, 0.0f, 0.0f };
+		T::TVector3 up = { 0.0f, 1.0f, 0.0f };
+		// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
+		m_MainCamera.SetView(eye, target, up);
+
+		T::D3DXMatrixPerspectiveFovLH(&m_matProj, TBASIS_PI * 0.25f,
+			(float)g_xClientSize / (float)g_yClientSize, 1.0f, 100.0f);
+
+		Reset();
 	}
 	Init();
 }
@@ -308,6 +338,7 @@ void   TCore::GameRun()
 void   TCore::GameRelease()
 {
 	Release();
+	m_Line.Release();
 
 	I_Sound.Release();
 	I_Shader.Release();

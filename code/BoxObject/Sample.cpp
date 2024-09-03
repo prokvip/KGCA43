@@ -124,6 +124,7 @@ void    Sample::Release()
 {
 	m_Plane.Release();
 	m_Box.Release();
+	m_Line.Release();
 }
 
 T_GAME_START(800, 600);

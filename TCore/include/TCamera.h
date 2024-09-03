@@ -20,7 +20,7 @@ public:
 	void MoveUp(float d);
 	void MoveSide(float d);
 	void UpdateVector();
-
+	void Frame();
 	void Update(float x, float y, float z, float d);
 	void SetView(T::TVector3 eye, T::TVector3 target, T::TVector3 up);
 };

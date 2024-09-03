@@ -1,4 +1,36 @@
 #include "TCamera.h"
+#include "TInput.h"
+void TCamera::Frame()
+{
+	if (TInput::Get().KeyCheck('W'))
+	{
+		MoveLook(g_fSecondPerFrame * 50.0f);
+	}
+	if (TInput::Get().KeyCheck('S'))
+	{
+		MoveLook(-g_fSecondPerFrame * 50.0f);
+	}
+	if (TInput::Get().KeyCheck('A'))
+	{
+		MoveSide(-g_fSecondPerFrame * 50.0f);
+	}
+	if (TInput::Get().KeyCheck('D'))
+	{
+		MoveSide(g_fSecondPerFrame * 50.0f);
+	}
+
+	if (TInput::Get().KeyCheck('Q'))
+	{
+		MoveUp(g_fSecondPerFrame * 50.0f);
+	}
+	if (TInput::Get().KeyCheck('E'))
+	{
+		MoveUp(-g_fSecondPerFrame * 50.0f);
+	}
+	Update(	TInput::Get().GetDeltaY(),
+			TInput::Get().GetDeltaX(),
+			0.0f, 0);
+}
 void TCamera::Update(float pitch, float yaw, float roll, float d)
 {
 	m_fYaw += yaw;
