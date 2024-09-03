@@ -1,10 +1,15 @@
 #pragma once
 #include <tstd.h>
 #include <fbxsdk.h>
+#include "TDxObj3D.h"
 #pragma comment(lib, "libfbxsdk-md.lib")
 #pragma comment(lib, "libxml2-md.lib")
 #pragma comment(lib, "zlib-md.lib")
 
+class TFbxModel : public TDxObject3D
+{
+
+};
 class TFbxLoader
 {
 public:
@@ -13,14 +18,13 @@ public:
 	FbxScene*		m_pScene = nullptr;
 	FbxNode*		m_pRootNode = nullptr;
 
-	std::vector<FbxMesh*>   m_pFbxMeshList;
-
+	std::vector<FbxMesh*>		m_pFbxMeshList;	
 public:
-	bool   Load(C_STR filename);
-	void   PreProcess(FbxNode* node);
 	void   Init();
-	void   Frame();
-	void   Render();
+	bool   Load(C_STR filename, std::vector<TFbxModel*>& model);
+	void   PreProcess(FbxNode* node);
+	void   LoadMesh(int iMesh, std::vector<TFbxModel*>& m_pModelList);
 	void   Release();
+	TFbxLoader() = default;
 };
 

@@ -4,7 +4,9 @@
 
 class Sample : public TCore
 {	
-	TFbxLoader   m_fbxLoader;
+	TFbxLoader					m_fbxLoader;
+	using tModel = std::vector<TFbxModel*>;
+	std::vector<tModel> m_pModelList;
 public:
 	void   Init() override;
 	void   PreRender()override;
@@ -12,4 +14,5 @@ public:
 	void   Render() override;
 	void   Release() override;
 	void   Reset() override;	
+	Sample() = default;
 };

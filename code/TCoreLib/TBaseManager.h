@@ -83,7 +83,7 @@ std::shared_ptr<T>  TBaseManager<T, S>::CreateObject(
 		//delete pData;
 		return nullptr;
 	}
-	m_list.insert(std::make_pair(pData->m_csName, pData));
+	m_list.insert(std::make_pair(name, pData));
 	return pData;
 }
 template <class T, class S>

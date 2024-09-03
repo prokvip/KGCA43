@@ -216,7 +216,7 @@ void   TCore::GamePostFrame()
 }
 void  TCore::GamePreRender()
 {
-	float clearColor[] = { 0.3640f, 0.4543545322f, 0.645672321f, 1.0f };
+	float clearColor[] = { 0, 0, 0, 1.0f };
 	TDevice::m_pContext->ClearRenderTargetView(TDevice::m_pRTV, clearColor);
 	TDevice::m_pContext->ClearDepthStencilView(m_pDSV.Get(),
 							D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f, 0);
@@ -305,7 +305,7 @@ void   TCore::GameInit()
 		m_MainCamera.SetView(eye, target, up);
 
 		T::D3DXMatrixPerspectiveFovLH(&m_matProj, TBASIS_PI * 0.25f,
-			(float)g_xClientSize / (float)g_yClientSize, 1.0f, 100.0f);
+			(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
 
 		Reset();
 	}

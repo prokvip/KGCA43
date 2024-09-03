@@ -88,6 +88,7 @@ bool     TDxObject3D::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 
 bool     TDxObject3D::CreateIndexBuffer(ID3D11Device* pd3dDevice)
 {
+	if (m_vIndexList.size() <= 0) return true;
 	// 버퍼 할당 크기를 세팅한다.
 	D3D11_BUFFER_DESC  bd;
 	ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
