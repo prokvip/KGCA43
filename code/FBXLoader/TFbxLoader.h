@@ -8,7 +8,8 @@
 
 class TFbxModel : public TDxObject3D
 {
-
+public:
+	std::string m_szTexFileName;
 };
 class TFbxLoader
 {
@@ -24,7 +25,12 @@ public:
 	bool   Load(C_STR filename, std::vector<TFbxModel*>& model);
 	void   PreProcess(FbxNode* node);
 	void   LoadMesh(int iMesh, std::vector<TFbxModel*>& m_pModelList);
+	FbxVector2  GetUV(	FbxMesh* fbxMesh, 
+						FbxLayerElementUV* uv,
+						int iVertexPosIndex, 
+						int iVertexUVIndex);
 	void   Release();
 	TFbxLoader() = default;
 };
+
 
