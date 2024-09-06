@@ -13,13 +13,16 @@ public:
 	std::vector<PNCT_Vertex>	m_vVertexList;		 // 프레임 화면 정보
 	std::vector<DWORD>			m_vIndexList;
 public:
-	virtual void   UpdateVertexBuffer();
+	
+public:
+	virtual void   LoadTexture(std::wstring szPath) override;	
 	virtual bool   Create(std::wstring texName,	std::wstring hlsl) override;
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice) override;
 	virtual bool     CreateIndexBuffer(ID3D11Device* pd3dDevice) override;
 	virtual bool	 CreateConstantBuffer(ID3D11Device* pd3dDevice) override;
 	virtual	bool     CreateInputLayout(ID3D11Device* pd3dDevice);
-
+public:
+	virtual void	 UpdateVertexBuffer();
 	virtual void     Init() {};
 	virtual void     Frame();
 	virtual void     PreRender(ID3D11DeviceContext* pContext);

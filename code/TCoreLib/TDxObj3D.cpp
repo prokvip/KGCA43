@@ -20,6 +20,14 @@ void   TDxObject3D::Frame()
 {
 
 }
+void   TDxObject3D::LoadTexture(std::wstring szPath)
+{
+	m_pTexture = I_Tex.Load(szPath).get();
+	if (m_pTexture != nullptr)
+	{
+		m_pSRV = m_pTexture->m_pSRV;
+	}
+}
 bool   TDxObject3D::Create(std::wstring texName, std::wstring hlsl)
 {
 	m_pd3dDevice = TDevice::m_pd3dDevice.Get();
@@ -27,11 +35,7 @@ bool   TDxObject3D::Create(std::wstring texName, std::wstring hlsl)
 
 	m_szShaderFilename = hlsl;
 
-	m_pTexture = I_Tex.Load(texName).get();
-	if (m_pTexture != nullptr)
-	{
-		m_pSRV = m_pTexture->m_pSRV;
-	}
+	LoadTexture(texName);
 
 	SetVertexData();
 	if (CreateVertexBuffer(m_pd3dDevice) == false)

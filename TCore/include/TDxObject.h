@@ -66,6 +66,7 @@ public:
 	// 텍스처(이미지) 로드 데이터
 	//ComPtr<ID3D11Resource> m_pTexture = nullptr;
 	TTexture* m_pTexture=nullptr;
+	virtual void        LoadTexture(std::wstring szPath) {};
 public:
 	std::wstring		  m_szShaderFilename;
 public:	
