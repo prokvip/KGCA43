@@ -14,8 +14,9 @@ public:
 	std::vector<TTexture*>							m_pSubMeshTexture;
 
 	using vList = std::vector<PNCT_Vertex>;
-	std::vector<vList>			m_vSubMeshVertexList;
-	std::vector<ID3D11Buffer*>  m_pSubMeshVertexBuffer;	
+	std::vector<vList>					m_vSubMeshVertexList;
+	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshVertexBuffer;
+
 	virtual void   LoadTexture(std::wstring szPath) override
 	{
 		if (m_vSubMeshVertexList.size() == 0)
@@ -75,7 +76,7 @@ public:
 				HRESULT hr = pd3dDevice->CreateBuffer(
 					&bd,
 					&sd,
-					&m_pSubMeshVertexBuffer[iMesh]);
+					m_pSubMeshVertexBuffer[iMesh].GetAddressOf());
 				if (FAILED(hr)) return false;
 			}
 		}
@@ -91,7 +92,7 @@ public:
 			UINT pStrides = sizeof(PNCT_Vertex); // 1개의 정점 크기
 			UINT pOffsets = 0; // 버퍼에 시작 인덱스
 			pContext->IASetVertexBuffers(StartSlot, NumBuffers, 
-				&m_pSubMeshVertexBuffer[iSubMesh], &pStrides, &pOffsets);
+				m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
 			pContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			pContext->PSSetShaderResources(0, 1, m_pSubMeshSRV[iSubMesh].GetAddressOf());
 			/*if (m_pIndexBuffer != nullptr)
@@ -115,10 +116,11 @@ public:
 		m_pSubMeshTexture.clear();
 		m_vSubMeshVertexList.clear();
 		m_vSubMeshVertexList.clear();
-		for (int iVB = 0; iVB < m_pSubMeshVertexBuffer.size(); iVB++)
+		m_pSubMeshVertexBuffer.clear();
+		/*for (int iVB = 0; iVB < m_pSubMeshVertexBuffer.size(); iVB++)
 		{
 			m_pSubMeshVertexBuffer[iVB]->Release();
-		}
+		}*/
 	}
 	virtual void     SetVertexData() override
 	{
