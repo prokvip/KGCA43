@@ -51,6 +51,9 @@ bool   TFbxLoader::Load(C_STR filename, std::vector<TFbxModel*>& model)
 	bRet = m_pImporter->Initialize(filename.c_str());
 	// 로딩된 정보를 m_pScene에 체운다.
 	bRet = m_pImporter->Import(m_pScene);
+
+	FbxAxisSystem::MayaZUp.ConvertScene(m_pScene);
+
 	m_pRootNode = m_pScene->GetRootNode();
 	PreProcess(m_pRootNode);
 
@@ -312,7 +315,10 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 			if (Property.IsValid())
 			{
 				FbxFileTexture* tex = Property.GetSrcObject<FbxFileTexture>(0);
-				texPathName = tex->GetFileName();
+				if (tex)
+				{
+					texPathName = tex->GetFileName();
+				}
 			}
 			pModel->m_szTexFileName.emplace_back(texPathName);
 		}
@@ -387,12 +393,6 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 						iVertexPositionIndex[iVertex],
 						iBasePolyIndex + iVertexIndex[iVertex]);
 					vFbxNormal = normalMatrix.MultT(vFbxNormal);
-
-					//// world tansform
-					//normalMatrix = matWorld.Inverse();
-					//normalMatrix = matWorld.Transpose();
-
-					//vFbxNormal = normalMatrix.MultT(fbvFbxNormalxV);
 					vFbxNormal.Normalize();
 				}
 				v.n.X = vFbxNormal.mData[0];

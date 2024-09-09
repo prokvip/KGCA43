@@ -216,7 +216,7 @@ void   TCore::GamePostFrame()
 }
 void  TCore::GamePreRender()
 {
-	float clearColor[] = { 0, 0, 0, 1.0f };
+	float clearColor[] = { 0.343f, 0.45f, 0.74f, 1.0f };
 	TDevice::m_pContext->ClearRenderTargetView(TDevice::m_pRTV, clearColor);
 	TDevice::m_pContext->ClearDepthStencilView(m_pDSV.Get(),
 							D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f, 0);

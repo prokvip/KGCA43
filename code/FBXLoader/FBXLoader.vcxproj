@@ -153,10 +153,12 @@
   <ItemGroup>
     <ClInclude Include="Sample.h" />
     <ClInclude Include="TFbxLoader.h" />
+    <ClInclude Include="TFbxObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="TFbxLoader.cpp" />
+    <ClCompile Include="TFbxObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TCoreLib\TCoreLib.vcxproj">
