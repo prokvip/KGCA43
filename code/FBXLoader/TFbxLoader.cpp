@@ -2,6 +2,22 @@
 
 FbxManager* TFbxLoader::m_pManager = nullptr;
 
+T::TMatrix TFbxLoader::ConvertFbxAMatrix(FbxAMatrix& m)
+{
+	T::TMatrix tMat;
+	float* pRetArray = reinterpret_cast<float*>(&tMat);
+	double* pSrcArray = reinterpret_cast<double*>(&m);
+	for (int i = 0; i < 16; i++)
+	{
+		pRetArray[i] = pSrcArray[i];
+	}
+	T::TMatrix ret;
+	ret._11 = tMat._11; ret._12 = tMat._13; ret._13 = tMat._12; ret._14 = tMat._14;
+	ret._21 = tMat._31; ret._22 = tMat._33; ret._23 = tMat._32; ret._24 = tMat._34;
+	ret._31 = tMat._21; ret._32 = tMat._23; ret._33 = tMat._22; ret._34 = tMat._24;	
+	ret._41 = tMat._41; ret._42 = tMat._43; ret._43 = tMat._42; ret._44 = tMat._44;
+	return ret;
+};
 void   TFbxLoader::Init()
 {
 	if (m_pManager == nullptr)
@@ -141,6 +157,50 @@ FbxColor  TFbxLoader::GetColor(	FbxMesh* fbxMesh,
 	}
 	return ret;
 }
+FbxVector4  TFbxLoader::GetNormal(FbxMesh* fbxMesh,
+	FbxLayerElementNormal* VertexNormalSet,
+	int iVertexPosIndex,
+	int iVertexNormalIndex)
+{
+	FbxVector4 ret;
+	switch (VertexNormalSet->GetMappingMode())
+	{
+		// 제어점 당 1개의 정보가 있다.
+	case FbxLayerElementVertexColor::eByControlPoint:
+	{
+		// 어떤 곳에 저장된 파악
+		switch (VertexNormalSet->GetReferenceMode())
+		{
+		case FbxLayerElementVertexColor::eDirect:
+		{
+			ret = VertexNormalSet->GetDirectArray().GetAt(iVertexPosIndex);
+		}break;
+		case FbxLayerElementVertexColor::eIndexToDirect:
+		{
+			int iIndex = VertexNormalSet->GetIndexArray().GetAt(iVertexPosIndex);
+			ret = VertexNormalSet->GetDirectArray().GetAt(iIndex);
+		}break;
+		}
+	}break;
+		// 정점 당 1개의 정보가 있다.
+	case FbxLayerElementVertexColor::eByPolygonVertex:
+	{
+		switch (VertexNormalSet->GetReferenceMode())
+		{
+		case FbxLayerElementVertexColor::eDirect:
+		{
+			ret = VertexNormalSet->GetDirectArray().GetAt(iVertexNormalIndex);
+		}break;
+		case FbxLayerElementVertexColor::eIndexToDirect:
+		{
+			int iColorIndex = VertexNormalSet->GetIndexArray().GetAt(iVertexNormalIndex);
+			ret = VertexNormalSet->GetDirectArray().GetAt(iColorIndex);
+		}break;
+		}
+	}break;
+	}
+	return ret;
+}
 // 폴리곤 당 사용하는 서브매터리얼 인덱스 반환.
 int   TFbxLoader::GetSubMaterialPolygonIndex(int iPoly, 
 	FbxLayerElementMaterial* pMaterial)
@@ -182,10 +242,17 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 	geom.SetT(trans);
 	geom.SetT(rot);
 	geom.SetT(scale);
-	// 월드 변환 행렬
+	// 노말 변환 행렬
+	FbxAMatrix normalMatrix = geom;
+	normalMatrix = normalMatrix.Inverse();
+	normalMatrix = normalMatrix.Transpose();
+
+	//// 월드 변환 행렬
 	FbxAMatrix matWorld  = pFbxNode->EvaluateGlobalTransform(0);
 
 	TFbxModel* pModel = new TFbxModel;
+	pModel->m_matWorld = ConvertFbxAMatrix(matWorld);
+
 	// Layer :  레이어 회수만큼 랜더링한다.
 	std::vector<FbxLayerElementUV*>				VertexUVLayer;
 	std::vector<FbxLayerElementVertexColor*>	VertexColorLayer;
@@ -216,6 +283,17 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 		{
 			VertexMaterialLayer.emplace_back(pFbxLayer->GetMaterials());
 		}
+	}
+
+	// 정점노말 (재)계산
+	if (VertexNormalLayer.size() > 0)
+	{
+		fbxMesh->InitNormals();
+#if (FBXSDK_VERSION_MAJOR >= 2015)
+		fbxMesh->GenerateNormals();
+#else
+		pFbxMesh->ComputeVertexNormals();
+#endif
 	}
 
 	// material
@@ -274,8 +352,9 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 				// 정점 위치
 				PNCT_Vertex v;
 				FbxVector4 fbxV = pVertexPositions[iVertexPositionIndex[iVertex]];
+				// neFbxV = fbxV * (geom * matWorld)
 				fbxV = geom.MultT(fbxV);
-				fbxV = matWorld.MultT(fbxV);
+				//fbxV = matWorld.MultT(fbxV);
 				v.p.X = fbxV.mData[0];
 				v.p.Y = fbxV.mData[2];
 				v.p.Z = fbxV.mData[1];
@@ -299,6 +378,26 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 				v.c.Y = color.mGreen;
 				v.c.Z = color.mBlue;
 				v.c.W = color.mAlpha;
+				// 정점노말
+
+				FbxVector4 vFbxNormal = { 0,0,0 };
+				if (VertexNormalLayer.size())
+				{
+					vFbxNormal = GetNormal(fbxMesh, VertexNormalLayer[0],
+						iVertexPositionIndex[iVertex],
+						iBasePolyIndex + iVertexIndex[iVertex]);
+					vFbxNormal = normalMatrix.MultT(vFbxNormal);
+
+					//// world tansform
+					//normalMatrix = matWorld.Inverse();
+					//normalMatrix = matWorld.Transpose();
+
+					//vFbxNormal = normalMatrix.MultT(fbvFbxNormalxV);
+					vFbxNormal.Normalize();
+				}
+				v.n.X = vFbxNormal.mData[0];
+				v.n.Y = vFbxNormal.mData[2];
+				v.n.Z = vFbxNormal.mData[1];
 
 				if (pModel->m_vSubMeshVertexList.size() == 0)
 				{

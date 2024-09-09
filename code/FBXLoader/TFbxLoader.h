@@ -16,8 +16,8 @@ public:
 	using vList = std::vector<PNCT_Vertex>;
 	std::vector<vList>					m_vSubMeshVertexList;
 	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshVertexBuffer;
-
-	virtual void   LoadTexture(std::wstring szPath) override
+public:
+	virtual void	 LoadTexture(std::wstring szPath) override
 	{
 		if (m_vSubMeshVertexList.size() == 0)
 		{
@@ -82,7 +82,7 @@ public:
 		}
 		return true;
 	}
-	void     Render(ID3D11DeviceContext* pContext)override
+	virtual void     Render(ID3D11DeviceContext* pContext)override
 	{
 		PreRender(pContext);
 		for (int iSubMesh = 0; iSubMesh < m_pSubMeshVertexBuffer.size(); iSubMesh++)
@@ -127,6 +127,7 @@ public:
 
 	}
 };
+
 class TFbxLoader
 {
 public:
@@ -149,6 +150,11 @@ public:
 						FbxLayerElementVertexColor* uv,
 						int iVertexPosIndex,
 						int iVertexColorIndex); 
+	FbxVector4  GetNormal(FbxMesh* fbxMesh,
+						FbxLayerElementNormal* VertexColorSet,
+						int iVertexPosIndex,
+						int iVertexColorIndex);
+	T::TMatrix  ConvertFbxAMatrix(FbxAMatrix& m);
 	int   GetSubMaterialPolygonIndex(int iPoly, 
 									 FbxLayerElementMaterial* pMaterialaterial);
 	void   Release();

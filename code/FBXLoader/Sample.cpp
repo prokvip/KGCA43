@@ -76,7 +76,8 @@ void    Sample::Render()
 		{
 			T::TMatrix matWorld;
 			D3DXMatrixTranslation(&matWorld, 0.0f, 0, 0);
-			m_pModelList[iFbx][iObj]->SetMatrix(&matWorld, &m_MainCamera.m_matView, &m_matProj);
+			m_pModelList[iFbx][iObj]->SetMatrix(
+				nullptr, &m_MainCamera.m_matView, &m_matProj);
 			m_pModelList[iFbx][iObj]->Render(TDevice::m_pContext);			
 		}
 	}

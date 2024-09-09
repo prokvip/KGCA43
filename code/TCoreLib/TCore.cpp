@@ -27,7 +27,7 @@ void TCore::Resize(UINT Width, UINT Height)
 	SetFontRTV();
 
 	T::D3DXMatrixPerspectiveFovLH(&m_matProj, TBASIS_PI * 0.25f,
-		(float)g_xClientSize / (float)g_yClientSize, 1.0f, 100.0f);
+		(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
 
 	Reset();
 }
