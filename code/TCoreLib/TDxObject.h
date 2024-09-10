@@ -29,6 +29,22 @@ struct PNCT_Vertex
 	T_Math::FVector3 n; // 정점방향
 	T_Math::FVector4 c; // 정점컬러
 	T_Math::FVector2 t; // 정점텍스처좌표
+	bool operator == (const PNCT_Vertex& v) const
+	{
+		if ( p == v.p && n == v.n && c == v.c && t == v.t)
+		{
+			return true;
+		}
+		return false;
+	};
+	bool operator != (const PNCT_Vertex& v) const
+	{
+		if (p == v.p || n == v.n || c == v.c || t == v.t)
+		{
+			return true;
+		}
+		return false;
+	};
 	PNCT_Vertex() = default;
 	PNCT_Vertex(T_Math::FVector3 p, T_Math::FVector3 n, T_Math::FVector4 c, T_Math::FVector2 t)
 	{

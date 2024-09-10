@@ -43,7 +43,25 @@ namespace T_Math
 	public:
 		FVector2 operator -(void);
 		FVector2 operator *(const FMatrix3x3& v);
+		bool operator == (const FVector2& v) const {
 
+			if (  fabs(X - v.X) < 0.0001f 
+				&& 
+				fabs(Y - v.Y) < 0.0001f)
+			{
+				return true;
+			}
+			return false;
+		};
+		bool operator != (const FVector2& v) const {
+			if (fabs(X - v.X) > 0.0001f
+				||
+				fabs(Y - v.Y) > 0.0001f)
+			{
+				return true;
+			}
+			return false;
+		};
 		FVector2 operator +(const FVector2& v) const;
 		FVector2 operator -(const FVector2& v) const;
 		FVector2 operator *(const float s) const;
@@ -96,7 +114,27 @@ namespace T_Math
 	public:
 		FVector3 operator -(void);
 		FVector3 operator *(const FMatrix3x3& v);
+		bool operator == (const FVector3& v) const
+		{
 
+			if (fabs(X - v.X) < 0.0001f  &&
+				fabs(Y - v.Y) < 0.0001f  &&
+				fabs(Z - v.Z) < 0.0001f)
+			{
+				return true;
+			}
+			return false;
+		};
+		bool operator != (const FVector3& v) const
+		{
+			if (fabs(X - v.X) > 0.0001f 	||
+				fabs(Y - v.Y) > 0.0001f		||
+				fabs(Z - v.Z) > 0.0001f)
+			{
+				return true;
+			}
+			return false;
+		};
 		FVector3 operator +(const FVector3& v) const;
 		FVector3 operator -(const FVector3& v) const;
 		FVector3 operator *(const float s) const;
@@ -177,6 +215,29 @@ namespace T_Math
 			Z = v.Z;
 			W = v.W;
 		}
+		bool operator == (const FVector4& v) const
+		{
+
+			if (fabs(X - v.X) < 0.0001f &&
+				fabs(Y - v.Y) < 0.0001f &&
+				fabs(Z - v.Z) < 0.0001f &&
+				fabs(W - v.W) < 0.0001f)
+			{
+				return true;
+			}
+			return false;
+		};
+		bool operator != (const FVector4& v) const
+		{
+			if (fabs(X - v.X) > 0.0001f ||
+				fabs(Y - v.Y) > 0.0001f ||
+				fabs(Z - v.Z) > 0.0001f || 
+				fabs(W - v.W) > 0.0001f)
+			{
+				return true;
+			}
+			return false;
+		};
 	};
 
 	struct float3x3

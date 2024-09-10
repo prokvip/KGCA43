@@ -42,7 +42,7 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 }
 bool   TFbxLoader::Load(C_STR filename, std::vector<TFbxModel*>& model)
 {
-	std::vector<TFbxModel*>& m_pModelList = model;
+	std::vector<TFbxModel*>& m_pFbxfileList = model;
 	m_pImporter = FbxImporter::Create(m_pManager, "");
 	m_pScene = FbxScene::Create(m_pManager, "");
 
@@ -59,7 +59,10 @@ bool   TFbxLoader::Load(C_STR filename, std::vector<TFbxModel*>& model)
 
 	for (int iMesh = 0; iMesh < m_pFbxMeshList.size(); iMesh++)
 	{
-		LoadMesh(iMesh, model);
+		LoadMesh(iMesh, model);	
+		/*pGeomModel->m_vVertexList.clear();
+		pGeomModel->m_vIndexList = indexArray;
+		pGeomModel->m_vVertexList = vertexArray;*/
 	}
 	
 	m_pFbxMeshList.clear();
@@ -304,6 +307,7 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 	if (iNumMtrl > 1)
 	{
 		pModel->m_vSubMeshVertexList.resize(iNumMtrl);
+		pModel->m_vSubMeshIndexList.resize(iNumMtrl);
 	}
 	for (int iMtrl = 0; iMtrl < iNumMtrl; iMtrl++)
 	{
@@ -401,11 +405,14 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 
 				if (pModel->m_vSubMeshVertexList.size() == 0)
 				{
-					pModel->m_vVertexList.push_back(v);
+					//pModel->m_vVertexList.push_back(v);
+					GenBuffer(pModel->m_vVertexList, pModel->m_vIndexList, v);
 				}
 				else
 				{
-					pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
+					//pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
+					GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl], 
+							  pModel->m_vSubMeshIndexList[iSubMtrl], v);
 				}
 			}
 		}
@@ -415,6 +422,26 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 	// 정점 몇개
 	model.push_back(pModel);
 }
+void   TFbxLoader::GenBuffer(std::vector<PNCT_Vertex>& vList, std::vector<DWORD>& iList, PNCT_Vertex& v1)
+{
+	int iVertexIndex = -1;
+	for (int iArray = 0; iArray < vList.size(); iArray++)
+	{
+		PNCT_Vertex v2 = vList[iArray];
+		if (v1 == v2)
+		{
+			iVertexIndex = iArray;
+			break;
+		}
+	}
+	if (iVertexIndex < 0)
+	{
+		vList.emplace_back(v1);
+		iVertexIndex = vList.size() - 1;
+	}
+	iList.emplace_back(iVertexIndex);
+}
+
 void   TFbxLoader::Release()
 {
 	if (m_pManager) m_pManager->Destroy();

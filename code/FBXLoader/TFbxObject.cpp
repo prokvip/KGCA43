@@ -50,17 +50,11 @@ bool     TFbxModel::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 	{
 		m_pSubMeshVertexBuffer.resize(m_vSubMeshVertexList.size());
 		for (int iMesh = 0; iMesh < m_vSubMeshVertexList.size(); iMesh++)
-		{
-			// 버퍼 할당 크기를 세팅한다.
+		{			
 			D3D11_BUFFER_DESC  bd;
 			ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
-			bd.ByteWidth = sizeof(PNCT_Vertex) * m_vSubMeshVertexList[iMesh].size();
-			// 연결에 용도가 뭐냐? 
+			bd.ByteWidth = sizeof(PNCT_Vertex) * m_vSubMeshVertexList[iMesh].size();			
 			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-
-			// 할당된 버퍼에 
-			// 시스템메모리가 ->GPU메모리로 체워지는 데이터
 			D3D11_SUBRESOURCE_DATA sd;
 			ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
 			sd.pSysMem = &m_vSubMeshVertexList[iMesh].at(0);
@@ -69,6 +63,36 @@ bool     TFbxModel::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 				&bd,
 				&sd,
 				m_pSubMeshVertexBuffer[iMesh].GetAddressOf());
+			if (FAILED(hr)) return false;
+		}
+	}
+	return true;
+}
+bool     TFbxModel::CreateIndexBuffer(ID3D11Device* pd3dDevice)
+{
+	if (m_vSubMeshIndexList.size() == 0)
+	{
+		TDxObject3D::CreateIndexBuffer(pd3dDevice);
+		return true;
+	}
+	else
+	{
+		m_pSubMeshIndexBuffer.resize(m_vSubMeshIndexList.size());
+		for (int iMesh = 0; iMesh < m_vSubMeshIndexList.size(); iMesh++)
+		{
+			D3D11_BUFFER_DESC  bd;
+			ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
+			bd.ByteWidth = sizeof(DWORD) * m_vSubMeshIndexList[iMesh].size();			
+			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+			D3D11_SUBRESOURCE_DATA sd;
+			ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+			sd.pSysMem = &m_vSubMeshIndexList[iMesh].at(0);
+
+			HRESULT hr = pd3dDevice->CreateBuffer(
+				&bd,
+				&sd,
+				m_pSubMeshIndexBuffer[iMesh].GetAddressOf());
 			if (FAILED(hr)) return false;
 		}
 	}
@@ -87,15 +111,14 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 			UINT pOffsets = 0; // 버퍼에 시작 인덱스
 			pContext->IASetVertexBuffers(StartSlot, NumBuffers,
 				m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
-			pContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			pContext->IASetIndexBuffer(m_pSubMeshIndexBuffer[iSubMesh].Get(), DXGI_FORMAT_R32_UINT, 0);
 			pContext->PSSetShaderResources(0, 1, m_pSubMeshSRV[iSubMesh].GetAddressOf());
-			/*if (m_pIndexBuffer != nullptr)
+			if (m_pSubMeshIndexBuffer[iSubMesh] != nullptr)
 			{
-				pContext->DrawIndexed(m_vIndexList.size(), 0, 0);
+				pContext->DrawIndexed(m_vSubMeshIndexList[iSubMesh].size(), 0, 0);
 			}
-			else*/
+			else
 			{
-				// ONLY VB
 				pContext->Draw(m_vSubMeshVertexList[iSubMesh].size(), 0);
 			}
 		}
@@ -116,11 +139,41 @@ void     TFbxModel::Release()
 	m_vSubMeshVertexList.clear();
 	m_vSubMeshVertexList.clear();
 	m_pSubMeshVertexBuffer.clear();
-	/*for (int iVB = 0; iVB < m_pSubMeshVertexBuffer.size(); iVB++)
-	{
-		m_pSubMeshVertexBuffer[iVB]->Release();
-	}*/
 }
 void     TFbxModel::SetVertexData() 
 {
 }
+//void   TFbxModel::GenBufferVI(PNCT_Vertex& v)
+//{
+//	std::vector<PNCT_Vertex>    vertexArray;
+//	std::vector<DWORD>			indexArray;
+//	if (pGeomModel)
+//	{
+//		// 서브매터리얼 사용 유무
+//		for (int iVertex = 0; iVertex < pGeomModel->m_vVertexList.size(); iVertex++)
+//		{
+//			PNCT_Vertex v1 = pGeomModel->m_vVertexList[iVertex];
+//			// vertexArray에 모든 정점과 비교
+//			int iVertexIndex = -1;
+//			for (int iArray = 0; iArray < vertexArray.size(); iArray++)
+//			{
+//				PNCT_Vertex v2 = vertexArray[iArray];
+//				if (v1 == v2)
+//				{
+//					iVertexIndex = iArray;
+//					break;
+//				}
+//			}
+//			if (iVertexIndex < 0)
+//			{
+//				vertexArray.emplace_back(v1);
+//				iVertexIndex = vertexArray.size() - 1;
+//			}
+//			indexArray.emplace_back(iVertexIndex);
+//		}
+//
+//		pGeomModel->m_vVertexList.clear();
+//		pGeomModel->m_vIndexList = indexArray;
+//		pGeomModel->m_vVertexList = vertexArray;
+//	}
+//}

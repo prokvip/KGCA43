@@ -19,7 +19,7 @@ public:
 	void   Init();
 	bool   Load(C_STR filename, std::vector<TFbxModel*>& model);
 	void   PreProcess(FbxNode* node);
-	void   LoadMesh(int iMesh, std::vector<TFbxModel*>& m_pModelList);
+	void   LoadMesh(int iMesh, std::vector<TFbxModel*>& m_pFbxfileList);
 	FbxVector2  GetUV(	FbxMesh* fbxMesh, 
 						FbxLayerElementUV* uv,
 						int iVertexPosIndex, 
@@ -36,6 +36,7 @@ public:
 	int   GetSubMaterialPolygonIndex(int iPoly, 
 									 FbxLayerElementMaterial* pMaterialaterial);
 	void   Release();
+	void   GenBuffer(std::vector<PNCT_Vertex>& vList, std::vector<DWORD>& iList, PNCT_Vertex& v1);
 	TFbxLoader() = default;
 };
 
