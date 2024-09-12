@@ -2,11 +2,11 @@
 void   Sample::Init()
 {		
 	m_fbxLoader.Init();	
-	tModel tModel1;
+	/*tModel tModel1;
 	if (m_fbxLoader.Load("../../data/fbx/box.fbx", tModel1))
 	{
 		m_pFbxfileList.push_back(tModel1);
-	}
+	}*/
 	/*tModel tModel2;
 	if (m_fbxLoader.Load("../../data/fbx/SM_Rock.fbx", tModel2))
 	{
@@ -19,11 +19,11 @@ void   Sample::Init()
 	////{
 	////	m_pFbxfileList.push_back(tModel3);
 	////}
-	tModel tModel4;
+	/*tModel tModel4;
 	if (m_fbxLoader.Load("../../data/fbx/ship.fbx", tModel4))
 	{
 		m_pFbxfileList.push_back(tModel4);
-	}
+	}*/
 	/*tModel tModel5;
 	if (m_fbxLoader.Load("../../data/fbx/Sphere.fbx", tModel5))
 	{
@@ -35,6 +35,12 @@ void   Sample::Init()
 		m_pFbxfileList.push_back(tModel6);
 	}*/
 	/*	m_fbxLoader.Load("../../data/fbx/sphereBox.fbx");*/
+
+	tModel tModel7;
+	if (m_fbxLoader.Load("../../data/fbx/Greystone.fbx", tModel7))
+	{
+		m_pFbxfileList.push_back(tModel7);
+	}
 
 	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++ )
 	{

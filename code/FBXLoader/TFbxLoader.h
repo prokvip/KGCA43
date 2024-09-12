@@ -9,6 +9,7 @@
 class TFbxLoader
 {
 public:
+	int						m_iNumNodeCount = 0;
 	static FbxManager*		m_pManager;
 	FbxImporter*	m_pImporter = nullptr;
 	FbxScene*		m_pScene = nullptr;

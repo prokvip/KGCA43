@@ -26,7 +26,8 @@ void   TFbxLoader::Init()
 	}
 }
 void   TFbxLoader::PreProcess(FbxNode* node)
-{
+{	
+	m_iNumNodeCount++;
 	if (node == nullptr) return;
 	FbxMesh* mesh = node->GetMesh();
 	if (mesh != nullptr)
@@ -405,14 +406,14 @@ void   TFbxLoader::LoadMesh(int iMesh, std::vector<TFbxModel*>& model)
 
 				if (pModel->m_vSubMeshVertexList.size() == 0)
 				{
-					//pModel->m_vVertexList.push_back(v);
-					GenBuffer(pModel->m_vVertexList, pModel->m_vIndexList, v);
+					pModel->m_vVertexList.push_back(v);
+					//GenBuffer(pModel->m_vVertexList, pModel->m_vIndexList, v);
 				}
 				else
 				{
-					//pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
-					GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl], 
-							  pModel->m_vSubMeshIndexList[iSubMtrl], v);
+					pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
+					//GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl], 
+						//	  pModel->m_vSubMeshIndexList[iSubMtrl], v);
 				}
 			}
 		}

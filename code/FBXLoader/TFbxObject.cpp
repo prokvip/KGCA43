@@ -51,6 +51,8 @@ bool     TFbxModel::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 		m_pSubMeshVertexBuffer.resize(m_vSubMeshVertexList.size());
 		for (int iMesh = 0; iMesh < m_vSubMeshVertexList.size(); iMesh++)
 		{			
+			if (m_vSubMeshVertexList[iMesh].size() <= 0) continue;
+
 			D3D11_BUFFER_DESC  bd;
 			ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
 			bd.ByteWidth = sizeof(PNCT_Vertex) * m_vSubMeshVertexList[iMesh].size();			
@@ -80,6 +82,7 @@ bool     TFbxModel::CreateIndexBuffer(ID3D11Device* pd3dDevice)
 		m_pSubMeshIndexBuffer.resize(m_vSubMeshIndexList.size());
 		for (int iMesh = 0; iMesh < m_vSubMeshIndexList.size(); iMesh++)
 		{
+			if (m_vSubMeshIndexList[iMesh].size() <= 0) continue;
 			D3D11_BUFFER_DESC  bd;
 			ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
 			bd.ByteWidth = sizeof(DWORD) * m_vSubMeshIndexList[iMesh].size();			
