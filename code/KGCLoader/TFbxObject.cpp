@@ -182,7 +182,7 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 				name += szFileExt;
 			}
 		}
-		pFbxMesh->Create(name, L"vertexcolor.hlsl");
+		pFbxMesh->Create(name, L"../../data/shader/vertexcolor.hlsl");
 	}
 
 	return true;

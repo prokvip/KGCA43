@@ -84,28 +84,6 @@ std::wstring   Sample::ExportPath(std::wstring loadfile, std::wstring expPath)
 void   Sample::Init()
 {
 	m_fbxLoader.Init();
-	wchar_t szExt[] = L"fbx";
-	wchar_t szFileModel[] = L"kgc Viewer";
-	if (LoadFileDlg(szExt, szFileModel))
-	{
-		for (int iLoad = 0; iLoad < m_LoadFiles.size(); iLoad++)
-		{
-			std::wstring expFilename;
-			TKgcFileFormat tModel;
-			if (m_fbxLoader.Load(to_wm(m_LoadFiles[iLoad]), tModel))
-			{
-				expFilename = ExportPath(m_LoadFiles[iLoad],
-										 L"D:\\00_43\\data\\kgc\\");				
-				TKgcFileFormat::Export(&tModel, expFilename);
-			}
-
-			std::vector<TFbxModel*> model1;
-			if (TKgcFileFormat::Import(expFilename, model1))
-			{
-				m_pFbxfileList.emplace_back(model1);
-			}
-		}
-	}
 	
 	
 	T::TVector3 eye = { 0.0f, 0.0f, -300.0f };
@@ -122,6 +100,41 @@ void  Sample::PreRender()
 }
 void    Sample::Frame()
 {
+	if (TInput::Get().KeyCheck(VK_HOME) == KEY_PUSH)
+	{
+		m_LoadFiles.clear();
+		for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
+		{
+			auto pModel = m_pFbxfileList[iFbx];
+			for (int iObj = 0; iObj < pModel.size(); iObj++)
+			{
+				m_pFbxfileList[iFbx][iObj]->Release();
+			}
+		}
+		m_pFbxfileList.clear();
+		wchar_t szExt[] = L"fbx";
+		wchar_t szFileModel[] = L"kgc Viewer";
+		if (LoadFileDlg(szExt, szFileModel))
+		{
+			for (int iLoad = 0; iLoad < m_LoadFiles.size(); iLoad++)
+			{
+				std::wstring expFilename;
+				TKgcFileFormat tModel;
+				if (m_fbxLoader.Load(to_wm(m_LoadFiles[iLoad]), tModel))
+				{
+					expFilename = ExportPath(m_LoadFiles[iLoad],
+						L"D:\\00_43\\data\\kgc\\");
+					TKgcFileFormat::Export(&tModel, expFilename);
+				}
+
+				std::vector<TFbxModel*> model1;
+				if (TKgcFileFormat::Import(expFilename, model1))
+				{
+					m_pFbxfileList.emplace_back(model1);
+				}
+			}
+		}
+	}
 }
 void    Sample::Render()
 {
