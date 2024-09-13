@@ -173,7 +173,7 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 			name += szFileName;
 			std::wstring ext = szFileExt;
 
-			if (ext == L".tga")
+			if (ext == L".tga" || ext == L".TGA")
 			{
 				name += L".dds";
 			}
