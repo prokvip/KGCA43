@@ -55,58 +55,9 @@ bool Sample::LoadFileDlg(TCHAR* szExt, TCHAR* szTitle)
 	SetCurrentDirectory(lpCurBuffer);
 	return true;
 }
-std::wstring   Sample::ExportPath(std::wstring loadfile, std::wstring expPath)
-{
-	std::wstring ret;
-	
-	std::wstring texPath = loadfile;
-	wchar_t  szDrive[MAX_PATH] = { 0, };
-	wchar_t  szDir[MAX_PATH] = { 0, };
-	wchar_t  szFileName[MAX_PATH] = { 0, };
-	wchar_t  szFileExt[MAX_PATH] = { 0, };
-	_tsplitpath_s(texPath.c_str(), szDrive, szDir, szFileName, szFileExt);
-	
-	if (!expPath.empty())
-	{
-		ret = expPath;
-		ret += szFileName;
-		ret += L".kgc";
-	}
-	else
-	{
-		ret += szDrive;
-		ret += szDir;
-		ret += szFileName;
-		ret += L".kgc";
-	}
-	return ret;
-}
 void   Sample::Init()
 {
 	m_fbxLoader.Init();
-	wchar_t szExt[] = L"fbx";
-	wchar_t szFileModel[] = L"kgc Viewer";
-	if (LoadFileDlg(szExt, szFileModel))
-	{
-		for (int iLoad = 0; iLoad < m_LoadFiles.size(); iLoad++)
-		{
-			std::wstring expFilename;
-			TKgcFileFormat tModel;
-			if (m_fbxLoader.Load(to_wm(m_LoadFiles[iLoad]), tModel))
-			{
-				expFilename = ExportPath(m_LoadFiles[iLoad],
-										 L"D:\\00_43\\data\\kgc\\");				
-				TKgcFileFormat::Export(&tModel, expFilename);
-			}
-
-			std::vector<TFbxModel*> model1;
-			if (TKgcFileFormat::Import(expFilename, model1))
-			{
-				m_pFbxfileList.emplace_back(model1);
-			}
-		}
-	}
-	
 	
 	T::TVector3 eye = { 0.0f, 0.0f, -300.0f };
 	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
@@ -122,6 +73,33 @@ void  Sample::PreRender()
 }
 void    Sample::Frame()
 {
+	if (TInput::Get().KeyCheck(VK_HOME) == KEY_PUSH)
+	{
+		m_LoadFiles.clear();
+		for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
+		{
+			auto pModel = m_pFbxfileList[iFbx];
+			for (int iObj = 0; iObj < pModel.size(); iObj++)
+			{
+				m_pFbxfileList[iFbx][iObj]->Release();
+			}
+		}
+		m_pFbxfileList.clear();
+
+		wchar_t szExt[] = L"kgc";
+		wchar_t szFileModel[] = L"kgc Viewer";
+		if (LoadFileDlg(szExt, szFileModel))
+		{
+			for (int iLoad = 0; iLoad < m_LoadFiles.size(); iLoad++)
+			{
+				std::vector<TFbxModel*> model1;
+				if (TKgcFileFormat::Import(m_LoadFiles[iLoad], model1))
+				{
+					m_pFbxfileList.emplace_back(model1);
+				}
+			}
+		}
+	}
 }
 void    Sample::Render()
 {
@@ -129,9 +107,9 @@ void    Sample::Render()
 	{
 		auto pModel = m_pFbxfileList[iFbx];
 		T::TMatrix matWorld;
-		D3DXMatrixTranslation(&matWorld, iFbx * 100.0f, 0, 0);
+		D3DXMatrixTranslation(&matWorld, iFbx*100.0f, 0, 0);
 		for (int iObj = 0; iObj < pModel.size(); iObj++)
-		{
+		{		
 			m_pFbxfileList[iFbx][iObj]->SetMatrix(
 				&matWorld, &m_MainCamera.m_matView, &m_matProj);
 			m_pFbxfileList[iFbx][iObj]->Render(TDevice::m_pContext);

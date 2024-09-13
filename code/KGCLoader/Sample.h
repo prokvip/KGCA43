@@ -5,6 +5,7 @@
 
 class Sample : public TCore
 {	
+	std::wstring				m_szSelectModelName;
 	TFbxLoader					m_fbxLoader;
 	using tModel = std::vector<TFbxModel*>;
 	std::vector<tModel>			m_pFbxfileList;
@@ -18,6 +19,5 @@ public:
 public:
 	std::vector<std::wstring> m_LoadFiles;
 	bool   LoadFileDlg(TCHAR* szExt, TCHAR* szTitle);
-	std::wstring   ExportPath(std::wstring loadfile, std::wstring expPath);
 	Sample() = default;
 };
