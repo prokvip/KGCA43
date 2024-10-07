@@ -17,6 +17,7 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 	header.iLength = tFile->m_szFileName.size(); // 파일명 크기
 	header.iChildNodeCounter = tFile->m_ChildList.size();
 	header.iVersion = 100;
+	header.matWorld = tFile->m_matWorld;
 
 	fwrite(&header, sizeof(TKgcFileHeader), 1, fp);
 	fwrite(tFile->m_szFileName.c_str(), sizeof(wchar_t), 
@@ -97,6 +98,8 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 		TFbxModel* fbxModel = new TFbxModel;
 		TKgcFileHeader header;		
 		fread(&header, sizeof(TKgcFileHeader), 1, fp);
+		
+		fbxModel->m_matWorld = header.matWorld;
 
 		fbxModel->m_szTexFileList.resize(header.iLength);
 		for (int iTex = 0; iTex < header.iLength; iTex++)
@@ -160,7 +163,6 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 	for (int iObj = 0; iObj < tFbxModel.size(); iObj++)
 	{
 		TFbxModel* pFbxMesh = tFbxModel[iObj];
-
 		std::wstring name = L"../../data/";
 		if (pFbxMesh->m_szTexFileList.size() > 0)
 		{

@@ -5,7 +5,15 @@
 #pragma comment(lib, "libfbxsdk-md.lib")
 #pragma comment(lib, "libxml2-md.lib")
 #pragma comment(lib, "zlib-md.lib")
-
+struct TFbxNode
+{
+	std::wstring szName;
+	std::wstring szParentName;
+	BOOL         isMesh = FALSE;
+	FbxNode* pFbxNode = nullptr;
+	FbxNode* pFbxParentNode = nullptr;
+	//std::vector<FbxNode*> pFbxChildNode;
+};
 class TFbxLoader
 {
 public:
@@ -16,6 +24,7 @@ public:
 	FbxNode*		m_pRootNode = nullptr;
 
 	std::vector<FbxMesh*>		m_pFbxMeshList;	
+	std::vector<TFbxNode*>		m_pFbxNodeList;
 public:
 	void   Init();
 	bool   Load(C_STR filename, TKgcFileFormat& model);

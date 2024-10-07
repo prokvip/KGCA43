@@ -29,11 +29,28 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 {	
 	m_iNumNodeCount++;
 	if (node == nullptr) return;
+
+	TFbxNode* pTNode = new TFbxNode;
+	pTNode->pFbxNode = node;
+	pTNode->szName = to_mw(node->GetName());
+
+	pTNode->pFbxParentNode = node->GetParent();
+	if (pTNode->pFbxParentNode != nullptr)
+	{
+		pTNode->szParentName = to_mw(node->GetParent()->GetName());
+	}
+
 	FbxMesh* mesh = node->GetMesh();
 	if (mesh != nullptr)
 	{
 		m_pFbxMeshList.push_back(mesh);
+		pTNode->isMesh = TRUE;
 	}
+
+	m_pFbxNodeList.emplace_back(pTNode);
+
+
+	
 	int iNumChild = node->GetChildCount();
 	for (int iNode = 0; iNode < iNumChild; iNode++)
 	{
