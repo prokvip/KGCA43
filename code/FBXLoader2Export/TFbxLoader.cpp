@@ -265,8 +265,8 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	FbxVector4 rot		= pFbxNode->GetGeometricRotation(FbxNode::eSourcePivot);
 	FbxVector4 scale	= pFbxNode->GetGeometricScaling(FbxNode::eSourcePivot);
 	geom.SetT(trans);
-	geom.SetT(rot);
-	geom.SetT(scale);
+	geom.SetR(rot);
+	geom.SetS(scale);
 	// 노말 변환 행렬
 	FbxAMatrix normalMatrix = geom;
 	normalMatrix = normalMatrix.Inverse();
@@ -367,9 +367,9 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 		{
 			int iVertexIndex[3] = { 0, iFace + 2, iFace + 1 };
 			int iVertexPositionIndex[3];
-			iVertexPositionIndex[0] = fbxMesh->GetPolygonVertex(iPoly, iVertexIndex[0]);
-			iVertexPositionIndex[1] = fbxMesh->GetPolygonVertex(iPoly, iVertexIndex[1]);
-			iVertexPositionIndex[2] = fbxMesh->GetPolygonVertex(iPoly, iVertexIndex[2]);
+			iVertexPositionIndex[0] = fbxMesh->GetPolygonVertex(iPoly, 0);
+			iVertexPositionIndex[1] = fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
+			iVertexPositionIndex[2] = fbxMesh->GetPolygonVertex(iPoly, iFace + 1);
 
 			int iVertexUVIndex[3];
 			iVertexUVIndex[0] = fbxMesh->GetTextureUVIndex(iPoly, iVertexIndex[0]);

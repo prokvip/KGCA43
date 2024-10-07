@@ -248,8 +248,8 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	FbxVector4 rot		= pFbxNode->GetGeometricRotation(FbxNode::eSourcePivot);
 	FbxVector4 scale	= pFbxNode->GetGeometricScaling(FbxNode::eSourcePivot);
 	geom.SetT(trans);
-	geom.SetT(rot);
-	geom.SetT(scale);
+	geom.SetR(rot);
+	geom.SetS(scale);
 	// 노말 변환 행렬
 	FbxAMatrix normalMatrix = geom;
 	normalMatrix = normalMatrix.Inverse();
