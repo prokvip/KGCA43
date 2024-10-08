@@ -142,13 +142,14 @@ void    Sample::Render()
 	{
 		tModel pModel = m_pFbxfileList[iFbx];
 		
-		T::TMatrix matWorld ;
-		D3DXMatrixTranslation(&matWorld, 0, 0, 0);
+		T::TMatrix matParent;
+		D3DXMatrixTranslation(&matParent, 0, cosf(g_fGameTime) * 10.0f, 0);
 		for (int iObj = 0; iObj < pModel.size(); iObj++)
 		{
-			//T::TMatrix matWorld = m_pFbxfileList[iFbx][iObj]->m_matWorld;
+			T::TMatrix matWorld = m_pFbxfileList[iFbx][iObj]->m_matInitWorld;
+			matWorld = matWorld * matParent;
 			m_pFbxfileList[iFbx][iObj]->SetMatrix(
-				nullptr, &m_MainCamera.m_matView, &m_matProj);
+				&matWorld, &m_MainCamera.m_matView, &m_matProj);
 			m_pFbxfileList[iFbx][iObj]->Render(TDevice::m_pContext);
 		}
 	}

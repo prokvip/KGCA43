@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../dxtk/include;../../fmod/inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../dxtk/include;../../fmod/inc;../../FBXSDK/include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -130,7 +130,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>../../dxtk/lib;../../fmod/lib/x64;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../dxtk/lib;../../fmod/lib/x64;;../../FBXSDK/lib/x64/debug;</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>copy "*.h" "../../TCore/Include/"
@@ -172,6 +172,8 @@ copy "..\\..\\output\\Release\\TCoreLib.lib" "..\\..\\TCore\\lib\\TCore.lib"</Co
     <ClInclude Include="TDxObj2D.h" />
     <ClInclude Include="TDxObj3D.h" />
     <ClInclude Include="TDxObject.h" />
+    <ClInclude Include="TFbxLoader.h" />
+    <ClInclude Include="TFbxObject.h" />
     <ClInclude Include="TInput.h" />
     <ClInclude Include="TLineObj.h" />
     <ClInclude Include="TMath.h" />
@@ -198,6 +200,8 @@ copy "..\\..\\output\\Release\\TCoreLib.lib" "..\\..\\TCore\\lib\\TCore.lib"</Co
     <ClCompile Include="TDxObj2D.cpp" />
     <ClCompile Include="TDxObj3D.cpp" />
     <ClCompile Include="TDxObject.cpp" />
+    <ClCompile Include="TFbxLoader.cpp" />
+    <ClCompile Include="TFbxObject.cpp" />
     <ClCompile Include="TInput.cpp" />
     <ClCompile Include="TLineObj.cpp" />
     <ClCompile Include="TMath.cpp" />

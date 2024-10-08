@@ -87,6 +87,12 @@
     <ClInclude Include="TShapeObj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="TFbxLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TFbxObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TCoreLib.cpp">
@@ -156,6 +162,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TShapeObj.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TFbxLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TFbxObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

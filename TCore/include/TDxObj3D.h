@@ -3,6 +3,7 @@
 class TDxObject3D : public TDxObject
 {
 public:
+	T::TMatrix		 m_matInitWorld;
 	T::TMatrix		 m_matWorld;
 	T::TMatrix		 m_matView;
 	T::TMatrix		 m_matProj;

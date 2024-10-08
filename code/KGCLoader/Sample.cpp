@@ -106,12 +106,10 @@ void    Sample::Render()
 	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
 	{
 		auto pModel = m_pFbxfileList[iFbx];
-		T::TMatrix matWorld;
-		D3DXMatrixTranslation(&matWorld, iFbx*100.0f, 0, 0);
 		for (int iObj = 0; iObj < pModel.size(); iObj++)
 		{		
 			m_pFbxfileList[iFbx][iObj]->SetMatrix(
-				&matWorld, &m_MainCamera.m_matView, &m_matProj);
+				nullptr, &m_MainCamera.m_matView, &m_matProj);
 			m_pFbxfileList[iFbx][iObj]->Render(TDevice::m_pContext);
 		}
 	}
