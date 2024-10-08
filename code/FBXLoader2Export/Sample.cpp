@@ -138,16 +138,17 @@ void    Sample::Frame()
 }
 void    Sample::Render()
 {
+	static float fFrame = 49.0f;
+	fFrame -= g_fSecondPerFrame * 15.0f;
+	if (fFrame < 0) fFrame = 49;
+
 	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
 	{
-		tModel pModel = m_pFbxfileList[iFbx];
-		
-		T::TMatrix matParent;
-		D3DXMatrixRotationY(&matParent, g_fGameTime);
-		//D3DXMatrixTranslation(&matParent, 0, cosf(g_fGameTime) * 10.0f, 0);
+		tModel pModel = m_pFbxfileList[iFbx];		
 		for (int iObj = 0; iObj < pModel.size(); iObj++)
 		{
-			//m_pFbxfileList[iFbx][iObj]->m_matParentWorld = matParent;
+			m_pFbxfileList[iFbx][iObj]->m_matWorld =
+				m_pFbxfileList[iFbx][iObj]->m_pAnimationMatrix[fFrame];
 			m_pFbxfileList[iFbx][iObj]->SetMatrix(
 				nullptr, &m_MainCamera.m_matView, &m_matProj);
 			m_pFbxfileList[iFbx][iObj]->Render(TDevice::m_pContext);

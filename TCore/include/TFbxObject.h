@@ -16,6 +16,7 @@ public:
 	std::vector<iList>		m_vSubMeshIndexList;
 	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshVertexBuffer;
 	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshIndexBuffer;
+	std::vector<T::TMatrix>				m_pAnimationMatrix;
 public:
 	virtual void	 LoadTexture(std::wstring szPath) override;
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice)override;
@@ -30,10 +31,15 @@ struct TKgcFileHeader
 	int				iVersion =100;
 	int				isSubMesh = 0; // 서브메터리얼 유무
 	int				iLength = 0;
+	int				iNumTrack = 0;
 	int				iChildNodeCounter=0;
 	int				iSubVertexBufferCounter = 0;
 	int				iSubIndexBufferCounter = 0;
 	T::TMatrix		matWorld;
+};
+struct TKgcFileTrack
+{
+	std::vector<T::TMatrix> pAnimationMatrix;
 };
 struct TTexFileHeader
 {	
@@ -54,6 +60,9 @@ public:
 	std::vector<vList>		m_vSubMeshVertexList;
 	std::vector<iList>		m_vSubMeshIndexList;
 	std::vector<TKgcFileFormat*> m_ChildList;
+
+
+	std::vector<T::TMatrix> m_pAnimationMatrix;
 
 	static bool Export(TKgcFileFormat* tFile, std::wstring szFileName);
 	static bool Import(std::wstring szFileName, std::vector<TFbxModel*>& tFbxModel);

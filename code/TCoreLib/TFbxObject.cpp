@@ -32,7 +32,15 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 		header.isSubMesh = (mesh->m_vSubMeshVertexList.size() > 0) ? 1 : 0;
 		header.iSubVertexBufferCounter = mesh->m_vSubMeshVertexList.size();
 		header.iSubIndexBufferCounter = mesh->m_vSubMeshIndexList.size();
+		header.iNumTrack = mesh->m_pAnimationMatrix.size();
 		fwrite(&header, sizeof(TKgcFileHeader), 1, fp);
+
+		// animation
+		//fwrite(&mesh->m_pAnimationMatrix, sizeof(T::TMatrix), header.iNumTrack, fp);
+		for (int iFrame = 0; iFrame < header.iNumTrack; iFrame++)
+		{
+			fwrite(&mesh->m_pAnimationMatrix[iFrame], sizeof(T::TMatrix), 1, fp);
+		}
 
 		for (auto tex : mesh->m_szTexFileList)
 		{
@@ -97,8 +105,18 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 	{
 		TFbxModel* fbxModel = new TFbxModel;
 		TKgcFileHeader header;		
-		fread(&header, sizeof(TKgcFileHeader), 1, fp);
-		
+		fread(&header, sizeof(TKgcFileHeader), 1, fp);	
+		// animation
+		fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
+		for (int iFrame = 0; iFrame < header.iNumTrack; iFrame++)
+		{
+			fread(&fbxModel->m_pAnimationMatrix[iFrame], sizeof(T::TMatrix), 1, fp);
+
+		}
+
+		//fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
+		//fread(&fbxModel->m_pAnimationMatrix, sizeof(T::TMatrix), header.iNumTrack, fp);
+
 		fbxModel->m_matWorld = header.matWorld;
 		fbxModel->m_matInitWorld = header.matWorld;
 

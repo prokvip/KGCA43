@@ -1,13 +1,18 @@
 #include "TFbxLoader.h"
 
 FbxManager* TFbxLoader::m_pManager = nullptr;
-void   TFbxLoader::LoadAnimation(TFbxNode* m_pFbxNode)
+void   TFbxLoader::LoadAnimation(	TFbxNode* m_pFbxNode, 
+									TKgcFileFormat* model)
 {
 	//// 월드 변환 행렬
 	FbxTime s;
-	FbxLongLong tFrame = 0;
-	s.SetFrame(tFrame);
-	FbxAMatrix matWorld = m_pFbxNode->pFbxNode->EvaluateGlobalTransform(s);
+	for (int iFrame = 0; iFrame < 50; iFrame++)
+	{		
+		s.SetFrame(iFrame);
+		FbxAMatrix matWorld = m_pFbxNode->pFbxNode->EvaluateGlobalTransform(s);
+		T::TMatrix matFrame = ConvertFbxAMatrix(matWorld);
+		model->m_pAnimationMatrix.emplace_back(matFrame);
+	}
 }
 T::TMatrix TFbxLoader::ConvertFbxAMatrix(FbxAMatrix& m)
 {
@@ -86,13 +91,13 @@ bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat& model)
 
 	for (int iMesh = 0; iMesh < m_pFbxMeshList.size(); iMesh++)
 	{
-		LoadMesh(iMesh, model);			
-		LoadAnimation(m_pFbxNodeList[iMesh]);
+		LoadMesh(iMesh, model);					
 	}
-	/*for (int iNode = 0; iNode < m_pFbxNodeList.size(); iNode++)
+
+	for (int iNode = 0; iNode < model.m_ChildList.size(); iNode++)
 	{
-		LoadAnimation(m_pFbxNodeList[iNode]);
-	}*/
+		LoadAnimation(m_pFbxNodeList[iNode], model.m_ChildList[iNode]);
+	}
 
 	m_pFbxMeshList.clear();
 	if (m_pScene) m_pScene->Destroy();
@@ -288,6 +293,7 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	s.SetFrame(tFrame);
 	FbxAMatrix matWorld = pFbxNode->EvaluateGlobalTransform(s);
 	
+	//std::shared_ptr<TKgcFileFormat>  pModel;
 	TKgcFileFormat* pModel = new TKgcFileFormat;
 	pModel->m_matWorld = ConvertFbxAMatrix(matWorld);
 
