@@ -86,7 +86,7 @@ void   Sample::Init()
 	m_fbxLoader.Init();
 	
 	
-	T::TVector3 eye = { 0.0f, 0.0f, -300.0f };
+	T::TVector3 eye = { 30.0f, 0.0f, 0.0f };
 	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
 	T::TVector3 up = { 0.0f, 1.0f, 0.0f };
 	// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
@@ -143,13 +143,13 @@ void    Sample::Render()
 		tModel pModel = m_pFbxfileList[iFbx];
 		
 		T::TMatrix matParent;
-		D3DXMatrixTranslation(&matParent, 0, cosf(g_fGameTime) * 10.0f, 0);
+		D3DXMatrixRotationY(&matParent, g_fGameTime);
+		//D3DXMatrixTranslation(&matParent, 0, cosf(g_fGameTime) * 10.0f, 0);
 		for (int iObj = 0; iObj < pModel.size(); iObj++)
 		{
-			T::TMatrix matWorld = m_pFbxfileList[iFbx][iObj]->m_matInitWorld;
-			matWorld = matWorld * matParent;
+			//m_pFbxfileList[iFbx][iObj]->m_matParentWorld = matParent;
 			m_pFbxfileList[iFbx][iObj]->SetMatrix(
-				&matWorld, &m_MainCamera.m_matView, &m_matProj);
+				nullptr, &m_MainCamera.m_matView, &m_matProj);
 			m_pFbxfileList[iFbx][iObj]->Render(TDevice::m_pContext);
 		}
 	}

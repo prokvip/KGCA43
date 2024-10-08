@@ -13,6 +13,8 @@ struct TFbxNode
 	FbxNode* pFbxNode = nullptr;
 	FbxNode* pFbxParentNode = nullptr;
 	//std::vector<FbxNode*> pFbxChildNode;
+	std::vector<FbxAMatrix*> pAnimationMatrix;
+	
 };
 class TFbxLoader
 {
@@ -31,6 +33,7 @@ public:
 	bool   Import(C_STR filename, TKgcFileFormat& model);
 	void   PreProcess(FbxNode* node);
 	void   LoadMesh(int iMesh, TKgcFileFormat& m_pFbxfileList);
+	void   LoadAnimation(TFbxNode* m_pFbxNode);
 	FbxVector2  GetUV(	FbxMesh* fbxMesh, 
 						FbxLayerElementUV* uv,
 						int iVertexPosIndex, 

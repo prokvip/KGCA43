@@ -76,6 +76,9 @@ class TDxObject
 protected:
 	ID3D11Device*		 m_pd3dDevice = nullptr;
 	ID3D11DeviceContext* m_pContext = nullptr;
+	std::wstring		 m_szName;
+	std::wstring		 m_szParentName;
+	BOOL				 m_objType = FALSE;
 public:
 	// 렌더링 파이브라인(픽쉘쉐이더)에 전송 데이터
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV = nullptr;	

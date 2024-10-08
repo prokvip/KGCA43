@@ -10,6 +10,14 @@ public:
 	T::TVector3		 m_vPos;
 	T::TVector3		 m_vScale;
 	T::TVector3		 m_vRotate;
+	T::TMatrix		 m_matParentWorld;
+	TDxObject3D*	 m_pParentObject = nullptr;
+	void			 SetParentObject(TDxObject3D* pParent)
+	{
+		_ASSERT(pParent);
+		m_pParentObject = pParent;
+		m_matParentWorld = pParent->m_matWorld;
+	}
 public:
 	std::vector<PNCT_Vertex>	m_vVertexList;		 // 프레임 화면 정보
 	std::vector<DWORD>			m_vIndexList;

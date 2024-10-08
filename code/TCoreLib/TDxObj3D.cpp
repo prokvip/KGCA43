@@ -203,7 +203,9 @@ void     TDxObject3D::PostRender(ID3D11DeviceContext* pContext)
 void TDxObject3D::SetMatrix(T::TMatrix* pWorld, T::TMatrix* pView, T::TMatrix* pProj)
 {
 	if (pWorld != nullptr)
+	{
 		m_matWorld = *pWorld;
+	}
 	if (pView != nullptr)
 		m_matView = *pView;
 	if (pProj != nullptr)
@@ -212,8 +214,8 @@ void TDxObject3D::SetMatrix(T::TMatrix* pWorld, T::TMatrix* pView, T::TMatrix* p
 	/*m_cb.g_matWorld = m_matWorld.Transpose();
 	m_cb.g_matView = m_matView.Transpose();
 	m_cb.g_matProj = m_matProj.Transpose();*/
-
-	T::D3DXMatrixTranspose(&m_cb.g_matWorld, &m_matWorld);
+	T::TMatrix matWorld = m_matWorld * m_matParentWorld;
+	T::D3DXMatrixTranspose(&m_cb.g_matWorld, &matWorld);
 	T::D3DXMatrixTranspose(&m_cb.g_matView, &m_matView);
 	T::D3DXMatrixTranspose(&m_cb.g_matProj, &m_matProj);
 

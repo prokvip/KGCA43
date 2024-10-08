@@ -73,8 +73,9 @@ void  Sample::PreRender()
 }
 void    Sample::Frame()
 {
+	//static bool bLoad = false;
 	if (TInput::Get().KeyCheck(VK_HOME) == KEY_PUSH)
-	{
+	{		
 		m_LoadFiles.clear();
 		for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
 		{
@@ -99,7 +100,7 @@ void    Sample::Frame()
 				}
 			}
 		}
-	}
+	}	
 }
 void    Sample::Render()
 {
