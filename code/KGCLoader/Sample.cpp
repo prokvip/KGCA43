@@ -93,7 +93,7 @@ void    Sample::Frame()
 		{
 			for (int iLoad = 0; iLoad < m_LoadFiles.size(); iLoad++)
 			{
-				std::vector<TFbxModel*> model1;
+				std::vector<std::shared_ptr<TFbxModel>> model1;
 				if (TKgcFileFormat::Import(m_LoadFiles[iLoad], model1))
 				{
 					m_pFbxfileList.emplace_back(model1);

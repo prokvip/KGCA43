@@ -87,9 +87,9 @@ void   Sample::Init()
 	
 	std::wstring expFilename;
 	auto tModel = std::make_shared<TKgcFileFormat>();
-	if (m_fbxLoader.Load("../../data/fbx/Turret_Deploy1/Turret_Deploy1.fbx", tModel.get()))
+	if (m_fbxLoader.Load("../../data/fbx/Turret_Deploy1.fbx", tModel.get()))
 	{
-		expFilename = ExportPath(L"../../data/fbx/Turret_Deploy1/Turret_Deploy1.fbx",
+		expFilename = ExportPath(L"../../data/fbx/Turret_Deploy1.fbx",
 			L"D:\\00_43\\data\\kgc\\");
 		TKgcFileFormat::Export(tModel.get(), expFilename);
 	}

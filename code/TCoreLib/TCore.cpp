@@ -187,15 +187,15 @@ void   TCore::GamePreFrame()
 	}
 	I_Sound.Frame();
 
-	if (I_Input.KeyCheck(VK_HOME) == KEY_PUSH)
+	if (I_Input.KeyCheck(VK_INSERT) == KEY_PUSH)
 	{
 		m_bDepthEnable = !m_bDepthEnable;
 	}
-	if (I_Input.KeyCheck(VK_END) == KEY_PUSH)
+	if (I_Input.KeyCheck(VK_DELETE) == KEY_PUSH)
 	{
 		m_bSolidEnable = !m_bSolidEnable;
 	}
-	if (I_Input.KeyCheck(VK_INSERT) == KEY_PUSH)
+	if (I_Input.KeyCheck(VK_END) == KEY_PUSH)
 	{
 		m_bLinearEnable = !m_bLinearEnable;
 	}
