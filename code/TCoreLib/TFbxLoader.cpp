@@ -1,38 +1,7 @@
 #include "TFbxLoader.h"
 
 FbxManager* TFbxLoader::m_pManager = nullptr;
-void   TFbxLoader::LoadAnimation(	TFbxNode* m_pFbxNode, 
-									TKgcFileFormat* model)
-{
-	FbxTime::SetGlobalTimeMode(FbxTime::eFrames30);
-	//FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
-	FbxAnimStack* stack = m_pScene->GetSrcObject<FbxAnimStack>(0);
-	if (stack == nullptr) return;
-	FbxString TakeName = stack->GetName();
-	FbxTakeInfo* TakeInfo = m_pScene->GetTakeInfo(TakeName);
-	if (TakeInfo)
-	{
-		FbxTime start = TakeInfo->mLocalTimeSpan.GetStart();
-		FbxTime end = TakeInfo->mLocalTimeSpan.GetStop();
 
-		FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
-		FbxLongLong sFrame = start.GetFrameCount(timeMode);
-		FbxLongLong eFrame = end.GetFrameCount(timeMode);
-		FbxTime s;
-
-		model->m_Header.iStartFrame = 0;
-		model->m_Header.iLastFrame = 50;
-		model->m_Header.iFrameSpeed = 30;
-
-		for (FbxLongLong iFrame = sFrame; iFrame < eFrame; iFrame++)
-		{		
-			s.SetFrame(iFrame, timeMode);
-			FbxAMatrix matWorld = m_pFbxNode->pFbxNode->EvaluateGlobalTransform(s);
-			T::TMatrix matFrame = ConvertFbxAMatrix(matWorld);
-			model->m_pAnimationMatrix.emplace_back(matFrame);
-		}
-	}
-}
 T::TMatrix TFbxLoader::ConvertFbxAMatrix(FbxAMatrix& m)
 {
 	T::TMatrix tMat;
@@ -90,9 +59,10 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 		PreProcess(child);
 	}
 }
-bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat* model)
+
+bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat* tKgcFileFormat)
 {
-	model->m_szFileName = to_mw(filename);
+	tKgcFileFormat->m_szFileName = to_mw(filename);
 
 	m_pImporter = FbxImporter::Create(m_pManager, "");
 	m_pScene = FbxScene::Create(m_pManager, "");
@@ -110,13 +80,10 @@ bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat* model)
 
 	for (int iMesh = 0; iMesh < m_pFbxMeshList.size(); iMesh++)
 	{
-		LoadMesh(iMesh, *model);					
+		LoadMesh(iMesh, *tKgcFileFormat);
 	}
 	
-	for (int iNode = 0; iNode < model->m_ChildList.size(); iNode++)
-	{
-		LoadAnimation(m_pFbxNodeList[iNode].get(), model->m_ChildList[iNode].get());
-	}
+	LoadAnimation(tKgcFileFormat);
 
 	m_pFbxMeshList.clear();
 	if (m_pScene) m_pScene->Destroy();
@@ -366,15 +333,25 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 		pModel->m_vSubMeshVertexList.resize(iNumMtrl);
 		pModel->m_vSubMeshIndexList.resize(iNumMtrl);
 	}
+	
+	
+
 	for (int iMtrl = 0; iMtrl < iNumMtrl; iMtrl++)
 	{
 		FbxSurfaceMaterial* pSurfaceMtrl = pFbxNode->GetMaterial(iMtrl);
 		if (pSurfaceMtrl)
 		{
+			/*std::map<int, FbxProperty> prop;
+			int iIndex = 0;
+			prop[iIndex++] = pSurfaceMtrl->FindProperty(FbxSurfaceMaterial::sDiffuse);
+			prop[iIndex++] = pSurfaceMtrl->FindProperty(FbxSurfaceMaterial::sDiffuseFactor);
+			prop[iIndex++] = pSurfaceMtrl->FindProperty(FbxSurfaceMaterial::sReflection);*/
+
 			std::string texPathName;
 			auto Property = pSurfaceMtrl->FindProperty(FbxSurfaceMaterial::sDiffuse);
 			if (Property.IsValid())
 			{
+				//auto iNumTex = Property.GetSrcObject<FbxFileTexture>();
 				FbxFileTexture* tex = Property.GetSrcObject<FbxFileTexture>(0);
 				if (tex)
 				{

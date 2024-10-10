@@ -200,6 +200,7 @@ copy "..\\..\\output\\Release\\TCoreLib.lib" "..\\..\\TCore\\lib\\TCore.lib"</Co
     <ClCompile Include="TDxObj2D.cpp" />
     <ClCompile Include="TDxObj3D.cpp" />
     <ClCompile Include="TDxObject.cpp" />
+    <ClCompile Include="TFbxAnimation.cpp" />
     <ClCompile Include="TFbxLoader.cpp" />
     <ClCompile Include="TFbxObject.cpp" />
     <ClCompile Include="TInput.cpp" />

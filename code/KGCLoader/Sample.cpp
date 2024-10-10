@@ -106,9 +106,31 @@ void    Sample::Render()
 {
 	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
 	{
-		auto pModel = m_pFbxfileList[iFbx];
+		static float fDirection = 1.0f;
+		float fFrame = m_pFbxfileList[iFbx][0]->m_fFrameAnimation;
+		float fStartFrame = m_pFbxfileList[iFbx][0]->m_FileHeader.iStartFrame;
+		float fEndFrame = m_pFbxfileList[iFbx][0]->m_FileHeader.iLastFrame;
+		float FrameSpeed = m_pFbxfileList[iFbx][0]->m_FileHeader.iFrameSpeed;
+
+		fFrame += fDirection * g_fSecondPerFrame * FrameSpeed * 1.f;
+		if (fFrame > fEndFrame)
+		{
+			fFrame = fEndFrame - 1;
+			fDirection *= -1.0f;
+		}
+		if (fFrame < fStartFrame)
+		{
+			fFrame = fStartFrame;
+			fDirection *= -1.0f;
+		}
+
+		m_pFbxfileList[iFbx][0]->m_fFrameAnimation = fFrame;
+
+		tModel pModel = m_pFbxfileList[iFbx];
 		for (int iObj = 0; iObj < pModel.size(); iObj++)
-		{		
+		{
+			m_pFbxfileList[iFbx][iObj]->m_matWorld =
+				m_pFbxfileList[iFbx][iObj]->m_pAnimationMatrix[fFrame];
 			m_pFbxfileList[iFbx][iObj]->SetMatrix(
 				nullptr, &m_MainCamera.m_matView, &m_matProj);
 			m_pFbxfileList[iFbx][iObj]->Render(TDevice::m_pContext);

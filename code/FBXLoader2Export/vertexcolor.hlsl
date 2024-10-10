@@ -55,6 +55,6 @@ PS_Out PSMain(PS_In psIn)
 	float4 pixel = g_txTexture.Sample(LinearPoint, psIn.t);
 	//float4 pixel = g_txTexture.Sample(Point, psIn.t);
 	pixel.a = 1.0f;
-	psOut.c = pixel*psIn.c;// float4(1, 0, 0, 1);
+	psOut.c = pixel;// *psIn.c;// float4(1, 0, 0, 1);
 	return psOut;	
 }
