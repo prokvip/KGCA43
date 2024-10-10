@@ -119,15 +119,15 @@ void    Sample::Frame()
 			for (int iLoad = 0; iLoad < m_LoadFiles.size(); iLoad++)
 			{
 				std::wstring expFilename;
-				TKgcFileFormat tModel;
-				if (m_fbxLoader.Load(to_wm(m_LoadFiles[iLoad]), tModel))
+				auto tModel = std::make_shared<TKgcFileFormat>();
+				if (m_fbxLoader.Load(to_wm(m_LoadFiles[iLoad]), tModel.get()))
 				{
 					expFilename = ExportPath(m_LoadFiles[iLoad],
 						L"D:\\00_43\\data\\kgc\\");
-					TKgcFileFormat::Export(&tModel, expFilename);
+					TKgcFileFormat::Export(tModel.get(), expFilename);
 				}
 
-				std::vector<TFbxModel*> model1;
+				std::vector< std::shared_ptr<TFbxModel> > model1;
 				if (TKgcFileFormat::Import(expFilename, model1))
 				{
 					m_pFbxfileList.emplace_back(model1);

@@ -59,13 +59,13 @@ public:
 	iList			m_vIndexList;
 	std::vector<vList>		m_vSubMeshVertexList;
 	std::vector<iList>		m_vSubMeshIndexList;
-	std::vector<TKgcFileFormat*> m_ChildList;
-
+	std::vector<std::shared_ptr<TKgcFileFormat>> m_ChildList;
 
 	std::vector<T::TMatrix> m_pAnimationMatrix;
 
 	static bool Export(TKgcFileFormat* tFile, std::wstring szFileName);
-	static bool Import(std::wstring szFileName, std::vector<TFbxModel*>& tFbxModel);
+	static bool Import( std::wstring szFileName, 
+						std::vector<std::shared_ptr<TFbxModel>>& tFbxModel);
 };
 
 

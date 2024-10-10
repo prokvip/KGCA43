@@ -6,7 +6,7 @@
 class Sample : public TCore
 {	
 	TFbxLoader					m_fbxLoader;
-	using tModel = std::vector<TFbxModel*>;
+	using tModel = std::vector< std::shared_ptr<TFbxModel> >;
 	std::vector<tModel>			m_pFbxfileList;
 public:
 	void   Init() override;

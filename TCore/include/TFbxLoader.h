@@ -26,11 +26,11 @@ public:
 	FbxNode*		m_pRootNode = nullptr;
 
 	std::vector<FbxMesh*>		m_pFbxMeshList;	
-	std::vector<TFbxNode*>		m_pFbxNodeList;
+	std::vector<std::shared_ptr<TFbxNode>>		m_pFbxNodeList;
 public:
 	void   Init();
-	bool   Load(C_STR filename, TKgcFileFormat& model);
-	bool   Import(C_STR filename, TKgcFileFormat& model);
+	bool   Load(C_STR filename, TKgcFileFormat* model);
+	bool   Import(C_STR filename, TKgcFileFormat* model);
 	void   PreProcess(FbxNode* node);
 	void   LoadMesh(int iMesh, TKgcFileFormat& m_pFbxfileList);
 	void   LoadAnimation(TFbxNode* m_pFbxNode, TKgcFileFormat* model);

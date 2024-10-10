@@ -42,7 +42,7 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 	m_iNumNodeCount++;
 	if (node == nullptr) return;
 
-	TFbxNode* pTNode = new TFbxNode;
+	auto  pTNode = std::make_shared<TFbxNode>();
 	pTNode->pFbxNode = node;
 	pTNode->szName = to_mw(node->GetName());
 
@@ -71,9 +71,9 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 		PreProcess(child);
 	}
 }
-bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat& model)
+bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat* model)
 {
-	model.m_szFileName = to_mw(filename);
+	model->m_szFileName = to_mw(filename);
 
 	m_pImporter = FbxImporter::Create(m_pManager, "");
 	m_pScene = FbxScene::Create(m_pManager, "");
@@ -91,12 +91,12 @@ bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat& model)
 
 	for (int iMesh = 0; iMesh < m_pFbxMeshList.size(); iMesh++)
 	{
-		LoadMesh(iMesh, model);					
+		LoadMesh(iMesh, *model);					
 	}
 
-	for (int iNode = 0; iNode < model.m_ChildList.size(); iNode++)
+	for (int iNode = 0; iNode < model->m_ChildList.size(); iNode++)
 	{
-		LoadAnimation(m_pFbxNodeList[iNode], model.m_ChildList[iNode]);
+		LoadAnimation(m_pFbxNodeList[iNode].get(), model->m_ChildList[iNode].get());
 	}
 
 	m_pFbxMeshList.clear();
@@ -293,8 +293,8 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	s.SetFrame(tFrame);
 	FbxAMatrix matWorld = pFbxNode->EvaluateGlobalTransform(s);
 	
-	//std::shared_ptr<TKgcFileFormat>  pModel;
-	TKgcFileFormat* pModel = new TKgcFileFormat;
+	std::shared_ptr<TKgcFileFormat>  pModel = std::make_shared<TKgcFileFormat>();
+	//TKgcFileFormat* pModel = new TKgcFileFormat;
 	pModel->m_matWorld = ConvertFbxAMatrix(matWorld);
 
 	// Layer :  레이어 회수만큼 랜더링한다.

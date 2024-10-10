@@ -89,7 +89,7 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 	return true;
 }
 bool  TKgcFileFormat::Import(std::wstring szFileName, 
-	std::vector<TFbxModel*>& tFbxModel)
+	std::vector<std::shared_ptr<TFbxModel>>& tFbxModel)
 {
 	FILE* fp = nullptr;
 	errno_t err = _wfopen_s(&fp, szFileName.c_str(), L"rb");
@@ -103,7 +103,7 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 
 	for (int iMesh =0; iMesh < header.iChildNodeCounter; iMesh++)
 	{
-		TFbxModel* fbxModel = new TFbxModel;
+		std::shared_ptr<TFbxModel>  fbxModel = std::make_shared<TFbxModel>();
 		TKgcFileHeader header;		
 		fread(&header, sizeof(TKgcFileHeader), 1, fp);	
 		// animation
@@ -181,7 +181,7 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 
 	for (int iObj = 0; iObj < tFbxModel.size(); iObj++)
 	{
-		TFbxModel* pFbxMesh = tFbxModel[iObj];
+		auto pFbxMesh = tFbxModel[iObj];
 		std::wstring name = L"../../data/";
 		if (pFbxMesh->m_szTexFileList.size() > 0)
 		{
