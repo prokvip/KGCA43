@@ -18,7 +18,7 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 	header.iChildNodeCounter = tFile->m_ChildList.size();
 	header.iVersion = 100;
 	header.matWorld = tFile->m_matWorld;
-
+	
 	fwrite(&header, sizeof(TKgcFileHeader), 1, fp);
 	fwrite(tFile->m_szFileName.c_str(), sizeof(wchar_t), 
 								header.iLength, fp);
@@ -33,6 +33,9 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 		header.iSubVertexBufferCounter = mesh->m_vSubMeshVertexList.size();
 		header.iSubIndexBufferCounter = mesh->m_vSubMeshIndexList.size();
 		header.iNumTrack = mesh->m_pAnimationMatrix.size();
+		header.iStartFrame = mesh->m_Header.iStartFrame;
+		header.iLastFrame = mesh->m_Header.iLastFrame;
+		header.iFrameSpeed = mesh->m_Header.iFrameSpeed;
 		fwrite(&header, sizeof(TKgcFileHeader), 1, fp);
 
 		// animation
@@ -104,8 +107,11 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 	for (int iMesh =0; iMesh < header.iChildNodeCounter; iMesh++)
 	{
 		std::shared_ptr<TFbxModel>  fbxModel = std::make_shared<TFbxModel>();
-		TKgcFileHeader header;		
-		fread(&header, sizeof(TKgcFileHeader), 1, fp);	
+
+		TKgcFileHeader header;
+		fread(&header, sizeof(TKgcFileHeader), 1, fp);
+		fbxModel->m_FileHeader = header;
+
 		// animation
 		fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
 		for (int iFrame = 0; iFrame < header.iNumTrack; iFrame++)

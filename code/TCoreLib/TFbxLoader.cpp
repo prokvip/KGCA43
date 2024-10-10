@@ -4,14 +4,33 @@ FbxManager* TFbxLoader::m_pManager = nullptr;
 void   TFbxLoader::LoadAnimation(	TFbxNode* m_pFbxNode, 
 									TKgcFileFormat* model)
 {
-	//// 월드 변환 행렬
-	FbxTime s;
-	for (int iFrame = 0; iFrame < 50; iFrame++)
-	{		
-		s.SetFrame(iFrame);
-		FbxAMatrix matWorld = m_pFbxNode->pFbxNode->EvaluateGlobalTransform(s);
-		T::TMatrix matFrame = ConvertFbxAMatrix(matWorld);
-		model->m_pAnimationMatrix.emplace_back(matFrame);
+	FbxTime::SetGlobalTimeMode(FbxTime::eFrames30);
+	//FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
+	FbxAnimStack* stack = m_pScene->GetSrcObject<FbxAnimStack>(0);
+	if (stack == nullptr) return;
+	FbxString TakeName = stack->GetName();
+	FbxTakeInfo* TakeInfo = m_pScene->GetTakeInfo(TakeName);
+	if (TakeInfo)
+	{
+		FbxTime start = TakeInfo->mLocalTimeSpan.GetStart();
+		FbxTime end = TakeInfo->mLocalTimeSpan.GetStop();
+
+		FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
+		FbxLongLong sFrame = start.GetFrameCount(timeMode);
+		FbxLongLong eFrame = end.GetFrameCount(timeMode);
+		FbxTime s;
+
+		model->m_Header.iStartFrame = 0;
+		model->m_Header.iLastFrame = 50;
+		model->m_Header.iFrameSpeed = 30;
+
+		for (FbxLongLong iFrame = sFrame; iFrame < eFrame; iFrame++)
+		{		
+			s.SetFrame(iFrame, timeMode);
+			FbxAMatrix matWorld = m_pFbxNode->pFbxNode->EvaluateGlobalTransform(s);
+			T::TMatrix matFrame = ConvertFbxAMatrix(matWorld);
+			model->m_pAnimationMatrix.emplace_back(matFrame);
+		}
 	}
 }
 T::TMatrix TFbxLoader::ConvertFbxAMatrix(FbxAMatrix& m)
@@ -93,7 +112,7 @@ bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat* model)
 	{
 		LoadMesh(iMesh, *model);					
 	}
-
+	
 	for (int iNode = 0; iNode < model->m_ChildList.size(); iNode++)
 	{
 		LoadAnimation(m_pFbxNodeList[iNode].get(), model->m_ChildList[iNode].get());

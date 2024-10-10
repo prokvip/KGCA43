@@ -5,8 +5,11 @@
 #pragma comment(lib, "libfbxsdk-md.lib")
 #pragma comment(lib, "libxml2-md.lib")
 #pragma comment(lib, "zlib-md.lib")
+
+
 struct TFbxNode
 {
+	TScene		 m_SceneInfo;
 	std::wstring szName;
 	std::wstring szParentName;
 	BOOL         isMesh = FALSE;
