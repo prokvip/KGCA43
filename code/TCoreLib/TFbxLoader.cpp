@@ -60,10 +60,12 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 	}
 }
 
-bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat* tKgcFileFormat)
+bool   TFbxLoader::Load(C_STR filename, 
+				TKgcFileFormat* tKgcFileFormat)
 {
 	tKgcFileFormat->m_szFileName = to_mw(filename);
 
+	m_pManager = FbxManager::Create();	
 	m_pImporter = FbxImporter::Create(m_pManager, "");
 	m_pScene = FbxScene::Create(m_pManager, "");
 
@@ -86,8 +88,13 @@ bool   TFbxLoader::Load(C_STR filename, TKgcFileFormat* tKgcFileFormat)
 	LoadAnimation(tKgcFileFormat);
 
 	m_pFbxMeshList.clear();
+	m_pFbxNodeList.clear();
+
 	if (m_pScene) m_pScene->Destroy();
 	if (m_pImporter) m_pImporter->Destroy();
+	if (m_pManager) m_pManager->Destroy();
+
+	m_pManager = nullptr;
 	m_pScene = nullptr;
 	m_pImporter = nullptr;
 	return true;

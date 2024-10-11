@@ -84,22 +84,30 @@ std::wstring   Sample::ExportPath(std::wstring loadfile, std::wstring expPath)
 void   Sample::Init()
 {
 	m_fbxLoader.Init();
-	
-	std::wstring expFilename;
-	auto tModel = std::make_shared<TKgcFileFormat>();
-	if (m_fbxLoader.Load("../../data/fbx/Turret_Deploy1/Turret_Deploy1.fbx", tModel.get()))
-	{
-		expFilename = ExportPath(L"../../data/fbx/Turret_Deploy1/Turret_Deploy1.fbx",
-			L"D:\\00_43\\data\\kgc\\");
-		TKgcFileFormat::Export(tModel.get(), expFilename);
-	}
+	///// <summary>
+	///// fbx loader -> Export (*.kgc)
+	///// class TKgcFileFormat
+	///// </summary>
+	//std::wstring expFilename;
+	//auto tKgcFileModel = std::make_shared<TKgcFileFormat>();
+	//if (m_fbxLoader.Load("../../data/fbx/Turret_Deploy1/Turret_Deploy1.fbx", 
+	//	tKgcFileModel.get()))
+	//{
+	//	expFilename = ExportPath(L"../../data/fbx/Turret_Deploy1/Turret_Deploy1.fbx",
+	//		L"D:\\00_43\\data\\kgc\\");
+	//	TKgcFileFormat::Export(tKgcFileModel.get(),
+	//		expFilename);
+	//}
 
-	
-	std::vector< std::shared_ptr<TFbxModel> > model1;
-	if (TKgcFileFormat::Import(expFilename, model1))
-	{
-		m_pFbxfileList.emplace_back(model1);
-	}
+	///// <summary>
+	///// kgc import ->  render
+	///// class TFbxModel
+	///// </summary>
+	//tModel model1 = std::make_shared<TFbxModel>();
+	//if (TKgcFileFormat::Import(expFilename, model1))
+	//{
+	//	m_pFbxfileList.emplace_back(model1);
+	//}
 	
 	T::TVector3 eye = { 30.0f, 0.0f, 0.0f };
 	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
@@ -118,15 +126,12 @@ void    Sample::Frame()
 	if (TInput::Get().KeyCheck(VK_HOME) == KEY_UP)
 	{
 		m_LoadFiles.clear();
-		for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
+		/*for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
 		{
 			auto pModel = m_pFbxfileList[iFbx];
-			for (int iObj = 0; iObj < pModel.size(); iObj++)
-			{
-				m_pFbxfileList[iFbx][iObj]->Release();
-			}
+			pModel->Release();
 		}
-		m_pFbxfileList.clear();
+		m_pFbxfileList.clear();*/
 		wchar_t szExt[] = L"fbx";
 		wchar_t szFileModel[] = L"kgc Viewer";
 		if (LoadFileDlg(szExt, szFileModel))
@@ -142,7 +147,7 @@ void    Sample::Frame()
 					TKgcFileFormat::Export(tModel.get(), expFilename);
 				}
 
-				std::vector< std::shared_ptr<TFbxModel> > model1;
+				std::shared_ptr<TFbxModel> model1 = std::make_shared<TFbxModel>();
 				if (TKgcFileFormat::Import(expFilename, model1))
 				{
 					m_pFbxfileList.emplace_back(model1);
@@ -154,36 +159,9 @@ void    Sample::Frame()
 void    Sample::Render()
 {
 	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
-	{
-		static float fDirection = 1.0f;
-		float fFrame = m_pFbxfileList[iFbx][0]->m_fFrameAnimation;
-		float fStartFrame = m_pFbxfileList[iFbx][0]->m_FileHeader.iStartFrame;
-		float fEndFrame = m_pFbxfileList[iFbx][0]->m_FileHeader.iLastFrame;
-		float FrameSpeed = m_pFbxfileList[iFbx][0]->m_FileHeader.iFrameSpeed;
-
-		fFrame += fDirection * g_fSecondPerFrame * FrameSpeed * 1.f;
-		if (fFrame > fEndFrame)
-		{
-			fFrame = fEndFrame - 1;
-			fDirection *= -1.0f;
-		}
-		if (fFrame < fStartFrame)
-		{
-			fFrame = fStartFrame;
-			fDirection *= -1.0f;
-		}
-
-		m_pFbxfileList[iFbx][0]->m_fFrameAnimation = fFrame;
-
-		tModel pModel = m_pFbxfileList[iFbx];	
-		for (int iObj = 0; iObj < pModel.size(); iObj++)
-		{
-			m_pFbxfileList[iFbx][iObj]->m_matWorld =
-				m_pFbxfileList[iFbx][iObj]->m_pAnimationMatrix[fFrame];
-			m_pFbxfileList[iFbx][iObj]->SetMatrix(
-				nullptr, &m_MainCamera.m_matView, &m_matProj);
-			m_pFbxfileList[iFbx][iObj]->Render(TDevice::m_pContext);
-		}
+	{		
+		m_pFbxfileList[iFbx]->SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+		m_pFbxfileList[iFbx]->Render(TDevice::m_pContext);
 	}
 }
 void    Sample::Release()
@@ -191,10 +169,7 @@ void    Sample::Release()
 	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
 	{
 		auto pModel = m_pFbxfileList[iFbx];
-		for (int iObj = 0; iObj < pModel.size(); iObj++)
-		{
-			m_pFbxfileList[iFbx][iObj]->Release();
-		}
+		pModel->Release();
 	}
 	m_fbxLoader.Release();
 }

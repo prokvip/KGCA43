@@ -18,7 +18,11 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 	fileHeader.iChildNodeCounter = tFile->m_ChildList.size();
 	fileHeader.iVersion = 100;
 	fileHeader.matWorld = tFile->m_matWorld;
-	
+	fileHeader.iNumTrack = tFile->m_pAnimationMatrix.size();
+	fileHeader.iStartFrame = fileHeader.iStartFrame;
+	fileHeader.iLastFrame = fileHeader.iLastFrame;
+	fileHeader.iFrameSpeed = fileHeader.iFrameSpeed;
+
 	fwrite(&fileHeader, sizeof(TKgcFileHeader), 1, fp);
 	fwrite(tFile->m_szFileName.c_str(), sizeof(wchar_t), fileHeader.iLength, fp);
 
@@ -91,7 +95,7 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 	return true;
 }
 bool  TKgcFileFormat::Import(std::wstring szFileName, 
-	std::vector<std::shared_ptr<TFbxModel>>& tFbxModel )
+	std::shared_ptr<TFbxModel>& tFbxModel )
 {
 	FILE* fp = nullptr;
 	errno_t err = _wfopen_s(&fp, szFileName.c_str(), L"rb");
@@ -102,7 +106,8 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 	fread(&fileHeader, sizeof(TKgcFileHeader), 1, fp);
 	WCHAR szLoadfilename[256] = { 0, };
 	fread(szLoadfilename, sizeof(wchar_t), fileHeader.iLength, fp);
-	
+	tFbxModel->m_FileHeader = fileHeader;
+
 	for (int iMesh =0; iMesh < fileHeader.iChildNodeCounter; iMesh++)
 	{
 		std::shared_ptr<TFbxModel>  fbxModel = std::make_shared<TFbxModel>();
@@ -177,16 +182,16 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 			}
 		}
 
-		tFbxModel.push_back(fbxModel);
+		tFbxModel->m_ChildModel.emplace_back(fbxModel);
 	}
 	err = fclose(fp);
 	if (err != 0) return false;
 	_fcloseall();
 
 
-	for (int iObj = 0; iObj < tFbxModel.size(); iObj++)
+	for (int iObj = 0; iObj < tFbxModel->m_ChildModel.size(); iObj++)
 	{
-		auto pFbxMesh = tFbxModel[iObj];
+		auto pFbxMesh = tFbxModel->m_ChildModel[iObj];
 		std::wstring name = L"../../data/";
 		if (pFbxMesh->m_szTexFileList.size() > 0)
 		{
@@ -317,37 +322,63 @@ bool     TFbxModel::CreateIndexBuffer(ID3D11Device* pd3dDevice)
 }
 void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 {
-	PreRender(pContext);
-	if (m_pSubMeshVertexBuffer.size())
+	static float fDirection = 1.0f;	
+	float fStartFrame = m_FileHeader.iStartFrame;
+	float fEndFrame = m_FileHeader.iLastFrame;
+	float FrameSpeed = m_FileHeader.iFrameSpeed;
+	m_fFrameAnimation += fDirection * g_fSecondPerFrame * FrameSpeed * 1.f;
+	if (m_fFrameAnimation > fEndFrame)
 	{
-		for (int iSubMesh = 0; iSubMesh < m_pSubMeshVertexBuffer.size(); iSubMesh++)
-		{
-			UINT StartSlot = 0;
-			UINT NumBuffers = 1;
-			UINT pStrides = sizeof(PNCT_Vertex); // 1개의 정점 크기
-			UINT pOffsets = 0; // 버퍼에 시작 인덱스
-			pContext->IASetVertexBuffers(StartSlot, NumBuffers,
-				m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
-			pContext->IASetIndexBuffer(m_pSubMeshIndexBuffer[iSubMesh].Get(), DXGI_FORMAT_R32_UINT, 0);
-			pContext->PSSetShaderResources(0, 1, m_pSubMeshSRV[iSubMesh].GetAddressOf());
-			if (m_pSubMeshIndexBuffer[iSubMesh] != nullptr)
-			{
-				pContext->DrawIndexed(m_vSubMeshIndexList[iSubMesh].size(), 0, 0);
-			}
-			else
-			{
-				pContext->Draw(m_vSubMeshVertexList[iSubMesh].size(), 0);
-			}
-		}
+		m_fFrameAnimation = fEndFrame - 1;
+		fDirection *= -1.0f;
 	}
-	else
+	if (m_fFrameAnimation < fStartFrame)
 	{
-		PostRender(pContext);
+		m_fFrameAnimation = fStartFrame;
+		fDirection *= -1.0f;
 	}
 
+	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
+	{
+		auto pModel = m_ChildModel[iChild];
+		pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];
+		pModel->SetMatrix(&pModel->m_matWorld, &m_matView, &m_matProj);
+		
+		pModel->PreRender(pContext);
+		if (pModel->m_pSubMeshVertexBuffer.size())
+		{
+			for (int iSubMesh = 0; iSubMesh < pModel->m_pSubMeshVertexBuffer.size(); iSubMesh++)
+			{
+				UINT StartSlot = 0;
+				UINT NumBuffers = 1;
+				UINT pStrides = sizeof(PNCT_Vertex); // 1개의 정점 크기
+				UINT pOffsets = 0; // 버퍼에 시작 인덱스
+				pContext->IASetVertexBuffers(StartSlot, NumBuffers,
+					pModel->m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
+				pContext->IASetIndexBuffer(pModel->m_pSubMeshIndexBuffer[iSubMesh].Get(), DXGI_FORMAT_R32_UINT, 0);
+				pContext->PSSetShaderResources(0, 1, pModel->m_pSubMeshSRV[iSubMesh].GetAddressOf());
+				if (pModel->m_pSubMeshIndexBuffer[iSubMesh] != nullptr)
+				{
+					pContext->DrawIndexed(pModel->m_vSubMeshIndexList[iSubMesh].size(), 0, 0);
+				}
+				else
+				{
+					pContext->Draw(pModel->m_vSubMeshVertexList[iSubMesh].size(), 0);
+				}
+			}
+		}
+		else
+		{
+			pModel->PostRender(pContext);
+		}
+	}
 }
 void     TFbxModel::Release() 
 {
+	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
+	{
+		m_ChildModel[iChild]->Release();
+	}
 	TDxObject3D::Release();
 
 	m_szTexFileList.clear();

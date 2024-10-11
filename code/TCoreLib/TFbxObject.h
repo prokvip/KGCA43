@@ -36,6 +36,8 @@ class TFbxModel : public TDxObject3D
 public:
 	float			m_fFrameAnimation = 0.0f;
 	TKgcFileHeader	m_FileHeader;
+	std::vector< std::shared_ptr<TFbxModel> > m_ChildModel;
+
 	std::vector<std::wstring> m_szTexFileList;
 	std::vector<ComPtr<ID3D11ShaderResourceView>>	m_pSubMeshSRV;
 	std::vector<TTexture*>							m_pSubMeshTexture;
@@ -76,7 +78,7 @@ public:
 
 	static bool Export(TKgcFileFormat* tFile, std::wstring szFileName);
 	static bool Import( std::wstring szFileName, 
-						std::vector<std::shared_ptr<TFbxModel>>& tFbxModel);
+						 std::shared_ptr<TFbxModel>& tFbxModel);
 };
 
 

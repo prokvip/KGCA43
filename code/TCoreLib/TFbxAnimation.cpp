@@ -1,7 +1,7 @@
 #include "TFbxLoader.h"
 void   TFbxLoader::LoadAnimationNode(
 	TKgcFileHeader header, 
-	TFbxNode* m_pFbxNode,
+	TFbxNode* pTFbxNode,
 	TKgcFileFormat* tKgcFileFormat)
 {
 	FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
@@ -12,7 +12,7 @@ void   TFbxLoader::LoadAnimationNode(
 	{
 		s.SetFrame(iFrame, timeMode);
 		// EvaluateGlobalTransform(최종월드행렬) = SelfAnimation(SRT보간) * ParentAnimation(SRT보간)
-		FbxAMatrix matWorld = m_pFbxNode->pFbxNode->EvaluateGlobalTransform(s);
+		FbxAMatrix matWorld = pTFbxNode->pFbxNode->EvaluateGlobalTransform(s);
 		T::TMatrix matFrame = ConvertFbxAMatrix(matWorld);
 		tKgcFileFormat->m_pAnimationMatrix.emplace_back(matFrame);
 	}
@@ -34,8 +34,8 @@ void   TFbxLoader::LoadAnimation(TKgcFileFormat* model)
 		FbxLongLong eFrame = end.GetFrameCount(timeMode);
 		FbxTime s;
 
-		model->m_Header.iStartFrame = 0;
-		model->m_Header.iLastFrame = 50;
+		model->m_Header.iStartFrame = sFrame;
+		model->m_Header.iLastFrame = eFrame;
 		model->m_Header.iFrameSpeed = 30;
 	}
 	for (int iNode = 0; iNode < model->m_ChildList.size(); iNode++)
