@@ -19,7 +19,7 @@ bool TMap::Load(TMapDesc& desc)
 {
 	if (CreateMap(desc))
 	{
-
+		return true;
 	}
 	return false;
 }
@@ -28,6 +28,9 @@ void	 TMap::SetVertexData()
 	m_vVertexList.resize(m_iNumVertices);
 	float fHalfCol = (m_iNumCols-1) / 2.0f;
 	float fHalfRow = (m_iNumRows - 1) / 2.0f;
+	float fTexOffsetU = 1.0f / (m_iNumCols - 1);
+	float fTexOffsetV = 1.0f / (m_iNumRows - 1);
+
 	for (int iRow = 0; iRow < m_iNumRows; iRow++)
 	{
 		for (int iCol = 0; iCol < m_iNumCols; iCol++)
@@ -37,8 +40,8 @@ void	 TMap::SetVertexData()
 			m_vVertexList[iIndex].p.Z = -((iRow- fHalfRow) * m_fCellDistance);
 			m_vVertexList[iIndex].p.Y = 0.0f;
 
-			m_vVertexList[iIndex].t.X = 0.0f;
-			m_vVertexList[iIndex].t.Y = 0.0f;
+			m_vVertexList[iIndex].t.X = fTexOffsetU * iCol;
+			m_vVertexList[iIndex].t.Y = fTexOffsetV * iRow;
 
 			m_vVertexList[iIndex].n = FVector3(0,1,0);
 			m_vVertexList[iIndex].c = FVector4(1, 1, 1,1);			

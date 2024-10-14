@@ -107,4 +107,15 @@ void TCamera::UpdateVector()
 	m_vLook.x = m_matView._13;
 	m_vLook.y = m_matView._23;
 	m_vLook.z = m_matView._33;
+
+	// 행렬을 분해해서 오일러 값을 얻는다.
+	// 역행렬
+	T::TMatrix   matInvView;
+	D3DXMatrixInverse(&matInvView , nullptr, &m_matView);
+	TVector3* pZAxis = (TVector3*)&matInvView._31;
+
+	float fLen = sqrtf(pZAxis->z * pZAxis->z + pZAxis->x * pZAxis->x);
+	this->m_fPitch = -atan2f(pZAxis->y, fLen);
+	this->m_fYaw = atan2f(pZAxis->x, pZAxis->z);
+	
 }
