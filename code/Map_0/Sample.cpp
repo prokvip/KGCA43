@@ -2,7 +2,7 @@
 void   Sample::Init()
 {
 	TMapDesc desc = { 65,65, 1.0f, 1.0f,
-		L"../../data/map/001.jpg", 
+		L"../../data/map/heightmap/HEIGHT_CASTLE.bmp", 
 		L"../../data/shader/pnct.hlsl"};
 
 	if (!m_Map.Load(desc))
