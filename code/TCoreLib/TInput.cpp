@@ -3,7 +3,7 @@
 /*
  * VK_0 - VK_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
  * 0x3A - 0x40 : unassigned
- * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
+ * VK_A - VK_Z are the same as ASCII 'A' - .z' (0x41 - 0x5A)
  */
 void    TInput::DebugPrint(int iKey)
 	{
@@ -18,7 +18,7 @@ void    TInput::DebugMousePos()
 	{
 #ifdef _DEBUG
 		TCHAR msgKey[MAX_PATH] = { 0, };
-		_stprintf_s(msgKey, L"Mouse X=%d, Y=%d\n", 
+		_stprintf_s(msgKey, L"Mouse.x=%d,.y=%d\n", 
 			m_ptMousePos.x, m_ptMousePos.y);
 		OutputDebugString(msgKey);
 #endif
@@ -26,13 +26,13 @@ void    TInput::DebugMousePos()
 float   TInput::GetDeltaX()
 {
 	float retX;
-	retX = ((float)m_ptDeltaMouse.x / (float)g_xClientSize) * TBASIS_PI;
+	retX = ((float)m_ptDeltaMouse.x / (float)g_xClientSize) * XM_PI;
 	return retX;
 }
 float   TInput::GetDeltaY()
 {
 	float retY;
-	retY = ((float)m_ptDeltaMouse.y / (float)g_yClientSize) * TBASIS_PI;
+	retY = ((float)m_ptDeltaMouse.y / (float)g_yClientSize) * XM_PI;
 	return retY;
 }
 void    TInput::Frame(HWND hWnd)
@@ -111,7 +111,7 @@ void    TInput::KeyTest()
 	/*
 	 * VK_0 - VK_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
 	 * 0x3A - 0x40 : unassigned
-	 * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
+	 * VK_A - VK_Z are the same as ASCII 'A' - .z' (0x41 - 0x5A)
 	 */
 	if (g_dwKeyState[VK_HOME] == KEY_PUSH)
 	{

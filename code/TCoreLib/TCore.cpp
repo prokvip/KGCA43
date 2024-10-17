@@ -26,7 +26,7 @@ void TCore::Resize(UINT Width, UINT Height)
 	TDevice::SetViewport();	
 	SetFontRTV();
 
-	T::D3DXMatrixPerspectiveFovLH(&m_matProj, TBASIS_PI * 0.25f,
+	T::D3DXMatrixPerspectiveFovLH(&m_matProj, XM_PI * 0.25f,
 		(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
 
 	Reset();
@@ -262,15 +262,15 @@ void   TCore::GameRender()
 void   TCore::DebugRender()
 {
 	m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
-	m_Line.Draw(FVector3(0.0f, 0.0f, 0.0f),
-		FVector3(10000.0f, 0.0f, 0.0f),
-		FVector4(1.0f, 0.0f, 0.0f, 1.0f));
-	m_Line.Draw(FVector3(0.0f, 0.0f, 0.0f),
-		FVector3(0.0f, 10000.0f, 0.0f),
-		FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-	m_Line.Draw(FVector3(0.0f, 0.0f, 0.0f),
-		FVector3(0.0f, 0.0f, 10000.0f),
-		FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	m_Line.Draw(T::TVector3(0.0f, 0.0f, 0.0f),
+		T::TVector3(10000.0f, 0.0f, 0.0f),
+		T::TVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	m_Line.Draw(T::TVector3(0.0f, 0.0f, 0.0f),
+		T::TVector3(0.0f, 10000.0f, 0.0f),
+		T::TVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	m_Line.Draw(T::TVector3(0.0f, 0.0f, 0.0f),
+		T::TVector3(0.0f, 0.0f, 10000.0f),
+		T::TVector4(0.0f, 0.0f, 1.0f, 1.0f));
 
 	/*m_Timer.DebugTimer();
 	I_Input.DebugMousePos();
@@ -304,7 +304,7 @@ void   TCore::GameInit()
 		// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
 		m_MainCamera.SetView(eye, target, up);
 
-		T::D3DXMatrixPerspectiveFovLH(&m_matProj, TBASIS_PI * 0.25f,
+		T::D3DXMatrixPerspectiveFovLH(&m_matProj, XM_PI * 0.25f,
 			(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
 
 		Reset();

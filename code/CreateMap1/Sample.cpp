@@ -168,8 +168,8 @@ void   Sample::Init()
 								 L"SaveLine");
 	LoadHeightMapTexture(
 		//L"../../data/map/heightmap/HEIGHT_CASTLE.bmp",
-		//L"../../data/map/heightmap/heightMap513.bmp",		
-		L"SaveLine.jpg",
+		L"../../data/map/heightmap/heightMap513.bmp",		
+		//L"SaveLine.jpg",
 		m_Map);
 
 	TMapDesc desc = { m_Map.m_HeightMapDesc.Width,

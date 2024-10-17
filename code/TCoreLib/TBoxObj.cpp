@@ -12,39 +12,39 @@ void   TBoxObj::SetVertexData()
 	// 0    3  
 	// ¾Õ¸é
 	m_vVertexList.resize(24);
-	m_vVertexList[0] = PNCT_Vertex(FVector3(-1.0f, 1.0f, -1.0f), FVector3(0.0f, 0.0f, -1.0f), FVector4(1.0f, 0.0f, 0.0f, 1.0f), FVector2(0.0f, 0.0f));
-	m_vVertexList[1] = PNCT_Vertex(FVector3(1.0f, 1.0f, -1.0f), FVector3(0.0f, 0.0f, -1.0f), FVector4(1.0f, 0.0f, 0.0f, 1.0f), FVector2(1.0f, 0.0f));
-	m_vVertexList[2] = PNCT_Vertex(FVector3(1.0f, -1.0f, -1.0f), FVector3(0.0f, 0.0f, -1.0f), FVector4(1.0f, 0.0f, 0.0f, 1.0f), FVector2(1.0f, 1.0f));
-	m_vVertexList[3] = PNCT_Vertex(FVector3(-1.0f, -1.0f, -1.0f), FVector3(0.0f, 0.0f, -1.0f), FVector4(1.0f, 0.0f, 0.0f, 1.0f), FVector2(0.0f, 1.0f));
+	m_vVertexList[0] = PNCT_Vertex(T::TVector3(-1.0f, 1.0f, -1.0f), T::TVector3(0.0f, 0.0f, -1.0f), T::TVector4(1.0f, 0.0f, 0.0f, 1.0f), T::TVector2(0.0f, 0.0f));
+	m_vVertexList[1] = PNCT_Vertex(T::TVector3(1.0f, 1.0f, -1.0f), T::TVector3(0.0f, 0.0f, -1.0f), T::TVector4(1.0f, 0.0f, 0.0f, 1.0f), T::TVector2(1.0f, 0.0f));
+	m_vVertexList[2] = PNCT_Vertex(T::TVector3(1.0f, -1.0f, -1.0f), T::TVector3(0.0f, 0.0f, -1.0f), T::TVector4(1.0f, 0.0f, 0.0f, 1.0f), T::TVector2(1.0f, 1.0f));
+	m_vVertexList[3] = PNCT_Vertex(T::TVector3(-1.0f, -1.0f, -1.0f), T::TVector3(0.0f, 0.0f, -1.0f), T::TVector4(1.0f, 0.0f, 0.0f, 1.0f), T::TVector2(0.0f, 1.0f));
 	// µÞ¸é
-	m_vVertexList[4] = PNCT_Vertex(FVector3(1.0f, 1.0f, 1.0f), FVector3(0.0f, 0.0f, 1.0f), FVector4(0.0f, 0.0f, 0.0f, 1.0f), FVector2(0.0f, 0.0f));
-	m_vVertexList[5] = PNCT_Vertex(FVector3(-1.0f, 1.0f, 1.0f), FVector3(0.0f, 0.0f, 1.0f), FVector4(0.0f, 1.0f, 0.0f, 1.0f), FVector2(1.0f, 0.0f));
-	m_vVertexList[6] = PNCT_Vertex(FVector3(-1.0f, -1.0f, 1.0f), FVector3(0.0f, 0.0f, 1.0f), FVector4(0.0f, 1.0f, 0.0f, 1.0f), FVector2(1.0f, 1.0f));
-	m_vVertexList[7] = PNCT_Vertex(FVector3(1.0f, -1.0f, 1.0f), FVector3(0.0f, 0.0f, 1.0f), FVector4(0.0f, 1.0f, 0.0f, 1.0f), FVector2(0.0f, 1.0f));
+	m_vVertexList[4] = PNCT_Vertex(T::TVector3(1.0f, 1.0f, 1.0f), T::TVector3(0.0f, 0.0f, 1.0f), T::TVector4(0.0f, 0.0f, 0.0f, 1.0f), T::TVector2(0.0f, 0.0f));
+	m_vVertexList[5] = PNCT_Vertex(T::TVector3(-1.0f, 1.0f, 1.0f), T::TVector3(0.0f, 0.0f, 1.0f), T::TVector4(0.0f, 1.0f, 0.0f, 1.0f), T::TVector2(1.0f, 0.0f));
+	m_vVertexList[6] = PNCT_Vertex(T::TVector3(-1.0f, -1.0f, 1.0f), T::TVector3(0.0f, 0.0f, 1.0f), T::TVector4(0.0f, 1.0f, 0.0f, 1.0f), T::TVector2(1.0f, 1.0f));
+	m_vVertexList[7] = PNCT_Vertex(T::TVector3(1.0f, -1.0f, 1.0f), T::TVector3(0.0f, 0.0f, 1.0f), T::TVector4(0.0f, 1.0f, 0.0f, 1.0f), T::TVector2(0.0f, 1.0f));
 
 	// ¿À¸¥ÂÊ
-	m_vVertexList[8] = PNCT_Vertex(FVector3(1.0f, 1.0f, -1.0f), FVector3(1.0f, 0.0f, 0.0f), FVector4(0.0f, 0.0f, 1.0f, 1.0f), FVector2(0.0f, 0.0f));
-	m_vVertexList[9] = PNCT_Vertex(FVector3(1.0f, 1.0f, 1.0f), FVector3(1.0f, 0.0f, 0.0f), FVector4(0.0f, 0.0f, 1.0f, 1.0f), FVector2(1.0f, 0.0f));
-	m_vVertexList[10] = PNCT_Vertex(FVector3(1.0f, -1.0f, 1.0f), FVector3(1.0f, 0.0f, 0.0f), FVector4(0.0f, 0.0f, 1.0f, 1.0f), FVector2(1.0f, 1.0f));
-	m_vVertexList[11] = PNCT_Vertex(FVector3(1.0f, -1.0f, -1.0f), FVector3(1.0f, 0.0f, 0.0f), FVector4(0.0f, 0.0f, 1.0f, 1.0f), FVector2(0.0f, 1.0f));
+	m_vVertexList[8] = PNCT_Vertex(T::TVector3(1.0f, 1.0f, -1.0f), T::TVector3(1.0f, 0.0f, 0.0f), T::TVector4(0.0f, 0.0f, 1.0f, 1.0f), T::TVector2(0.0f, 0.0f));
+	m_vVertexList[9] = PNCT_Vertex(T::TVector3(1.0f, 1.0f, 1.0f), T::TVector3(1.0f, 0.0f, 0.0f), T::TVector4(0.0f, 0.0f, 1.0f, 1.0f), T::TVector2(1.0f, 0.0f));
+	m_vVertexList[10] = PNCT_Vertex(T::TVector3(1.0f, -1.0f, 1.0f), T::TVector3(1.0f, 0.0f, 0.0f), T::TVector4(0.0f, 0.0f, 1.0f, 1.0f), T::TVector2(1.0f, 1.0f));
+	m_vVertexList[11] = PNCT_Vertex(T::TVector3(1.0f, -1.0f, -1.0f), T::TVector3(1.0f, 0.0f, 0.0f), T::TVector4(0.0f, 0.0f, 1.0f, 1.0f), T::TVector2(0.0f, 1.0f));
 
 	// ¿ÞÂÊ
-	m_vVertexList[12] = PNCT_Vertex(FVector3(-1.0f, 1.0f, 1.0f), FVector3(-1.0f, 0.0f, 0.0f), FVector4(1.0f, 1.0f, 0.0f, 1.0f), FVector2(0.0f, 0.0f));
-	m_vVertexList[13] = PNCT_Vertex(FVector3(-1.0f, 1.0f, -1.0f), FVector3(-1.0f, 0.0f, 0.0f), FVector4(1.0f, 1.0f, 0.0f, 1.0f), FVector2(1.0f, 0.0f));
-	m_vVertexList[14] = PNCT_Vertex(FVector3(-1.0f, -1.0f, -1.0f), FVector3(-1.0f, 0.0f, 0.0f), FVector4(1.0f, 1.0f, 0.0f, 1.0f), FVector2(1.0f, 1.0f));
-	m_vVertexList[15] = PNCT_Vertex(FVector3(-1.0f, -1.0f, 1.0f), FVector3(-1.0f, 0.0f, 0.0f), FVector4(1.0f, 1.0f, 0.0f, 1.0f), FVector2(0.0f, 1.0f));
+	m_vVertexList[12] = PNCT_Vertex(T::TVector3(-1.0f, 1.0f, 1.0f), T::TVector3(-1.0f, 0.0f, 0.0f), T::TVector4(1.0f, 1.0f, 0.0f, 1.0f), T::TVector2(0.0f, 0.0f));
+	m_vVertexList[13] = PNCT_Vertex(T::TVector3(-1.0f, 1.0f, -1.0f), T::TVector3(-1.0f, 0.0f, 0.0f), T::TVector4(1.0f, 1.0f, 0.0f, 1.0f), T::TVector2(1.0f, 0.0f));
+	m_vVertexList[14] = PNCT_Vertex(T::TVector3(-1.0f, -1.0f, -1.0f), T::TVector3(-1.0f, 0.0f, 0.0f), T::TVector4(1.0f, 1.0f, 0.0f, 1.0f), T::TVector2(1.0f, 1.0f));
+	m_vVertexList[15] = PNCT_Vertex(T::TVector3(-1.0f, -1.0f, 1.0f), T::TVector3(-1.0f, 0.0f, 0.0f), T::TVector4(1.0f, 1.0f, 0.0f, 1.0f), T::TVector2(0.0f, 1.0f));
 
 	// À­¸é
-	m_vVertexList[16] = PNCT_Vertex(FVector3(-1.0f, 1.0f, 1.0f), FVector3(0.0f, 1.0f, 0.0f), FVector4(1.0f, 0.5f, 1.0f, 1.0f), FVector2(0.0f, 0.0f));
-	m_vVertexList[17] = PNCT_Vertex(FVector3(1.0f, 1.0f, 1.0f), FVector3(0.0f, 1.0f, 0.0f), FVector4(1.0f, 0.5f, 1.0f, 1.0f), FVector2(1.0f, 0.0f));
-	m_vVertexList[18] = PNCT_Vertex(FVector3(1.0f, 1.0f, -1.0f), FVector3(0.0f, 1.0f, 0.0f), FVector4(1.0f, 0.5f, 1.0f, 1.0f), FVector2(1.0f, 1.0f));
-	m_vVertexList[19] = PNCT_Vertex(FVector3(-1.0f, 1.0f, -1.0f), FVector3(0.0f, 1.0f, 0.0f), FVector4(1.0f, 0.5f, 1.0f, 1.0f), FVector2(0.0f, 1.0f));
+	m_vVertexList[16] = PNCT_Vertex(T::TVector3(-1.0f, 1.0f, 1.0f), T::TVector3(0.0f, 1.0f, 0.0f), T::TVector4(1.0f, 0.5f, 1.0f, 1.0f), T::TVector2(0.0f, 0.0f));
+	m_vVertexList[17] = PNCT_Vertex(T::TVector3(1.0f, 1.0f, 1.0f), T::TVector3(0.0f, 1.0f, 0.0f), T::TVector4(1.0f, 0.5f, 1.0f, 1.0f), T::TVector2(1.0f, 0.0f));
+	m_vVertexList[18] = PNCT_Vertex(T::TVector3(1.0f, 1.0f, -1.0f), T::TVector3(0.0f, 1.0f, 0.0f), T::TVector4(1.0f, 0.5f, 1.0f, 1.0f), T::TVector2(1.0f, 1.0f));
+	m_vVertexList[19] = PNCT_Vertex(T::TVector3(-1.0f, 1.0f, -1.0f), T::TVector3(0.0f, 1.0f, 0.0f), T::TVector4(1.0f, 0.5f, 1.0f, 1.0f), T::TVector2(0.0f, 1.0f));
 
 	// ¾Æ·§¸é
-	m_vVertexList[20] = PNCT_Vertex(FVector3(-1.0f, -1.0f, -1.0f), FVector3(0.0f, -1.0f, 0.0f), FVector4(0.0f, 1.0f, 1.0f, 1.0f), FVector2(0.0f, 0.0f));
-	m_vVertexList[21] = PNCT_Vertex(FVector3(1.0f, -1.0f, -1.0f), FVector3(0.0f, -1.0f, 0.0f), FVector4(0.0f, 1.0f, 1.0f, 1.0f), FVector2(1.0f, 0.0f));
-	m_vVertexList[22] = PNCT_Vertex(FVector3(1.0f, -1.0f, 1.0f), FVector3(0.0f, -1.0f, 0.0f), FVector4(0.0f, 1.0f, 1.0f, 1.0f), FVector2(1.0f, 1.0f));
-	m_vVertexList[23] = PNCT_Vertex(FVector3(-1.0f, -1.0f, 1.0f), FVector3(0.0f, -1.0f, 0.0f), FVector4(0.0f, 1.0f, 1.0f, 1.0f), FVector2(0.0f, 1.0f));
+	m_vVertexList[20] = PNCT_Vertex(T::TVector3(-1.0f, -1.0f, -1.0f), T::TVector3(0.0f, -1.0f, 0.0f), T::TVector4(0.0f, 1.0f, 1.0f, 1.0f), T::TVector2(0.0f, 0.0f));
+	m_vVertexList[21] = PNCT_Vertex(T::TVector3(1.0f, -1.0f, -1.0f), T::TVector3(0.0f, -1.0f, 0.0f), T::TVector4(0.0f, 1.0f, 1.0f, 1.0f), T::TVector2(1.0f, 0.0f));
+	m_vVertexList[22] = PNCT_Vertex(T::TVector3(1.0f, -1.0f, 1.0f), T::TVector3(0.0f, -1.0f, 0.0f), T::TVector4(0.0f, 1.0f, 1.0f, 1.0f), T::TVector2(1.0f, 1.0f));
+	m_vVertexList[23] = PNCT_Vertex(T::TVector3(-1.0f, -1.0f, 1.0f), T::TVector3(0.0f, -1.0f, 0.0f), T::TVector4(0.0f, 1.0f, 1.0f, 1.0f), T::TVector2(0.0f, 1.0f));
 
 
 }
@@ -63,7 +63,7 @@ void   TBoxObj::SetIndexData()
 void   TBoxObj::Frame()
 {
 	/*static FVector3 vPos = { 0, 0, 0 };
-	vPos.X = cosf(g_fGameTime) * 2.0f;*/
+	vPos.x = cosf(g_fGameTime) * 2.0f;*/
 
 	T::TMatrix  matScale, matTrans, matRotate;
 	T::D3DXMatrixTranslation(&matTrans, m_vPos.x, m_vPos.y, m_vPos.z);

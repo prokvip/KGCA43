@@ -6,5 +6,5 @@ class TLineObj : public TShapeObj
 public:
 	virtual void		SetVertexData() override;
 	virtual void		SetIndexData() override;
-	void Draw(FVector3 s, FVector3 e, FVector4 c);
+	void Draw(T::TVector3 s, T::TVector3 e, T::TVector4 c);
 };

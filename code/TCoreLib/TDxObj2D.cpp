@@ -16,19 +16,19 @@ void   TDxObject2D::UpdateVertexBuffer()
 		m_pContext->UpdateSubresource(m_pVertexBuffer, 0, NULL, &m_vListNDC.at(0), 0, 0);
 	}
 }
-T_Math::FVector2 TDxObject2D::ConvertScreenToNDC(T_Math::FVector2 v)
+T::TVector2 TDxObject2D::ConvertScreenToNDC(T::TVector2 v)
 {
 	// 0~ 800 -> 0 ~ 1
-	v.X = v.X / g_xClientSize;
-	v.Y = v.Y / g_yClientSize;
+	v.x = v.x / g_xClientSize;
+	v.y = v.y / g_yClientSize;
 	//NDC 좌표계
 	// 0 ~ 1  -> -1 ~ +1
-	T_Math::FVector2 ret;
-	ret.X = v.X * 2.0f - 1.0f;
-	ret.Y = -(v.Y * 2.0f - 1.0f);
+	T::TVector2 ret;
+	ret.x = v.x * 2.0f - 1.0f;
+	ret.y = -(v.y * 2.0f - 1.0f);
 	// -1 ~ 1  -> 0 ~ +1
-	/*v.X = v.X * 0.5f + 0.5f;
-	v.Y = v.Y * 0.5f + 0.5f;*/
+	/*v.x = v.x * 0.5f + 0.5f;
+	v.y = v.y * 0.5f + 0.5f;*/
 	return ret;
 }
 
@@ -42,21 +42,21 @@ void   TDxObject2D::SetVertexData(RECT rt)
 	m_vListScreen.resize(6);
 	// 시계방향으로 구축되어야 한다.
 	m_vListScreen[0] = { (float)rt.left, (float)rt.top,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f };
-	m_vListScreen[1] = { T_Math::FVector2(rt.right, rt.top),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(1, 0) };
-	m_vListScreen[2] = { T_Math::FVector2(rt.right, rt.bottom),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(1, 1) };
-	m_vListScreen[3] = { T_Math::FVector2(rt.right, rt.bottom),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(1, 1) };
-	m_vListScreen[4] = { T_Math::FVector2(rt.left, rt.bottom),
-					T_Math::FVector4(1, 1, 1, 1),
-					T_Math::FVector2(0, 1) };
-	m_vListScreen[5].p = T_Math::FVector2(rt.left, rt.top);
-	m_vListScreen[5].c = T_Math::FVector4(1, 1, 1, 1),
-		m_vListScreen[5].t = T_Math::FVector2(0, 0);
+	m_vListScreen[1] = { T::TVector2(rt.right, rt.top),
+					T::TVector4(1, 1, 1, 1),
+					T::TVector2(1, 0) };
+	m_vListScreen[2] = { T::TVector2(rt.right, rt.bottom),
+					T::TVector4(1, 1, 1, 1),
+					T::TVector2(1, 1) };
+	m_vListScreen[3] = { T::TVector2(rt.right, rt.bottom),
+					T::TVector4(1, 1, 1, 1),
+					T::TVector2(1, 1) };
+	m_vListScreen[4] = { T::TVector2(rt.left, rt.bottom),
+					T::TVector4(1, 1, 1, 1),
+					T::TVector2(0, 1) };
+	m_vListScreen[5].p = T::TVector2(rt.left, rt.top);
+	m_vListScreen[5].c = T::TVector4(1, 1, 1, 1),
+		m_vListScreen[5].t = T::TVector2(0, 0);
 
 	// 화면좌표계를  NDC좌표 변경한다.
 	m_vVertexList = m_vListScreen;

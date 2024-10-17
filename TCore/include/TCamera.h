@@ -1,6 +1,6 @@
 #pragma once
 #include "TStd.h"
-using namespace T_Math;
+//using namespace T_Math;
 class TCamera
 {
 public:

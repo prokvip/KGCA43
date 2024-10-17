@@ -11,6 +11,17 @@ struct TMapDesc
 	T_STR			strShaderFile;
 };
 
+struct TFaceInfo
+{
+	// 평면노말
+	T::TVector3  vNormal;
+	// 에지 인덱스
+	// 정점 인덱스	
+};
+struct TVertexInfo
+{	
+	std::vector< UINT >   m_FaceIndexList;
+};
 class TMap : public TDxObject3D
 {
 public:
@@ -25,10 +36,16 @@ public:
 	int				m_iNumVertices;
 	int				m_iNumFace;
 	float			m_fCellDistance;
+	std::vector< TFaceInfo>		m_FaceInfoList;
+	std::vector< TVertexInfo >  m_VertrexInfoList;
 public:
 	bool    Load(TMapDesc& desc);
 	bool	CreateMap(TMapDesc& desc);
 	virtual void	 SetVertexData() override;
 	virtual void	 SetIndexData() override;
+public:
+	void ComputeVertexNormal();
+	void CreateFaceNormals();
+	void SetVertexNormals();
 };
 

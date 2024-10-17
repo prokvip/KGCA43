@@ -7,7 +7,7 @@ public:
 	std::vector<P2C4T2_Vertex>  m_vVertexList;		 // 프레임 화면 정보
 	std::vector<P2C4T2_Vertex>  m_vListNDC;	 // NDC
 public:
-	T_Math::FVector2 ConvertScreenToNDC(T_Math::FVector2 v);
+	T::TVector2 ConvertScreenToNDC(T::TVector2 v);
 	virtual void   UpdateVertexBuffer();
 	virtual bool   Create(RECT rt, std::wstring texName,std::wstring hlsl) override;
 

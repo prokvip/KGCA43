@@ -8,25 +8,25 @@ void   TPlaneObj::SetVertexData()
 	// 0     1
 
 	// 3     2
-	m_vVertexList[0].p = T_Math::FVector3(-1.0f, 1.0f, 0.0f);
-	m_vVertexList[0].n = T_Math::FVector3(0.0f, 0.0f, 0.0f);
-	m_vVertexList[0].c = T_Math::FVector4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_vVertexList[0].t = T_Math::FVector2(0.0f, 0.0f);
+	m_vVertexList[0].p = T::TVector3(-1.0f, 1.0f, 0.0f);
+	m_vVertexList[0].n = T::TVector3(0.0f, 0.0f, 0.0f);
+	m_vVertexList[0].c = T::TVector4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_vVertexList[0].t = T::TVector2(0.0f, 0.0f);
 
-	m_vVertexList[1].p = T_Math::FVector3(1.0f, 1.0f, 0.0f);
-	m_vVertexList[1].n = T_Math::FVector3(0.0f, 0.0f, 0.0f);
-	m_vVertexList[1].c = T_Math::FVector4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_vVertexList[1].t = T_Math::FVector2(1.0f, 0.0f);
+	m_vVertexList[1].p = T::TVector3(1.0f, 1.0f, 0.0f);
+	m_vVertexList[1].n = T::TVector3(0.0f, 0.0f, 0.0f);
+	m_vVertexList[1].c = T::TVector4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_vVertexList[1].t = T::TVector2(1.0f, 0.0f);
 
-	m_vVertexList[2].p = T_Math::FVector3(1.0f, -1.0f, 0.0f);
-	m_vVertexList[2].n = T_Math::FVector3(0.0f, 0.0f, 0.0f);
-	m_vVertexList[2].c = T_Math::FVector4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_vVertexList[2].t = T_Math::FVector2(1.0f, 1.0f);
+	m_vVertexList[2].p = T::TVector3(1.0f, -1.0f, 0.0f);
+	m_vVertexList[2].n = T::TVector3(0.0f, 0.0f, 0.0f);
+	m_vVertexList[2].c = T::TVector4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_vVertexList[2].t = T::TVector2(1.0f, 1.0f);
 
-	m_vVertexList[3].p = T_Math::FVector3(-1.0f, -1.0f, 0.0f);
-	m_vVertexList[3].n = T_Math::FVector3(0.0f, 0.0f, 0.0f);
-	m_vVertexList[3].c = T_Math::FVector4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_vVertexList[3].t = T_Math::FVector2(0.0f, 1.0f);
+	m_vVertexList[3].p = T::TVector3(-1.0f, -1.0f, 0.0f);
+	m_vVertexList[3].n = T::TVector3(0.0f, 0.0f, 0.0f);
+	m_vVertexList[3].c = T::TVector4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_vVertexList[3].t = T::TVector2(0.0f, 1.0f);
 }
 void   TPlaneObj::SetIndexData()
 {

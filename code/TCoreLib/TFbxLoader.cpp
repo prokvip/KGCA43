@@ -406,16 +406,16 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 				// neFbxV = fbxV * (geom * matWorld)
 				fbxV = geom.MultT(fbxV);
 				//fbxV = matWorld.MultT(fbxV);
-				v.p.X = fbxV.mData[0];
-				v.p.Y = fbxV.mData[2];
-				v.p.Z = fbxV.mData[1];
+				v.p.x = fbxV.mData[0];
+				v.p.y = fbxV.mData[2];
+				v.p.z = fbxV.mData[1];
 				// 정점 텍스처 좌표			
 				if (VertexUVLayer.size() > 0)
 				{
 					FbxVector2 uv = GetUV(fbxMesh, VertexUVLayer[0],
 						iVertexPositionIndex[iVertex], iVertexUVIndex[iVertex]);
-					v.t.X = uv.mData[0];
-					v.t.Y = 1.0f - uv.mData[1];
+					v.t.x = uv.mData[0];
+					v.t.y = 1.0f - uv.mData[1];
 				}
 				// 정점 컬러
 				FbxColor color = FbxColor(1, 1, 1, 1);
@@ -425,10 +425,10 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 						iVertexPositionIndex[iVertex], 
 						iBasePolyIndex + iVertexIndex[iVertex]);
 				}
-				v.c.X = color.mRed;
-				v.c.Y = color.mGreen;
-				v.c.Z = color.mBlue;
-				v.c.W = color.mAlpha;
+				v.c.x = color.mRed;
+				v.c.y = color.mGreen;
+				v.c.z = color.mBlue;
+				v.c.w = color.mAlpha;
 				// 정점노말
 
 				FbxVector4 vFbxNormal = { 0,0,0 };
@@ -440,9 +440,9 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 					vFbxNormal = normalMatrix.MultT(vFbxNormal);
 					vFbxNormal.Normalize();
 				}
-				v.n.X = vFbxNormal.mData[0];
-				v.n.Y = vFbxNormal.mData[2];
-				v.n.Z = vFbxNormal.mData[1];
+				v.n.x = vFbxNormal.mData[0];
+				v.n.y = vFbxNormal.mData[2];
+				v.n.z = vFbxNormal.mData[1];
 
 				if (pModel->m_vSubMeshVertexList.size() == 0)
 				{

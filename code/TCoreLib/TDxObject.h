@@ -1,15 +1,15 @@
 #pragma once
 #include "TTexMgr.h"
 #include "TShaderMgr.h"
-using namespace T_Math;
+//using namespace T_Math;
 // p, n, c, t
 struct P2C4T2_Vertex
 {
-	T_Math::FVector2 p; // 정점위치
-	T_Math::FVector4 c; // 정점컬러
-	T_Math::FVector2 t; // 정점텍스처좌표
+	T::TVector2 p; // 정점위치
+	T::TVector4 c; // 정점컬러
+	T::TVector2 t; // 정점텍스처좌표
 	P2C4T2_Vertex() = default;
-	P2C4T2_Vertex(T_Math::FVector2 p, T_Math::FVector4 c, T_Math::FVector2 t)
+	P2C4T2_Vertex(T::TVector2 p, T::TVector4 c, T::TVector2 t)
 	{
 		this->p = p;
 		this->c = c;
@@ -25,10 +25,10 @@ struct P2C4T2_Vertex
 };
 struct PNCT_Vertex
 {
-	T_Math::FVector3 p; // 정점위치
-	T_Math::FVector3 n; // 정점방향
-	T_Math::FVector4 c; // 정점컬러
-	T_Math::FVector2 t; // 정점텍스처좌표
+	T::TVector3 p; // 정점위치
+	T::TVector3 n; // 정점방향
+	T::TVector4 c; // 정점컬러
+	T::TVector2 t; // 정점텍스처좌표
 	bool operator == (const PNCT_Vertex& v) const
 	{
 		if ( p == v.p && n == v.n && c == v.c && t == v.t)
@@ -46,7 +46,7 @@ struct PNCT_Vertex
 		return false;
 	};
 	PNCT_Vertex() = default;
-	PNCT_Vertex(T_Math::FVector3 p, T_Math::FVector3 n, T_Math::FVector4 c, T_Math::FVector2 t)
+	PNCT_Vertex(T::TVector3 p, T::TVector3 n, T::TVector4 c, T::TVector2 t)
 	{
 		this->p = p;
 		this->n = n;
