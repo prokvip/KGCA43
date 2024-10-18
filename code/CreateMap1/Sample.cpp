@@ -164,8 +164,8 @@ void   Sample::LoadHeightMapTexture(T_STR texName, TMap& map)
 }
 void   Sample::Init()
 {
-	LoadTextureAndPixelWriteSave(L"../../data/map/heightmap/heightMap513.bmp", 
-								 L"SaveLine");
+	/*LoadTextureAndPixelWriteSave(L"../../data/map/heightmap/heightMap513.bmp", 
+								 L"SaveLine");*/
 	LoadHeightMapTexture(
 		//L"../../data/map/heightmap/HEIGHT_CASTLE.bmp",
 		L"../../data/map/heightmap/heightMap513.bmp",		
