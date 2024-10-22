@@ -199,16 +199,18 @@ FbxVector4  TFbxLoader::GetNormal(FbxMesh* fbxMesh,
 	switch (VertexNormalSet->GetMappingMode())
 	{
 		// 제어점 당 1개의 정보가 있다.
-	case FbxLayerElementVertexColor::eByControlPoint:
+	case FbxGeometryElement::eByControlPoint:
 	{
 		// 어떤 곳에 저장된 파악
 		switch (VertexNormalSet->GetReferenceMode())
 		{
-		case FbxLayerElementVertexColor::eDirect:
+		case FbxGeometryElement::eDirect:
 		{
-			ret = VertexNormalSet->GetDirectArray().GetAt(iVertexPosIndex);
+			float x = VertexNormalSet->GetDirectArray().GetAt(iVertexPosIndex).mData[0];
+			float z = VertexNormalSet->GetDirectArray().GetAt(iVertexPosIndex).mData[1];
+			float y = VertexNormalSet->GetDirectArray().GetAt(iVertexPosIndex).mData[2];
 		}break;
-		case FbxLayerElementVertexColor::eIndexToDirect:
+		case FbxGeometryElement::eIndexToDirect:
 		{
 			int iIndex = VertexNormalSet->GetIndexArray().GetAt(iVertexPosIndex);
 			ret = VertexNormalSet->GetDirectArray().GetAt(iIndex);
@@ -216,15 +218,15 @@ FbxVector4  TFbxLoader::GetNormal(FbxMesh* fbxMesh,
 		}
 	}break;
 		// 정점 당 1개의 정보가 있다.
-	case FbxLayerElementVertexColor::eByPolygonVertex:
+	case FbxGeometryElement::eByPolygonVertex:
 	{
 		switch (VertexNormalSet->GetReferenceMode())
 		{
-		case FbxLayerElementVertexColor::eDirect:
+		case FbxGeometryElement::eDirect:
 		{
 			ret = VertexNormalSet->GetDirectArray().GetAt(iVertexNormalIndex);
 		}break;
-		case FbxLayerElementVertexColor::eIndexToDirect:
+		case FbxGeometryElement::eIndexToDirect:
 		{
 			int iColorIndex = VertexNormalSet->GetIndexArray().GetAt(iVertexNormalIndex);
 			ret = VertexNormalSet->GetDirectArray().GetAt(iColorIndex);
@@ -290,6 +292,8 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	//TKgcFileFormat* pModel = new TKgcFileFormat;
 	pModel->m_matWorld = ConvertFbxAMatrix(matWorld);
 
+	
+
 	// Layer :  레이어 회수만큼 랜더링한다.
 	std::vector<FbxLayerElementUV*>				VertexUVLayer;
 	std::vector<FbxLayerElementVertexColor*>	VertexColorLayer;
@@ -297,6 +301,18 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	std::vector<FbxLayerElementTangent*>		VertexTangentLayer;
 	std::vector<FbxLayerElementMaterial*>		VertexMaterialLayer;
 	int iLayerCount = fbxMesh->GetLayerCount();
+
+	// 정점노말 (재)계산
+	if (iLayerCount == 0 || fbxMesh->GetLayer(0)->GetNormals() == nullptr )
+	{
+		fbxMesh->InitNormals();
+#if (FBXSDK_VERSION_MAJOR >= 2015)
+		fbxMesh->GenerateNormals();
+#else
+		pFbxMesh->ComputeVertexNormals();
+#endif
+	}
+
 	for (int iLayer = 0; iLayer < iLayerCount; iLayer++)
 	{
 		FbxLayer* pFbxLayer = fbxMesh->GetLayer(iLayer);
@@ -322,16 +338,7 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 		}
 	}
 
-	// 정점노말 (재)계산
-	if (VertexNormalLayer.size() > 0)
-	{
-		fbxMesh->InitNormals();
-#if (FBXSDK_VERSION_MAJOR >= 2015)
-		fbxMesh->GenerateNormals();
-#else
-		pFbxMesh->ComputeVertexNormals();
-#endif
-	}
+	
 
 	// material
 	int iNumMtrl = pFbxNode->GetMaterialCount();

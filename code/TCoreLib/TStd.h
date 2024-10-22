@@ -56,6 +56,10 @@ static std::string to_wm(const std::wstring& _src)
 	USES_CONVERSION;
 	return std::string(W2A(_src.c_str()));
 };
+#define randf(x) (x*rand()/(float)RAND_MAX)
+#define randf2(x,off) (off+x*rand()/(float)RAND_MAX)
+#define randstep(fMin,fMax) (fMin+((float)fMax-(float)fMin)*rand()/(float)RAND_MAX)
+#define clamp(x,MinX,MaxX) if (x>MaxX) x=MaxX; else if (x<MinX) x=MinX;
 
 #define SAMPLE_CREATE class Sample : public TCore {
 #define SAMPLE_END };

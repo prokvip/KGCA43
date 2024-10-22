@@ -77,7 +77,7 @@ void   Sample::Init()
 		m_Map);
 
 	TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
-					m_Map.m_HeightMapDesc.Height, 1.0f, 0.5f,
+					m_Map.m_HeightMapDesc.Height, 10.0f, 2.0f,
 		//L"../../data/map/heightmap/castle.jpg",
 		L"../../data/map/001.jpg",		
 		L"Lightting.hlsl"};
@@ -87,24 +87,24 @@ void   Sample::Init()
 		return;
 	}
 
-
-	auto model1 = std::make_shared<TFbxModel>();
-	if (TKgcFileFormat::Import(L"../../data/kgc/box.kgc", model1))
+	//m_LoadFiles.push_back(L"../../data/kgc/box.kgc");
+	m_LoadFiles.push_back(L"../../data/kgc/SM_Rock.kgc");
+	m_LoadFiles.push_back(L"../../data/kgc/SM_Barrel.kgc");
+	m_LoadFiles.push_back(L"../../data/kgc/Man.kgc");
+	for (int iObj = 0; iObj < m_LoadFiles.size(); iObj++)
 	{
-		model1->m_vPos = { 100.0f, 0.0f, 0.0f };
-		model1->m_matParentWorld._41 = model1->m_vPos.x;
-		model1->m_matParentWorld._42 = model1->m_vPos.y;
-		model1->m_matParentWorld._43 = model1->m_vPos.z;
-		model1->m_matParentWorld._42 = m_Map.GetHeight(model1->m_vPos);
-		m_pFbxfileList.emplace_back(model1);
+		auto model1 = std::make_shared<TFbxModel>();
+		if (TKgcFileFormat::Import(m_LoadFiles[iObj], L"Lightting.hlsl", model1))
+		{
+			m_pFbxfileList.emplace_back(model1);
+		}
 	}
-
-	for (int iObj = 0; iObj < 10; iObj++)
+	for (int iObj = 0; iObj < 1000; iObj++)
 	{
 		TMapObject obj;
-		obj.vPos = { 50.0f* iObj, 0.0f, 0.0f };
-		obj.vPos.x -= 200.0f;
-		obj.vScale = { 0.1f, 1.0f, 0.1f };
+		obj.iObjectType = rand() % 3;
+		obj.vPos = { randstep(-2000.0f, +2000.0f), 0.0f, randstep(-2000.0f, +2000.0f) };
+		obj.vScale = { randstep(0.1f, 2.0f), randstep(0.1f, 2.0f), randstep(0.1f, 2.0f) };
 		D3DXMatrixScaling(&obj.matWorld, obj.vScale.x, obj.vScale.y, obj.vScale.z);
 		obj.matWorld._41 = obj.vPos.x;
 		obj.matWorld._42 = m_Map.GetHeight(obj.vPos);
@@ -113,7 +113,7 @@ void   Sample::Init()
 	}
 
 
-	T::TVector3 eye = { 0.0f, 100.0f, -100.0f };
+	T::TVector3 eye = { 0.0f, 500.0f, -500.0f };
 	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
 	T::TVector3 up = { 0.0f, 1.0f, 0.0f };
 	// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
@@ -125,7 +125,7 @@ void   Sample::Init()
 void    Sample::Frame()
 {
 	T::TVector3 vDir;
-	T::TVector3 vPos = { 100, 100, 0 };
+	T::TVector3 vPos = { 0, 500, 0 };
 	T::TMatrix matRotation;
 	D3DXMatrixRotationY(&matRotation, 0);
 	D3DXVec3TransformCoord(&vPos, &vPos, &matRotation);
@@ -133,7 +133,7 @@ void    Sample::Frame()
 	m_LightInfo.m_vLightDir.x = -vDir.x;
 	m_LightInfo.m_vLightDir.y = -vDir.y;
 	m_LightInfo.m_vLightDir.z = -vDir.z;
-	m_LightInfo.m_vLightDir.w = 300.0f; min(0.0f, cos(g_fGameTime) * 100.0f);
+	m_LightInfo.m_vLightDir.w = (cos(g_fGameTime)*0.5f+0.5f) * 3000.0f;
 
 	m_LightInfo.m_vLightPos.x = vPos.x;
 	m_LightInfo.m_vLightPos.y = vPos.y;
@@ -155,7 +155,7 @@ void    Sample::Render()
 
 	m_Map.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
 	m_Map.Render(TDevice::m_pContext);
-	static bool m_bMainCamera = true;
+	static bool m_bMainCamera = false;
 	if (TInput::Get().KeyCheck(VK_F3) == KEY_PUSH)
 	{
 		m_bMainCamera = !m_bMainCamera;
@@ -174,7 +174,7 @@ void    Sample::Render()
 			m_pMapObjectList[iFbx].vPos.y,
 			m_pMapObjectList[iFbx].vPos.z);
 		
-		D3DXMatrixRotationY(&matRotate,g_fGameTime*0.1f);
+		D3DXMatrixRotationY(&matRotate,0/*g_fGameTime*0.1f*/);
 
 		T::TVector3 vPos;
 		D3DXVec3TransformCoord(&vPos, &m_pMapObjectList[iFbx].vPos, &matRotate);
@@ -194,11 +194,13 @@ void    Sample::Render()
 			m_MainCamera.SetView(eye, target, up);
 		}
 		m_pMapObjectList[iFbx].matWorld = matScale * matTrans;	
-		m_pFbxfileList[0]->m_matParentWorld = m_pMapObjectList[iFbx].matWorld;
 
-		m_pFbxfileList[0]->SetMatrix(
+		int iObjType = m_pMapObjectList[iFbx].iObjectType;
+		m_pFbxfileList[iObjType]->m_matParentWorld = m_pMapObjectList[iFbx].matWorld;
+
+		m_pFbxfileList[iObjType]->SetMatrix(
 			nullptr, &m_MainCamera.m_matView, &m_matProj);
-		m_pFbxfileList[0]->Render(TDevice::m_pContext);
+		m_pFbxfileList[iObjType]->Render(TDevice::m_pContext);
 	}
 }
 void    Sample::Release()

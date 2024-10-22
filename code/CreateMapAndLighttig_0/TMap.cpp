@@ -107,8 +107,8 @@ void	 TMap::SetVertexData()
 			m_vVertexList[iIndex].p.z = -((iRow- fHalfRow) * m_fCellDistance);
 			m_vVertexList[iIndex].p.y = m_HeightList[iIndex]* m_mapDesc.fScaleHeight;
 
-			m_vVertexList[iIndex].t.x = fTexOffsetU * iCol;
-			m_vVertexList[iIndex].t.y = fTexOffsetV * iRow;
+			m_vVertexList[iIndex].t.x = fTexOffsetU * iCol * 30.0f;
+			m_vVertexList[iIndex].t.y = fTexOffsetV * iRow * 30.0f;
 
 			m_vVertexList[iIndex].n = T::TVector3(0,0,0);
 			m_vVertexList[iIndex].c = T::TVector4(1, 1, 1,1);			

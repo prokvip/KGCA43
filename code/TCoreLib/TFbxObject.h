@@ -77,7 +77,7 @@ public:
 	std::vector<T::TMatrix> m_pAnimationMatrix;
 
 	static bool Export(TKgcFileFormat* tFile, std::wstring szFileName);
-	static bool Import( std::wstring szFileName, 
+	static bool Import( std::wstring szFileName, std::wstring szShaderFile,
 						 std::shared_ptr<TFbxModel>& tFbxModel);
 };
 

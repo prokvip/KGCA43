@@ -37,12 +37,19 @@ VS_Out VSMain(VS_In vsIn)
 	vsOut.p = vProj;
 	//vsOut.c = vsIn.c;
 	//float3 fLightDir = float3(-1, 0.0f, 0);
-	float fDot = dot(vsIn.n, -g_vLightDir.xyz);
+	float fDotDirection = dot(vsIn.n, -g_vLightDir.xyz);
+	float3 vDir = normalize(g_vLightPos.xyz - vWorld.xyz);
+	float fDot = dot(vsIn.n, vDir);
+
 	float fDistance = distance(vWorld.xyz, g_vLightPos.xyz);
 	fDistance /= g_vDistance;
 	fDistance = 1.0f - min(fDistance, 1.0f);
-	vsOut.c = float4(fDistance*fDot,fDistance*fDot, fDistance*fDot, 1.0f);
-	vsOut.t = vsIn.t;
+
+	float4 fAmbientColor = float4(0.0f, 0.0f, 1.0f, 1.0f);
+	vsOut.c = fAmbientColor + float4(fDotDirection, fDotDirection, fDotDirection,1.0f) +
+		float4(1.0f* fDistance * fDot, 0.0f*fDistance * fDot, 0.0f*fDistance * fDot, 1.0f);
+	//vsOut.c = float4(fDot, fDot, fDot, 1.0f);
+	vsOut.t = vsIn.t;// *10.0f;
 	return vsOut;
 }
 
@@ -67,6 +74,6 @@ PS_Out PSMain(PS_In psIn)
 	float4 pixel = g_txTexture.Sample(LinearPoint, psIn.t);
 	//float4 pixel = g_txTexture.Sample(Point, psIn.t);
 	pixel.a = 1.0f;
-	psOut.c = /*pixel**/psIn.c;// float4(1, 0, 0, 1);
+	psOut.c = pixel * psIn.c;// float4(1, 0, 0, 1);
 	return psOut;	
 }

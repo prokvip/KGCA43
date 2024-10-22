@@ -84,30 +84,30 @@ std::wstring   Sample::ExportPath(std::wstring loadfile, std::wstring expPath)
 void   Sample::Init()
 {
 	m_fbxLoader.Init();
-	///// <summary>
-	///// fbx loader -> Export (*.kgc)
-	///// class TKgcFileFormat
-	///// </summary>
-	//std::wstring expFilename;
-	//auto tKgcFileModel = std::make_shared<TKgcFileFormat>();
-	//if (m_fbxLoader.Load("../../data/fbx/Turret_Deploy1/Turret_Deploy1.fbx", 
-	//	tKgcFileModel.get()))
-	//{
-	//	expFilename = ExportPath(L"../../data/fbx/Turret_Deploy1/Turret_Deploy1.fbx",
-	//		L"D:\\00_43\\data\\kgc\\");
-	//	TKgcFileFormat::Export(tKgcFileModel.get(),
-	//		expFilename);
-	//}
+	/// <summary>
+	/// fbx loader -> Export (*.kgc)
+	/// class TKgcFileFormat
+	/// </summary>
+	std::wstring expFilename;
+	auto tKgcFileModel = std::make_shared<TKgcFileFormat>();
+	if (m_fbxLoader.Load("../../data/fbx/Man.fbx", 
+		tKgcFileModel.get()))
+	{
+		expFilename = ExportPath(L"../../data/fbx/Man.fbx",
+			L"D:\\00_43\\data\\kgc\\");
+		TKgcFileFormat::Export(tKgcFileModel.get(),
+			expFilename);
+	}
 
-	///// <summary>
-	///// kgc import ->  render
-	///// class TFbxModel
-	///// </summary>
-	//tModel model1 = std::make_shared<TFbxModel>();
-	//if (TKgcFileFormat::Import(expFilename, model1))
-	//{
-	//	m_pFbxfileList.emplace_back(model1);
-	//}
+	/// <summary>
+	/// kgc import ->  render
+	/// class TFbxModel
+	/// </summary>
+	tModel model1 = std::make_shared<TFbxModel>();
+	if (TKgcFileFormat::Import(expFilename,L"vertexcolor.hlsl", model1))
+	{
+		m_pFbxfileList.emplace_back(model1);
+	}
 	
 	T::TVector3 eye = { 30.0f, 0.0f, 0.0f };
 	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
@@ -148,7 +148,7 @@ void    Sample::Frame()
 				}
 
 				std::shared_ptr<TFbxModel> model1 = std::make_shared<TFbxModel>();
-				if (TKgcFileFormat::Import(expFilename, model1))
+				if (TKgcFileFormat::Import(expFilename, L"vertexcolor.hlsl",model1))
 				{
 					m_pFbxfileList.emplace_back(model1);
 				}

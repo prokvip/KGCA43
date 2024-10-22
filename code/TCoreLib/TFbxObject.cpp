@@ -94,7 +94,7 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 	_fcloseall();
 	return true;
 }
-bool  TKgcFileFormat::Import(std::wstring szFileName, 
+bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 	std::shared_ptr<TFbxModel>& tFbxModel )
 {
 	FILE* fp = nullptr;
@@ -213,7 +213,7 @@ bool  TKgcFileFormat::Import(std::wstring szFileName,
 				name += szFileExt;
 			}
 		}
-		pFbxMesh->Create(name, L"../../data/shader/vertexcolor.hlsl");
+		pFbxMesh->Create(name, szShaderFile);
 	}
 
 	return true;

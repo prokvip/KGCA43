@@ -12,6 +12,7 @@ struct TLightInfo
 };
 struct TMapObject
 {
+	int iObjectType = 0;
 	T::TVector3 vPos;
 	T::TVector3 vScale;
 	T::TVector3 vRotate;
@@ -25,6 +26,7 @@ class Sample : public TCore
 	using tModel = std::shared_ptr<TFbxModel>;
 	std::vector<tModel>			m_pFbxfileList;
 	std::vector<TMapObject>		m_pMapObjectList;
+	std::vector<std::wstring>   m_LoadFiles;
 public:
 	TLightInfo  m_LightInfo;
 	ComPtr<ID3D11Buffer>  m_pConstantBufferLight;
