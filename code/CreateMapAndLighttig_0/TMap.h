@@ -43,6 +43,9 @@ public:
 	bool	CreateMap(TMapDesc& desc);
 	virtual void	 SetVertexData() override;
 	virtual void	 SetIndexData() override;
+	float   GetHeight(T::TVector3 pos);
+	float GetHeightmap(int row, int col);
+	float Lerp(float fStart, float fEnd, float fTangent);
 public:
 	void ComputeVertexNormal();
 	void CreateFaceNormals();

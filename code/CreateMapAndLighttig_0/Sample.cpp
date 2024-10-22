@@ -87,6 +87,32 @@ void   Sample::Init()
 		return;
 	}
 
+
+	auto model1 = std::make_shared<TFbxModel>();
+	if (TKgcFileFormat::Import(L"../../data/kgc/box.kgc", model1))
+	{
+		model1->m_vPos = { 100.0f, 0.0f, 0.0f };
+		model1->m_matParentWorld._41 = model1->m_vPos.x;
+		model1->m_matParentWorld._42 = model1->m_vPos.y;
+		model1->m_matParentWorld._43 = model1->m_vPos.z;
+		model1->m_matParentWorld._42 = m_Map.GetHeight(model1->m_vPos);
+		m_pFbxfileList.emplace_back(model1);
+	}
+
+	for (int iObj = 0; iObj < 10; iObj++)
+	{
+		TMapObject obj;
+		obj.vPos = { 50.0f* iObj, 0.0f, 0.0f };
+		obj.vPos.x -= 200.0f;
+		obj.vScale = { 0.1f, 1.0f, 0.1f };
+		D3DXMatrixScaling(&obj.matWorld, obj.vScale.x, obj.vScale.y, obj.vScale.z);
+		obj.matWorld._41 = obj.vPos.x;
+		obj.matWorld._42 = m_Map.GetHeight(obj.vPos);
+		obj.matWorld._43 = obj.vPos.z;
+		m_pMapObjectList.emplace_back(obj);
+	}
+
+
 	T::TVector3 eye = { 0.0f, 100.0f, -100.0f };
 	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
 	T::TVector3 up = { 0.0f, 1.0f, 0.0f };
@@ -101,13 +127,13 @@ void    Sample::Frame()
 	T::TVector3 vDir;
 	T::TVector3 vPos = { 100, 100, 0 };
 	T::TMatrix matRotation;
-	D3DXMatrixRotationY(&matRotation, g_fGameTime);
+	D3DXMatrixRotationY(&matRotation, 0);
 	D3DXVec3TransformCoord(&vPos, &vPos, &matRotation);
 	D3DXVec3Normalize(&vDir,&vPos);
 	m_LightInfo.m_vLightDir.x = -vDir.x;
 	m_LightInfo.m_vLightDir.y = -vDir.y;
 	m_LightInfo.m_vLightDir.z = -vDir.z;
-	m_LightInfo.m_vLightDir.w = min(0.0f, cos(g_fGameTime)*100.0f);
+	m_LightInfo.m_vLightDir.w = 300.0f; min(0.0f, cos(g_fGameTime) * 100.0f);
 
 	m_LightInfo.m_vLightPos.x = vPos.x;
 	m_LightInfo.m_vLightPos.y = vPos.y;
@@ -115,6 +141,12 @@ void    Sample::Frame()
 	m_LightInfo.m_vLightPos.w = 1.0f;
 	TDevice::m_pContext->UpdateSubresource(
 		m_pConstantBufferLight.Get(), 0, NULL, &m_LightInfo, 0, 0);
+
+
+	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
+	{
+		m_pFbxfileList[iFbx]->Frame();
+	}
 }
 void    Sample::Render()
 {
@@ -123,10 +155,61 @@ void    Sample::Render()
 
 	m_Map.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
 	m_Map.Render(TDevice::m_pContext);
+	static bool m_bMainCamera = true;
+	if (TInput::Get().KeyCheck(VK_F3) == KEY_PUSH)
+	{
+		m_bMainCamera = !m_bMainCamera;
+	}
+
+	//m_pMapObjectList.emplace_back(obj);
+	for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
+	{
+		T::TMatrix matScale, matRotate, matTrans;
+		D3DXMatrixScaling(&matScale,
+			m_pMapObjectList[iFbx].vScale.x,
+			m_pMapObjectList[iFbx].vScale.y,
+			m_pMapObjectList[iFbx].vScale.z);
+		D3DXMatrixTranslation(&matTrans,
+			m_pMapObjectList[iFbx].vPos.x,
+			m_pMapObjectList[iFbx].vPos.y,
+			m_pMapObjectList[iFbx].vPos.z);
+		
+		D3DXMatrixRotationY(&matRotate,g_fGameTime*0.1f);
+
+		T::TVector3 vPos;
+		D3DXVec3TransformCoord(&vPos, &m_pMapObjectList[iFbx].vPos, &matRotate);
+		vPos.y = m_Map.GetHeight(vPos);
+		D3DXMatrixTranslation(&matTrans,vPos.x, vPos.y, vPos.z);
+		
+		
+		if (iFbx == 0 && m_bMainCamera)
+		{
+			T::TVector3 eye =
+				vPos +
+				T::TVector3(0, 0, -1) * 50.0f +
+				T::TVector3(0, 1, 0) * 50.0f;
+			T::TVector3 target = vPos;
+			T::TVector3 up = { 0.0f, 1.0f, 0.0 };
+			// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
+			m_MainCamera.SetView(eye, target, up);
+		}
+		m_pMapObjectList[iFbx].matWorld = matScale * matTrans;	
+		m_pFbxfileList[0]->m_matParentWorld = m_pMapObjectList[iFbx].matWorld;
+
+		m_pFbxfileList[0]->SetMatrix(
+			nullptr, &m_MainCamera.m_matView, &m_matProj);
+		m_pFbxfileList[0]->Render(TDevice::m_pContext);
+	}
 }
 void    Sample::Release()
 {
+	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
+	{
+		m_pFbxfileList[iFbx]->Release();
+	}
+	m_fbxLoader.Release();
 
+	m_Map.Release();
 }
 void Sample::SaveFile(T_STR name, ID3D11Texture2D* pRes)
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include "TCore.h"
 #include "TMap.h"
-
+#include "TFbxLoader.h"
 #include <wincodec.h>
 #include <wincodecsdk.h>
 #pragma comment (lib,"windowscodecs.lib")
@@ -10,9 +10,21 @@ struct TLightInfo
 	T::TVector4 m_vLightDir;	
 	T::TVector4 m_vLightPos;
 };
+struct TMapObject
+{
+	T::TVector3 vPos;
+	T::TVector3 vScale;
+	T::TVector3 vRotate;
+	T::TMatrix  matWorld;
+};
 class Sample : public TCore
 {	
 	TMap		m_Map;
+
+	TFbxLoader					m_fbxLoader;
+	using tModel = std::shared_ptr<TFbxModel>;
+	std::vector<tModel>			m_pFbxfileList;
+	std::vector<TMapObject>		m_pMapObjectList;
 public:
 	TLightInfo  m_LightInfo;
 	ComPtr<ID3D11Buffer>  m_pConstantBufferLight;
