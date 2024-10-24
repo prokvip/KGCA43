@@ -1,4 +1,44 @@
 #include "TDxObject.h"
+ID3D11Buffer* TDxObject::CreateConstantBuffer(
+	ID3D11Device* pd3dDevice,
+	void* data, UINT iNumIndex,
+	UINT iSize, bool bDynamic)
+{
+	HRESULT hr = S_OK;
+	ID3D11Buffer* pBuffer = nullptr;
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	D3D11_SUBRESOURCE_DATA InitData;
+	ZeroMemory(&InitData, sizeof(InitData));
+	if (bDynamic)
+	{
+		bd.Usage = D3D11_USAGE_DYNAMIC;
+		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	}
+	else
+	{
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.CPUAccessFlags = 0;
+	}
+	bd.ByteWidth = iSize * iNumIndex;
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	InitData.pSysMem = data;
+	if (data != NULL)
+	{
+		if (FAILED(hr = pd3dDevice->CreateBuffer(&bd, &InitData, &pBuffer)))
+		{
+			return nullptr;
+		}
+	}
+	else
+	{
+		if (FAILED(hr = pd3dDevice->CreateBuffer(&bd, NULL, &pBuffer)))
+		{
+			return nullptr;
+		}
+	}
+	return pBuffer;
+}
 /// <summary>
 /// 
 /// </summary>

@@ -82,3 +82,24 @@ public:
 };
 
 
+class TKgcObject : public TDxObject3D
+{
+	std::shared_ptr<TFbxModel>	  m_pdxObj = nullptr;
+public:
+	std::shared_ptr<TFbxModel> Get() { return m_pdxObj; }
+	TFbxModel* GetPtr() { return m_pdxObj.get(); }
+	bool  Load(T_STR filename)
+	{
+		m_pdxObj = std::make_shared<TFbxModel>();
+		if (TKgcFileFormat::Import(filename, L"../../data/shader/Lightting.hlsl", m_pdxObj))
+		{
+			return true;
+		}
+		return true;
+	}
+	void  Release() override
+	{
+		m_pdxObj->Release();
+		return;
+	}
+};

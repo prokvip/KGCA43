@@ -195,6 +195,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateMap1", "CreateMap1\Cr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateMapAndLighttig_0", "CreateMapAndLighttig_0\CreateMapAndLighttig_0.vcxproj", "{CF33280E-0AB2-4E30-BDE7-46591114CCB2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjectManager", "ObjectManager\ObjectManager.vcxproj", "{4DC3A421-04F5-4AFC-B352-0C4558E78D52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -851,6 +853,14 @@ Global
 		{CF33280E-0AB2-4E30-BDE7-46591114CCB2}.Release|x64.Build.0 = Release|x64
 		{CF33280E-0AB2-4E30-BDE7-46591114CCB2}.Release|x86.ActiveCfg = Release|Win32
 		{CF33280E-0AB2-4E30-BDE7-46591114CCB2}.Release|x86.Build.0 = Release|Win32
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52}.Debug|x64.ActiveCfg = Debug|x64
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52}.Debug|x64.Build.0 = Debug|x64
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52}.Debug|x86.ActiveCfg = Debug|Win32
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52}.Debug|x86.Build.0 = Debug|Win32
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52}.Release|x64.ActiveCfg = Release|x64
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52}.Release|x64.Build.0 = Release|x64
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52}.Release|x86.ActiveCfg = Release|Win32
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -941,6 +951,7 @@ Global
 		{9CAECD71-983D-4DD8-ABEE-9F245330951E} = {D4481213-0450-4C2A-890D-0A00EA4AB8E4}
 		{2E253672-E6C6-4327-88EE-FE5AB414A31B} = {D4481213-0450-4C2A-890D-0A00EA4AB8E4}
 		{CF33280E-0AB2-4E30-BDE7-46591114CCB2} = {D4481213-0450-4C2A-890D-0A00EA4AB8E4}
+		{4DC3A421-04F5-4AFC-B352-0C4558E78D52} = {D4481213-0450-4C2A-890D-0A00EA4AB8E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {760E8DCA-1EDC-41D9-8CDF-C65DDEE5F915}

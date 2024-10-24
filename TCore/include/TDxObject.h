@@ -95,6 +95,11 @@ public:
 	// 3D
 	virtual bool   Create(std::wstring texName,	std::wstring hlsl);
 
+	static ID3D11Buffer* CreateConstantBuffer(
+		ID3D11Device* pd3dDevice,
+		void* data, UINT iNumIndex,
+		UINT iSize, bool bDynamic=false);
+
 	// GPU 메모리에 할당된 버퍼.
 	ID3D11Buffer* m_pVertexBuffer=nullptr;
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice);
