@@ -81,9 +81,13 @@ void TWindow::Resize(UINT w, UINT h)
 {
 
 }
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
-	lParam)
+LRESULT TWindow::MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam)
 {
+	return 1;
+}
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam)
+{
+	g_pWindow->MsgProc(hwnd, uMsg, wParam, lParam);
 	switch (uMsg)
 	{
 	// 프로그램의 활성화(포커스)

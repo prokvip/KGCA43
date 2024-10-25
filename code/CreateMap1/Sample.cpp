@@ -1,6 +1,60 @@
 #include "Sample.h"
 #include "TTexMgr.h"
 #include "ScreenGrab.h"
+#include <codecvt>  //wstring_convert
+#include <fstream>  //ifstream
+
+// 1)
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT Sample::MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM	lParam)
+{
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+		return true;
+	return 1;
+}
+//2)
+void Sample::SetImGui()
+{ 
+	// 환경설정
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+
+	// 한글폰트 설정, 스타일 설정
+	ImGui_ImplWin32_Init(m_hWnd);
+	ImGui_ImplDX11_Init(TDevice::m_pd3dDevice.Get(), 
+						TDevice::m_pContext);
+}
+//2)
+void Sample::FrameImGui()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+}
+void Sample::RenderImGui()
+{
+	bool activeid;
+	ImGui::Begin("My First Tool", &activeid, ImGuiWindowFlags_MenuBar);
+	ImGui::End();
+
+	ImGui::Render();
+}
+void   Sample::PostRender()
+{
+	RenderImGui();
+
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+}
 void Sample::SaveFile(T_STR name, ID3D11Texture2D* pRes)
 {
 	HRESULT hr = S_OK;
@@ -164,6 +218,7 @@ void   Sample::LoadHeightMapTexture(T_STR texName, TMap& map)
 }
 void   Sample::Init()
 {
+	SetImGui();
 	/*LoadTextureAndPixelWriteSave(L"../../data/map/heightmap/heightMap513.bmp", 
 								 L"SaveLine");*/
 	LoadHeightMapTexture(
@@ -191,6 +246,7 @@ void   Sample::Init()
 }
 void    Sample::Frame()
 {
+	FrameImGui();
 }
 void    Sample::Render()
 {
@@ -199,7 +255,10 @@ void    Sample::Render()
 }
 void    Sample::Release()
 {
-
+	// Cleanup
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }
 
 T_GAME_START(800, 600);

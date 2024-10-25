@@ -84,8 +84,7 @@ void    Sample::Frame()
 }
 void    Sample::Render()
 {
-	TDevice::m_pContext->VSSetConstantBuffers(1, 1, 
-		m_pConstantBufferLight.GetAddressOf());
+	TDevice::m_pContext->VSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
 
 	m_Map.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
 	m_Map.Render(TDevice::m_pContext);
@@ -131,9 +130,7 @@ void    Sample::Render()
 
 		int iObjType = m_pMapObjectList[iFbx].iObjectType;
 		
-		auto baseModel = m_pFbxfileList[iObjType]->Get();
-		//TFbxModel* pModel = (TFbxModel*)baseModel.get();
-		auto model = std::dynamic_pointer_cast<TKgcObject>(baseModel);
+		auto model = std::dynamic_pointer_cast<TKgcObject>(m_pFbxfileList[iObjType]->Get());
 		if (model)
 		{
 			model->Get()->m_matParentWorld = m_pMapObjectList[iFbx].matWorld;
