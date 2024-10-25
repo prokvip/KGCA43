@@ -176,7 +176,9 @@ copy "..\\..\\output\\Release\\TCoreLib.lib" "..\\..\\TCore\\lib\\TCore.lib"</Co
     <ClInclude Include="TFbxObject.h" />
     <ClInclude Include="TInput.h" />
     <ClInclude Include="TLineObj.h" />
+    <ClInclude Include="TMap.h" />
     <ClInclude Include="TMath.h" />
+    <ClInclude Include="TObjectMgr.h" />
     <ClInclude Include="TPlaneObj.h" />
     <ClInclude Include="TShaderMgr.h" />
     <ClInclude Include="TShapeObj.h" />
@@ -205,7 +207,9 @@ copy "..\\..\\output\\Release\\TCoreLib.lib" "..\\..\\TCore\\lib\\TCore.lib"</Co
     <ClCompile Include="TFbxObject.cpp" />
     <ClCompile Include="TInput.cpp" />
     <ClCompile Include="TLineObj.cpp" />
+    <ClCompile Include="TMap.cpp" />
     <ClCompile Include="TMath.cpp" />
+    <ClCompile Include="TObjectMgr.cpp" />
     <ClCompile Include="TPlaneObj.cpp" />
     <ClCompile Include="TShaderMgr.cpp" />
     <ClCompile Include="TShapeObj.cpp" />

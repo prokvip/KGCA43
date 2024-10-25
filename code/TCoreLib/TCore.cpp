@@ -26,6 +26,8 @@ void TCore::Resize(UINT Width, UINT Height)
 	TDevice::SetViewport();	
 	SetFontRTV();
 
+	g_xClientSize = Width;
+	g_yClientSize = Height;
 	T::D3DXMatrixPerspectiveFovLH(&m_matProj, XM_PI * 0.25f,
 		(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
 

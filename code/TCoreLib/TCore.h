@@ -66,6 +66,22 @@ private:
 	void   GameInit();	
 	void   GameRelease();
 public:
+	void   ToolGameInit()
+	{
+		GameInit();
+	};
+	void   ToolGameRelease()
+	{
+		GameRelease();
+	}
+	void   ToolGameFrame()
+	{
+		GameFrame();
+	}
+	void   ToolGameRender()
+	{
+		GameRender();
+	}
 	void   GameRun();
 };
 
