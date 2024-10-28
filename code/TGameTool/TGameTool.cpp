@@ -139,7 +139,9 @@ BOOL CTGameToolApp::InitInstance()
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	CTGameToolView* pView = (CTGameToolView*)pFrame->GetActiveView();
 	m_Tool.m_hWnd = pView->m_hWnd;
+	g_hWnd = pView->m_hWnd;
 	m_Tool.m_isActive = true;
+	
 	m_Tool.ToolGameInit();
 	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.
 	m_pMainWnd->ShowWindow(SW_SHOW);

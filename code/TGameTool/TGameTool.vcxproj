@@ -200,6 +200,7 @@
     <ClInclude Include="TGameTool.h" />
     <ClInclude Include="TGameToolDoc.h" />
     <ClInclude Include="TGameToolView.h" />
+    <ClInclude Include="TSelect.h" />
     <ClInclude Include="ViewTree.h" />
   </ItemGroup>
   <ItemGroup>
@@ -218,6 +219,7 @@
     <ClCompile Include="TGameTool.cpp" />
     <ClCompile Include="TGameToolDoc.cpp" />
     <ClCompile Include="TGameToolView.cpp" />
+    <ClCompile Include="TSelect.cpp" />
     <ClCompile Include="ViewTree.cpp" />
   </ItemGroup>
   <ItemGroup>

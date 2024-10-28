@@ -3,6 +3,7 @@
 #include "TMap.h"
 #include "TFbxLoader.h"
 #include "TObjectMgr.h"
+#include "TSelect.h"
 
 struct TLightInfo
 {
@@ -21,6 +22,7 @@ struct TMapObject
 };
 class Sample : public TCore
 {	
+	TSelect		m_Select;
 	TMap		m_Map;
 	using tModel = std::shared_ptr<TObject>;
 	std::vector<tModel>			m_pFbxfileList;
@@ -31,6 +33,7 @@ public:
 	ComPtr<ID3D11Buffer>  m_pConstantBufferLight;	
 public:
 	void   Init() override;
+	void   PreFrame() override;
 	void   Frame() override;
 	void   Render() override;
 	void   Release() override;

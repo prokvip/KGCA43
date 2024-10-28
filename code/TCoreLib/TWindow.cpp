@@ -1,6 +1,7 @@
 #include "TWindow.h"
 TWindow* g_pWindow = nullptr;
 
+HWND		g_hWnd;
 UINT		g_xClientSize;
 UINT		g_yClientSize;
 
@@ -50,7 +51,7 @@ bool   TWindow::CreateWin(HINSTANCE hInstance, UINT xSize, UINT ySize)
 	GetWindowRect(hwnd, &m_rtWindow);
 	GetClientRect(hwnd, &m_rtClient);
 
-	m_hWnd = hwnd;
+	g_hWnd = m_hWnd = hwnd;
 	ShowWindow(hwnd, SW_SHOW);
 	return true;
 }

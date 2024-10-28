@@ -30,6 +30,7 @@ extern UINT		g_yClientSize;
 extern double   g_fSecondPerFrame;
 extern double   g_fGameTime;
 extern bool     g_bGameRun;
+extern HWND     g_hWnd;
 
 typedef std::basic_string<TCHAR>				T_STR;
 typedef std::basic_string<wchar_t>				W_STR; // std::wstring

@@ -68,6 +68,10 @@ private:
 public:
 	void   ToolGameInit()
 	{
+		GetWindowRect(m_hWnd, &m_rtWindow);
+		GetClientRect(m_hWnd, &m_rtClient);
+		g_xClientSize = m_rtClient.right;
+		g_yClientSize = m_rtClient.bottom;
 		GameInit();
 	};
 	void   ToolGameRelease()

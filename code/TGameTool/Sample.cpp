@@ -13,8 +13,10 @@ void   Sample::Init()
 		//L"../../data/map/heightmap/HEIGHT_CASTLE.bmp",
 		L"../../data/map/heightmap/heightMap513.bmp");
 
-	TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
-					m_Map.m_HeightMapDesc.Height, 10.0f, 2.0f,
+	//TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
+	//				m_Map.m_HeightMapDesc.Height, 1.0f, 2.0f,
+		TMapDesc desc = { 3,
+					3, 10.0f, 2.0f,
 		//L"../../data/map/heightmap/castle.jpg",
 		L"../../data/map/001.jpg",		
 		L"Lightting.hlsl"};
@@ -33,7 +35,7 @@ void   Sample::Init()
 		auto tObject = I_Object.Load(m_LoadFiles[iObj]);
 		m_pFbxfileList.emplace_back(tObject);
 	}
-	for (int iObj = 0; iObj < 1000; iObj++)
+	for (int iObj = 0; iObj < 0; iObj++)
 	{
 		TMapObject obj;
 		int iNumObject = I_Object.m_list.size();
@@ -56,6 +58,45 @@ void   Sample::Init()
 
 
 	
+}
+void	Sample::PreFrame()
+{
+	m_Select.SetMatrix(nullptr, 
+		&m_MainCamera.m_matView,
+		&m_matProj);
+	m_Select.Frame();
+
+	std::vector<T::TVector3> vIntersectionList;
+	if (I_Input.Get().KeyCheck(VK_MBUTTON) == KEY_PUSH)
+	{
+		for (int iFace = 0; iFace < m_Map.m_iNumFace; iFace++)
+		{
+			UINT i0 = m_Map.m_vIndexList[iFace*3+0];
+			UINT i1 = m_Map.m_vIndexList[iFace * 3 + 1];
+			UINT i2 = m_Map.m_vIndexList[iFace * 3 + 2];
+			T::TVector3 v0 = m_Map.m_vVertexList[i0].p;
+			T::TVector3 v1 = m_Map.m_vVertexList[i1].p;
+			T::TVector3 v2 = m_Map.m_vVertexList[i2].p;
+			// 교점
+			T::TVector3 e = m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirecton * 10000.0f;
+			T::TVector3 s = m_Select.m_Ray.vOrigin;
+			T::TVector3 vFaceNoraml;
+			T::TVector3 e0 = v1 - v0;
+			T::TVector3 e1 = v2 - v0;
+			T::TVector3 n;
+			D3DXVec3Cross(&n, &e0, &e1);
+			D3DXVec3Normalize(&n, &n);
+
+			if (m_Select.GetIntersection(v0, v1, v2, n, s, e))
+			{				// 점포함 테스트
+				if (m_Select.PointInPolygon(m_Select.m_vIntersection, 
+					v0, v1, v2))
+				{
+					vIntersectionList.push_back(m_Select.m_vIntersection);
+				}
+			}
+		}
+	}
 }
 void    Sample::Frame()
 {
