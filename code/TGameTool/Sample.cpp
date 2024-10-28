@@ -15,8 +15,8 @@ void   Sample::Init()
 
 	//TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
 	//				m_Map.m_HeightMapDesc.Height, 1.0f, 2.0f,
-		TMapDesc desc = { 3,
-					3, 10.0f, 2.0f,
+		TMapDesc desc = { 5,
+					5, 10.0f, 2.0f,
 		//L"../../data/map/heightmap/castle.jpg",
 		L"../../data/map/001.jpg",		
 		L"Lightting.hlsl"};
@@ -78,9 +78,8 @@ void	Sample::PreFrame()
 			T::TVector3 v1 = m_Map.m_vVertexList[i1].p;
 			T::TVector3 v2 = m_Map.m_vVertexList[i2].p;
 			// 교점
-			T::TVector3 e = m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirecton * 10000.0f;
+			T::TVector3 e = m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirecton * 1000.0f;
 			T::TVector3 s = m_Select.m_Ray.vOrigin;
-			T::TVector3 vFaceNoraml;
 			T::TVector3 e0 = v1 - v0;
 			T::TVector3 e1 = v2 - v0;
 			T::TVector3 n;
@@ -89,7 +88,7 @@ void	Sample::PreFrame()
 
 			if (m_Select.GetIntersection(v0, v1, v2, n, s, e))
 			{				// 점포함 테스트
-				if (m_Select.PointInPolygon(m_Select.m_vIntersection, 
+				if (m_Select.PointInPolygon(m_Select.m_vIntersection, n,
 					v0, v1, v2))
 				{
 					vIntersectionList.push_back(m_Select.m_vIntersection);

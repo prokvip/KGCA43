@@ -2,30 +2,35 @@
 #include "TInput.h"
 void TCamera::Frame()
 {
+	if (TInput::Get().KeyCheck(VK_SPACE))	m_fSpeed += g_fSecondPerFrame * 10.0f;
+	else						m_fSpeed -= g_fSecondPerFrame * 10.0f;
+	// 최소값으로 고정
+	if (m_fSpeed < 1.0f) m_fSpeed = 1.0f;
+
 	if (TInput::Get().KeyCheck('W'))
 	{
-		MoveLook(g_fSecondPerFrame * 50.0f);
+		MoveLook(g_fSecondPerFrame * 50.0f*m_fSpeed);
 	}
 	if (TInput::Get().KeyCheck('S'))
 	{
-		MoveLook(-g_fSecondPerFrame * 50.0f);
+		MoveLook(-g_fSecondPerFrame * 50.0f * m_fSpeed);
 	}
 	if (TInput::Get().KeyCheck('A'))
 	{
-		MoveSide(-g_fSecondPerFrame * 50.0f);
+		MoveSide(-g_fSecondPerFrame * 50.0f * m_fSpeed);
 	}
 	if (TInput::Get().KeyCheck('D'))
 	{
-		MoveSide(g_fSecondPerFrame * 50.0f);
+		MoveSide(g_fSecondPerFrame * 50.0f * m_fSpeed);
 	}
 
 	if (TInput::Get().KeyCheck('Q'))
 	{
-		MoveUp(g_fSecondPerFrame * 50.0f);
+		MoveUp(g_fSecondPerFrame * 50.0f * m_fSpeed);
 	}
 	if (TInput::Get().KeyCheck('E'))
 	{
-		MoveUp(-g_fSecondPerFrame * 50.0f);
+		MoveUp(-g_fSecondPerFrame * 50.0f * m_fSpeed);
 	}
 	Update(	TInput::Get().GetDeltaY(),
 			TInput::Get().GetDeltaX(),

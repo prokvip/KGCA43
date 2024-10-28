@@ -10,7 +10,7 @@ public:
 	T::TVector3     m_vLook; // z
 	T::TVector3     m_vUp;   // y
 	T::TVector3     m_vSide; // x
-
+	float			m_fSpeed = 1.0f;
 	float		m_fYaw = 0.0f;
 	float		m_fPitch = 0.0f;
 	float		m_fRoll = 0.0f;

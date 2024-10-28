@@ -27,6 +27,7 @@ public:
 								T::TVector3 s,
 								T::TVector3 e);
 	bool        PointInPolygon( T::TVector3 vIntersection, 
+								T::TVector3 n,
 								T::TVector3 v0,
 								T::TVector3 v1,
 								T::TVector3 v2);
