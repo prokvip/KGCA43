@@ -62,6 +62,25 @@ static std::string to_wm(const std::wstring& _src)
 #define randstep(fMin,fMax) (fMin+((float)fMax-(float)fMin)*rand()/(float)RAND_MAX)
 #define clamp(x,MinX,MaxX) if (x>MaxX) x=MaxX; else if (x<MinX) x=MinX;
 
+/////////////////////////////////////////  반환하지 않는다. ////////////////////////////////////////////////////////
+#if defined(DEBUG) | defined(_DEBUG) 
+#ifndef H
+//주의사항:매크로 함수안에서 매크로 함수(x가 함수로 해석)를 중복 실행 되지 않게 x=DX메소드만 사용해야 한다.
+#define H(x){ hr = (x);if (FAILED(hr)){\
+							LPWSTR output;\
+							WCHAR buffer[256]={0,};\
+							FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |FORMAT_MESSAGE_IGNORE_INSERTS |FORMAT_MESSAGE_ALLOCATE_BUFFER,\
+							NULL,x,MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),(LPTSTR)&output,0,NULL);\
+							wsprintf(buffer,L"File=%s\nLine=%d", _T(__FILE__), __LINE__);\
+							MessageBox(NULL, buffer,output,MB_OK);}\
+						}
+#endif
+#else
+#ifndef H
+#define H(x) (x)
+#endif
+#endif
+
 #define SAMPLE_CREATE class Sample : public TCore {
 #define SAMPLE_END };
 #define T_GAME_START(x, y) int WINAPI wWinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance,PWSTR pCmdLine,int nCmdShow){	Sample win;	if (win.CreateWin(hInstance, x, y))	{		win.GameRun();	}	return 0;}

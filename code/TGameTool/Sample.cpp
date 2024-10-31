@@ -141,7 +141,14 @@ void    Sample::Render()
 	TDevice::m_pContext->VSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
 
 	m_Map.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
-	m_Map.Render(TDevice::m_pContext);
+	m_Map.PreRender(TDevice::m_pContext);
+	
+	TDevice::m_pContext->IASetIndexBuffer(
+		m_Quadtree.m_pRootNode->m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	//m_Quadtree.PostRender(TDevice::m_pContext, m_Quadtree.m_pRootNode);
+	//m_Map.PostRender(TDevice::m_pContext);
+	m_Quadtree.Render();
+
 	static bool m_bMainCamera = false;
 	if (TInput::Get().KeyCheck(VK_F3) == KEY_PUSH)
 	{
@@ -197,6 +204,7 @@ void    Sample::Release()
 {
 	I_Object.Release();
 	m_Map.Release();
+	m_Quadtree.Release();
 }
 void   Sample::LoadTextureAndPixelWriteSave(T_STR texName, T_STR texSave)
 {

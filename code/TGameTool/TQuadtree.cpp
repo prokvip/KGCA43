@@ -1,23 +1,74 @@
 #include "pch.h"
 #include "TQuadtree.h"
+#include "TDxObject.h"
 void   TQuadtree::Init()
 {
-	m_pRootNode = new TNode;
-	m_pRootNode->iCornerIndex[0] = 0; // TL
-	m_pRootNode->iCornerIndex[1] = m_pMap->m_iNumCols-1; // TR
-	m_pRootNode->iCornerIndex[2] = 
-			(m_pMap->m_iNumRows-1) * m_pMap->m_iNumCols; // BL
-	m_pRootNode->iCornerIndex[3] = m_pMap->m_iNumRows*m_pMap->m_iNumCols-1;//BR
+	m_pRootNode = CreateNode(nullptr, 
+		0, m_pMap->m_iNumCols - 1, 
+		(m_pMap->m_iNumRows - 1) * m_pMap->m_iNumCols,
+		m_pMap->m_iNumRows * m_pMap->m_iNumCols - 1);	
 }
 TNode* TQuadtree::CreateNode(TNode* pNode, UINT TL, UINT TR, UINT BL, UINT BR)
 {
 	TNode* pChild = new TNode;	
-	pChild->iCornerIndex[0] = TL;
-	pChild->iCornerIndex[1] = TR;
-	pChild->iCornerIndex[2] = BL;
-	pChild->iCornerIndex[3] = BR;
-	pChild->iDepth = pNode->iDepth + 1;
+	pChild->iCornerIndex[0] = TL; 	pChild->iCornerIndex[1] = TR;
+	pChild->iCornerIndex[2] = BL;	pChild->iCornerIndex[3] = BR;
+	if (pNode != nullptr)
+	{
+		pChild->iDepth = pNode->iDepth + 1;
+	}
+	// 0      2      4
+	// 5      7      9 
+	// 10 11 12 13  14
+	// 15    17 18  19
+	// 20    22     24
+	
+	UINT iNumCols = (TR - TL);
+	UINT iNumWidth = m_pMap->m_iNumRows;
+	UINT iNumFace = iNumCols * ((BL - TL)/ iNumWidth) * 2;
+	UINT iNumIndex = iNumFace * 3;
+	pChild->m_IndexList.resize(iNumIndex);
+
+	// vb->map,  node->ib
+	
+	UINT iStartRow = TL / iNumWidth;
+	UINT IEndRow = BL  / iNumWidth;
+	UINT iStartCol = TL % iNumWidth;
+	UINT iEndCol = TR % iNumWidth;
+
+	UINT iIndex = 0;
+	for (UINT iRow = iStartRow; iRow < IEndRow; iRow++)
+	{
+		for (UINT iCol = iStartCol; iCol < iEndCol; iCol++)
+		{
+			UINT iNextRow = iRow + 1;
+			UINT iNextCol = iCol + 1;
+			pChild->m_IndexList[iIndex++] = iRow* iNumWidth + iCol;
+			pChild->m_IndexList[iIndex++] = iRow * iNumWidth + iNextCol;
+			pChild->m_IndexList[iIndex++] = iNextRow* iNumWidth + iCol;
+
+			pChild->m_IndexList[iIndex++] = iNextRow * iNumWidth + iCol;
+			pChild->m_IndexList[iIndex++] = iRow * iNumWidth + iNextCol;
+			pChild->m_IndexList[iIndex++] = iNextRow * iNumWidth + iNextCol;
+		}
+	}
+
+	pChild->m_pIndexBuffer.Attach(
+		DX::CreateIndexBuffer(TDevice::m_pd3dDevice.Get(), 
+			&pChild->m_IndexList.at(0), iNumIndex, sizeof(UINT)));
 	return pChild;
+}
+void     TQuadtree::PostRender(ID3D11DeviceContext* pContext, TNode* pNode)
+{
+	if (pNode->m_pIndexBuffer != nullptr)
+	{
+		pContext->DrawIndexed(pNode->m_IndexList.size(), 0, 0);
+	}
+	else
+	{
+		// ONLY VB
+		//pContext->Draw(pNode->m_VertexList.size(), 0);
+	}
 }
 bool   TQuadtree::SubDivide(TNode* pNode)
 {
@@ -50,6 +101,7 @@ bool   TQuadtree::SubDivide(TNode* pNode)
 		return true;
 	}
 	pNode->isLeaf = TRUE;
+	m_LeafNodes.push_back(pNode);
 	return false;
 }
 void   TQuadtree::BuildTree(TNode* pNode)
@@ -69,8 +121,14 @@ void   TQuadtree::Frame()
 }
 void   TQuadtree::Render()
 {
-
+	for (auto node : m_LeafNodes)
+	{		
+		TDevice::m_pContext->IASetIndexBuffer(
+			node->m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		PostRender(TDevice::m_pContext, node);
+	}
 }
 void   TQuadtree::Release()
 {
+	delete m_pRootNode;
 }
