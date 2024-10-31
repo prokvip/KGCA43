@@ -90,3 +90,35 @@ void		TSelect::SetMatrix(T::TMatrix* pWorld, T::TMatrix* pView, T::TMatrix* pPro
 	if (pView != nullptr)m_matView = *pView;
 	if (pProj != nullptr)m_matProj = *pProj;
 }
+
+bool		TSelect::IntersectTriangle(const TVector3& orig,
+	const TVector3& dir,
+	TVector3& v0,
+	TVector3& v1,
+	TVector3& v2,
+	FLOAT* t, FLOAT* u, FLOAT* v)
+{
+	T::TVector3 edge1 = v1 - v0;
+	T::TVector3 edge2 = v2 - v0;
+	T::TVector3 pvec;
+	D3DXVec3Cross(&pvec, &dir, &edge2);
+	FLOAT det = D3DXVec3Dot(&edge1, &pvec);
+		T::TVector3 tvec; // 내적이 양수가 될 수 있도록 det 방향을 뒤집는다.
+	if (det > 0)	{		tvec = orig - v0;	}	
+	else	{		tvec = v0 - orig;		det = -det;	}
+
+	if (det < 0.0001f)		return false;
+	*u = D3DXVec3Dot(&tvec, &pvec);
+	if (*u < 0.0f || *u > det)
+		return false;
+	T::TVector3 qvec;
+	D3DXVec3Cross(&qvec, &tvec, &edge1);
+	*v = D3DXVec3Dot(&dir, &qvec);
+	if (*v < 0.0f || *u + *v > det)		return false;
+	*t = D3DXVec3Dot(&edge2, &qvec);
+	FLOAT fInvDet = 1.0f / det;
+	*t *= fInvDet;
+	*u *= fInvDet;
+	*v *= fInvDet;
+	return true;
+}

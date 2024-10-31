@@ -31,5 +31,11 @@ public:
 								T::TVector3 v0,
 								T::TVector3 v1,
 								T::TVector3 v2);
+	bool		IntersectTriangle(const TVector3& orig,
+								const TVector3& dir,
+								TVector3& v0,
+								TVector3& v1,
+								TVector3& v2,
+								FLOAT* t, FLOAT* u, FLOAT* v);
 };
 

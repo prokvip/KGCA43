@@ -13,8 +13,8 @@ void   Sample::Init()
 		//L"../../data/map/heightmap/HEIGHT_CASTLE.bmp",
 		L"../../data/map/heightmap/heightMap513.bmp");
 
-	//TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
-	//				m_Map.m_HeightMapDesc.Height, 1.0f, 2.0f,
+	/*TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
+					m_Map.m_HeightMapDesc.Height, 10.0f, 2.0f,*/
 		TMapDesc desc = { 5,
 					5, 10.0f, 2.0f,
 		//L"../../data/map/heightmap/castle.jpg",
@@ -49,6 +49,9 @@ void   Sample::Init()
 		m_pMapObjectList.emplace_back(obj);
 	}
 
+	m_Quadtree.m_pMap = &m_Map;
+	m_Quadtree.Init();
+	m_Quadtree.BuildTree(m_Quadtree.m_pRootNode);
 
 	T::TVector3 eye = { 0.0f, 500.0f, -500.0f };
 	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
@@ -86,14 +89,24 @@ void	Sample::PreFrame()
 			D3DXVec3Cross(&n, &e0, &e1);
 			D3DXVec3Normalize(&n, &n);
 
-			if (m_Select.GetIntersection(v0, v1, v2, n, s, e))
-			{				// 점포함 테스트
-				if (m_Select.PointInPolygon(m_Select.m_vIntersection, n,
-					v0, v1, v2))
-				{
-					vIntersectionList.push_back(m_Select.m_vIntersection);
-				}
+			float t, u, v;
+			if (m_Select.IntersectTriangle(
+								m_Select.m_Ray.vOrigin,
+								m_Select.m_Ray.vDirecton,
+								v0, v1, v2, &t,&u,&v))
+			{
+				m_Select.m_vIntersection =
+					m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirecton * t;
+				vIntersectionList.push_back(m_Select.m_vIntersection);
 			}
+			////if (m_Select.GetIntersection(v0, v1, v2, n, s, e))
+			////{				// 점포함 테스트
+			////	if (m_Select.PointInPolygon(m_Select.m_vIntersection, n,
+			////		v0, v1, v2))
+			////	{
+			////		vIntersectionList.push_back(m_Select.m_vIntersection);
+			////	}
+			////}
 		}
 	}
 }

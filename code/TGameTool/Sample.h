@@ -1,6 +1,6 @@
 #pragma once
 #include "TCore.h"
-#include "TMap.h"
+#include "TQuadtree.h"
 #include "TFbxLoader.h"
 #include "TObjectMgr.h"
 #include "TSelect.h"
@@ -24,6 +24,7 @@ class Sample : public TCore
 {	
 	TSelect		m_Select;
 	TMap		m_Map;
+	TQuadtree   m_Quadtree;
 	using tModel = std::shared_ptr<TObject>;
 	std::vector<tModel>			m_pFbxfileList;
 	std::vector<TMapObject>		m_pMapObjectList;

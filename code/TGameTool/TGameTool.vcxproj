@@ -200,6 +200,7 @@
     <ClInclude Include="TGameTool.h" />
     <ClInclude Include="TGameToolDoc.h" />
     <ClInclude Include="TGameToolView.h" />
+    <ClInclude Include="TQuadtree.h" />
     <ClInclude Include="TSelect.h" />
     <ClInclude Include="ViewTree.h" />
   </ItemGroup>
@@ -219,6 +220,7 @@
     <ClCompile Include="TGameTool.cpp" />
     <ClCompile Include="TGameToolDoc.cpp" />
     <ClCompile Include="TGameToolView.cpp" />
+    <ClCompile Include="TQuadtree.cpp" />
     <ClCompile Include="TSelect.cpp" />
     <ClCompile Include="ViewTree.cpp" />
   </ItemGroup>
@@ -253,7 +255,6 @@
     <Image Include="res\userimages.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
     <None Include="res\TGameTool.rc2" />
   </ItemGroup>
   <ItemGroup>

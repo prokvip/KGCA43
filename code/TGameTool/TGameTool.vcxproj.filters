@@ -60,6 +60,9 @@
     <ClInclude Include="TSelect.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="TQuadtree.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TGameTool.cpp">
@@ -96,6 +99,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TSelect.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TQuadtree.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -185,6 +191,5 @@
     <None Include="res\TGameTool.rc2">
       <Filter>리소스 파일</Filter>
     </None>
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
