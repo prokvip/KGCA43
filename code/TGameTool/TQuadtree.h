@@ -1,5 +1,5 @@
 #include "TMap.h"
-
+#include "TCamera.h"
 struct TNode
 {
 	UINT   iDepth;
@@ -33,9 +33,10 @@ class TQuadtree
 {
 public:
 	TMap*	m_pMap = nullptr;
-	TNode* m_pRootNode = nullptr;
+	TCamera* m_pCamera = nullptr;
+	TNode*  m_pRootNode = nullptr;
 	std::vector<TNode*>  m_LeafNodes;
-
+	int		m_iMaxDepth = 3;
 public:
 	void   BuildTree(TNode* pNode);
 	bool   SubDivide(TNode* pNode);

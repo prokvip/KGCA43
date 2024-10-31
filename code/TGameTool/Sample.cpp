@@ -13,10 +13,10 @@ void   Sample::Init()
 		//L"../../data/map/heightmap/HEIGHT_CASTLE.bmp",
 		L"../../data/map/heightmap/heightMap513.bmp");
 
-	/*TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
-					m_Map.m_HeightMapDesc.Height, 10.0f, 2.0f,*/
-		TMapDesc desc = { 5,
-					5, 10.0f, 2.0f,
+	TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
+					m_Map.m_HeightMapDesc.Height, 10.0f, 2.0f,
+		/*TMapDesc desc = { 5,
+					5, 10.0f, 2.0f,*/
 		//L"../../data/map/heightmap/castle.jpg",
 		L"../../data/map/001.jpg",		
 		L"Lightting.hlsl"};

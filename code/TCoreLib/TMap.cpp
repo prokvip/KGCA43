@@ -159,11 +159,11 @@ void	 TMap::SetVertexData()
 			int iIndex = iRow * m_iNumCols + iCol;
 			m_vVertexList[iIndex].p.x = (iCol-fHalfCol) * m_fCellDistance;			
 			m_vVertexList[iIndex].p.z = -((iRow- fHalfRow) * m_fCellDistance);
-			/*if (m_HeightList.size() > 0)
+			if (m_HeightList.size() > 0)
 			{
 				m_vVertexList[iIndex].p.y = m_HeightList[iIndex] * m_mapDesc.fScaleHeight;
 			}
-			else*/
+			else
 			{
 				m_vVertexList[iIndex].p.y = 0.0f;
 			}

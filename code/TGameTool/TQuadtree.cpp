@@ -77,7 +77,8 @@ bool   TQuadtree::SubDivide(TNode* pNode)
 	UINT iHalf_Y = (pNode->iCornerIndex[2] -
 					pNode->iCornerIndex[0]) /
 					m_pMap->m_iNumCols;
-	if (iHalf_X > 1 && iHalf_Y > 1)
+	
+	if (pNode->iDepth < m_iMaxDepth &&iHalf_X > 1 && iHalf_Y > 1)
 	{
 		// 0(TL)   1(CT)      2(TR)
 		// 3(CL)   4(CC)	  5(CR)
@@ -121,11 +122,13 @@ void   TQuadtree::Frame()
 }
 void   TQuadtree::Render()
 {
-	for (auto node : m_LeafNodes)
+	//TNode* pNode = m_pRootNode->pChild[2];
+	for (auto pNode : m_LeafNodes)
 	{		
 		TDevice::m_pContext->IASetIndexBuffer(
-			node->m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-		PostRender(TDevice::m_pContext, node);
+			pNode->m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		PostRender(TDevice::m_pContext, pNode);
+		//break;
 	}
 }
 void   TQuadtree::Release()
