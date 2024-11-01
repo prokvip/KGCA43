@@ -39,4 +39,5 @@ public:
 	void   Render() override;
 	void   Release() override;
 	void   LoadTextureAndPixelWriteSave(T_STR texName, T_STR texSave);
+	void   SetObject(T::TVector3 vPos);
 };

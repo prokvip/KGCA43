@@ -1,7 +1,21 @@
 #include "pch.h"
 #include "Sample.h"
 #include "TTexMgr.h"
-
+void   Sample::SetObject(T::TVector3 vPos)
+{
+	TMapObject obj;
+	int iNumObject = I_Object.m_list.size();
+	obj.iObjectType = rand() % m_pFbxfileList.size();
+	obj.vPos = vPos;/*{ randstep(-m_Map.m_fMapDistance.x / 2.0f, +m_Map.m_fMapDistance.x / 2.0f), 0.0f,
+		randstep(-m_Map.m_fMapDistance.y / 2.0f, +m_Map.m_fMapDistance.y / 2.0f) };*/
+	obj.vScale = { randstep(0.1f, 2.0f), randstep(0.1f, 2.0f), randstep(0.1f, 2.0f) };
+	D3DXMatrixScaling(&obj.matWorld, obj.vScale.x, obj.vScale.y, obj.vScale.z);
+	obj.matWorld._41 = obj.vPos.x;
+	obj.matWorld._42 = obj.vPos.y;
+	obj.matWorld._43 = obj.vPos.z;
+	m_pMapObjectList.emplace_back(obj);
+	
+}
 void   Sample::Init()
 {
 	m_LightInfo.m_vLightDir = T::TVector4(0, -1, 0, 1);
@@ -15,8 +29,8 @@ void   Sample::Init()
 
 	TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
 					m_Map.m_HeightMapDesc.Height, 10.0f, 2.0f,
-		/*TMapDesc desc = { 5,
-					5, 10.0f, 2.0f,*/
+		//TMapDesc desc = { 5,
+		//			5, 10.0f, 2.0f,
 		//L"../../data/map/heightmap/castle.jpg",
 		L"../../data/map/001.jpg",		
 		L"Lightting.hlsl"};
@@ -35,19 +49,21 @@ void   Sample::Init()
 		auto tObject = I_Object.Load(m_LoadFiles[iObj]);
 		m_pFbxfileList.emplace_back(tObject);
 	}
-	for (int iObj = 0; iObj < 0; iObj++)
+
+	/*for (int iObj = 0; iObj < 10; iObj++)
 	{
 		TMapObject obj;
 		int iNumObject = I_Object.m_list.size();
 		obj.iObjectType = rand() % m_pFbxfileList.size();
-		obj.vPos = { randstep(-2000.0f, +2000.0f), 0.0f, randstep(-2000.0f, +2000.0f) };
+		obj.vPos = { randstep(-m_Map.m_fMapDistance.x/2.0f, +m_Map.m_fMapDistance.x/2.0f), 0.0f,
+			randstep(-m_Map.m_fMapDistance.y/2.0f, +m_Map.m_fMapDistance.y/2.0f) };
 		obj.vScale = { randstep(0.1f, 2.0f), randstep(0.1f, 2.0f), randstep(0.1f, 2.0f) };
 		D3DXMatrixScaling(&obj.matWorld, obj.vScale.x, obj.vScale.y, obj.vScale.z);
 		obj.matWorld._41 = obj.vPos.x;
 		obj.matWorld._42 = m_Map.GetHeight(obj.vPos);
 		obj.matWorld._43 = obj.vPos.z;
 		m_pMapObjectList.emplace_back(obj);
-	}
+	}*/
 
 	m_Quadtree.m_pMap = &m_Map;
 	m_Quadtree.Init();
@@ -98,6 +114,7 @@ void	Sample::PreFrame()
 				m_Select.m_vIntersection =
 					m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirecton * t;
 				vIntersectionList.push_back(m_Select.m_vIntersection);
+				SetObject(m_Select.m_vIntersection);
 			}
 			////if (m_Select.GetIntersection(v0, v1, v2, n, s, e))
 			////{				// 점포함 테스트
@@ -148,6 +165,9 @@ void    Sample::Render()
 	//m_Quadtree.PostRender(TDevice::m_pContext, m_Quadtree.m_pRootNode);
 	//m_Map.PostRender(TDevice::m_pContext);
 	m_Quadtree.Render();
+
+	m_Quadtree.m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+	m_Quadtree.DrawBB(m_Quadtree.m_pRootNode);
 
 	static bool m_bMainCamera = false;
 	if (TInput::Get().KeyCheck(VK_F3) == KEY_PUSH)

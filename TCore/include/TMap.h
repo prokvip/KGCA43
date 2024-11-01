@@ -29,6 +29,7 @@ public:
 	D3D11_TEXTURE2D_DESC m_HeightMapDesc;
 public:
 	TMapDesc		m_mapDesc;
+	T::TVector2     m_fMapDistance;
 	int				m_iNumCols;
 	int				m_iNumRows;
 	int				m_iNumCellCols;

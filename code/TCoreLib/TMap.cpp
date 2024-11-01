@@ -131,7 +131,8 @@ bool TMap::CreateMap(TMapDesc& desc)
 	m_iNumVertices = m_iNumCols * m_iNumRows;
 	m_iNumFace		= m_iNumCellCols * m_iNumCellRows* 2.0f;
 	m_fCellDistance = desc.fCellDistance;
-
+	m_fMapDistance.x = m_iNumCols * m_fCellDistance;
+	m_fMapDistance.y = m_iNumRows * m_fCellDistance;
 
 	return Create(m_mapDesc.strTextureFile,
 				  m_mapDesc.strShaderFile);

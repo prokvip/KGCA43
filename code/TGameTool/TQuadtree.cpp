@@ -7,6 +7,8 @@ void   TQuadtree::Init()
 		0, m_pMap->m_iNumCols - 1, 
 		(m_pMap->m_iNumRows - 1) * m_pMap->m_iNumCols,
 		m_pMap->m_iNumRows * m_pMap->m_iNumCols - 1);	
+
+	m_Line.Create(L"../../data/obj.jpg", L"../../data/shader/line.hlsl");
 }
 TNode* TQuadtree::CreateNode(TNode* pNode, UINT TL, UINT TR, UINT BL, UINT BR)
 {
@@ -50,13 +52,105 @@ TNode* TQuadtree::CreateNode(TNode* pNode, UINT TL, UINT TR, UINT BL, UINT BR)
 			pChild->m_IndexList[iIndex++] = iNextRow * iNumWidth + iCol;
 			pChild->m_IndexList[iIndex++] = iRow * iNumWidth + iNextCol;
 			pChild->m_IndexList[iIndex++] = iNextRow * iNumWidth + iNextCol;
+
 		}
+		
 	}
 
+	for (UINT iRow = iStartRow; iRow < IEndRow+1; iRow++)
+	{
+		for (UINT iCol = iStartCol; iCol < iEndCol+1; iCol++)
+		{
+			pChild->m_VertexIndex.push_back(iRow * iNumWidth + iCol);
+		}
+	}
 	pChild->m_pIndexBuffer.Attach(
 		DX::CreateIndexBuffer(TDevice::m_pd3dDevice.Get(), 
 			&pChild->m_IndexList.at(0), iNumIndex, sizeof(UINT)));
+
+
+	// bounding box
+	pChild->m_Box.vMin = { 99999.0f, 99999.0f, 99999.0f };
+	pChild->m_Box.vMax = { -99999.0f, -99999.0f, -99999.0f };
+
+	for (int i = 0; i < pChild->m_VertexIndex.size(); i++)
+	{
+		T::TVector3 v = m_pMap->m_vVertexList[pChild->m_VertexIndex[i]].p;
+		if (v.x > pChild->m_Box.vMax.x)
+		{
+			pChild->m_Box.vMax.x = v.x;
+		}
+		if (v.y > pChild->m_Box.vMax.y)
+		{
+			pChild->m_Box.vMax.y = v.y;
+		}
+		if (v.z > pChild->m_Box.vMax.z)
+		{
+			pChild->m_Box.vMax.z = v.z;
+		}
+		if (v.x < pChild->m_Box.vMin.x)
+		{
+			pChild->m_Box.vMin.x = v.x;
+		}
+		if (v.y < pChild->m_Box.vMin.y)
+		{
+			pChild->m_Box.vMin.y = v.y;
+		}
+		if (v.z < pChild->m_Box.vMin.z)
+		{
+			pChild->m_Box.vMin.z = v.z;
+		}
+	}
+
+	pChild->m_Sphere.vCenter = (pChild->m_Box.vMax + pChild->m_Box.vMin) * 0.5f;
+	pChild->m_Sphere.m_fRadius = (pChild->m_Box.vMax - pChild->m_Sphere.vCenter).Length();
 	return pChild;
+}
+void     TQuadtree::DrawNodeBB(TNode* pNode)
+{
+	TBox& box = pNode->m_Box;
+	//m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+	T::TVector3 v[8];
+	v[0] = { box.vMin.x, box.vMin.y, box.vMin.z};
+	v[1] = { box.vMin.x, box.vMax.y, box.vMin.z };
+	v[2] = { box.vMax.x, box.vMax.y, box.vMin.z };
+	v[3] = { box.vMax.x, box.vMin.y, box.vMin.z };
+
+	v[4] = { box.vMin.x, box.vMin.y, box.vMax.z };
+	v[5] = { box.vMin.x, box.vMax.y, box.vMax.z };
+	v[6] = { box.vMax.x, box.vMax.y, box.vMax.z };
+	v[7] = { box.vMax.x, box.vMin.y, box.vMax.z };
+
+	T::TVector4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//T::TVector4 color = { 1.0f, 0.0f, 0.0f, 1.0f };
+	m_Line.Draw(v[0], v[1], color);
+	m_Line.Draw(v[1], v[2], color);
+	m_Line.Draw(v[2], v[3], color);
+	m_Line.Draw(v[3], v[0], color);
+
+
+	m_Line.Draw(v[4], v[5], color);
+	m_Line.Draw(v[5], v[6], color);
+	m_Line.Draw(v[6], v[7], color);
+	m_Line.Draw(v[7], v[4], color);
+
+
+	m_Line.Draw(v[0], v[4], color);
+	m_Line.Draw(v[1], v[5], color);
+	m_Line.Draw(v[2], v[6], color);
+	m_Line.Draw(v[3], v[7], color);
+}
+void     TQuadtree::DrawBB(TNode* pNode)
+{
+	if (pNode != nullptr)
+	{
+		DrawNodeBB(pNode);
+		for (int iNode = 0; iNode < 4; iNode++)
+		{
+			TNode* pChild = pNode->pChild[iNode];
+			DrawBB(pChild);
+		}
+	}
 }
 void     TQuadtree::PostRender(ID3D11DeviceContext* pContext, TNode* pNode)
 {
@@ -133,5 +227,6 @@ void   TQuadtree::Render()
 }
 void   TQuadtree::Release()
 {
+	m_Line.Release();
 	delete m_pRootNode;
 }
