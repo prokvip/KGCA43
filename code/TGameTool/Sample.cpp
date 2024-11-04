@@ -82,7 +82,7 @@ void	Sample::PreFrame()
 {
 	m_Select.SetMatrix(nullptr, 
 		&m_MainCamera.m_matView,
-		&m_matProj);
+		&m_MainCamera.m_matProj);
 	m_Select.Frame();
 
 	std::vector<T::TVector3> vIntersectionList;
@@ -157,7 +157,7 @@ void    Sample::Render()
 {
 	TDevice::m_pContext->VSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
 
-	m_Map.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+	m_Map.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_MainCamera.m_matProj);
 	m_Map.PreRender(TDevice::m_pContext);
 	
 	TDevice::m_pContext->IASetIndexBuffer(
@@ -166,7 +166,7 @@ void    Sample::Render()
 	//m_Map.PostRender(TDevice::m_pContext);
 	m_Quadtree.Render();
 
-	m_Quadtree.m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+	m_Quadtree.m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_MainCamera.m_matProj);
 	m_Quadtree.DrawBB(m_Quadtree.m_pRootNode);
 
 	static bool m_bMainCamera = false;
@@ -215,7 +215,7 @@ void    Sample::Render()
 		if (model)
 		{
 			model->Get()->m_matParentWorld = m_pMapObjectList[iFbx].matWorld;
-			model->Get()->SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+			model->Get()->SetMatrix(nullptr, &m_MainCamera.m_matView, &m_MainCamera.m_matProj);
 			model->Get()->Render(TDevice::m_pContext);
 		}
 	}

@@ -30,7 +30,8 @@ void TCore::Resize(UINT Width, UINT Height)
 	GetClientRect(m_hWnd, &m_rtClient);
 	g_xClientSize = m_rtClient.right;
 	g_yClientSize = m_rtClient.bottom;
-	T::D3DXMatrixPerspectiveFovLH(&m_matProj, XM_PI * 0.25f,
+
+	m_MainCamera.SetProj(XM_PI * 0.25f,
 		(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
 
 	Reset();
@@ -265,7 +266,8 @@ void   TCore::GameRender()
 }
 void   TCore::DebugRender()
 {
-	m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+	m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, 
+							  &m_MainCamera.m_matProj);
 	m_Line.Draw(T::TVector3(0.0f, 0.0f, 0.0f),
 		T::TVector3(10000.0f, 0.0f, 0.0f),
 		T::TVector4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -306,11 +308,10 @@ void   TCore::GameInit()
 		T::TVector3 target = { 0.0f, 0.0f, 0.0f };
 		T::TVector3 up = { 0.0f, 1.0f, 0.0f };
 		// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
-		m_MainCamera.SetView(eye, target, up);
-
-		T::D3DXMatrixPerspectiveFovLH(&m_matProj, XM_PI * 0.25f,
+		m_MainCamera.SetProj(XM_PI * 0.25f,
 			(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
-
+		m_MainCamera.SetView(eye, target, up);
+		
 		Reset();
 	}
 	Init();

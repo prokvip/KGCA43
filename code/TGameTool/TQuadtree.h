@@ -1,41 +1,14 @@
 #include "TMap.h"
 #include "TCamera.h"
 #include "TLineObj.h"
-struct T_AABB
-{
-	T::TVector3 vMin;
-	T::TVector3 vMax;
-};
-struct T_OBB
-{
-	T::TVector3 vCenter;
-	T::TVector3 vAxis[3];
-	float       fDistance[3];
-};
-struct TBox
-{
-	/*T_AABB     aabb;
-	T_OBB      obb;*/
-	// AABB
-	T::TVector3 vMin;
-	T::TVector3 vMax;
-	// OBB
-	T::TVector3 vCenter;
-	T::TVector3 vAxis[3];
-	float       fDistance[3];
-};
-struct TSphere
-{
-	T::TVector3 vCenter;
-	float m_fRadius;
-};
+
 struct TNode
 {
 	UINT   iDepth;
 	BOOL   isLeaf;
 	UINT   iCornerIndex[4];
-	TBox    m_Box;
-	TSphere m_Sphere;
+	T_Box    m_Box;
+	T_Sphere m_Sphere;
 	TNode*  pChild[4];
 	std::vector<UINT>  m_VertexIndex;
 	std::vector<UINT> m_IndexList;

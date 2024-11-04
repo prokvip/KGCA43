@@ -108,7 +108,7 @@ TNode* TQuadtree::CreateNode(TNode* pNode, UINT TL, UINT TR, UINT BL, UINT BR)
 }
 void     TQuadtree::DrawNodeBB(TNode* pNode)
 {
-	TBox& box = pNode->m_Box;
+	T_Box& box = pNode->m_Box;
 	//m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
 	T::TVector3 v[8];
 	v[0] = { box.vMin.x, box.vMin.y, box.vMin.z};

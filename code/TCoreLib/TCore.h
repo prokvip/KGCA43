@@ -16,7 +16,6 @@ class TCore : public TWindow, public TBaseCore
 {
 public:
 	TCamera			m_MainCamera;
-	T::TMatrix		m_matProj;
 	TLineObj		m_Line;
 public:
 	bool			m_bDepthEnable = true;

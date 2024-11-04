@@ -123,4 +123,13 @@ void TCamera::UpdateVector()
 	this->m_fPitch = -atan2f(pZAxis->y, fLen);
 	this->m_fYaw = atan2f(pZAxis->x, pZAxis->z);
 	
+
+	m_Frustum.SetMatrix(nullptr, &m_matView, &m_matProj);
+
+}
+
+void  TCamera::SetProj(float fFov, float fAspect, float fNear, float fFar)
+{
+	T::D3DXMatrixPerspectiveFovLH(&m_matProj, fFov,
+		fAspect, fNear, fFar);
 }

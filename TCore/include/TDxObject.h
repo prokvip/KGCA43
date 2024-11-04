@@ -1,7 +1,7 @@
 #pragma once
 #include "TTexMgr.h"
 #include "TShaderMgr.h"
-//using namespace T_Math;
+#include "TCollision.h"
 // p, n, c, t
 struct P2C4T2_Vertex
 {
