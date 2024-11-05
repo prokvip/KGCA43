@@ -32,7 +32,7 @@ public:
 	void UpdateFonts();
 
 // 특성입니다.
-protected:
+public:
 	CMFCTabCtrl	m_wndTabs;
 
 	COutputList m_wndOutputBuild;

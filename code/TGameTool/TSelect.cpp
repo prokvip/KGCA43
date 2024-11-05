@@ -1,5 +1,57 @@
 #include "pch.h"
 #include "TSelect.h"
+
+BOOL		TSelect::ChkBoxToRay(T_Box& Box)
+{
+	float fWdU[3], fAWdU[3], fDdU[3], fADdU[3], fAWxDdU[3], fRhs;
+
+	TVector3 vReverseDir = m_Ray.vOrigin - Box.vCenter;
+
+	fWdU[0] = D3DXVec3Dot(&m_Ray.vDirection, &Box.vAxis[0]);
+	fAWdU[0] = fabs(fWdU[0]);
+	fDdU[0] = D3DXVec3Dot(&vReverseDir, &Box.vAxis[0]);
+	fADdU[0] = fabs(fDdU[0]);
+	if (fADdU[0] > Box.fDistance[0] && fDdU[0] * fWdU[0] >= 0.0f)
+		return false;
+
+	fWdU[1] = D3DXVec3Dot(&m_Ray.vDirection, &Box.vAxis[1]);
+	fAWdU[1] = fabs(fWdU[1]);
+	fDdU[1] = D3DXVec3Dot(&vReverseDir, &Box.vAxis[1]);
+	fADdU[1] = fabs(fDdU[1]);
+	if (fADdU[1] > Box.fDistance[1] && fDdU[1] * fWdU[1] >= 0.0f)
+		return false;
+
+	fWdU[2] = D3DXVec3Dot(&m_Ray.vDirection, &Box.vAxis[2]);
+	fAWdU[2] = fabs(fWdU[2]);
+	fDdU[2] = D3DXVec3Dot(&vReverseDir, &Box.vAxis[2]);
+	fADdU[2] = fabs(fDdU[2]);
+	if (fADdU[2] > Box.fDistance[2] && fDdU[2] * fWdU[2] >= 0.0f)
+		return false;
+
+
+	TVector3 kWxD;
+	D3DXVec3Cross(&kWxD, &m_Ray.vDirection, &vReverseDir);
+
+
+	fAWxDdU[0] = fabs(D3DXVec3Dot(&kWxD, &Box.vAxis[0]));
+	fRhs = Box.fDistance[1] * fAWdU[2] + Box.fDistance[2] * fAWdU[1];
+	if (fAWxDdU[0] > fRhs)
+		return false;
+	fAWxDdU[1] = fabs(D3DXVec3Dot(&kWxD, &Box.vAxis[1]));
+	fRhs = Box.fDistance[0] * fAWdU[2] + Box.fDistance[2] * fAWdU[0];
+	if (fAWxDdU[1] > fRhs)
+		return false;
+	fAWxDdU[2] = fabs(D3DXVec3Dot(&kWxD, &Box.vAxis[2]));
+	fRhs = Box.fDistance[0] * fAWdU[1] + Box.fDistance[1] * fAWdU[0];
+	if (fAWxDdU[2] > fRhs)
+		return false;
+	return TRUE;
+}
+BOOL		TSelect::ChkBoxToSphere(T_Sphere& sphere)
+{
+	return FALSE;
+}
+
 void		TSelect::Init()
 {
 }
@@ -23,7 +75,7 @@ void		TSelect::Frame()
 	// w = 1  vOrigin = vViewOrigtn * matInverseView;
 	D3DXVec3TransformCoord(&m_Ray.vOrigin, &vViewOrigin, &matInverseView);
 	// w= 0
-	D3DXVec3TransformNormal(&m_Ray.vDirecton, &vViewDir, &matInverseView);
+	D3DXVec3TransformNormal(&m_Ray.vDirection, &vViewDir, &matInverseView);
 }
 
 bool    TSelect::GetIntersection(

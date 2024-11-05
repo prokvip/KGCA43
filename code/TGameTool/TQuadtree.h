@@ -42,7 +42,10 @@ public:
 	TCamera* m_pCamera = nullptr;
 	TNode*  m_pRootNode = nullptr;
 	std::vector<TNode*>  m_LeafNodes;
+	std::vector<TNode*>  m_DrawNodes;
 	int		m_iMaxDepth = 3;
+public:
+	void  DrawFindNode(TNode * pParent);
 public:
 	void   BuildTree(TNode* pNode);
 	bool   SubDivide(TNode* pNode);
@@ -55,5 +58,10 @@ public:
 
 	void   DrawNodeBB(TNode* pNode);
 	void   DrawBB(TNode* pNode);
+	void   Set(TMap* pMap,TCamera* pCamera)
+	{
+		m_pMap = pMap;
+		m_pCamera = pCamera;
+	}
 };
 

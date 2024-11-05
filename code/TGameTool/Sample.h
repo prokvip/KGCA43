@@ -22,6 +22,7 @@ struct TMapObject
 };
 class Sample : public TCore
 {	
+public:
 	TSelect		m_Select;
 	TMap		m_Map;
 	TQuadtree   m_Quadtree;

@@ -65,7 +65,7 @@ void   Sample::Init()
 		m_pMapObjectList.emplace_back(obj);
 	}*/
 
-	m_Quadtree.m_pMap = &m_Map;
+	m_Quadtree.Set(&m_Map, &m_MainCamera);
 	m_Quadtree.Init();
 	m_Quadtree.BuildTree(m_Quadtree.m_pRootNode);
 
@@ -86,44 +86,54 @@ void	Sample::PreFrame()
 	m_Select.Frame();
 
 	std::vector<T::TVector3> vIntersectionList;
-	if (I_Input.Get().KeyCheck(VK_MBUTTON) == KEY_PUSH)
+	if (I_Input.Get().KeyCheck(VK_MBUTTON) == KEY_UP)
 	{
-		for (int iFace = 0; iFace < m_Map.m_iNumFace; iFace++)
+		for (auto node : m_Quadtree.m_DrawNodes)
 		{
-			UINT i0 = m_Map.m_vIndexList[iFace*3+0];
-			UINT i1 = m_Map.m_vIndexList[iFace * 3 + 1];
-			UINT i2 = m_Map.m_vIndexList[iFace * 3 + 2];
-			T::TVector3 v0 = m_Map.m_vVertexList[i0].p;
-			T::TVector3 v1 = m_Map.m_vVertexList[i1].p;
-			T::TVector3 v2 = m_Map.m_vVertexList[i2].p;
-			// 교점
-			T::TVector3 e = m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirecton * 1000.0f;
-			T::TVector3 s = m_Select.m_Ray.vOrigin;
-			T::TVector3 e0 = v1 - v0;
-			T::TVector3 e1 = v2 - v0;
-			T::TVector3 n;
-			D3DXVec3Cross(&n, &e0, &e1);
-			D3DXVec3Normalize(&n, &n);
-
-			float t, u, v;
-			if (m_Select.IntersectTriangle(
-								m_Select.m_Ray.vOrigin,
-								m_Select.m_Ray.vDirecton,
-								v0, v1, v2, &t,&u,&v))
+			BOOL bRet = m_Select.ChkBoxToRay(node->m_Box);
+			if (bRet == TRUE)
 			{
-				m_Select.m_vIntersection =
-					m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirecton * t;
-				vIntersectionList.push_back(m_Select.m_vIntersection);
-				SetObject(m_Select.m_vIntersection);
+				//node->m_Box : m_Select.m_Ray
+				//node->m_Sphere : m_Select.m_Ray
+
+				for (int iFace = 0; iFace < node->m_IndexList.size()/3; iFace++)
+				{
+					UINT i0 = node->m_IndexList[iFace * 3 + 0];
+					UINT i1 = node->m_IndexList[iFace * 3 + 1];
+					UINT i2 = node->m_IndexList[iFace * 3 + 2];
+					T::TVector3 v0 = m_Map.m_vVertexList[i0].p;
+					T::TVector3 v1 = m_Map.m_vVertexList[i1].p;
+					T::TVector3 v2 = m_Map.m_vVertexList[i2].p;
+					// 교점
+					T::TVector3 e = m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirection * 1000.0f;
+					T::TVector3 s = m_Select.m_Ray.vOrigin;
+					T::TVector3 e0 = v1 - v0;
+					T::TVector3 e1 = v2 - v0;
+					T::TVector3 n;
+					D3DXVec3Cross(&n, &e0, &e1);
+					D3DXVec3Normalize(&n, &n);
+
+					float t, u, v;
+					if (m_Select.IntersectTriangle(
+						m_Select.m_Ray.vOrigin,
+						m_Select.m_Ray.vDirection,
+						v0, v1, v2, &t, &u, &v))
+					{
+						m_Select.m_vIntersection =
+							m_Select.m_Ray.vOrigin + m_Select.m_Ray.vDirection * t;
+						vIntersectionList.push_back(m_Select.m_vIntersection);
+						SetObject(m_Select.m_vIntersection);
+					}
+					////if (m_Select.GetIntersection(v0, v1, v2, n, s, e))
+					////{				// 점포함 테스트
+					////	if (m_Select.PointInPolygon(m_Select.m_vIntersection, n,
+					////		v0, v1, v2))
+					////	{
+					////		vIntersectionList.push_back(m_Select.m_vIntersection);
+					////	}
+					////}
+				}
 			}
-			////if (m_Select.GetIntersection(v0, v1, v2, n, s, e))
-			////{				// 점포함 테스트
-			////	if (m_Select.PointInPolygon(m_Select.m_vIntersection, n,
-			////		v0, v1, v2))
-			////	{
-			////		vIntersectionList.push_back(m_Select.m_vIntersection);
-			////	}
-			////}
 		}
 	}
 }
@@ -152,6 +162,9 @@ void    Sample::Frame()
 	{
 		m_pFbxfileList[iFbx]->Get()->Frame();
 	}
+
+
+	m_Quadtree.Frame();
 }
 void    Sample::Render()
 {
@@ -167,7 +180,7 @@ void    Sample::Render()
 	m_Quadtree.Render();
 
 	m_Quadtree.m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_MainCamera.m_matProj);
-	m_Quadtree.DrawBB(m_Quadtree.m_pRootNode);
+	//m_Quadtree.DrawBB(m_Quadtree.m_pRootNode);
 
 	static bool m_bMainCamera = false;
 	if (TInput::Get().KeyCheck(VK_F3) == KEY_PUSH)

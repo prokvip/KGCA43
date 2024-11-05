@@ -228,9 +228,24 @@ void CTGameToolApp::SaveCustomState()
 
 
 BOOL CTGameToolApp::OnIdle(LONG lCount)
-{
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+{	
 	m_Tool.ToolGameFrame();
 	m_Tool.ToolGameRender();
+
+	static float fTime = 0.0f;
+	fTime += g_fSecondPerFrame;
+	if (fTime > 1.0f)
+	{
+		CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+		std::wstring msg = std::to_wstring(m_Tool.m_Quadtree.m_DrawNodes.size());
+		pFrame->m_wndOutput.m_wndOutputBuild.AddString(msg.c_str());
+		int iNum = pFrame->m_wndOutput.m_wndOutputBuild.GetCount();
+		if (iNum > 20)
+		{
+			pFrame->m_wndOutput.m_wndOutputBuild.ResetContent();
+		}
+		fTime -= 1.0f;
+	}
+
 	return TRUE;// __super::OnIdle(lCount);
 }

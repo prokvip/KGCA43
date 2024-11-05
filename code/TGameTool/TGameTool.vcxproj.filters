@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="coreSrc">
+      <UniqueIdentifier>{683e604a-fa3d-4a78-be81-aebfbe8d0e84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TGameTool.h">
@@ -54,14 +57,14 @@
     <ClInclude Include="pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Sample.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="TSelect.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>coreSrc</Filter>
     </ClInclude>
     <ClInclude Include="TQuadtree.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>coreSrc</Filter>
+    </ClInclude>
+    <ClInclude Include="Sample.h">
+      <Filter>coreSrc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -96,13 +99,13 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Sample.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TSelect.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>coreSrc</Filter>
     </ClCompile>
     <ClCompile Include="TQuadtree.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>coreSrc</Filter>
+    </ClCompile>
+    <ClCompile Include="TSelect.cpp">
+      <Filter>coreSrc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

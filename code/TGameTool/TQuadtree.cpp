@@ -102,6 +102,14 @@ TNode* TQuadtree::CreateNode(TNode* pNode, UINT TL, UINT TR, UINT BL, UINT BR)
 		}
 	}
 
+	pChild->m_Box.vCenter = (pChild->m_Box.vMax + pChild->m_Box.vMin) * 0.5f;
+	pChild->m_Box.vAxis[0] = { 1.0f, 0.0f, 0.0f };
+	pChild->m_Box.vAxis[1] = { 0.0f, 1.0f, 0.0f };
+	pChild->m_Box.vAxis[2] = { 0.0f, 0.0f, 1.0f };
+	pChild->m_Box.fDistance[0] = (pChild->m_Box.vMax.x - pChild->m_Box.vMin.x) * 0.5f;
+	pChild->m_Box.fDistance[1] = (pChild->m_Box.vMax.y - pChild->m_Box.vMin.y) * 0.5f;
+	pChild->m_Box.fDistance[2] = (pChild->m_Box.vMax.z - pChild->m_Box.vMin.z) * 0.5f;
+
 	pChild->m_Sphere.vCenter = (pChild->m_Box.vMax + pChild->m_Box.vMin) * 0.5f;
 	pChild->m_Sphere.m_fRadius = (pChild->m_Box.vMax - pChild->m_Sphere.vCenter).Length();
 	return pChild;
@@ -210,20 +218,42 @@ void   TQuadtree::BuildTree(TNode* pNode)
 		}
 	}
 }
+void   TQuadtree::DrawFindNode(TNode* pNode)
+{
+	if (pNode == nullptr) return;
+	bool bRet = m_pCamera->m_Frustum.FrustumInBox(pNode->m_Box);
+	if (bRet == true )
+	{
+		if ( pNode->isLeaf == true)
+		{
+			m_DrawNodes.push_back(pNode);
+		}
+	}
+	else
+	{
+		return;
+	}
+	for (int iChild = 0; iChild < 4; iChild++)
+	{
+		DrawFindNode(pNode->pChild[iChild]);
+	}
+}
 void   TQuadtree::Frame()
 {
-
+	m_DrawNodes.clear();
+	DrawFindNode(m_pRootNode);
 }
 void   TQuadtree::Render()
 {
 	//TNode* pNode = m_pRootNode->pChild[2];
-	for (auto pNode : m_LeafNodes)
+	//for (auto pNode : m_LeafNodes)
+	for (auto pNode : m_DrawNodes)
 	{		
 		TDevice::m_pContext->IASetIndexBuffer(
 			pNode->m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		PostRender(TDevice::m_pContext, pNode);
-		//break;
 	}
+	
 }
 void   TQuadtree::Release()
 {

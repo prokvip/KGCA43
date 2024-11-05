@@ -1,9 +1,9 @@
 #pragma once
-#include "TStd.h"
+#include "TCollision.h"
 struct TRayPick
 {
 	T::TVector3 vOrigin;
-	T::TVector3 vDirecton;
+	T::TVector3 vDirection;
 };
 class TSelect
 {
@@ -19,6 +19,9 @@ public:
 	void		Render();
 	void		Release();
 	void		SetMatrix(T::TMatrix* pWorld, T::TMatrix* pView, T::TMatrix* pProj);
+public:
+	BOOL		ChkBoxToRay(T_Box& box);
+	BOOL		ChkBoxToSphere(T_Sphere& sphere);
 public:
 	bool		GetIntersection(T::TVector3 v0,
 								T::TVector3 v1,

@@ -63,15 +63,15 @@ bool TFrustum::FrustumInBox(T_Box b)
 			m_Plane[p].b * b.vCenter.y +
 			m_Plane[p].c * b.vCenter.z + m_Plane[p].d;
 
-		fDistance = m_Plane[p].a * vAxisX.x +
+		fDistance = fabs(m_Plane[p].a * vAxisX.x +
 					m_Plane[p].b * vAxisX.y +
-					m_Plane[p].c * vAxisX.z;
-		fDistance += m_Plane[p].a * vAxisY.x +
+					m_Plane[p].c * vAxisX.z);
+		fDistance += fabs(m_Plane[p].a * vAxisY.x +
 					m_Plane[p].b * vAxisY.y +
-					m_Plane[p].c * vAxisY.z;
-		fDistance += m_Plane[p].a * vAxisZ.x +
+					m_Plane[p].c * vAxisY.z);
+		fDistance += fabs(m_Plane[p].a * vAxisZ.x +
 					m_Plane[p].b * vAxisZ.y +
-					m_Plane[p].c * vAxisZ.z;
+					m_Plane[p].c * vAxisZ.z);
 		if (fPlaneToCenter < -fDistance) return false;
 	}
 	return true;
