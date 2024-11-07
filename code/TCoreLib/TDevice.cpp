@@ -54,6 +54,10 @@ bool  TDevice::CreateDevice(HWND hWnd)
 }
 bool  TDevice::CreateRTV()
 {
+	if (m_pSwapChain)
+	{
+		m_pSwapChain->GetDesc(&m_SwapChainDesc);
+	}
 	return m_RT.CreateRTV(m_pd3dDevice.Get(), m_pSwapChain);
 	//HRESULT hr;
 	////ID3D11RenderTargetView* m_pRTV = nullptr;

@@ -1,5 +1,6 @@
 #include "TRenderTarget.h"
 #include "TDevice.h"
+#include "TTexMgr.h"
 bool  TRenderTarget::CreateRTV(ID3D11Device* pDevice,
 							   IDXGISwapChain* pSwapChain)
 {
@@ -23,6 +24,9 @@ bool  TRenderTarget::CreateRTV(ID3D11Device* pDevice,
 	}
 	if (pSwapChain)
 		pSwapChain->GetDesc(&m_SwapChainDesc);
+
+	m_iWidthVP = m_SwapChainDesc.BufferDesc.Width;
+	m_iHeightVP = m_SwapChainDesc.BufferDesc.Height;
 	return true;
 }
 void  TRenderTarget::Begin()
@@ -33,10 +37,11 @@ void  TRenderTarget::Begin()
 	TDevice::m_pContext->ClearDepthStencilView(m_pDSV.Get(),
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	TDevice::m_pContext->OMSetRenderTargets(1, m_pRTV.GetAddressOf(), m_pDSV.Get());
+	SetViewport(m_iWidthVP,	m_iHeightVP);
 }
 void  TRenderTarget::End()
 {
-
+	//I_Tex.SaveFile(L"rt", m_pTexRT.Get());
 }
 void  TRenderTarget::DeleteDevice()
 {	
@@ -48,8 +53,8 @@ void  TRenderTarget::SetViewport(UINT iWidth, UINT iHeight)
 	//m_pSwapChain->GetDesc(&cd);
 	m_ViewPort.TopLeftX = 0;
 	m_ViewPort.TopLeftY = 0;
-	m_ViewPort.Width = m_SwapChainDesc.BufferDesc.Width;
-	m_ViewPort.Height = m_SwapChainDesc.BufferDesc.Height;
+	m_ViewPort.Width = iWidth;
+	m_ViewPort.Height = iHeight;
 	m_ViewPort.MinDepth = 0;
 	m_ViewPort.MaxDepth = 1;
 	TDevice::m_pContext->RSSetViewports(1, &m_ViewPort);
@@ -95,10 +100,65 @@ void  TRenderTarget::Release()
 }
 bool	TRenderTarget::Create(ID3D11Device* pDevice, UINT iWidth, UINT iHeight)
 {
-	return false;
+	HRESULT hr;
+	
+	D3D11_TEXTURE2D_DESC td;
+	ZeroMemory(&td, sizeof(td));
+	td.Width = iWidth;
+	td.Height = iHeight;
+	td.MipLevels = 1;
+	td.ArraySize = 1;
+	td.Format = DXGI_FORMAT_R8G8B8A8_UNORM; 
+	td.SampleDesc.Count = 1;
+	td.Usage = D3D11_USAGE_DEFAULT;
+	td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	hr = TDevice::m_pd3dDevice->CreateTexture2D(&td, 
+		nullptr, m_pTexRT.GetAddressOf());
+	if (FAILED(hr)) return hr;
+
+	hr = pDevice->CreateRenderTargetView(
+		m_pTexRT.Get(),
+		nullptr,
+		m_pRTV.GetAddressOf());
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	hr = pDevice->CreateShaderResourceView(
+		m_pTexRT.Get(),
+		nullptr,
+		m_pSRV_RT.GetAddressOf());
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	
+	m_iWidthVP = iWidth;
+	m_iHeightVP = iHeight;
+	return true;
 }
-ID3D11Texture2D* TRenderTarget::CreateTexture(ID3D11Device* pDevice, UINT iWidth, UINT iHeight)
+ID3D11Texture2D* TRenderTarget::CreateTexture(
+	ID3D11Device* pDevice, UINT iWidth, UINT iHeight)
 {
+	HRESULT hr;
+	/// <summary>
+	/// 텍스처 생성
+	/// </summary>
+	/// <returns></returns>
+	//ComPtr<ID3D11Texture2D> tex;
+	//D3D11_TEXTURE2D_DESC td;
+	//ZeroMemory(&td, sizeof(td));
+	//td.Width = iWidth;
+	//td.Height = iHeight;
+	//td.MipLevels = 1;
+	//td.ArraySize = 1;
+	//td.Format = DXGI_FORMAT_R24G8_TYPELESS; // D,S
+	//td.SampleDesc.Count = 1;
+	//td.Usage = D3D11_USAGE_DEFAULT;
+	//td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	//hr = TDevice::m_pd3dDevice->CreateTexture2D(&td, nullptr, tex.GetAddressOf());
+	//if (FAILED(hr)) return hr;
 	return nullptr;
 }
 bool	TRenderTarget::CreateRTV(ID3D11Device* pDevice, ID3D11Texture2D* pTex)

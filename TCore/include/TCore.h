@@ -15,9 +15,11 @@
 class TCore : public TWindow, public TBaseCore
 {
 public:
+	bool			m_isTexRender = false;
 	TCamera			m_MainCamera;
 	TLineObj		m_Line;
 	TRenderTarget	m_MainRT;
+	TPlaneObj		m_ViewportObj;
 public:
 	bool			m_bDepthEnable = true;
 	bool			m_bSolidEnable = true;

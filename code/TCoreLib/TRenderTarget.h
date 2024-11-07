@@ -13,8 +13,14 @@ using namespace Microsoft::WRL;
 class TRenderTarget
 {
 public:
+	UINT			m_iWidthVP = 0;
+	UINT			m_iHeightVP = 0;
 	// backbuffer -> Set RT
+	ComPtr<ID3D11Texture2D> m_pTexRT = nullptr;
 	ComPtr<ID3D11RenderTargetView>	m_pRTV = nullptr;
+	ComPtr<ID3D11ShaderResourceView>	m_pSRV_RT = nullptr;
+
+	ComPtr<ID3D11Texture2D> m_pTexDS = nullptr;
 	ComPtr<ID3D11DepthStencilView>  m_pDSV = nullptr;
 	D3D11_VIEWPORT					m_ViewPort;
 	DXGI_SWAP_CHAIN_DESC			m_SwapChainDesc;

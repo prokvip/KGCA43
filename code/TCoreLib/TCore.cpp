@@ -195,13 +195,20 @@ void   TCore::GamePostFrame()
 }
 void  TCore::GamePreRender()
 {
-	TDevice::m_RT.Begin();
-	///*float clearColor[] = { 0.343f, 0.45f, 0.74f, 1.0f };
-	//TDevice::m_pContext->ClearRenderTargetView(TDevice::m_pRTV, clearColor);
-	//TDevice::m_pContext->ClearDepthStencilView(m_pDSV.Get(),
-	//						D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f, 0);
-	//TDevice::m_pContext->OMSetRenderTargets(1, &TDevice::m_pRTV,  m_pDSV.Get());
-	//*/
+	if (m_isTexRender)
+	{
+		m_MainRT.Begin();
+	}
+	else
+	{
+		TDevice::m_RT.Begin();		
+		///*float clearColor[] = { 0.343f, 0.45f, 0.74f, 1.0f };
+		//TDevice::m_pContext->ClearRenderTargetView(TDevice::m_pRTV, clearColor);
+		//TDevice::m_pContext->ClearDepthStencilView(m_pDSV.Get(),
+		//						D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f, 0);
+		//TDevice::m_pContext->OMSetRenderTargets(1, &TDevice::m_pRTV,  m_pDSV.Get());
+		//*/
+	}
 	TDevice::m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
 	
 	if (m_bDepthEnable)
@@ -231,6 +238,20 @@ void  TCore::GamePostRender()
 	PostRender();
 	DebugRender();
 	m_font.DrawText(m_Timer.m_csBuffer, { 0,0 });
+
+	if (m_isTexRender)
+	{
+		m_MainRT.End();
+
+		TDevice::m_RT.Begin();
+		// screen quad 
+		m_ViewportObj.SetMatrix(nullptr, nullptr, nullptr);
+		m_ViewportObj.PreRender(TDevice::m_pContext);
+		TDevice::m_pContext->PSSetShaderResources(0,
+			1, m_MainRT.m_pSRV_RT.GetAddressOf());
+		m_ViewportObj.PostRender(TDevice::m_pContext);
+		TDevice::m_RT.End();
+	}
 	TDevice::m_pSwapChain->Present(0, 0);
 }
 void   TCore::GameRender()
@@ -287,6 +308,8 @@ void   TCore::GameInit()
 			(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
 		m_MainCamera.SetView(eye, target, up);
 		
+
+		m_ViewportObj.Create(L"", L"../../data/shader/ScreenQuad.txt");
 		Reset();
 	}
 	Init();
