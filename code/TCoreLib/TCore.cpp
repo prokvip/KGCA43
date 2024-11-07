@@ -9,7 +9,7 @@ void TCore::Resize(UINT Width, UINT Height)
 	
 	m_font.ResourceRelease();
 	TDevice::m_pContext->OMSetRenderTargets(0, nullptr, nullptr);
-	TDevice::m_pRTV->Release();
+	TDevice::m_RT.m_pRTV->Release();
 
 	// 갱신 -> m_SwapChainDesc
 	hr = TDevice::m_pSwapChain->ResizeBuffers(
@@ -23,7 +23,8 @@ void TCore::Resize(UINT Width, UINT Height)
 	TDevice::CreateRTV();
 	CreateDepthBuffer();
 
-	TDevice::SetViewport();	
+	TDevice::SetViewport(TDevice::m_SwapChainDesc.BufferDesc.Width,
+						 TDevice::m_SwapChainDesc.BufferDesc.Height);
 	SetFontRTV();
 
 	GetWindowRect(m_hWnd, &m_rtWindow);
@@ -144,39 +145,12 @@ HRESULT  TCore::SetAlphaBlendState()
 }
 HRESULT TCore::CreateDepthBuffer()
 {
-	HRESULT hr;
-	/// <summary>
-	/// 텍스처 생성
-	/// </summary>
-	/// <returns></returns>
-	ComPtr<ID3D11Texture2D> tex;
-	D3D11_TEXTURE2D_DESC td;
-	ZeroMemory(&td, sizeof(td));
-	td.Width = TDevice::m_SwapChainDesc.BufferDesc.Width;
-	td.Height = TDevice::m_SwapChainDesc.BufferDesc.Height;
-	td.MipLevels = 1;
-	td.ArraySize = 1;
-	td.Format = DXGI_FORMAT_R24G8_TYPELESS; // D,S
-	td.SampleDesc.Count = 1;
-	td.Usage = D3D11_USAGE_DEFAULT;
-	td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	hr = TDevice::m_pd3dDevice->CreateTexture2D(&td, nullptr, tex.GetAddressOf());
-	if (FAILED(hr)) return hr;
+	HRESULT hr = TDevice::m_RT.CreateDepthBuffer(
+		TDevice::m_SwapChainDesc.BufferDesc.Width,
+		TDevice::m_SwapChainDesc.BufferDesc.Height);
 
-	/// <summary>
-	/// DepthStencilView 생성
-	/// </summary>
-	/// <returns></returns>
-	D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
-	ZeroMemory(&dsvd, sizeof(dsvd));
-	dsvd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	//dsvd.Texture2D.MipSlice  -> ShaderResourceVie에서 사용됨.
-	hr = TDevice::m_pd3dDevice->CreateDepthStencilView(tex.Get(), &dsvd, m_pDSV.ReleaseAndGetAddressOf());
-	if (FAILED(hr)) return hr;
-
-	
-	return hr;
+	hr = m_MainRT.Create(TDevice::m_pd3dDevice.Get(),1024, 1024);	
+	return S_OK;
 }
 void TCore::Init(){}
 void TCore::Frame() {}
@@ -221,12 +195,13 @@ void   TCore::GamePostFrame()
 }
 void  TCore::GamePreRender()
 {
-	float clearColor[] = { 0.343f, 0.45f, 0.74f, 1.0f };
-	TDevice::m_pContext->ClearRenderTargetView(TDevice::m_pRTV, clearColor);
-	TDevice::m_pContext->ClearDepthStencilView(m_pDSV.Get(),
-							D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f, 0);
-	TDevice::m_pContext->OMSetRenderTargets(1, &TDevice::m_pRTV,  m_pDSV.Get());
-	
+	TDevice::m_RT.Begin();
+	///*float clearColor[] = { 0.343f, 0.45f, 0.74f, 1.0f };
+	//TDevice::m_pContext->ClearRenderTargetView(TDevice::m_pRTV, clearColor);
+	//TDevice::m_pContext->ClearDepthStencilView(m_pDSV.Get(),
+	//						D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1.0f, 0);
+	//TDevice::m_pContext->OMSetRenderTargets(1, &TDevice::m_pRTV,  m_pDSV.Get());
+	//*/
 	TDevice::m_pContext->OMSetBlendState(m_pAlphaBlend.Get(), 0, -1);
 	
 	if (m_bDepthEnable)
@@ -350,5 +325,6 @@ void   TCore::GameRelease()
 	I_Tex.Release();
 
 	m_font.Release();
+	m_MainRT.Release();
 	TDevice::DeleteDevice();
 }

@@ -3,8 +3,9 @@
 ComPtr<ID3D11Device>		TDevice::m_pd3dDevice = nullptr;
 ID3D11DeviceContext*		TDevice::m_pContext = nullptr;
 IDXGISwapChain*				TDevice::m_pSwapChain = nullptr;
-ID3D11RenderTargetView*		TDevice::m_pRTV = nullptr;
-D3D11_VIEWPORT				TDevice::m_ViewPort;
+TRenderTarget				TDevice::m_RT;
+//ID3D11RenderTargetView*		TDevice::m_pRTV = nullptr;
+//D3D11_VIEWPORT				TDevice::m_ViewPort;
 DXGI_SWAP_CHAIN_DESC		TDevice::m_SwapChainDesc;
 bool  TDevice::CreateDevice(HWND hWnd)
 {
@@ -46,32 +47,35 @@ bool  TDevice::CreateDevice(HWND hWnd)
 	}
 
 	TDevice::CreateRTV();
-	TDevice::SetViewport();	
+	TDevice::SetViewport(
+		TDevice::m_SwapChainDesc.BufferDesc.Width,
+		TDevice::m_SwapChainDesc.BufferDesc.Height);
 	return true;
 }
 bool  TDevice::CreateRTV()
 {
-	HRESULT hr;
-	//ID3D11RenderTargetView* m_pRTV = nullptr;
-	if (m_pd3dDevice != nullptr && m_pSwapChain != nullptr)
-	{
-		ComPtr<ID3D11Texture2D> pBackBuffer = nullptr;
-		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-			(void**)pBackBuffer.GetAddressOf());
+	return m_RT.CreateRTV(m_pd3dDevice.Get(), m_pSwapChain);
+	//HRESULT hr;
+	////ID3D11RenderTargetView* m_pRTV = nullptr;
+	//if (m_pd3dDevice != nullptr && m_pSwapChain != nullptr)
+	//{
+	//	ComPtr<ID3D11Texture2D> pBackBuffer = nullptr;
+	//	m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+	//		(void**)pBackBuffer.GetAddressOf());
 
-		D3D11_RENDER_TARGET_VIEW_DESC* pDesc = nullptr;
-		hr = m_pd3dDevice->CreateRenderTargetView(
-			pBackBuffer.Get(),
-			pDesc,
-			&m_pRTV);
-		if (FAILED(hr))
-		{
-			return false;
-		}
-	}
-	if (m_pSwapChain)
-		m_pSwapChain->GetDesc(&m_SwapChainDesc);
-	return true;
+	//	D3D11_RENDER_TARGET_VIEW_DESC* pDesc = nullptr;
+	//	hr = m_pd3dDevice->CreateRenderTargetView(
+	//		pBackBuffer.Get(),
+	//		pDesc,
+	//		&m_pRTV);
+	//	if (FAILED(hr))
+	//	{
+	//		return false;
+	//	}
+	//}
+	//if (m_pSwapChain)
+	//	m_pSwapChain->GetDesc(&m_SwapChainDesc);
+	//return true;
 }
 void  TDevice::DeleteDevice()
 {
@@ -90,21 +94,18 @@ void  TDevice::DeleteDevice()
 		m_pContext->Release();
 		m_pContext = nullptr;
 	}
-	if (m_pRTV)
-	{
-		m_pRTV->Release();
-		m_pRTV = nullptr;
-	}
+	m_RT.DeleteDevice();
 }
-void  TDevice::SetViewport()
+void  TDevice::SetViewport(UINT iWidth, UINT iHeight)
 {
-	//DXGI_SWAP_CHAIN_DESC cd;
-	//m_pSwapChain->GetDesc(&cd);
-	m_ViewPort.TopLeftX = 0;
-	m_ViewPort.TopLeftY = 0;
-	m_ViewPort.Width  = m_SwapChainDesc.BufferDesc.Width;
-	m_ViewPort.Height = m_SwapChainDesc.BufferDesc.Height;
-	m_ViewPort.MinDepth = 0;
-	m_ViewPort.MaxDepth = 1;
-	m_pContext->RSSetViewports(1, &m_ViewPort);
+	m_RT.SetViewport(iWidth, iHeight);
+	////DXGI_SWAP_CHAIN_DESC cd;
+	////m_pSwapChain->GetDesc(&cd);
+	//m_ViewPort.TopLeftX = 0;
+	//m_ViewPort.TopLeftY = 0;
+	//m_ViewPort.Width  = m_SwapChainDesc.BufferDesc.Width;
+	//m_ViewPort.Height = m_SwapChainDesc.BufferDesc.Height;
+	//m_ViewPort.MinDepth = 0;
+	//m_ViewPort.MaxDepth = 1;
+	//m_pContext->RSSetViewports(1, &m_ViewPort);
 }

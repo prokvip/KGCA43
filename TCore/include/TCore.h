@@ -17,13 +17,14 @@ class TCore : public TWindow, public TBaseCore
 public:
 	TCamera			m_MainCamera;
 	TLineObj		m_Line;
+	TRenderTarget	m_MainRT;
 public:
 	bool			m_bDepthEnable = true;
 	bool			m_bSolidEnable = true;
 	bool			m_bLinearEnable = true;
 	TTimer			m_Timer;
 	TWriterFont		m_font;
-	ComPtr<ID3D11DepthStencilView>  m_pDSV = nullptr;
+	
 	ComPtr<ID3D11DepthStencilState> m_pDepthEnable = nullptr;
 	ComPtr<ID3D11DepthStencilState> m_pDepthDisable = nullptr;
 	ComPtr<ID3D11BlendState>		m_pAlphaBlend = nullptr;

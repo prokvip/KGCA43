@@ -43,7 +43,7 @@ public:
 	TNode*  m_pRootNode = nullptr;
 	std::vector<TNode*>  m_LeafNodes;
 	std::vector<TNode*>  m_DrawNodes;
-	int		m_iMaxDepth = 3;
+	int		m_iMaxDepth = 5;
 public:
 	void  DrawFindNode(TNode * pParent);
 public:
