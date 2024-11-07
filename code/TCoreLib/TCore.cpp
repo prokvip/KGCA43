@@ -341,6 +341,7 @@ void   TCore::GameRun()
 void   TCore::GameRelease()
 {
 	Release();
+	m_ViewportObj.Release();
 	m_Line.Release();
 
 	I_Sound.Release();

@@ -76,7 +76,8 @@ void   Sample::Init()
 	m_MainCamera.SetView(eye, target, up);
 
 
-	
+	m_MiniMapObj.Create(L"../../data/22879344.jpg", 
+		L"../../data/shader/ScreenQuad.txt");
 }
 void	Sample::PreFrame()
 {
@@ -232,9 +233,13 @@ void    Sample::Render()
 			model->Get()->Render(TDevice::m_pContext);
 		}
 	}
+
+	m_MiniMapObj.SetMatrix(nullptr, nullptr, nullptr);
+	m_MiniMapObj.Render(TDevice::m_pContext);
 }
 void    Sample::Release()
 {
+	m_MiniMapObj.Release();
 	I_Object.Release();
 	m_Map.Release();
 	m_Quadtree.Release();
