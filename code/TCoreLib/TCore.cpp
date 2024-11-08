@@ -300,6 +300,8 @@ void   TCore::GameInit()
 
 		m_Line.Create(L"../../data/obj.jpg", L"../../data/shader/line.hlsl");
 
+
+		m_MainCamera.Init();
 		T::TVector3 eye = { 0.0f, 0.0f, -25.0f };
 		T::TVector3 target = { 0.0f, 0.0f, 0.0f };
 		T::TVector3 up = { 0.0f, 1.0f, 0.0f };
@@ -343,6 +345,7 @@ void   TCore::GameRelease()
 	Release();
 	m_ViewportObj.Release();
 	m_Line.Release();
+	m_MainCamera.Release();
 
 	I_Sound.Release();
 	I_Shader.Release();

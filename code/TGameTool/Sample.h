@@ -26,6 +26,7 @@ class TMiniMap : public TPlaneObj
 public:
 	D3D11_VIEWPORT					    m_ViewPort;
 	ComPtr<ID3D11ShaderResourceView>	m_pSRV_RT;
+	TBoxObj								m_FrustumObj;
 public:
 	void   Render(ID3D11DeviceContext* pContext) override
 	{
@@ -35,8 +36,8 @@ public:
 			TDevice::m_pContext->RSSetViewports(
 				1, &m_ViewPort);
 			PreRender(pContext);
-			/*TDevice::m_pContext->PSSetShaderResources(0,
-				1, m_pSRV_RT.GetAddressOf());*/
+			TDevice::m_pContext->PSSetShaderResources(0,
+				1, m_pSRV_RT.GetAddressOf());
 			PostRender(pContext);
 		//TDevice::m_pContext->RSSetViewports(iNumVp, &vp);
 			TDevice::m_pContext->RSSetViewports(1, 
@@ -57,6 +58,9 @@ public:
 class Sample : public TCore
 {	
 public:
+	TRenderTarget	m_TopViewRT;
+	TCamera			m_TopViewCamera;
+public:
 	TSelect		m_Select;
 	TMap		m_Map;
 	TQuadtree   m_Quadtree;
@@ -72,8 +76,12 @@ public:
 	void   Init() override;
 	void   PreFrame() override;
 	void   Frame() override;
+	void   PostFrame() override;
 	void   Render() override;
 	void   Release() override;
 	void   LoadTextureAndPixelWriteSave(T_STR texName, T_STR texSave);
 	void   SetObject(T::TVector3 vPos);
+	void   MapRender(TCamera* pCamera);
+	void   MiniMapRander(ID3D11ShaderResourceView* pSRV);
+	void   CreateTopViewRT();
 };

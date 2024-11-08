@@ -19,11 +19,15 @@ public:
 	float		m_fRoll = 0.0f;
 
 public:
+	void Init();
 	void MoveLook(float d);
 	void MoveUp(float d);
 	void MoveSide(float d);
 	void UpdateVector();
 	void Frame();
+	void FrustumRender(T::TMatrix& matView, T::TMatrix& matProj);
+	void Release();
+
 	void Update(float x, float y, float z, float d);
 	void SetView(T::TVector3 eye, T::TVector3 target, T::TVector3 up);
 	void SetProj(float fFov, float fAspect, float fNear =1.0f, float fFar= 1000.0f);

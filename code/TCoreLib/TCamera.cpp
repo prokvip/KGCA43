@@ -1,5 +1,9 @@
 #include "TCamera.h"
 #include "TInput.h"
+void TCamera::Init()
+{
+	m_Frustum.m_Box.Create(L"", L"../../data/shader/DrawColor.txt");
+}
 void TCamera::Frame()
 {
 	if (TInput::Get().KeyCheck(VK_SPACE))	m_fSpeed += g_fSecondPerFrame * 10.0f;
@@ -124,10 +128,17 @@ void TCamera::UpdateVector()
 	this->m_fYaw = atan2f(pZAxis->x, pZAxis->z);
 	
 
-	m_Frustum.SetMatrix(nullptr, &m_matView, &m_matProj);
+	m_Frustum.Set(nullptr, &m_matView, &m_matProj);
 
 }
-
+void TCamera::FrustumRender(T::TMatrix& matView, T::TMatrix& matProj)
+{	
+	m_Frustum.Draw(matView, matProj);
+}
+void TCamera::Release()
+{
+	m_Frustum.m_Box.Release();
+}
 void  TCamera::SetProj(float fFov, float fAspect, float fNear, float fFar)
 {
 	T::D3DXMatrixPerspectiveFovLH(&m_matProj, fFov,

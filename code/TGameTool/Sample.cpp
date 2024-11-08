@@ -16,8 +16,21 @@ void   Sample::SetObject(T::TVector3 vPos)
 	m_pMapObjectList.emplace_back(obj);
 	
 }
+void   Sample::CreateTopViewRT()
+{
+	m_TopViewRT.Create(TDevice::m_pd3dDevice.Get(), 1024, 1024);
+	T::TVector3 eye = { 0.0f, 10000.0f, -1.0f };
+	T::TVector3 target = { 0.0f, 0.0f, 0.0f };
+	T::TVector3 up = { 0.0f, 1.0f, 0.0f };
+	// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
+	m_TopViewCamera.SetView(eye, target, up);
+	m_TopViewCamera.SetProj(XM_PI * 0.25f,
+		(float)300.0f / (float)300.0f, 1.0f, 10000.0f);
+}
 void   Sample::Init()
 {
+	CreateTopViewRT();
+
 	m_LightInfo.m_vLightDir = T::TVector4(0, -1, 0, 1);
 	m_pConstantBufferLight.Attach(
 		TDxObject::CreateConstantBuffer(TDevice::m_pd3dDevice.Get(),
@@ -167,13 +180,23 @@ void    Sample::Frame()
 
 	m_Quadtree.Frame();
 }
-void    Sample::Render()
+void    Sample::PostFrame()
+{	
+	m_TopViewRT.Begin();
+	MapRender(&m_TopViewCamera);
+	m_MainCamera.FrustumRender( m_TopViewCamera.m_matView,
+							    m_TopViewCamera.m_matProj);
+	m_TopViewRT.End();	
+
+	m_MiniMapObj.m_pSRV_RT = m_TopViewRT.m_pSRV_RT;
+}
+void    Sample::MapRender(TCamera* pCamera)
 {
 	TDevice::m_pContext->VSSetConstantBuffers(1, 1, m_pConstantBufferLight.GetAddressOf());
-
-	m_Map.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_MainCamera.m_matProj);
+	m_Map.SetMatrix(nullptr, &pCamera->m_matView,
+							 &pCamera->m_matProj);
 	m_Map.PreRender(TDevice::m_pContext);
-	
+
 	TDevice::m_pContext->IASetIndexBuffer(
 		m_Quadtree.m_pRootNode->m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	//m_Quadtree.PostRender(TDevice::m_pContext, m_Quadtree.m_pRootNode);
@@ -182,6 +205,10 @@ void    Sample::Render()
 
 	m_Quadtree.m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_MainCamera.m_matProj);
 	//m_Quadtree.DrawBB(m_Quadtree.m_pRootNode);
+}
+void    Sample::Render()
+{
+	MapRender(&m_MainCamera);
 
 	static bool m_bMainCamera = false;
 	if (TInput::Get().KeyCheck(VK_F3) == KEY_PUSH)
@@ -234,12 +261,18 @@ void    Sample::Render()
 		}
 	}
 
+	MiniMapRander(nullptr);	
+}
+void    Sample::MiniMapRander(ID3D11ShaderResourceView* pSRV)
+{
 	m_MiniMapObj.SetMatrix(nullptr, nullptr, nullptr);
 	m_MiniMapObj.Render(TDevice::m_pContext);
 }
 void    Sample::Release()
 {
 	m_MiniMapObj.Release();
+	m_TopViewRT.Release();
+
 	I_Object.Release();
 	m_Map.Release();
 	m_Quadtree.Release();
