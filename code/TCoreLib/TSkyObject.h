@@ -19,7 +19,9 @@ public:
 
 class TSkyBox : public TSkyObject
 {
-	TTexture* m_pSRV[6];
+	TTexture* m_pTex[6];
+	ComPtr<ID3D11ShaderResourceView> m_pSRVArray[6];
+	ComPtr<ID3D11ShaderResourceView> m_pCubeSRV;
 public:	
 	TBoxObj		m_Mesh;
 	bool   Create(std::wstring texName, std::wstring hlsl);
@@ -27,7 +29,9 @@ public:
 	virtual void   SetMatrix(T::TMatrix* pWorld, T::TMatrix* pView, T::TMatrix* pProj);
 	virtual void   Frame();
 	virtual void   Render();
-	virtual void   PostRender(ID3D11DeviceContext* pContext);
+	virtual void   PostRender1(ID3D11DeviceContext* pContext);
+	virtual void   PostRender6(ID3D11DeviceContext* pContext);
+	void		   PostRenderCube(ID3D11DeviceContext* pContext);
 	virtual void   Release();
 };
 

@@ -47,6 +47,11 @@ bool   TSkyBox::Create(std::wstring texName, std::wstring hlsl)
 		L"..\\..\\data\\sky\\st00_cm_up.bmp",
 		L"..\\..\\data\\sky\\st00_cm_down.bmp"
 	};	
+	//m_pCubeSRV.Attach(
+	//	I_Tex.Load(L"..\\..\\data\\sky\\grassenvmap1024.dds")->m_pSRV.Get());
+	m_pCubeSRV.Attach(
+		I_Tex.Load(L"..\\..\\data\\sky\\Default_reflection.dds")->m_pSRV.Get());
+
 	return Create(texList, hlsl);
 };
 bool   TSkyBox::Create(std::vector<std::wstring> texList, std::wstring hlsl)
@@ -54,7 +59,8 @@ bool   TSkyBox::Create(std::vector<std::wstring> texList, std::wstring hlsl)
 	SetRasterizerState();
 	for (int i = 0; i < texList.size(); i++)
 	{
-		m_pSRV[i] = I_Tex.Load(texList[i]).get();
+		m_pTex[i] = I_Tex.Load(texList[i]).get();
+		m_pSRVArray[i].Attach(m_pTex[i]->m_pSRV.Get());
 	}
 	return m_Mesh.Create(texList[0], hlsl);
 };
@@ -73,16 +79,47 @@ void   TSkyBox::Render()
 	TDevice::m_pContext->RSGetState(&pSaveRS);
 	TDevice::m_pContext->RSSetState(m_pRSCullNone.Get());
 	m_Mesh.PreRender(TDevice::m_pContext);
-	PostRender(TDevice::m_pContext);
+	PostRenderCube(TDevice::m_pContext);
 	TDevice::m_pContext->RSSetState(pSaveRS);
 };
 void   TSkyBox::Release() {};
-void   TSkyBox::PostRender(ID3D11DeviceContext* pContext)
+void   TSkyBox::PostRender1(ID3D11DeviceContext* pContext)
+{
+	pContext->PSSetSamplers(0, 1, m_pSSPoint.GetAddressOf());
+	pContext->PSSetShaderResources(1, 6, m_pSRVArray[0].GetAddressOf());
+	if (m_Mesh.m_pIndexBuffer != nullptr)
+	{
+		pContext->DrawIndexed(m_Mesh.m_vIndexList.size(), 0, 0);
+	}
+	else
+	{
+		// ONLY VB
+		pContext->Draw(m_Mesh.m_vVertexList.size(), 0);
+	}
+	TDevice::m_pContext->PSSetSamplers(0, 1, m_pSSLinear.GetAddressOf());
+}
+void   TSkyBox::PostRenderCube(ID3D11DeviceContext* pContext)
+{
+	pContext->PSSetSamplers(0, 1, m_pSSLinear.GetAddressOf());
+	pContext->PSSetSamplers(1, 1, m_pSSPoint.GetAddressOf());
+	pContext->PSSetShaderResources(3, 1, m_pCubeSRV.GetAddressOf());
+	if (m_Mesh.m_pIndexBuffer != nullptr)
+	{
+		pContext->DrawIndexed(m_Mesh.m_vIndexList.size(), 0, 0);
+	}
+	else
+	{
+		// ONLY VB
+		pContext->Draw(m_Mesh.m_vVertexList.size(), 0);
+	}
+	TDevice::m_pContext->PSSetSamplers(0, 1, m_pSSLinear.GetAddressOf());
+}
+void   TSkyBox::PostRender6(ID3D11DeviceContext* pContext)
 {
 	TDevice::m_pContext->PSSetSamplers(0, 1, m_pSSPoint.GetAddressOf());
 	for (int i = 0; i < 6; i++)
 	{
-		pContext->PSSetShaderResources(0, 1, m_pSRV[i]->m_pSRV.GetAddressOf());
+		pContext->PSSetShaderResources(0, 1, m_pTex[i]->m_pSRV.GetAddressOf());
 
 		if (m_Mesh.m_pIndexBuffer != nullptr)
 		{
