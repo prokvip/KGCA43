@@ -33,7 +33,7 @@ void TCore::Resize(UINT Width, UINT Height)
 	g_yClientSize = m_rtClient.bottom;
 
 	m_MainCamera.SetProj(XM_PI * 0.25f,
-		(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
+		(float)g_xClientSize / (float)g_yClientSize, 0.1f, 10000.0f);
 
 	Reset();
 }
@@ -62,8 +62,7 @@ HRESULT  TCore::SetDepthStencilState()
 
 	dsd.DepthEnable = FALSE;
 	hr = TDevice::m_pd3dDevice->CreateDepthStencilState(&dsd, m_pDepthDisable.GetAddressOf());
-	if (FAILED(hr)) return hr;
-
+	return hr;
 }
 HRESULT  TCore::SetRasterizerState()
 {
@@ -79,6 +78,13 @@ HRESULT  TCore::SetRasterizerState()
 	rd.FillMode = D3D11_FILL_WIREFRAME;
 	hr = TDevice::m_pd3dDevice->CreateRasterizerState(&rd, m_pRSWireFrame.GetAddressOf());
 	if (FAILED(hr)) return hr;
+
+	rd.FillMode = D3D11_FILL_SOLID;
+	rd.CullMode = D3D11_CULL_NONE;
+	hr = TDevice::m_pd3dDevice->CreateRasterizerState(&rd, 
+		m_pRSCullNone.GetAddressOf());
+	if (FAILED(hr)) return hr;
+
 	return hr;
 }
 HRESULT  TCore::SetSamplerState()
@@ -180,7 +186,7 @@ void   TCore::GamePreFrame()
 	}
 
 	m_MainCamera.Frame();
-
+	m_SkyObject->Frame();
 	PreFrame();
 }
 void   TCore::GameFrame()
@@ -231,6 +237,11 @@ void  TCore::GamePreRender()
 		TDevice::m_pContext->PSSetSamplers(0, 1, m_pSSPoint.GetAddressOf());
 	}
 	TDevice::m_pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
+	m_SkyObject->SetMatrix(nullptr, &m_MainCamera.m_matView,
+		&m_MainCamera.m_matProj);
+	m_SkyObject->Render();
+
 	PreRender();
 }
 void  TCore::GamePostRender()
@@ -307,9 +318,13 @@ void   TCore::GameInit()
 		T::TVector3 up = { 0.0f, 1.0f, 0.0f };
 		// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
 		m_MainCamera.SetProj(XM_PI * 0.25f,
-			(float)g_xClientSize / (float)g_yClientSize, 1.0f, 10000.0f);
+			(float)g_xClientSize / (float)g_yClientSize,
+			0.1f, 10000.0f);
 		m_MainCamera.SetView(eye, target, up);
 		
+		m_SkyObject = std::make_shared<TSkyBox>();
+		m_SkyObject->Create(L"../../data/obj.jpg",
+			L"../../data/shader/skyobject.hlsl");
 
 		m_ViewportObj.Create(L"", L"../../data/shader/ScreenQuad.txt");
 		Reset();
@@ -346,6 +361,7 @@ void   TCore::GameRelease()
 	m_ViewportObj.Release();
 	m_Line.Release();
 	m_MainCamera.Release();
+	m_SkyObject->Release();
 
 	I_Sound.Release();
 	I_Shader.Release();

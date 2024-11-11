@@ -11,6 +11,7 @@
 #include "TBoxObj.h"
 #include "TLineObj.h"
 #include "TCamera.h"
+#include "TSkyObject.h"
 // 테스트를 완료하고  TCore에 포함한다.
 class TCore : public TWindow, public TBaseCore
 {
@@ -20,6 +21,7 @@ public:
 	TLineObj		m_Line;
 	TRenderTarget	m_MainRT;
 	TPlaneObj		m_ViewportObj;
+	std::shared_ptr<TSkyObject>		m_SkyObject;
 public:
 	bool			m_bDepthEnable = true;
 	bool			m_bSolidEnable = true;
@@ -31,6 +33,7 @@ public:
 	ComPtr<ID3D11DepthStencilState> m_pDepthDisable = nullptr;
 	ComPtr<ID3D11BlendState>		m_pAlphaBlend = nullptr;
 	ComPtr<ID3D11RasterizerState>	m_pRSWireFrame = nullptr;
+	ComPtr<ID3D11RasterizerState>	m_pRSCullNone = nullptr;	
 	ComPtr<ID3D11RasterizerState>	m_pRSSolid = nullptr;
 	ComPtr<ID3D11SamplerState>		m_pSSPoint = nullptr;
 	ComPtr<ID3D11SamplerState>		m_pSSLinear= nullptr;

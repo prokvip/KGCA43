@@ -195,4 +195,7 @@
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\data\shader\skyobject.hlsl" />
+  </ItemGroup>
 </Project>
