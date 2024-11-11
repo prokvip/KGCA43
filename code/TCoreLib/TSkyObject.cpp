@@ -79,7 +79,7 @@ void   TSkyBox::Render()
 	TDevice::m_pContext->RSGetState(&pSaveRS);
 	TDevice::m_pContext->RSSetState(m_pRSCullNone.Get());
 	m_Mesh.PreRender(TDevice::m_pContext);
-	PostRenderCube(TDevice::m_pContext);
+	PostRender1(TDevice::m_pContext);
 	TDevice::m_pContext->RSSetState(pSaveRS);
 };
 void   TSkyBox::Release() {};

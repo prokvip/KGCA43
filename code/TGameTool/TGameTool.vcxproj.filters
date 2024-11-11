@@ -196,6 +196,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Lightting.hlsl" />
+    <FxCompile Include="..\..\data\shader\skyobject.hlsl" />
   </ItemGroup>
 </Project>

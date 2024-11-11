@@ -14,6 +14,7 @@ struct VS_Out
 	float4 p : SV_POSITION;// 반드시 float4
 	float4 c  :COLOR0;//COLOR1;
 	float3 t  :TEXCOORD0; // ~ TEXCOORD15
+	uint   i  : INDEX;
 };
 cbuffer FRAME_CB : register(b0)// 상수버퍼
 {
@@ -33,9 +34,10 @@ VS_Out VSMain(VS_In vsIn)
 	vsOut.p = vProj;
 	vsOut.c = vsIn.c;
 	uint i = vsIn.vertexID / (uint)4;
-	//vsOut.t = float3(vsIn.t, vsIn.vertexID / (float)i);
-	vsOut.t = normalize(vLocal.xyz);
+	vsOut.t = float3(vsIn.t, (float)i);
+	//vsOut.t = normalize(vLocal.xyz);
 	//vsOut.t.z =  vsIn.vertexID /4;
+	vsOut.i = i;
 	return vsOut;
 }
 
@@ -56,7 +58,7 @@ struct PS_In
 	float4 p : SV_POSITION;// 반드시 float4
 	float4 c  :COLOR;
 	float3 t  :TEXCOORD0;	
-	uint  vertexD : SV_VertexID;
+	uint   i : INDEX;
 	uint  primitiveID : SV_PrimitiveID;
 };
 struct PS_Out
@@ -80,10 +82,9 @@ float4 GetTextureColor(uint index, float2 uv)
 PS_Out PSMain(PS_In psIn)
 {	
 	//uint iIndex = psIn.primitiveID / 2;
-	uint iIndex = psIn.vertexID / 4;
 	PS_Out  psOut = (PS_Out)0;
-	//psOut.c = GetTextureColor((uint)psIn.t.z, psIn.t.xy);
-	psOut.c = GetTextureColor(iIndex, psIn.t.xy);
+	psOut.c = GetTextureColor((uint)psIn.i, psIn.t.xy);
+	//psOut.c = GetTextureColor(iIndex, psIn.t.xy);
 	//psOut.c = g_txCube.Sample(Linear, psIn.t);
 	return psOut;
 }
