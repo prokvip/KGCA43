@@ -1,4 +1,57 @@
 #include "TFbxLoader.h"
+int  TFbxLoader::GetFbxNodeIndex(FbxNode* fbxNode)
+{
+	for (int index = 0; index < m_pFbxNodeList.size(); index++)
+	{
+		if (m_pFbxNodeList[index] == fbxNode)
+		{
+			return index;
+		}
+	}
+	return -1;
+}
+bool  TFbxLoader::ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model)
+{
+	m_WeightList.clear();
+	// skin 
+	int iDeformerCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
+	if (iDeformerCount == 0) return false;
+
+	// mesh iNumVertexCount == iVertexCount;
+	int iVertexCount = fbxMesh->GetControlPointsCount();
+	m_WeightList.resize(iVertexCount);
+
+	for (int iDeformer = 0; iDeformer < iDeformerCount; iDeformer++)
+	{
+		FbxSkin* pSkin = 
+			reinterpret_cast<FbxSkin*>(fbxMesh->GetDeformer(iDeformer, FbxDeformer::eSkin));
+		int  iClusterCounter = pSkin->GetClusterCount();
+		// FbxNode가 영향을 미치는 정점들의 덩어리
+		for (int iCluster=0; iCluster < iClusterCounter; iCluster++)
+		{
+			auto pCluster = pSkin->GetCluster(iCluster);
+			FbxNode* pFbxNode = pCluster->GetLink();
+			std::wstring name = to_mw(pFbxNode->GetName());
+			// FbxNode에 대한 전체 배열있어야
+			// pFbxNode에 해당하는 노드의 인덱스를 얻어야 한다.
+			int  iBoneIndex = GetFbxNodeIndex(pFbxNode);
+			// 묶은에  포함된 정점의 개수가 
+			int iClusterSize = pCluster->GetControlPointIndicesCount();
+			int* iFbxNodeIndex = pCluster->GetControlPointIndices();
+			double* pWeights = pCluster->GetControlPointWeights();
+			for (int v = 0; v < iClusterSize; v++)
+			{
+				// v번 정점은 boneindex의 행렬에 weight값의 가중치로 영향을 받는다.
+				int    iVertexIndex = iFbxNodeIndex[v];
+				float  fWeight = pWeights[v];
+				m_WeightList[iVertexIndex].Index.push_back(iBoneIndex);
+				m_WeightList[iVertexIndex].weight.push_back(fWeight);
+			}
+
+		}
+	}
+	return true;
+}
 void   TFbxLoader::LoadAnimationNode(
 	TKgcFileHeader header, 
 	TFbxNode* pTFbxNode,
@@ -41,7 +94,7 @@ void   TFbxLoader::LoadAnimation(TKgcFileFormat* model)
 	for (int iNode = 0; iNode < model->m_ChildList.size(); iNode++)
 	{
 		LoadAnimationNode(	model->m_Header, 
-							m_pFbxNodeList[iNode].get(), 
+							m_pFbxMeshNodeList[iNode].get(), 
 							model->m_ChildList[iNode].get());
 	}
 }

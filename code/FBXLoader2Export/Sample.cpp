@@ -160,7 +160,8 @@ void    Sample::Render()
 {
 	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
 	{		
-		m_pFbxfileList[iFbx]->SetMatrix(nullptr, &m_MainCamera.m_matView, &m_matProj);
+		m_pFbxfileList[iFbx]->SetMatrix(nullptr, &m_MainCamera.m_matView, 
+												 &m_MainCamera.m_matProj);
 		m_pFbxfileList[iFbx]->Render(TDevice::m_pContext);
 	}
 }

@@ -45,18 +45,31 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 	{
 		m_pFbxMeshList.push_back(mesh);
 		pTNode->isMesh = TRUE;
-		m_pFbxNodeList.emplace_back(pTNode);
+		m_pFbxMeshNodeList.emplace_back(pTNode);
 	}
-
-	//m_pFbxNodeList.emplace_back(pTNode);
-
+	// 중요
+	m_pFbxNodeList.emplace_back(node);
 
 	
 	int iNumChild = node->GetChildCount();
 	for (int iNode = 0; iNode < iNumChild; iNode++)
 	{
-		FbxNode* child = node->GetChild(iNode);
-		PreProcess(child);
+		FbxNode* pChild = node->GetChild(iNode);
+		// 헬퍼오브젝트 + 지오메트리 오브젝트
+		if (pChild->GetNodeAttribute() != nullptr)
+		{
+			FbxNodeAttribute::EType type = pChild->GetNodeAttribute()->GetAttributeType();
+			if (type == FbxNodeAttribute::eMesh ||
+				type == FbxNodeAttribute::eSkeleton ||
+				type == FbxNodeAttribute::eNull)
+			{
+				PreProcess(pChild);
+			}
+		}
+		else
+		{
+			PreProcess(pChild);
+		}		
 	}
 }
 
@@ -88,7 +101,7 @@ bool   TFbxLoader::Load(C_STR filename,
 	LoadAnimation(tKgcFileFormat);
 
 	m_pFbxMeshList.clear();
-	m_pFbxNodeList.clear();
+	m_pFbxMeshNodeList.clear();
 
 	if (m_pScene) m_pScene->Destroy();
 	if (m_pImporter) m_pImporter->Destroy();
@@ -265,9 +278,14 @@ int   TFbxLoader::GetSubMaterialPolygonIndex(int iPoly,
 	}
 	return ret;
 }
+// 1) skinning 여부 ->  정보 얻기
+// 2) object anim , skinning -> animation
+// 3) object anim -> skinning 처리 
+// 4) skinning    ->    ""
 void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 {	
 	FbxMesh* fbxMesh = m_pFbxMeshList[iMesh];
+	bool    bSkinned = ParseMeshSkinning(fbxMesh, model);
 	FbxNode* pFbxNode = fbxMesh->GetNode();
 	// 로칼 변환 행렬
 	FbxAMatrix geom;

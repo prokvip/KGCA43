@@ -16,6 +16,12 @@ struct TFbxNode
 	FbxNode* pFbxParentNode = nullptr;
 	std::vector<T::TMatrix> pAnimationMatrix;	
 };
+// 정점 단위로 생성한다.
+struct TWeight
+{
+	std::vector<int>   Index;
+	std::vector<float> weight;
+};
 class TFbxLoader
 {
 public:
@@ -25,9 +31,13 @@ public:
 	FbxImporter*	m_pImporter = nullptr;
 	FbxScene*		m_pScene = nullptr;
 	FbxNode*		m_pRootNode = nullptr;
-
+	std::vector< TWeight>       m_WeightList;
 	std::vector<FbxMesh*>		m_pFbxMeshList;	
-	std::vector<std::shared_ptr<TFbxNode>>		m_pFbxNodeList;
+	std::vector<std::shared_ptr<TFbxNode>>		m_pFbxMeshNodeList;
+	std::vector<FbxNode*>		m_pFbxNodeList;
+public:
+	int    GetFbxNodeIndex(FbxNode* fbxNode);
+	bool   ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model);
 public:
 	void   Init();
 	bool   Load(C_STR filename, TKgcFileFormat* model);	

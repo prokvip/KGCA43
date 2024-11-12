@@ -54,8 +54,8 @@ void   Sample::Init()
 	}
 
 	//m_LoadFiles.push_back(L"../../data/kgc/box.fbx");
-	m_LoadFiles.push_back(L"../../data/kgc/SM_Rock.kgc");
-	m_LoadFiles.push_back(L"../../data/kgc/SM_Barrel.kgc");
+	//m_LoadFiles.push_back(L"../../data/kgc/SM_Rock.kgc");
+	//m_LoadFiles.push_back(L"../../data/kgc/SM_Barrel.kgc");
 	m_LoadFiles.push_back(L"../../data/kgc/Man.kgc");
 	for (int iObj = 0; iObj < m_LoadFiles.size(); iObj++)
 	{
