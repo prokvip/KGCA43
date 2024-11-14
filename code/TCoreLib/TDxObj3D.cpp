@@ -49,6 +49,11 @@ bool   TDxObject3D::Create(std::wstring texName, std::wstring hlsl)
 		Release();
 		return false;
 	}
+	if (CreateIWVertexBuffer(m_pd3dDevice) == false)
+	{
+		Release();
+		return false;
+	}
 	if (LoadShader(m_szShaderFilename) == false)
 	{
 		Release();
@@ -65,6 +70,10 @@ bool   TDxObject3D::Create(std::wstring texName, std::wstring hlsl)
 		return false;
 	}
 	return true;
+}
+
+bool     TDxObject3D::CreateIWVertexBuffer(ID3D11Device* pd3dDevice) {
+	return true; 
 }
 bool     TDxObject3D::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 {
@@ -151,12 +160,24 @@ bool	 TDxObject3D::CreateConstantBuffer(ID3D11Device* pd3dDevice)
 //   0~7  8~11   24~32
 bool     TDxObject3D::CreateInputLayout(ID3D11Device* pd3dDevice)
 {
-	const D3D11_INPUT_ELEMENT_DESC layout[] =
+
+	/*const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{"POS",0,	DXGI_FORMAT_R32G32B32_FLOAT,		0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
 		{"NOR",0,	DXGI_FORMAT_R32G32B32_FLOAT,		0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
 		{"COL",0,DXGI_FORMAT_R32G32B32A32_FLOAT,			0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
 		{"TEX",0,DXGI_FORMAT_R32G32_FLOAT,				0,40,D3D11_INPUT_PER_VERTEX_DATA,0 },
+	};*/
+
+	const D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{"POS",0,	DXGI_FORMAT_R32G32B32_FLOAT,		0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"NOR",0,	DXGI_FORMAT_R32G32B32_FLOAT,		0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"COL",0,DXGI_FORMAT_R32G32B32A32_FLOAT,		0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"TEX",0,DXGI_FORMAT_R32G32_FLOAT,				0,40,D3D11_INPUT_PER_VERTEX_DATA,0 },
+
+		{"INDEX",0,	DXGI_FORMAT_R32G32B32_FLOAT,		1,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"WEIGHT",0,DXGI_FORMAT_R32G32B32A32_FLOAT,		1,16,D3D11_INPUT_PER_VERTEX_DATA,0 },		
 	};
 
 	UINT NumElements = sizeof(layout) / sizeof(layout[0]);
@@ -180,6 +201,7 @@ void     TDxObject3D::PreRender(ID3D11DeviceContext* pContext)
 	UINT NumBuffers = 1;
 	UINT pStrides = sizeof(PNCT_Vertex); // 1개의 정점 크기
 	UINT pOffsets = 0; // 버퍼에 시작 인덱스
+	
 	pContext->IASetVertexBuffers(StartSlot, NumBuffers, &m_pVertexBuffer, &pStrides, &pOffsets);
 	pContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	pContext->IASetInputLayout(m_pVertexLayout);
@@ -201,7 +223,7 @@ void     TDxObject3D::PostRender(ID3D11DeviceContext* pContext)
 		pContext->Draw(m_vVertexList.size(), 0);
 	}
 }
-void TDxObject3D::SetMatrix(T::TMatrix* pWorld, T::TMatrix* pView, T::TMatrix* pProj)
+void	 TDxObject3D::SetMatrix(T::TMatrix* pWorld, T::TMatrix* pView, T::TMatrix* pProj)
 {
 	if (pWorld != nullptr)
 	{

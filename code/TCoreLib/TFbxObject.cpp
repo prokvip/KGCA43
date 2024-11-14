@@ -35,6 +35,7 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 		header.isSubMesh = (mesh->m_vSubMeshVertexList.size() > 0) ? 1 : 0;
 		header.iSubVertexBufferCounter = mesh->m_vSubMeshVertexList.size();
 		header.iSubIndexBufferCounter = mesh->m_vSubMeshIndexList.size();
+		header.iSubIWVertexBufferCounter = mesh->m_vSubMeshIWVertexList.size();
 		header.iNumTrack = mesh->m_pAnimationMatrix.size();
 		header.iStartFrame = fileHeader.iStartFrame;
 		header.iLastFrame  = fileHeader.iLastFrame;
@@ -71,6 +72,13 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 				if (iSize <= 0) continue;
 				fwrite(&sub.at(0), sizeof(DWORD), sub.size(), fp);
 			}
+			for (auto sub : mesh->m_vSubMeshIWVertexList)
+			{
+				int iSize = sub.size();
+				fwrite(&iSize, sizeof(int), 1, fp);
+				if (iSize <= 0) continue;
+				fwrite(&sub.at(0), sizeof(IW_Vertex), sub.size(), fp);
+			}
 		}
 		else
 		{
@@ -86,6 +94,14 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 			if (iLen != 0)
 			{
 				fwrite(&mesh->m_vIndexList.at(0), sizeof(DWORD), mesh->m_vIndexList.size(), fp);
+			}
+			// index + weight
+			iLen = mesh->m_vIWVertexList.size();
+			fwrite(&iLen, sizeof(int), 1, fp);
+			if (iLen != 0)
+			{
+				fwrite(&mesh->m_vIWVertexList.at(0), sizeof(IW_Vertex), 
+											mesh->m_vIWVertexList.size(), fp);
 			}
 		}
 	}
@@ -161,6 +177,16 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 				fread(&subIndexList.at(0), sizeof(DWORD), iSize, fp);
 				fbxModel->m_vSubMeshIndexList.emplace_back(subIndexList);
 			}
+			// skinning
+			for (int iIndex = 0; iIndex < header.iSubIWVertexBufferCounter; iIndex++)
+			{
+				int iSize = 0;
+				fread(&iSize, sizeof(int), 1, fp);
+				if (iSize <= 0) continue;
+				iwList  subIW(iSize);
+				fread(&subIW.at(0), sizeof(IW_Vertex), iSize, fp);
+				fbxModel->m_vSubMeshIWVertexList.emplace_back(subIW);
+			}
 		}
 		else
 		{
@@ -179,6 +205,13 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 				fbxModel->m_vIndexList.resize(iLen);
 				fread(&fbxModel->m_vIndexList.at(0), sizeof(DWORD),
 					iLen, fp);
+			}
+
+			fread(&iLen, sizeof(int), 1, fp);
+			if (iLen != 0)
+			{
+				fbxModel->m_vIWVertexList.resize(iLen);
+				fread(&fbxModel->m_vIWVertexList.at(0), sizeof(IW_Vertex),	iLen, fp);
 			}
 		}
 
@@ -257,6 +290,30 @@ void	 TFbxModel::LoadTexture(std::wstring szPath)
 			}
 		}
 	}
+}
+bool     TFbxModel::CreateIWVertexBuffer(ID3D11Device* pd3dDevice)
+{
+	if (m_vIWVertexList.size() == 0) return true;
+	// 버퍼 할당 크기를 세팅한다.
+	D3D11_BUFFER_DESC  bd;
+	ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
+	bd.ByteWidth = sizeof(IW_Vertex) * m_vIWVertexList.size();
+	// 연결에 용도가 뭐냐? 
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+
+	// 할당된 버퍼에 
+	// 시스템메모리가 ->GPU메모리로 체워지는 데이터
+	D3D11_SUBRESOURCE_DATA sd;
+	ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+	sd.pSysMem = &m_vIWVertexList.at(0);
+
+	HRESULT hr = pd3dDevice->CreateBuffer(
+		&bd,
+		&sd,
+		m_pIWVertexBuffer.GetAddressOf());
+	if (FAILED(hr)) return false;
+	return true;
 }
 bool     TFbxModel::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 {
@@ -352,10 +409,15 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 			{
 				UINT StartSlot = 0;
 				UINT NumBuffers = 1;
-				UINT pStrides = sizeof(PNCT_Vertex); // 1개의 정점 크기
-				UINT pOffsets = 0; // 버퍼에 시작 인덱스
-				pContext->IASetVertexBuffers(StartSlot, NumBuffers,
-					pModel->m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
+				UINT pStrides[2] = { sizeof(PNCT_Vertex), sizeof(IW_Vertex) }; // 1개의 정점 크기
+				UINT pOffsets[2] = { 0, 0 }; // 버퍼에 시작 인덱스
+				ID3D11Buffer* buffer[2] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
+											pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get()  };
+				NumBuffers = 2;
+				pContext->IASetVertexBuffers(0, 2,buffer, pStrides, pOffsets);
+				// 
+				//pContext->IASetVertexBuffers(StartSlot, NumBuffers,
+				//	pModel->m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
 				pContext->IASetIndexBuffer(pModel->m_pSubMeshIndexBuffer[iSubMesh].Get(), DXGI_FORMAT_R32_UINT, 0);
 				pContext->PSSetShaderResources(0, 1, pModel->m_pSubMeshSRV[iSubMesh].GetAddressOf());
 				if (pModel->m_pSubMeshIndexBuffer[iSubMesh] != nullptr)
@@ -370,6 +432,14 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 		}
 		else
 		{
+			UINT StartSlot = 0;
+			UINT NumBuffers = 1;
+			UINT pStrides[2] = { sizeof(PNCT_Vertex), sizeof(IW_Vertex) }; // 1개의 정점 크기
+			UINT pOffsets[2] = { 0, 0 }; // 버퍼에 시작 인덱스
+			ID3D11Buffer* buffer[2] = { pModel->m_pVertexBuffer,
+										pModel->m_pIWVertexBuffer.Get() };
+			NumBuffers = 2;
+			pContext->IASetVertexBuffers(0, 2, buffer, pStrides, pOffsets);
 			pModel->PostRender(pContext);
 		}
 	}
@@ -391,6 +461,41 @@ void     TFbxModel::Release()
 }
 void     TFbxModel::SetVertexData() 
 {
+}
+bool     TFbxModel::CreateInputLayout(ID3D11Device* pd3dDevice)
+{
+	//if(m_vIWVertexList.size() > 0)
+	/*const D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{"POS",0,	DXGI_FORMAT_R32G32B32_FLOAT,		0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"NOR",0,	DXGI_FORMAT_R32G32B32_FLOAT,		0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"COL",0,DXGI_FORMAT_R32G32B32A32_FLOAT,			0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"TEX",0,DXGI_FORMAT_R32G32_FLOAT,				0,40,D3D11_INPUT_PER_VERTEX_DATA,0 },
+	};*/
+
+	const D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{"POS",0,	DXGI_FORMAT_R32G32B32_FLOAT,		0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"NOR",0,	DXGI_FORMAT_R32G32B32_FLOAT,		0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"COL",0,DXGI_FORMAT_R32G32B32A32_FLOAT,		0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"TEX",0,DXGI_FORMAT_R32G32_FLOAT,				0,40,D3D11_INPUT_PER_VERTEX_DATA,0 },
+
+		{"INDEX",0,	DXGI_FORMAT_R32G32B32_FLOAT,		1,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"WEIGHT",0,DXGI_FORMAT_R32G32B32A32_FLOAT,		1,16,D3D11_INPUT_PER_VERTEX_DATA,0 },
+	};
+
+	UINT NumElements = sizeof(layout) / sizeof(layout[0]);
+	HRESULT hr = pd3dDevice->CreateInputLayout(
+		layout,
+		NumElements,
+		m_pShader->VS_Bytecode->GetBufferPointer(),
+		m_pShader->VS_Bytecode->GetBufferSize(),
+		&m_pVertexLayout);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	return true;
 }
 //void   TFbxModel::GenBufferVI(PNCT_Vertex& v)
 //{

@@ -12,6 +12,28 @@ struct TWeight
 {
 	std::vector<int>   Index;
 	std::vector<float> weight;
+	void Insert(int iIndex, float fWeight)
+	{
+		for (DWORD i = 0; i < Index.size(); ++i)
+		{
+			if (fWeight > weight[i])
+			{
+				for (DWORD j = (Index.size() - 1); j > i; --j)
+				{
+					Index[j] = Index[j - 1];
+					weight[j] = weight[j - 1];
+				}
+				Index[i] = iIndex;
+				weight[i] = fWeight;
+				break;
+			}
+		}
+	}
+	TWeight()
+	{
+		Index.resize(8);
+		weight.resize(8);
+	}
 };
 struct TKgcFileHeader
 {
@@ -25,6 +47,7 @@ struct TKgcFileHeader
 	int				iChildNodeCounter = 0;
 	int				iSubVertexBufferCounter = 0;
 	int				iSubIndexBufferCounter = 0;
+	int				iSubIWVertexBufferCounter = 0;
 	T::TMatrix		matWorld;
 };
 struct TKgcFileTrack
@@ -50,18 +73,28 @@ public:
 
 	using vList = std::vector<PNCT_Vertex>;
 	using iList = std::vector<DWORD>;
-	std::vector<vList>		m_vSubMeshVertexList;
-	std::vector<iList>		m_vSubMeshIndexList;
+	using vIWList = std::vector<IW_Vertex>;
+
+	std::vector< TWeight>       m_WeightList;	
+	std::vector<IW_Vertex>		m_vIWVertexList;
+	ComPtr<ID3D11Buffer>		m_pIWVertexBuffer = nullptr;
+
+	vIWList						m_vVertexListIndexWegiht;
+	std::vector<vIWList>		m_vSubMeshIWVertexList;
+	std::vector<vList>			m_vSubMeshVertexList;
+	std::vector<iList>			m_vSubMeshIndexList;
 	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshVertexBuffer;
 	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshIndexBuffer;
+	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshIWVertexBuffer;
 	std::vector<T::TMatrix>				m_pAnimationMatrix;
 
 	//skinning
 	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
-	std::vector< TWeight>       m_WeightList;
-	using vIWList = std::vector<IW_Vertex>;
-	vIWList						m_vVertexListIndexWegiht;
-	std::vector<vIWList>		m_vSubMeshIWVertexList;
+
+	
+
+	virtual bool     CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
+
 public:
 	virtual void	 LoadTexture(std::wstring szPath) override;
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice)override;
@@ -69,6 +102,7 @@ public:
 	virtual void     Render(ID3D11DeviceContext* pContext)override;
 	virtual void     Release() override;
 	virtual void     SetVertexData() override;
+	virtual bool     CreateInputLayout(ID3D11Device* pd3dDevice) override;
 };
 
 
@@ -81,6 +115,7 @@ public:
 	std::vector<std::wstring> m_szTexFileList;
 	using vList = std::vector<PNCT_Vertex>;
 	using iList = std::vector<DWORD>;
+	using iwList = std::vector<IW_Vertex>;
 	vList			m_vVertexList;		 // 프레임 화면 정보
 	iList			m_vIndexList;
 	std::vector<vList>		m_vSubMeshVertexList;
@@ -97,6 +132,7 @@ public:
 	using vIWList = std::vector<IW_Vertex>;
 	vIWList						m_vVertexListIndexWegiht;
 	std::vector<vIWList>		m_vSubMeshIWVertexList;
+	std::vector<IW_Vertex>		m_vIWVertexList;
 
 
 	static bool Export(TKgcFileFormat* tFile, std::wstring szFileName);

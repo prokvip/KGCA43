@@ -25,7 +25,8 @@ public:
 	
 public:
 	virtual void   LoadTexture(std::wstring szPath) override;	
-	virtual bool   Create(std::wstring texName,	std::wstring hlsl) override;
+	virtual bool   Create(std::wstring texName,	std::wstring hlsl) override;	
+	virtual bool   CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice) override;
 	virtual bool     CreateIndexBuffer(ID3D11Device* pd3dDevice) override;
 	virtual bool	 CreateConstantBuffer(ID3D11Device* pd3dDevice) override;

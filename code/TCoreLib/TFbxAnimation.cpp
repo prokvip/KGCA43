@@ -56,8 +56,7 @@ bool  TFbxLoader::ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model)
 				// v번 정점은 boneindex의 행렬에 weight값의 가중치로 영향을 받는다.
 				int    iVertexIndex = iFbxNodeIndex[v];
 				float  fWeight = pWeights[v];
-				model.m_WeightList[iVertexIndex].Index.push_back(iBoneIndex);
-				model.m_WeightList[iVertexIndex].weight.push_back(fWeight);
+				model.m_WeightList[iVertexIndex].Insert(iBoneIndex, fWeight);
 			}
 
 		}

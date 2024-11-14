@@ -59,7 +59,7 @@ public:
 	int   GetSubMaterialPolygonIndex(int iPoly, 
 									 FbxLayerElementMaterial* pMaterialaterial);
 	void   Release();
-	void   GenBuffer(std::vector<PNCT_Vertex>& vList, std::vector<DWORD>& iList, PNCT_Vertex& v1);
+	bool   GenBuffer(std::vector<PNCT_Vertex>& vList, std::vector<DWORD>& iList, PNCT_Vertex& v1);
 	TFbxLoader() = default;
 };
 

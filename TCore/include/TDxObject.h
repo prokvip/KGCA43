@@ -66,35 +66,12 @@ struct PNCT_Vertex
 };
 struct IW_Vertex
 {
-	T::TVector4 i; // 행렬의 인덱스
-	T::TVector4 w; // 행렬의 가중치	
-	bool operator == (const IW_Vertex& v) const
+	float i[4]; // 행렬의 인덱스
+	float w[4]; // 행렬의 가중치	
+	IW_Vertex()
 	{
-		if (i == v.i && w == v.w)
-		{
-			return true;
-		}
-		return false;
-	};
-	bool operator != (const IW_Vertex& v) const
-	{
-		if (i == v.i || w == v.w)
-		{
-			return true;
-		}
-		return false;
-	};
-	IW_Vertex() = default;
-	IW_Vertex(T::TVector4 i, T::TVector4 w)
-	{
-		this->i = i;
-		this->w = w;
-	}
-	IW_Vertex(float x, float y, float z, float w,
-			  float r, float g, float b, float a)
-	{
-		this->i = { x, y, z,w };
-		this->w = { r,g,b,a };
+		i[3] = i[2] = i[1] = i[0] = 0;
+		w[3] = w[2] = w[1] = w[0] = 0;
 	}
 };
 
@@ -159,6 +136,8 @@ public:
 		UINT iSize, bool bDynamic=false);
 
 	// GPU 메모리에 할당된 버퍼.
+	virtual bool   CreateIWVertexBuffer(ID3D11Device* pd3dDevice) { return true; };
+
 	ID3D11Buffer* m_pVertexBuffer=nullptr;
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice);
 	ID3D11Buffer* m_pIndexBuffer = nullptr;

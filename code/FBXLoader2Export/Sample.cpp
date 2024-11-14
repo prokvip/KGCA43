@@ -95,8 +95,7 @@ void   Sample::Init()
 	{
 		expFilename = ExportPath(L"../../data/fbx/Man.fbx",
 			L"D:\\00_43\\data\\kgc\\");
-		TKgcFileFormat::Export(tKgcFileModel.get(),
-			expFilename);
+		TKgcFileFormat::Export(tKgcFileModel.get(),expFilename);
 	}
 
 	/// <summary>

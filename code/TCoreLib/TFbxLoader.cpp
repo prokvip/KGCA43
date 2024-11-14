@@ -303,6 +303,8 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	pModel->m_pFbxNodeBindPoseMatrixList.resize(m_pFbxNodeList.size());
 	bool    bSkinned = ParseMeshSkinning(fbxMesh, *pModel.get());
 	
+	int  iBoneIndex = GetFbxNodeIndex(pFbxNode);
+
 	// 로칼 변환 행렬
 	FbxAMatrix geom;
 	FbxVector4 trans	= pFbxNode->GetGeometricTranslation(FbxNode::eSourcePivot);
@@ -372,6 +374,7 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	{
 		pModel->m_vSubMeshVertexList.resize(iNumMtrl);
 		pModel->m_vSubMeshIndexList.resize(iNumMtrl);
+		pModel->m_vSubMeshIWVertexList.resize(iNumMtrl);
 	}
 	
 	
@@ -406,7 +409,7 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	int iNumPolyCount = fbxMesh->GetPolygonCount();
 	// 정점의 위치가 저장된 배열의 시작주소를 반환.
 	FbxVector4* pVertexPositions = fbxMesh->GetControlPoints();
-
+	int iNumControlPoint = fbxMesh->GetControlPointsCount();
 	int iBasePolyIndex = 0;
 	for (int iPoly = 0; iPoly < iNumPolyCount; iPoly++)
 	{
@@ -477,16 +480,43 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 				v.n.y = vFbxNormal.mData[2];
 				v.n.z = vFbxNormal.mData[1];
 
+				// skinning
+				IW_Vertex iwVertex;
+				if (bSkinned)
+				{
+					TWeight& pWeight = pModel->m_WeightList[iVertexPositionIndex[iVertex]];
+					for (int i = 0; i < 4; i++)
+					{
+						iwVertex.i[i] = pWeight.Index[i];
+						iwVertex.w[i] = pWeight.weight[i];
+					}
+				}
+				else
+				{
+					iwVertex.i[0] = iBoneIndex;
+					iwVertex.w[0] = 1.0f;
+				}
+
 				if (pModel->m_vSubMeshVertexList.size() == 0)
 				{
 					//pModel->m_vVertexList.push_back(v);
-					GenBuffer(pModel->m_vVertexList, pModel->m_vIndexList, v);
+					//pModel->m_vIWVertexList.push_back(iwVertex);
+					bool bAddIWVertex = GenBuffer(pModel->m_vVertexList, pModel->m_vIndexList, v);
+					if (bAddIWVertex)
+					{
+						pModel->m_vIWVertexList.emplace_back(iwVertex);
+					}
 				}
 				else
 				{
 					//pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
-					GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl], 
+					//pModel->m_vSubMeshIWVertexList[iSubMtrl].push_back(iwVertex);
+					bool bAddIWVertex = GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl],
 							  pModel->m_vSubMeshIndexList[iSubMtrl], v);
+					if (bAddIWVertex)
+					{
+						pModel->m_vSubMeshIWVertexList[iSubMtrl].emplace_back(iwVertex);
+					}
 				}
 			}
 		}
@@ -496,8 +526,10 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	// 정점 몇개
 	model.m_ChildList.emplace_back(pModel);
 }
-void   TFbxLoader::GenBuffer(std::vector<PNCT_Vertex>& vList, std::vector<DWORD>& iList, PNCT_Vertex& v1)
+bool   TFbxLoader::GenBuffer(std::vector<PNCT_Vertex>& vList, 
+						     std::vector<DWORD>& iList, PNCT_Vertex& v1)
 {
+	bool  bIWVertex = false;
 	int iVertexIndex = -1;
 	for (int iArray = 0; iArray < vList.size(); iArray++)
 	{
@@ -511,9 +543,11 @@ void   TFbxLoader::GenBuffer(std::vector<PNCT_Vertex>& vList, std::vector<DWORD>
 	if (iVertexIndex < 0)
 	{
 		vList.emplace_back(v1);
+		bIWVertex = true;
 		iVertexIndex = vList.size() - 1;
 	}
 	iList.emplace_back(iVertexIndex);
+	return bIWVertex;
 }
 
 void   TFbxLoader::Release()
