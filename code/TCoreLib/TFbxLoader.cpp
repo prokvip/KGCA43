@@ -50,6 +50,9 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 	// 중요
 	m_pFbxNodeList.emplace_back(node);
 
+	//FbxAMatrix matWorld = node->EvaluateGlobalTransform(0);
+	T::TMatrix matDXWorld;// = ConvertFbxAMatrix(matWorld);
+	m_pFbxNodeBindPoseMatrixList.emplace_back(matDXWorld.Invert());
 	
 	int iNumChild = node->GetChildCount();
 	for (int iNode = 0; iNode < iNumChild; iNode++)
@@ -91,13 +94,15 @@ bool   TFbxLoader::Load(C_STR filename,
 	FbxAxisSystem::MayaZUp.ConvertScene(m_pScene);
 
 	m_pRootNode = m_pScene->GetRootNode();
-	PreProcess(m_pRootNode);
+	PreProcess(m_pRootNode);	
 
 	for (int iMesh = 0; iMesh < m_pFbxMeshList.size(); iMesh++)
 	{
 		LoadMesh(iMesh, *tKgcFileFormat);
 	}
 	
+	tKgcFileFormat->m_pFbxNodeBindPoseMatrixList = m_pFbxNodeBindPoseMatrixList;
+
 	LoadAnimation(tKgcFileFormat);
 
 	m_pFbxMeshList.clear();
@@ -285,8 +290,19 @@ int   TFbxLoader::GetSubMaterialPolygonIndex(int iPoly,
 void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 {	
 	FbxMesh* fbxMesh = m_pFbxMeshList[iMesh];
-	bool    bSkinned = ParseMeshSkinning(fbxMesh, model);
 	FbxNode* pFbxNode = fbxMesh->GetNode();
+
+	//// 월드 변환 행렬
+	FbxTime s;
+	FbxLongLong tFrame = 0;
+	s.SetFrame(tFrame);
+	FbxAMatrix matWorld = pFbxNode->EvaluateGlobalTransform(s);
+	std::shared_ptr<TKgcFileFormat>  pModel = std::make_shared<TKgcFileFormat>();
+	pModel->m_matWorld = ConvertFbxAMatrix(matWorld);
+
+	pModel->m_pFbxNodeBindPoseMatrixList.resize(m_pFbxNodeList.size());
+	bool    bSkinned = ParseMeshSkinning(fbxMesh, *pModel.get());
+	
 	// 로칼 변환 행렬
 	FbxAMatrix geom;
 	FbxVector4 trans	= pFbxNode->GetGeometricTranslation(FbxNode::eSourcePivot);
@@ -300,17 +316,9 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	normalMatrix = normalMatrix.Inverse();
 	normalMatrix = normalMatrix.Transpose();
 
-	//// 월드 변환 행렬
-	FbxTime s;
-	FbxLongLong tFrame = 0;
-	s.SetFrame(tFrame);
-	FbxAMatrix matWorld = pFbxNode->EvaluateGlobalTransform(s);
 	
-	std::shared_ptr<TKgcFileFormat>  pModel = std::make_shared<TKgcFileFormat>();
-	//TKgcFileFormat* pModel = new TKgcFileFormat;
-	pModel->m_matWorld = ConvertFbxAMatrix(matWorld);
-
 	
+		
 
 	// Layer :  레이어 회수만큼 랜더링한다.
 	std::vector<FbxLayerElementUV*>				VertexUVLayer;

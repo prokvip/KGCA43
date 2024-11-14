@@ -12,14 +12,15 @@ int  TFbxLoader::GetFbxNodeIndex(FbxNode* fbxNode)
 }
 bool  TFbxLoader::ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model)
 {
-	m_WeightList.clear();
+	//model.m_WeightList.clear();
 	// skin 
 	int iDeformerCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
 	if (iDeformerCount == 0) return false;
 
 	// mesh iNumVertexCount == iVertexCount;
 	int iVertexCount = fbxMesh->GetControlPointsCount();
-	m_WeightList.resize(iVertexCount);
+	model.m_WeightList.resize(iVertexCount);
+	
 
 	for (int iDeformer = 0; iDeformer < iDeformerCount; iDeformer++)
 	{
@@ -35,6 +36,17 @@ bool  TFbxLoader::ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model)
 			// FbxNode에 대한 전체 배열있어야
 			// pFbxNode에 해당하는 노드의 인덱스를 얻어야 한다.
 			int  iBoneIndex = GetFbxNodeIndex(pFbxNode);
+
+			FbxAMatrix matXBindPose;
+			FbxAMatrix matReferenceGlobalInitPosition;
+			pCluster->GetTransformLinkMatrix(matXBindPose);
+			pCluster->GetTransformMatrix(matReferenceGlobalInitPosition);
+			FbxAMatrix matBindPose = matReferenceGlobalInitPosition.Inverse() * matXBindPose;
+
+			T::TMatrix matDxBindPose = ConvertFbxAMatrix(matBindPose);
+			model.m_pFbxNodeBindPoseMatrixList[iBoneIndex] = matDxBindPose.Invert();
+			model.m_pUsedBoneIndexList.push_back(iBoneIndex);
+
 			// 묶은에  포함된 정점의 개수가 
 			int iClusterSize = pCluster->GetControlPointIndicesCount();
 			int* iFbxNodeIndex = pCluster->GetControlPointIndices();
@@ -44,8 +56,8 @@ bool  TFbxLoader::ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model)
 				// v번 정점은 boneindex의 행렬에 weight값의 가중치로 영향을 받는다.
 				int    iVertexIndex = iFbxNodeIndex[v];
 				float  fWeight = pWeights[v];
-				m_WeightList[iVertexIndex].Index.push_back(iBoneIndex);
-				m_WeightList[iVertexIndex].weight.push_back(fWeight);
+				model.m_WeightList[iVertexIndex].Index.push_back(iBoneIndex);
+				model.m_WeightList[iVertexIndex].weight.push_back(fWeight);
 			}
 
 		}

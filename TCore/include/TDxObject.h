@@ -64,6 +64,39 @@ struct PNCT_Vertex
 		this->t = { u, v };
 	}
 };
+struct IW_Vertex
+{
+	T::TVector4 i; // 행렬의 인덱스
+	T::TVector4 w; // 행렬의 가중치	
+	bool operator == (const IW_Vertex& v) const
+	{
+		if (i == v.i && w == v.w)
+		{
+			return true;
+		}
+		return false;
+	};
+	bool operator != (const IW_Vertex& v) const
+	{
+		if (i == v.i || w == v.w)
+		{
+			return true;
+		}
+		return false;
+	};
+	IW_Vertex() = default;
+	IW_Vertex(T::TVector4 i, T::TVector4 w)
+	{
+		this->i = i;
+		this->w = w;
+	}
+	IW_Vertex(float x, float y, float z, float w,
+			  float r, float g, float b, float a)
+	{
+		this->i = { x, y, z,w };
+		this->w = { r,g,b,a };
+	}
+};
 
 struct FRAME_CB // 상수버퍼
 {

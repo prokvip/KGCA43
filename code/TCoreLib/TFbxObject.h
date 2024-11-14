@@ -7,6 +7,12 @@ struct TScene
 	int		iLastFrame = 0;
 	int		iFrameSpeed = 30;
 };
+// 정점 단위로 생성한다.
+struct TWeight
+{
+	std::vector<int>   Index;
+	std::vector<float> weight;
+};
 struct TKgcFileHeader
 {
 	int				iVersion = 100;
@@ -49,6 +55,13 @@ public:
 	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshVertexBuffer;
 	std::vector<ComPtr<ID3D11Buffer>>   m_pSubMeshIndexBuffer;
 	std::vector<T::TMatrix>				m_pAnimationMatrix;
+
+	//skinning
+	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
+	std::vector< TWeight>       m_WeightList;
+	using vIWList = std::vector<IW_Vertex>;
+	vIWList						m_vVertexListIndexWegiht;
+	std::vector<vIWList>		m_vSubMeshIWVertexList;
 public:
 	virtual void	 LoadTexture(std::wstring szPath) override;
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice)override;
@@ -75,6 +88,16 @@ public:
 	std::vector<std::shared_ptr<TKgcFileFormat>> m_ChildList;
 
 	std::vector<T::TMatrix> m_pAnimationMatrix;
+
+	// Skinning : 전체 트리 노드가 본 좌표계로 변환되는 행렬
+	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
+	std::vector<int>			m_pUsedBoneIndexList;
+
+	std::vector< TWeight>       m_WeightList;
+	using vIWList = std::vector<IW_Vertex>;
+	vIWList						m_vVertexListIndexWegiht;
+	std::vector<vIWList>		m_vSubMeshIWVertexList;
+
 
 	static bool Export(TKgcFileFormat* tFile, std::wstring szFileName);
 	static bool Import( std::wstring szFileName, std::wstring szShaderFile,
