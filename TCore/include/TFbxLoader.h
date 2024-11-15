@@ -41,6 +41,9 @@ public:
 	bool   Load(C_STR filename, TKgcFileFormat* model);	
 	void   PreProcess(FbxNode* node);
 	void   LoadMesh(int iMesh, TKgcFileFormat& );
+
+	void   LoadNodeAnimation(TKgcFileFormat*);
+
 	void   LoadAnimation(TKgcFileFormat* );
 	void   LoadAnimationNode(TKgcFileHeader	, TFbxNode*, TKgcFileFormat* );
 	FbxVector2  GetUV(	FbxMesh* fbxMesh, 

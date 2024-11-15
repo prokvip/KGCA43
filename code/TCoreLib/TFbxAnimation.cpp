@@ -81,6 +81,53 @@ void   TFbxLoader::LoadAnimationNode(
 		tKgcFileFormat->m_pAnimationMatrix.emplace_back(matFrame);
 	}
 }
+
+void   TFbxLoader::LoadNodeAnimation(TKgcFileFormat* model)
+{
+	FbxTime::SetGlobalTimeMode(FbxTime::eFrames30);
+	FbxAnimStack* stack = m_pScene->GetSrcObject<FbxAnimStack>(0);
+	if (stack == nullptr) return;
+	FbxString TakeName = stack->GetName();
+	FbxTakeInfo* TakeInfo = m_pScene->GetTakeInfo(TakeName);
+	if (TakeInfo)
+	{
+		FbxTime start = TakeInfo->mLocalTimeSpan.GetStart();
+		FbxTime end = TakeInfo->mLocalTimeSpan.GetStop();
+
+		FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
+		FbxLongLong sFrame = start.GetFrameCount(timeMode);
+		FbxLongLong eFrame = end.GetFrameCount(timeMode);
+		model->m_Header.iStartFrame = sFrame;
+		model->m_Header.iLastFrame = eFrame;
+		model->m_Header.iFrameSpeed = 30;
+
+		int iNumAnimFrame = model->m_Header.iLastFrame - model->m_Header.iStartFrame;
+		// 71 * iNumAnimFrame;
+		std::vector<FbxTime>  s;
+		s.resize(iNumAnimFrame);
+		for (int iFrame = sFrame; iFrame < eFrame; iFrame++)
+		{
+			s[iFrame].SetFrame(iFrame, timeMode);
+		}
+		// bone 71
+		model->m_pBoneAnimMatrix.resize(m_pFbxNodeList.size());
+		m_pFbxNodeBindPoseMatrixList.resize(m_pFbxNodeList.size());
+		// biped + bone + dummy + mesh
+		for (int fbxnode = 0; fbxnode < m_pFbxNodeList.size(); fbxnode++)
+		{
+			// bone per frame
+			model->m_pBoneAnimMatrix[fbxnode].resize(iNumAnimFrame);
+			for (int iFrame = sFrame; iFrame < eFrame; iFrame++)
+			{
+				FbxAMatrix matWorld = m_pFbxNodeList[fbxnode]->EvaluateGlobalTransform(s[iFrame]);
+				T::TMatrix matFrame = ConvertFbxAMatrix(matWorld);
+				model->m_pBoneAnimMatrix[fbxnode][iFrame] = matFrame;
+			}
+			m_pFbxNodeBindPoseMatrixList[fbxnode] = model->m_pBoneAnimMatrix[fbxnode][sFrame];
+		}		
+	}	
+}
+
 void   TFbxLoader::LoadAnimation(TKgcFileFormat* model)
 {
 	FbxTime::SetGlobalTimeMode(FbxTime::eFrames30);
@@ -96,16 +143,15 @@ void   TFbxLoader::LoadAnimation(TKgcFileFormat* model)
 		FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
 		FbxLongLong sFrame = start.GetFrameCount(timeMode);
 		FbxLongLong eFrame = end.GetFrameCount(timeMode);
-		FbxTime s;
-
 		model->m_Header.iStartFrame = sFrame;
 		model->m_Header.iLastFrame = eFrame;
 		model->m_Header.iFrameSpeed = 30;
 	}
+
 	for (int iNode = 0; iNode < model->m_ChildList.size(); iNode++)
 	{
-		LoadAnimationNode(	model->m_Header, 
-							m_pFbxMeshNodeList[iNode].get(), 
-							model->m_ChildList[iNode].get());
+		LoadAnimationNode(model->m_Header,
+			m_pFbxMeshNodeList[iNode].get(),
+			model->m_ChildList[iNode].get());
 	}
 }

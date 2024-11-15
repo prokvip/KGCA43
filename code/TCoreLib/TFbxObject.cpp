@@ -26,9 +26,22 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 	fwrite(&fileHeader, sizeof(TKgcFileHeader), 1, fp);
 	fwrite(tFile->m_szFileName.c_str(), sizeof(wchar_t), fileHeader.iLength, fp);
 
+	// bone matrix
+	// 71
+	if (fileHeader.iLastFrame > 0)
+	{
+		for (int iBone = 0; iBone < tFile->m_pBoneAnimMatrix.size(); iBone++)
+		{
+			fwrite(&tFile->m_pBoneAnimMatrix[iBone].at(0),
+				sizeof(T::TMatrix), fileHeader.iLastFrame, fp);
+		}
+	}
+
+
 	for (auto mesh : tFile->m_ChildList)
 	{
 		TKgcFileHeader header;
+		
 		header.iLength = mesh->m_szTexFileList.size(); // 텍스처 개수
 		header.iChildNodeCounter = mesh->m_ChildList.size();
 		header.matWorld = mesh->m_matWorld;
@@ -129,6 +142,17 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 	WCHAR szLoadfilename[256] = { 0, };
 	fread(szLoadfilename, sizeof(wchar_t), fileHeader.iLength, fp);
 	tFbxModel->m_FileHeader = fileHeader;
+
+	if (fileHeader.iLastFrame > 0)
+	{
+		tFbxModel->m_pBoneAnimMatrix.resize(fileHeader.iNumNodeCounter);
+		for (int iBone = 0; iBone < tFbxModel->m_pBoneAnimMatrix.size(); iBone++)
+		{
+			tFbxModel->m_pBoneAnimMatrix[iBone].resize(fileHeader.iLastFrame);
+			fread(&tFbxModel->m_pBoneAnimMatrix[iBone].at(0),
+				sizeof(T::TMatrix), fileHeader.iLastFrame, fp);
+		}
+	}
 
 	for (int iMesh =0; iMesh < fileHeader.iChildNodeCounter; iMesh++)
 	{
@@ -547,7 +571,8 @@ void     TFbxModel::Frame()
 		auto pModel = m_ChildModel[iChild];
 		for (int iBone = 0; iBone < pModel->m_pFbxNodeBindPoseMatrixList.size(); iBone++)
 		{
-			//matAnim = pModel->m_pFbxNodeBindPoseMatrixList[iBone];
+			matAnim = pModel->m_pFbxNodeBindPoseMatrixList[iBone] * 
+											m_pBoneAnimMatrix[iBone][m_fFrameAnimation];
 			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone],
 				&matAnim);
 		}

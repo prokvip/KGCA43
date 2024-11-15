@@ -49,10 +49,6 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 	}
 	// Áß¿ä
 	m_pFbxNodeList.emplace_back(node);
-
-	//FbxAMatrix matWorld = node->EvaluateGlobalTransform(0);
-	T::TMatrix matDXWorld;// = ConvertFbxAMatrix(matWorld);
-	m_pFbxNodeBindPoseMatrixList.emplace_back(matDXWorld.Invert());
 	
 	int iNumChild = node->GetChildCount();
 	for (int iNode = 0; iNode < iNumChild; iNode++)
@@ -96,13 +92,14 @@ bool   TFbxLoader::Load(C_STR filename,
 	m_pRootNode = m_pScene->GetRootNode();
 	PreProcess(m_pRootNode);	
 
+	LoadNodeAnimation(tKgcFileFormat);
+	tKgcFileFormat->m_Header.iNumNodeCounter = m_pFbxNodeList.size();
+
 	for (int iMesh = 0; iMesh < m_pFbxMeshList.size(); iMesh++)
 	{
 		LoadMesh(iMesh, *tKgcFileFormat);
-	}
-	
-	tKgcFileFormat->m_pFbxNodeBindPoseMatrixList = m_pFbxNodeBindPoseMatrixList;
-
+	}	
+	tKgcFileFormat->m_pFbxNodeBindPoseMatrixList = m_pFbxNodeBindPoseMatrixList;	
 	LoadAnimation(tKgcFileFormat);
 
 	m_pFbxMeshList.clear();

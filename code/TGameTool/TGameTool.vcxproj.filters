@@ -197,6 +197,8 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\data\shader\skyobject.hlsl" />
+    <FxCompile Include="CharacterLightting.hlsl" />
+    <FxCompile Include="Lightting.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="DrawColor.txt" />

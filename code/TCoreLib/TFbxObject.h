@@ -38,6 +38,7 @@ struct TWeight
 struct TKgcFileHeader
 {
 	int				iVersion = 100;
+	int				iNumNodeCounter = 0;
 	int				isSubMesh = 0; // 서브메터리얼 유무
 	int				iStartFrame = 0;
 	int				iLastFrame = 0;
@@ -95,6 +96,8 @@ public:
 	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
 	ComPtr<ID3D11Buffer>        m_pBoneCB;
 	TBoneMatrix					m_matBoneList;
+	using boneFrameMatrix = std::vector<T::TMatrix>;
+	std::vector<boneFrameMatrix> m_pBoneAnimMatrix;
 
 	virtual bool     CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
 
@@ -125,9 +128,12 @@ public:
 	iList			m_vIndexList;
 	std::vector<vList>		m_vSubMeshVertexList;
 	std::vector<iList>		m_vSubMeshIndexList;
-	std::vector<std::shared_ptr<TKgcFileFormat>> m_ChildList;
-
 	std::vector<T::TMatrix> m_pAnimationMatrix;
+	std::vector<std::shared_ptr<TKgcFileFormat>> m_ChildList;
+	// 모든 행렬에 대한 에니메이션 프레임 저장
+	using boneFrameMatrix = std::vector<T::TMatrix>;
+	std::vector<boneFrameMatrix> m_pBoneAnimMatrix;
+	
 
 	// Skinning : 전체 트리 노드가 본 좌표계로 변환되는 행렬
 	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
@@ -155,7 +161,7 @@ public:
 	bool  Load(T_STR filename)
 	{
 		m_pdxObj = std::make_shared<TFbxModel>();
-		if (TKgcFileFormat::Import(filename, L"../../data/shader/Lightting.hlsl", m_pdxObj))
+		if (TKgcFileFormat::Import(filename, L"../../data/shader/CharacterLightting.hlsl", m_pdxObj))
 		{
 			return true;
 		}

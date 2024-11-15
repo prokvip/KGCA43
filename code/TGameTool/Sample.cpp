@@ -8,7 +8,8 @@ void   Sample::SetObject(T::TVector3 vPos)
 	obj.iObjectType = rand() % m_pFbxfileList.size();
 	obj.vPos = vPos;/*{ randstep(-m_Map.m_fMapDistance.x / 2.0f, +m_Map.m_fMapDistance.x / 2.0f), 0.0f,
 		randstep(-m_Map.m_fMapDistance.y / 2.0f, +m_Map.m_fMapDistance.y / 2.0f) };*/
-	obj.vScale = { randstep(0.1f, 2.0f), randstep(0.1f, 2.0f), randstep(0.1f, 2.0f) };
+	//obj.vScale = { randstep(0.1f, 2.0f), randstep(0.1f, 2.0f), randstep(0.1f, 2.0f) };
+	obj.vScale = { 1.0f, 1.0f, 1.0f };
 	D3DXMatrixScaling(&obj.matWorld, obj.vScale.x, obj.vScale.y, obj.vScale.z);
 	obj.matWorld._41 = obj.vPos.x;
 	obj.matWorld._42 = obj.vPos.y;
@@ -150,6 +151,7 @@ void	Sample::PreFrame()
 			}
 		}
 	}
+
 }
 void    Sample::Frame()
 {
@@ -176,7 +178,15 @@ void    Sample::Frame()
 	{
 		m_pFbxfileList[iFbx]->Get()->Frame();
 	}
-
+	for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
+	{
+		int iObjType = m_pMapObjectList[iFbx].iObjectType;
+		auto model = std::dynamic_pointer_cast<TKgcObject>(m_pFbxfileList[iObjType]->Get());
+		if (model)
+		{
+			model->Get()->Frame();
+		}
+	}
 
 	m_Quadtree.Frame();
 }
@@ -201,6 +211,7 @@ void    Sample::MapRender(TCamera* pCamera)
 		m_Quadtree.m_pRootNode->m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	//m_Quadtree.PostRender(TDevice::m_pContext, m_Quadtree.m_pRootNode);
 	//m_Map.PostRender(TDevice::m_pContext);
+	// 
 	m_Quadtree.Render();
 
 	m_Quadtree.m_Line.SetMatrix(nullptr, &m_MainCamera.m_matView, &m_MainCamera.m_matProj);
@@ -208,7 +219,7 @@ void    Sample::MapRender(TCamera* pCamera)
 }
 void    Sample::Render()
 {
-	MapRender(&m_MainCamera);
+	//MapRender(&m_MainCamera);
 
 	static bool m_bMainCamera = false;
 	if (TInput::Get().KeyCheck(VK_F3) == KEY_PUSH)
