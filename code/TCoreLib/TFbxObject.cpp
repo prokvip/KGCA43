@@ -42,7 +42,13 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 		header.iFrameSpeed = fileHeader.iFrameSpeed;
 		fwrite(&header, sizeof(TKgcFileHeader), 1, fp);
 
-		// animation
+		// Bindpose matrix
+		int iSize = mesh->m_pFbxNodeBindPoseMatrixList.size();
+		fwrite(&iSize, sizeof(int), 1, fp);
+		if (iSize <= 0) continue;
+		fwrite(&mesh->m_pFbxNodeBindPoseMatrixList.at(0), 
+			sizeof(T::TMatrix), iSize, fp);
+
 		//fwrite(&mesh->m_pAnimationMatrix, sizeof(T::TMatrix), header.iNumTrack, fp);
 		for (int iFrame = 0; iFrame < header.iNumTrack; iFrame++)
 		{
@@ -131,6 +137,13 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 		TKgcFileHeader header;
 		fread(&header, sizeof(TKgcFileHeader), 1, fp);
 		fbxModel->m_FileHeader = header;
+
+		// Bindpose matrix
+		int iSize;
+		fread(&iSize, sizeof(int), 1, fp);
+		if (iSize <= 0) continue;
+		fbxModel->m_pFbxNodeBindPoseMatrixList.resize(iSize);
+		fread(&fbxModel->m_pFbxNodeBindPoseMatrixList.at(0),sizeof(T::TMatrix), iSize, fp);
 
 		// animation
 		fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
@@ -403,6 +416,11 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 		pModel->SetMatrix(&pModel->m_matWorld, &m_matView, &m_matProj);
 		
 		pModel->PreRender(pContext);
+
+		// skinning
+		pContext->VSSetConstantBuffers(2, 1, 
+			pModel->m_pBoneCB.GetAddressOf());
+
 		if (pModel->m_pSubMeshVertexBuffer.size())
 		{
 			for (int iSubMesh = 0; iSubMesh < pModel->m_pSubMeshVertexBuffer.size(); iSubMesh++)
@@ -496,6 +514,46 @@ bool     TFbxModel::CreateInputLayout(ID3D11Device* pd3dDevice)
 		return false;
 	}
 	return true;
+}
+bool	 TFbxModel::CreateConstantBuffer(ID3D11Device* pd3dDevice)
+{
+	TDxObject3D::CreateConstantBuffer(pd3dDevice);
+
+	// 버퍼 할당 크기를 세팅한다.
+	D3D11_BUFFER_DESC  bd;
+	ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
+	bd.ByteWidth = sizeof(TBoneMatrix);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+
+	// 할당된 버퍼에 
+	// 시스템메모리가 ->GPU메모리로 체워지는 데이터
+	D3D11_SUBRESOURCE_DATA sd;
+	ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+	sd.pSysMem = &m_matBoneList;
+
+	HRESULT hr = pd3dDevice->CreateBuffer(
+		&bd,
+		&sd,
+		m_pBoneCB.GetAddressOf());
+	if (FAILED(hr)) return false;
+	return true;
+}
+void     TFbxModel::Frame()
+{
+	T::TMatrix matAnim;
+	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
+	{
+		auto pModel = m_ChildModel[iChild];
+		for (int iBone = 0; iBone < pModel->m_pFbxNodeBindPoseMatrixList.size(); iBone++)
+		{
+			//matAnim = pModel->m_pFbxNodeBindPoseMatrixList[iBone];
+			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone],
+				&matAnim);
+		}
+		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(),
+			0, NULL, &pModel->m_matBoneList, 0, 0);
+	}
 }
 //void   TFbxModel::GenBufferVI(PNCT_Vertex& v)
 //{

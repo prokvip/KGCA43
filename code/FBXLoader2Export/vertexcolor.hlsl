@@ -1,12 +1,12 @@
-//1 > FXC : error X3501 : 'main' : entrypoint not found
-//1 >
-//1 > compilation failed; no code produced
+#define MAX_BONE_MATRICES 255 
 struct VS_In
 {
 	float3 p : POS;
 	float3 n : NOR;
 	float4 c : COL;
 	float2 t : TEX;
+	float4 i : INDEX;
+	float4 w : WEIGHT;
 };
 struct VS_Out
 {
@@ -20,16 +20,35 @@ cbuffer FRAME_CB : register(b0)// 상수버퍼
 	matrix g_matView;
 	matrix g_matProj;
 };
+cbuffer cbAnimMatrices : register (b2)
+{
+	matrix m_matConstBoneWorld[MAX_BONE_MATRICES];
+};
 
 VS_Out VSMain(VS_In vsIn)
 {
 	VS_Out  vsOut = (VS_Out)0;
 	float4 vLocal = float4(vsIn.p.x, vsIn.p.y, vsIn.p.z, 1.0f);
-	float4 vWorld = mul(vLocal, g_matWorld);
+
+	float4 vAnimVertex = 0;
+	float3 vAnimNormal = 0;
+	// iNumWeight4 = 1.0f - w[0] + w[1] + w[2]; 	
+	for (int iBone = 0; iBone < 4; iBone++)
+	{
+		uint iBoneIndex = vsIn.i[iBone];
+		float1 fWeight = vsIn.w[iBone];
+		float4x4 matBone = m_matConstBoneWorld[iBoneIndex];
+
+		vAnimVertex += mul(vLocal, matBone) * fWeight;
+		vAnimNormal += mul(vsIn.n, (float3x3)matBone) * fWeight;
+	}
+
+	float4 vWorld = mul(vAnimVertex, g_matWorld);
 	float4 vView  = mul(vWorld, g_matView);
 	float4 vProj = mul(vView, g_matProj);
 	vsOut.p = vProj;
-	vsOut.c = vsIn.c;
+	vsOut.c = vsIn.w;
+	vsOut.c.a = 1.0f;
 	vsOut.t = vsIn.t;
 	return vsOut;
 }
@@ -55,6 +74,6 @@ PS_Out PSMain(PS_In psIn)
 	float4 pixel = g_txTexture.Sample(LinearPoint, psIn.t);
 	//float4 pixel = g_txTexture.Sample(Point, psIn.t);
 	pixel.a = 1.0f;
-	psOut.c = pixel;// *psIn.c;// float4(1, 0, 0, 1);
+	psOut.c = psIn.c;// float4(1, 0, 0, 1);
 	return psOut;	
 }

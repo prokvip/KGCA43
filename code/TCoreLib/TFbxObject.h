@@ -59,7 +59,10 @@ struct TTexFileHeader
 	int				iLength = 0;
 	int				iType = 0;
 };
-
+struct  TBoneMatrix
+{
+	T::TMatrix  matBone[255];
+};
 class TFbxModel : public TDxObject3D
 {
 public:
@@ -90,8 +93,8 @@ public:
 
 	//skinning
 	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
-
-	
+	ComPtr<ID3D11Buffer>        m_pBoneCB;
+	TBoneMatrix					m_matBoneList;
 
 	virtual bool     CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
 
@@ -99,6 +102,8 @@ public:
 	virtual void	 LoadTexture(std::wstring szPath) override;
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice)override;
 	virtual bool     CreateIndexBuffer(ID3D11Device* pd3dDevice) override;
+	virtual bool	 CreateConstantBuffer(ID3D11Device* pd3dDevice) override;
+	virtual void     Frame()override;
 	virtual void     Render(ID3D11DeviceContext* pContext)override;
 	virtual void     Release() override;
 	virtual void     SetVertexData() override;

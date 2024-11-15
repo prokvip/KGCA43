@@ -154,6 +154,10 @@ void    Sample::Frame()
 			}
 		}
 	}
+	for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
+	{
+		m_pFbxfileList[iFbx]->Frame();
+	}
 }
 void    Sample::Render()
 {
