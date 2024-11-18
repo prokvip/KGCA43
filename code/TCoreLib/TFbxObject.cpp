@@ -416,26 +416,28 @@ bool     TFbxModel::CreateIndexBuffer(ID3D11Device* pd3dDevice)
 }
 void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 {
-	static float fDirection = 1.0f;	
-	float fStartFrame = m_FileHeader.iStartFrame;
-	float fEndFrame = m_FileHeader.iLastFrame;
+	//static float fDirection = 1.0f;	
+	float fStartFrame = 61;// m_FileHeader.iStartFrame;
+	float fEndFrame = 91;// m_FileHeader.iLastFrame;
 	float FrameSpeed = m_FileHeader.iFrameSpeed;
-	m_fFrameAnimation += fDirection * g_fSecondPerFrame * FrameSpeed * 1.f;
+	m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 1.f;
 	if (m_fFrameAnimation > fEndFrame)
 	{
-		m_fFrameAnimation = fEndFrame - 1;
-		fDirection *= -1.0f;
+		m_fFrameAnimation = fStartFrame;// fEndFrame - 1;
+		//fDirection *= -1.0f;
 	}
-	if (m_fFrameAnimation < fStartFrame)
-	{
-		m_fFrameAnimation = fStartFrame;
-		fDirection *= -1.0f;
-	}
+	//if (m_fFrameAnimation < fStartFrame)
+	//{
+	//	m_fFrameAnimation = fStartFrame;
+	//	//fDirection *= -1.0f;
+	//}
 
 	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
 	{
 		auto pModel = m_ChildModel[iChild];
-		pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];
+		//pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];
+		//pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];		
+		D3DXMatrixIdentity(&pModel->m_matWorld);
 		pModel->m_matParentWorld = m_matParentWorld;
 		pModel->SetMatrix(&pModel->m_matWorld, &m_matView, &m_matProj);
 		
@@ -573,8 +575,7 @@ void     TFbxModel::Frame()
 		{
 			matAnim = pModel->m_pFbxNodeBindPoseMatrixList[iBone] * 
 											m_pBoneAnimMatrix[iBone][m_fFrameAnimation];
-			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone],
-				&matAnim);
+			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone],&matAnim);
 		}
 		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(),
 			0, NULL, &pModel->m_matBoneList, 0, 0);

@@ -13,12 +13,33 @@ struct TLightInfo
 };
 struct TMapObject
 {
-	int iObjectType = 0;
-	TObject* pObject = nullptr;
-	T::TVector3 vPos;
-	T::TVector3 vScale;
-	T::TVector3 vRotate;
-	T::TMatrix  matWorld;
+	int				iObjectType = 0;
+	TObject*		pObject = nullptr;
+	T::TVector3		vPos;
+	T::TVector3		vScale;
+	T::TVector3		vRotate;
+	T::TMatrix		matWorld;
+	T::TVector3	    vLook = { 0.0f,0.0f,1.0f };
+	T::TVector3	    vSide = { 1.0f,0.0f,0.0f };
+	T::TVector3	    vUp = { 0.0f,1.0f,0.0f };
+	float			m_fFrameAnimation = 61.0f;
+	TKgcFileHeader	m_FileHeader;	
+	/*void     Frame()
+	{
+		T::TMatrix matAnim;
+		for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
+		{
+			auto pModel = m_ChildModel[iChild];
+			for (int iBone = 0; iBone < pModel->m_pFbxNodeBindPoseMatrixList.size(); iBone++)
+			{
+				matAnim = pModel->m_pFbxNodeBindPoseMatrixList[iBone] *
+					m_pBoneAnimMatrix[iBone][m_fFrameAnimation];
+				D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matAnim);
+			}
+			TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(),
+				0, NULL, &pModel->m_matBoneList, 0, 0);
+		}
+	}*/
 };
 
 class TMiniMap : public TPlaneObj
