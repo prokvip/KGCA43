@@ -414,24 +414,13 @@ bool     TFbxModel::CreateIndexBuffer(ID3D11Device* pd3dDevice)
 	}
 	return true;
 }
-void     TFbxModel::Render(ID3D11DeviceContext* pContext)
+void     TFbxModel::SetAnimFrame(float s, float e)
 {
-	//static float fDirection = 1.0f;	
-	float fStartFrame = 61;// m_FileHeader.iStartFrame;
-	float fEndFrame = 91;// m_FileHeader.iLastFrame;
-	float FrameSpeed = m_FileHeader.iFrameSpeed;
-	m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 1.f;
-	if (m_fFrameAnimation > fEndFrame)
-	{
-		m_fFrameAnimation = fStartFrame;// fEndFrame - 1;
-		//fDirection *= -1.0f;
-	}
-	//if (m_fFrameAnimation < fStartFrame)
-	//{
-	//	m_fFrameAnimation = fStartFrame;
-	//	//fDirection *= -1.0f;
-	//}
-
+	m_fStartFrame = s;
+	m_fEndFrame = e;
+}
+void     TFbxModel::Render(ID3D11DeviceContext* pContext)
+{	
 	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
 	{
 		auto pModel = m_ChildModel[iChild];
@@ -444,8 +433,7 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 		pModel->PreRender(pContext);
 
 		// skinning
-		pContext->VSSetConstantBuffers(2, 1, 
-			pModel->m_pBoneCB.GetAddressOf());
+		pContext->VSSetConstantBuffers(2, 1, pModel->m_pBoneCB.GetAddressOf());
 
 		if (pModel->m_pSubMeshVertexBuffer.size())
 		{
@@ -565,7 +553,8 @@ bool	 TFbxModel::CreateConstantBuffer(ID3D11Device* pd3dDevice)
 	if (FAILED(hr)) return false;
 	return true;
 }
-void     TFbxModel::Frame()
+void	 TFbxModel::Frame() {} 
+void     TFbxModel::AnimFrame(float& fAnimFrame)
 {
 	T::TMatrix matAnim;
 	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
@@ -574,11 +563,10 @@ void     TFbxModel::Frame()
 		for (int iBone = 0; iBone < pModel->m_pFbxNodeBindPoseMatrixList.size(); iBone++)
 		{
 			matAnim = pModel->m_pFbxNodeBindPoseMatrixList[iBone] * 
-											m_pBoneAnimMatrix[iBone][m_fFrameAnimation];
+											m_pBoneAnimMatrix[iBone][fAnimFrame];
 			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone],&matAnim);
 		}
-		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(),
-			0, NULL, &pModel->m_matBoneList, 0, 0);
+		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(),	0, NULL, &pModel->m_matBoneList, 0, 0);
 	}
 }
 //void   TFbxModel::GenBufferVI(PNCT_Vertex& v)

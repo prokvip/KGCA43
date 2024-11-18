@@ -14,32 +14,63 @@ struct TLightInfo
 struct TMapObject
 {
 	int				iObjectType = 0;
-	TObject*		pObject = nullptr;
+	TKgcObject*		m_pAnimMesh = nullptr;
 	T::TVector3		vPos;
 	T::TVector3		vScale;
 	T::TVector3		vRotate;
 	T::TMatrix		matWorld;
-	T::TVector3	    vLook = { 0.0f,0.0f,1.0f };
+	T::TVector3	    vLook = { 0.0f,0.0f,-1.0f };
 	T::TVector3	    vSide = { 1.0f,0.0f,0.0f };
 	T::TVector3	    vUp = { 0.0f,1.0f,0.0f };
 	float			m_fFrameAnimation = 61.0f;
+	UINT			m_fStartFrame = 0.0f;
+	UINT			m_fLastFrame  = 60.0f;
 	TKgcFileHeader	m_FileHeader;	
-	/*void     Frame()
+	void       SetAnimFrame(UINT s, UINT e)
 	{
-		T::TMatrix matAnim;
-		for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
+		if (m_fStartFrame != s && m_fLastFrame != e)
 		{
-			auto pModel = m_ChildModel[iChild];
-			for (int iBone = 0; iBone < pModel->m_pFbxNodeBindPoseMatrixList.size(); iBone++)
-			{
-				matAnim = pModel->m_pFbxNodeBindPoseMatrixList[iBone] *
-					m_pBoneAnimMatrix[iBone][m_fFrameAnimation];
-				D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matAnim);
-			}
-			TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(),
-				0, NULL, &pModel->m_matBoneList, 0, 0);
+			m_fStartFrame = s;
+			m_fLastFrame = e;
+			m_fFrameAnimation = s;
 		}
-	}*/
+	}
+
+	void       Render(TMap& map, TCamera& cam)
+	{
+		T::TMatrix matScale, matBaseRotate, matRotate, matTrans;
+		D3DXMatrixScaling(&matScale,vScale.x,	vScale.y,	vScale.z);
+		//vPos += vLook * g_fSecondPerFrame * 120.0f;
+		D3DXMatrixRotationY(&matBaseRotate, DegreeToRadian(180.0f));
+		D3DXMatrixRotationY(&matRotate, g_fGameTime * 0.f);
+		D3DXVec3TransformCoord(&vPos, &vPos, &matRotate);
+		vPos.y = map.GetHeight(vPos);
+		D3DXMatrixTranslation(&matTrans, vPos.x, vPos.y, vPos.z);	
+		matWorld = matScale * matBaseRotate * matRotate;
+		matWorld._41 = vPos.x;
+		matWorld._42 = vPos.y;
+		matWorld._43 = vPos.z;
+		vLook.x = -matWorld._31;
+		vLook.y = -matWorld._32;
+		vLook.z = -matWorld._33;
+		D3DXVec3Normalize(&vLook, &vLook);
+
+		float FrameSpeed = 30.0f;
+		m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 1.f;
+		if (m_fFrameAnimation > m_fLastFrame)
+		{
+			m_fFrameAnimation = m_fStartFrame;
+		}
+
+		if (m_pAnimMesh)
+		{
+			m_pAnimMesh->Get()->SetAnimFrame(m_fStartFrame, m_fLastFrame);
+			m_pAnimMesh->Get()->AnimFrame(m_fFrameAnimation);	
+			m_pAnimMesh->Get()->m_matParentWorld = matWorld;
+			m_pAnimMesh->Get()->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
+			m_pAnimMesh->Get()->Render(TDevice::m_pContext);
+		}
+	}	
 };
 
 class TMiniMap : public TPlaneObj

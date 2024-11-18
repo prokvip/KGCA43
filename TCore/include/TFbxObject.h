@@ -68,6 +68,10 @@ class TFbxModel : public TDxObject3D
 {
 public:
 	float			m_fFrameAnimation = 0.0f;
+	float			m_fStartFrame=0;
+	float			m_fEndFrame=0;
+	void			SetAnimFrame(float s, float e);		
+
 	TKgcFileHeader	m_FileHeader;
 	std::vector< std::shared_ptr<TFbxModel> > m_ChildModel;
 
@@ -107,6 +111,7 @@ public:
 	virtual bool     CreateIndexBuffer(ID3D11Device* pd3dDevice) override;
 	virtual bool	 CreateConstantBuffer(ID3D11Device* pd3dDevice) override;
 	virtual void     Frame()override;
+	virtual void     AnimFrame(float& fAnimFrame);
 	virtual void     Render(ID3D11DeviceContext* pContext)override;
 	virtual void     Release() override;
 	virtual void     SetVertexData() override;

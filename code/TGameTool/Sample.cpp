@@ -6,14 +6,16 @@ void   Sample::SetObject(T::TVector3 vPos)
 	TMapObject obj;
 	int iNumObject = I_Object.m_list.size();
 	obj.iObjectType = rand() % m_pFbxfileList.size();
-	obj.vPos = vPos;/*{ randstep(-m_Map.m_fMapDistance.x / 2.0f, +m_Map.m_fMapDistance.x / 2.0f), 0.0f,
-		randstep(-m_Map.m_fMapDistance.y / 2.0f, +m_Map.m_fMapDistance.y / 2.0f) };*/
-	//obj.vScale = { randstep(0.1f, 2.0f), randstep(0.1f, 2.0f), randstep(0.1f, 2.0f) };
+	obj.m_pAnimMesh = std::dynamic_pointer_cast<TKgcObject>(
+								m_pFbxfileList[obj.iObjectType]->Get()).get();
+	
+	obj.vPos = vPos;
 	obj.vScale = { 1.0f, 1.0f, 1.0f };
 	D3DXMatrixScaling(&obj.matWorld, obj.vScale.x, obj.vScale.y, obj.vScale.z);
 	obj.matWorld._41 = obj.vPos.x;
 	obj.matWorld._42 = obj.vPos.y;
 	obj.matWorld._43 = obj.vPos.z;
+	
 	m_pMapObjectList.emplace_back(obj);
 	
 }
@@ -90,8 +92,7 @@ void   Sample::Init()
 	m_MainCamera.SetView(eye, target, up);
 
 
-	m_MiniMapObj.Create(L"../../data/22879344.jpg", 
-		L"../../data/shader/ScreenQuad.txt");
+	m_MiniMapObj.Create(L"../../data/22879344.jpg", L"../../data/shader/ScreenQuad.txt");
 }
 void	Sample::PreFrame()
 {
@@ -170,41 +171,20 @@ void    Sample::Frame()
 	m_LightInfo.m_vLightPos.y = vPos.y;
 	m_LightInfo.m_vLightPos.z = vPos.z;
 	m_LightInfo.m_vLightPos.w = 1.0f;
-	TDevice::m_pContext->UpdateSubresource(
-		m_pConstantBufferLight.Get(), 0, NULL, &m_LightInfo, 0, 0);
-
-
-	/*for (int iFbx = 0; iFbx < m_pFbxfileList.size(); iFbx++)
-	{
-		m_pFbxfileList[iFbx]->Get()->Frame();
-	}*/
-	////for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
-	////{
-	////	int iObjType = m_pMapObjectList[iFbx].iObjectType;
-	////	auto model = std::dynamic_pointer_cast<TKgcObject>(m_pFbxfileList[iObjType]->Get());
-	////	if (model)
-	////	{
-	////		/*static float fDirection = 1.0f;
-	////		float fStartFrame = m_pMapObjectList[iFbx].m_FileHeader.iStartFrame;
-	////		float fEndFrame = m_pMapObjectList[iFbx].m_FileHeader.iLastFrame;
-	////		float FrameSpeed = m_pMapObjectList[iFbx].m_FileHeader.iFrameSpeed;
-	////		m_pMapObjectList[iFbx].m_fFrameAnimation += fDirection * g_fSecondPerFrame * FrameSpeed * 1.f;
-	////		if (m_pMapObjectList[iFbx].m_fFrameAnimation > fEndFrame)
-	////		{
-	////			m_pMapObjectList[iFbx].m_fFrameAnimation = fEndFrame - 1;
-	////			fDirection *= -1.0f;
-	////		}
-	////		if (m_fFrameAnimation < fStartFrame)
-	////		{
-	////			m_pMapObjectList[iFbx].m_fFrameAnimation = fStartFrame;
-	////			fDirection *= -1.0f;
-	////		}
-	////		model->Get()->m_fFrameAnimation = m_pMapObjectList[iFbx].m_fFrameAnimation;
-	////		model->Get()->Frame();*/
-	////	}
-	////}
-
+	TDevice::m_pContext->UpdateSubresource(	m_pConstantBufferLight.Get(), 0, NULL, &m_LightInfo, 0, 0);
 	m_Quadtree.Frame();
+
+	if (m_pMapObjectList.size() > 0)
+	{
+		if (I_Input.Get().KeyCheck(VK_UP) == KEY_HOLD)
+		{
+			m_pMapObjectList[0].SetAnimFrame(61, 91);
+		}
+		else
+		{
+			m_pMapObjectList[0].SetAnimFrame(0, 60);
+		}
+	}
 }
 void    Sample::PostFrame()
 {	
@@ -243,65 +223,9 @@ void    Sample::Render()
 		m_bMainCamera = !m_bMainCamera;
 	}
 
-	//m_pMapObjectList.emplace_back(obj);
 	for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
 	{
-		T::TMatrix matScale, matRotate, matTrans;
-		D3DXMatrixScaling(&matScale,
-			m_pMapObjectList[iFbx].vScale.x,
-			m_pMapObjectList[iFbx].vScale.y,
-			m_pMapObjectList[iFbx].vScale.z);
-
-		m_pMapObjectList[iFbx].vPos += m_pMapObjectList[iFbx].vLook* g_fSecondPerFrame*50.0f;
-		/*D3DXMatrixTranslation(&matTrans,
-			m_pMapObjectList[iFbx].vPos.x,
-			m_pMapObjectList[iFbx].vPos.y,
-			m_pMapObjectList[iFbx].vPos.z);*/
-		
-
-		D3DXMatrixRotationY(&matRotate, iFbx * 100.0f);
-
-		T::TVector3 vPos=m_pMapObjectList[iFbx].vPos;
-		D3DXVec3TransformCoord(&vPos, &m_pMapObjectList[iFbx].vPos, &matRotate);
-		vPos.y = m_Map.GetHeight(vPos);
-		D3DXMatrixTranslation(&matTrans,vPos.x, vPos.y, vPos.z);
-		
-		
-		if (iFbx == 0 && m_bMainCamera)
-		{
-			T::TVector3 eye =
-				vPos +
-				T::TVector3(0, 0, -1) * 50.0f +
-				T::TVector3(0, 1, 0) * 50.0f;
-			T::TVector3 target = vPos;
-			T::TVector3 up = { 0.0f, 1.0f, 0.0 };
-			// 이항 '=': 오른쪽 피연산자로 'T_Math::FMatrix' 형식을 사용하는 연산자가 없거나 허용되는 변환이 없습니다.
-			m_MainCamera.SetView(eye, target, up);
-		}
-		//m_pMapObjectList[iFbx].matWorld = matScale * matTrans;	
-		m_pMapObjectList[iFbx].matWorld = matScale * matRotate * matTrans;
-		m_pMapObjectList[iFbx].vLook.x = -m_pMapObjectList[iFbx].matWorld._31;
-		m_pMapObjectList[iFbx].vLook.y = -m_pMapObjectList[iFbx].matWorld._32;
-		m_pMapObjectList[iFbx].vLook.z = -m_pMapObjectList[iFbx].matWorld._33;
-
-		D3DXVec3Normalize(&m_pMapObjectList[iFbx].vLook, &m_pMapObjectList[iFbx].vLook);
-
-		int iObjType = m_pMapObjectList[iFbx].iObjectType;
-		
-		auto model = std::dynamic_pointer_cast<TKgcObject>(m_pFbxfileList[iObjType]->Get());
-		if (model)
-		{
-			model->Get()->m_fFrameAnimation = m_pMapObjectList[iFbx].m_fFrameAnimation;
-				model->Get()->Frame();
-			m_pMapObjectList[iFbx].m_fFrameAnimation = model->Get()->m_fFrameAnimation;
-
-			model->Get()->m_matParentWorld = m_pMapObjectList[iFbx].matWorld;
-			model->Get()->SetMatrix(nullptr, &m_MainCamera.m_matView, &m_MainCamera.m_matProj);
-			
-			model->Get()->m_fFrameAnimation = m_pMapObjectList[iFbx].m_fFrameAnimation;
-				model->Get()->Render(TDevice::m_pContext);
-			m_pMapObjectList[iFbx].m_fFrameAnimation = model->Get()->m_fFrameAnimation;
-		}
+		m_pMapObjectList[iFbx].Render(m_Map, m_MainCamera);
 	}
 
 	MiniMapRander(nullptr);	

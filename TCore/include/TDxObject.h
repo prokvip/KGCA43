@@ -155,6 +155,7 @@ public:
 
 	virtual void     Init() {};
 	virtual void     Frame();
+	virtual void     AnimFrame(float& fAnimFrame) {};
 	virtual void     PreRender(ID3D11DeviceContext* pContext);
 	virtual void     Render(ID3D11DeviceContext* pContext);
 	virtual void     PostRender(ID3D11DeviceContext* pContext);

@@ -61,7 +61,9 @@ static std::string to_wm(const std::wstring& _src)
 #define randf2(x,off) (off+x*rand()/(float)RAND_MAX)
 #define randstep(fMin,fMax) (fMin+((float)fMax-(float)fMin)*rand()/(float)RAND_MAX)
 #define clamp(x,MinX,MaxX) if (x>MaxX) x=MaxX; else if (x<MinX) x=MinX;
-
+#define DegreeToRadian( degree ) ((degree) * (XM_PI / 180.0f))
+#define RadianToDegree( radian ) ((radian) * (180.0f / XM_PI))
+// 
 /////////////////////////////////////////  반환하지 않는다. ////////////////////////////////////////////////////////
 #if defined(DEBUG) | defined(_DEBUG) 
 #ifndef H
