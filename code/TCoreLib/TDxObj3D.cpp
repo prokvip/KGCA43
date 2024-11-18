@@ -244,8 +244,7 @@ void	 TDxObject3D::SetMatrix(T::TMatrix* pWorld, T::TMatrix* pView, T::TMatrix* 
 
 	if (m_pConstantBuffer != nullptr)
 	{
-		m_pContext->UpdateSubresource(m_pConstantBuffer.Get(), 0,
-			NULL, &m_cb, 0, 0);
+		m_pContext->UpdateSubresource(m_pConstantBuffer.Get(), 0,NULL, &m_cb, 0, 0);
 	}
 }
 void     TDxObject3D::Render(ID3D11DeviceContext* pContext)

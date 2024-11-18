@@ -178,11 +178,17 @@ void    Sample::Frame()
 	{
 		if (I_Input.Get().KeyCheck(VK_UP) == KEY_HOLD)
 		{
-			m_pMapObjectList[0].SetAnimFrame(61, 91);
+			for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
+			{
+				m_pMapObjectList[iFbx].SetAnimFrame(61, 91);
+			}
 		}
 		else
 		{
-			m_pMapObjectList[0].SetAnimFrame(0, 60);
+			for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
+			{
+				m_pMapObjectList[iFbx].SetAnimFrame(0, 60);
+			}
 		}
 	}
 }

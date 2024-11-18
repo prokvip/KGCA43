@@ -39,21 +39,20 @@ struct TMapObject
 	void       Render(TMap& map, TCamera& cam)
 	{
 		T::TMatrix matScale, matBaseRotate, matRotate, matTrans;
-		D3DXMatrixScaling(&matScale,vScale.x,	vScale.y,	vScale.z);
-		//vPos += vLook * g_fSecondPerFrame * 120.0f;
+		D3DXMatrixScaling(&matScale,vScale.x,	vScale.y,	vScale.z);		
 		D3DXMatrixRotationY(&matBaseRotate, DegreeToRadian(180.0f));
-		D3DXMatrixRotationY(&matRotate, g_fGameTime * 0.f);
-		D3DXVec3TransformCoord(&vPos, &vPos, &matRotate);
-		vPos.y = map.GetHeight(vPos);
-		D3DXMatrixTranslation(&matTrans, vPos.x, vPos.y, vPos.z);	
-		matWorld = matScale * matBaseRotate * matRotate;
-		matWorld._41 = vPos.x;
-		matWorld._42 = vPos.y;
-		matWorld._43 = vPos.z;
+		D3DXMatrixRotationY(&matRotate, g_fGameTime * 0.5f);
+		//D3DXVec3TransformCoord(&vPos, &vPos, &matRotate);
+		
 		vLook.x = -matWorld._31;
 		vLook.y = -matWorld._32;
 		vLook.z = -matWorld._33;
 		D3DXVec3Normalize(&vLook, &vLook);
+		
+		vPos += vLook * g_fSecondPerFrame * 100.0f;
+		vPos.y = map.GetHeight(vPos);
+		D3DXMatrixTranslation(&matTrans, vPos.x, vPos.y, vPos.z);
+		matWorld = matScale * matBaseRotate * matRotate * matTrans;
 
 		float FrameSpeed = 30.0f;
 		m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 1.f;
@@ -65,7 +64,7 @@ struct TMapObject
 		if (m_pAnimMesh)
 		{
 			m_pAnimMesh->Get()->SetAnimFrame(m_fStartFrame, m_fLastFrame);
-			m_pAnimMesh->Get()->AnimFrame(m_fFrameAnimation);	
+			m_pAnimMesh->Get()->AnimFrame(m_fFrameAnimation);
 			m_pAnimMesh->Get()->m_matParentWorld = matWorld;
 			m_pAnimMesh->Get()->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
 			m_pAnimMesh->Get()->Render(TDevice::m_pContext);

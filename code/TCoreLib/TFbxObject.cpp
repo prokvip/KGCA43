@@ -428,7 +428,7 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 		//pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];		
 		D3DXMatrixIdentity(&pModel->m_matWorld);
 		pModel->m_matParentWorld = m_matParentWorld;
-		pModel->SetMatrix(&pModel->m_matWorld, &m_matView, &m_matProj);
+		pModel->SetMatrix(nullptr, &m_matView, &m_matProj);
 		
 		pModel->PreRender(pContext);
 
