@@ -50,7 +50,7 @@ VS_Out VSMain(VS_In vsIn)
 	}
 
 	float4 vWorld = mul(vAnimVertex, g_matWorld);
-	float4 vView  = mul(vAnimVertex, g_matView);
+	float4 vView  = mul(vWorld, g_matView);
 	float4 vProj = mul(vView, g_matProj);
 	vsOut.p = vProj;
 	//vsOut.c = vsIn.c;
