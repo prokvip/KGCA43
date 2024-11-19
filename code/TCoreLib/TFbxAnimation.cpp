@@ -44,8 +44,11 @@ bool  TFbxLoader::ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model)
 			FbxAMatrix matBindPose = matReferenceGlobalInitPosition.Inverse() * matXBindPose;
 
 			T::TMatrix matDxBindPose = ConvertFbxAMatrix(matBindPose);
-			model.m_pFbxNodeBindPoseMatrixList[iBoneIndex] = matDxBindPose.Invert();
+			model.m_matBindPose[iBoneIndex] = matDxBindPose.Invert();
 			model.m_pUsedBoneIndexList.push_back(iBoneIndex);
+			//// add
+			//model.m_pMapBindPoseMatrixList.insert(
+			//	std::make_pair(name, model.m_matBindPose[iBoneIndex]));
 
 			// 묶은에  포함된 정점의 개수가 
 			int iClusterSize = pCluster->GetControlPointIndicesCount();
@@ -65,7 +68,7 @@ bool  TFbxLoader::ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model)
 }
 void   TFbxLoader::LoadAnimationNode(
 	TKgcFileHeader header, 
-	TFbxNode* pTFbxNode,
+	FbxNode* pNode,
 	TKgcFileFormat* tKgcFileFormat)
 {
 	FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
@@ -76,7 +79,7 @@ void   TFbxLoader::LoadAnimationNode(
 	{
 		s.SetFrame(iFrame, timeMode);
 		// EvaluateGlobalTransform(최종월드행렬) = SelfAnimation(SRT보간) * ParentAnimation(SRT보간)
-		FbxAMatrix matWorld = pTFbxNode->pFbxNode->EvaluateGlobalTransform(s);
+		FbxAMatrix matWorld = pNode->EvaluateGlobalTransform(s);
 		T::TMatrix matFrame = ConvertFbxAMatrix(matWorld);
 		tKgcFileFormat->m_pAnimationMatrix.emplace_back(matFrame);
 	}
@@ -101,7 +104,7 @@ void   TFbxLoader::LoadNodeAnimation(TKgcFileFormat* model)
 		model->m_Header.iLastFrame = eFrame;
 		model->m_Header.iFrameSpeed = 30;
 
-		int iNumAnimFrame = model->m_Header.iLastFrame - model->m_Header.iStartFrame;
+		int iNumAnimFrame = eFrame;// model->m_Header.iLastFrame - model->m_Header.iStartFrame;
 		// 71 * iNumAnimFrame;
 		std::vector<FbxTime>  s;
 		s.resize(iNumAnimFrame);
@@ -111,19 +114,22 @@ void   TFbxLoader::LoadNodeAnimation(TKgcFileFormat* model)
 		}
 		// bone 71
 		model->m_pBoneAnimMatrix.resize(m_pFbxNodeList.size());
-		m_pFbxNodeBindPoseMatrixList.resize(m_pFbxNodeList.size());
+		m_matBindPose.resize(m_pFbxNodeList.size());
 		// biped + bone + dummy + mesh
 		for (int fbxnode = 0; fbxnode < m_pFbxNodeList.size(); fbxnode++)
 		{
+			std::wstring name = to_mw(m_pFbxNodeList[fbxnode]->GetName());
 			// bone per frame
 			model->m_pBoneAnimMatrix[fbxnode].resize(iNumAnimFrame);
+
+			std::vector<T::TMatrix> matAnim(iNumAnimFrame);			
 			for (int iFrame = sFrame; iFrame < eFrame; iFrame++)
 			{
 				FbxAMatrix matWorld = m_pFbxNodeList[fbxnode]->EvaluateGlobalTransform(s[iFrame]);
 				T::TMatrix matFrame = ConvertFbxAMatrix(matWorld);
 				model->m_pBoneAnimMatrix[fbxnode][iFrame] = matFrame;
 			}
-			m_pFbxNodeBindPoseMatrixList[fbxnode] = model->m_pBoneAnimMatrix[fbxnode][sFrame];
+			m_matBindPose[fbxnode] = model->m_pBoneAnimMatrix[fbxnode][sFrame];
 		}		
 	}	
 }
@@ -151,7 +157,7 @@ void   TFbxLoader::LoadAnimation(TKgcFileFormat* model)
 	for (int iNode = 0; iNode < model->m_ChildList.size(); iNode++)
 	{
 		LoadAnimationNode(model->m_Header,
-			m_pFbxMeshNodeList[iNode].get(),
+			m_pFbxMeshNodeList[iNode],
 			model->m_ChildList[iNode].get());
 	}
 }

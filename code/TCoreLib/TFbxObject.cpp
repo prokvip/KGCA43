@@ -26,6 +26,10 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 	fwrite(&fileHeader, sizeof(TKgcFileHeader), 1, fp);
 	fwrite(tFile->m_szFileName.c_str(), sizeof(wchar_t), fileHeader.iLength, fp);
 
+	// TNode 
+	fwrite(&tFile->m_ptNodeList.at(0), sizeof(TFbxNode), 
+			fileHeader.iNumNodeCounter, fp);
+
 	// bone matrix
 	// 71
 	if (fileHeader.iLastFrame > 0)
@@ -56,10 +60,10 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 		fwrite(&header, sizeof(TKgcFileHeader), 1, fp);
 
 		// Bindpose matrix
-		int iSize = mesh->m_pFbxNodeBindPoseMatrixList.size();
+		int iSize = mesh->m_matBindPose.size();
 		fwrite(&iSize, sizeof(int), 1, fp);
 		if (iSize <= 0) continue;
-		fwrite(&mesh->m_pFbxNodeBindPoseMatrixList.at(0), 
+		fwrite(&mesh->m_matBindPose.at(0), 
 			sizeof(T::TMatrix), iSize, fp);
 
 		//fwrite(&mesh->m_pAnimationMatrix, sizeof(T::TMatrix), header.iNumTrack, fp);
@@ -143,6 +147,11 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 	fread(szLoadfilename, sizeof(wchar_t), fileHeader.iLength, fp);
 	tFbxModel->m_FileHeader = fileHeader;
 
+	// TNode 
+	tFbxModel->m_pTNodeList.resize(fileHeader.iNumNodeCounter);
+	fread(&tFbxModel->m_pTNodeList.at(0), sizeof(TFbxNode),
+		fileHeader.iNumNodeCounter, fp);
+
 	if (fileHeader.iLastFrame > 0)
 	{
 		tFbxModel->m_pBoneAnimMatrix.resize(fileHeader.iNumNodeCounter);
@@ -166,8 +175,8 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 		int iSize;
 		fread(&iSize, sizeof(int), 1, fp);
 		if (iSize <= 0) continue;
-		fbxModel->m_pFbxNodeBindPoseMatrixList.resize(iSize);
-		fread(&fbxModel->m_pFbxNodeBindPoseMatrixList.at(0),sizeof(T::TMatrix), iSize, fp);
+		fbxModel->m_matBindPose.resize(iSize);
+		fread(&fbxModel->m_matBindPose.at(0),sizeof(T::TMatrix), iSize, fp);
 
 		// animation
 		fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
@@ -560,13 +569,30 @@ void     TFbxModel::AnimFrame(float& fAnimFrame)
 	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
 	{
 		auto pModel = m_ChildModel[iChild];
-		for (int iBone = 0; iBone < pModel->m_pFbxNodeBindPoseMatrixList.size(); iBone++)
+		for (int iBone = 0; iBone < pModel->m_matBindPose.size(); iBone++)
 		{
-			matAnim = pModel->m_pFbxNodeBindPoseMatrixList[iBone] * 
-											m_pBoneAnimMatrix[iBone][fAnimFrame];
-			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone],&matAnim);
+			matAnim = pModel->m_matBindPose[iBone] * 
+				m_pBoneAnimMatrix[iBone][fAnimFrame];
+			D3DXMatrixTranspose(
+				&pModel->m_matBoneList.matBone[iBone],&matAnim);
 		}
 		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(),	0, NULL, &pModel->m_matBoneList, 0, 0);
+	}
+}
+void     TFbxModel::AnimFrame(float& fAnimFrame, TFbxModel* pAnim)
+{
+	T::TMatrix matAnim;
+	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
+	{
+		auto pModel = m_ChildModel[iChild];
+		for (int iBone = 0; iBone < pModel->m_matBindPose.size(); iBone++)
+		{
+			matAnim =  pModel->m_matBindPose[iBone] *
+				pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
+			D3DXMatrixTranspose(
+				&pModel->m_matBoneList.matBone[iBone], &matAnim);
+		}
+		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(), 0, NULL, &pModel->m_matBoneList, 0, 0);
 	}
 }
 //void   TFbxModel::GenBufferVI(PNCT_Vertex& v)

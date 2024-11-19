@@ -7,6 +7,13 @@ struct TScene
 	int		iLastFrame = 0;
 	int		iFrameSpeed = 30;
 };
+struct TFbxNode
+{
+	BOOL         isMesh = FALSE;
+	WCHAR        szName[32];
+	WCHAR        szParentName[32];
+};
+
 // 정점 단위로 생성한다.
 struct TWeight
 {
@@ -97,11 +104,14 @@ public:
 	std::vector<T::TMatrix>				m_pAnimationMatrix;
 
 	//skinning
-	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
+	std::vector<T::TMatrix>		m_matBindPose;
 	ComPtr<ID3D11Buffer>        m_pBoneCB;
 	TBoneMatrix					m_matBoneList;
 	using boneFrameMatrix = std::vector<T::TMatrix>;
 	std::vector<boneFrameMatrix> m_pBoneAnimMatrix;
+
+	std::vector<TFbxNode>		m_pTNodeList;
+
 
 	virtual bool     CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
 
@@ -112,6 +122,7 @@ public:
 	virtual bool	 CreateConstantBuffer(ID3D11Device* pd3dDevice) override;
 	virtual void     Frame()override;
 	virtual void     AnimFrame(float& fAnimFrame);
+	virtual void     AnimFrame(float& fAnimFrame, TFbxModel* pAnim);
 	virtual void     Render(ID3D11DeviceContext* pContext)override;
 	virtual void     Release() override;
 	virtual void     SetVertexData() override;
@@ -138,11 +149,10 @@ public:
 	// 모든 행렬에 대한 에니메이션 프레임 저장
 	using boneFrameMatrix = std::vector<T::TMatrix>;
 	std::vector<boneFrameMatrix> m_pBoneAnimMatrix;
-	
-
 	// Skinning : 전체 트리 노드가 본 좌표계로 변환되는 행렬
-	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
+	std::vector<T::TMatrix>		m_matBindPose;
 	std::vector<int>			m_pUsedBoneIndexList;
+	std::vector<TFbxNode>		m_ptNodeList;
 
 	std::vector< TWeight>       m_WeightList;
 	using vIWList = std::vector<IW_Vertex>;

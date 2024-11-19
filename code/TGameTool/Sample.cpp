@@ -8,14 +8,46 @@ void   Sample::SetObject(T::TVector3 vPos)
 	obj.iObjectType = rand() % m_pFbxfileList.size();
 	obj.m_pAnimMesh = std::dynamic_pointer_cast<TKgcObject>(
 								m_pFbxfileList[obj.iObjectType]->Get()).get();
-	
+	//obj.m_pAnimMatrix = obj.m_pAnimMesh;
+
+	auto tObjectWalking = I_Object.Load(L"../../data/kgc/Swat@walking.kgc");
+	obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
+
+	// mesh
+	using boneFrameMatrix = std::vector<T::TMatrix>;
+	std::vector<boneFrameMatrix> m_pNewBoneAnimMatrix;
+
+	////auto pAnimObj = obj.m_pAnimMesh->Get()->m_pTNodeList;
+	//for (int iNode = 0; iNode < obj.m_pAnimMesh->Get()->m_pTNodeList.size(); iNode++)
+	//{
+	//	TFbxNode& MeshNode = obj.m_pAnimMesh->Get()->m_pTNodeList[iNode];
+	//	TFbxNode& AnimNode = obj.m_pAnimMatrix->Get()->m_pTNodeList[iNode];
+	//	m_pNewBoneAnimMatrix[iNode] = ;
+
+	//}
+
+	UINT iNumTrack = obj.m_pAnimMatrix->Get()->m_FileHeader.iLastFrame;
+	boneFrameMatrix matBone;
+	matBone.resize(iNumTrack);
+		//obj.m_pAnimMesh->Get()->m_pBoneAnimMatrix[obj.m_pAnimMesh->Get()->m_pTNodeList.size() - 1];
+	obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.push_back(matBone);
+
+
+
 	obj.vPos = vPos;
 	obj.vScale = { 1.0f, 1.0f, 1.0f };
 	D3DXMatrixScaling(&obj.matWorld, obj.vScale.x, obj.vScale.y, obj.vScale.z);
 	obj.matWorld._41 = obj.vPos.x;
 	obj.matWorld._42 = obj.vPos.y;
 	obj.matWorld._43 = obj.vPos.z;
+	obj.m_FileHeader = obj.m_pAnimMatrix->Get()->m_FileHeader;
+
+
 	
+	obj.SetAnimFrame(
+		obj.m_FileHeader.iStartFrame,
+		45);
+
 	m_pMapObjectList.emplace_back(obj);
 	
 }
@@ -57,9 +89,8 @@ void   Sample::Init()
 	}
 
 	//m_LoadFiles.push_back(L"../../data/kgc/box.fbx");
-	//m_LoadFiles.push_back(L"../../data/kgc/SM_Rock.kgc");
-	//m_LoadFiles.push_back(L"../../data/kgc/SM_Barrel.kgc");
-	m_LoadFiles.push_back(L"../../data/kgc/Man.kgc");
+	m_LoadFiles.push_back(L"../../data/kgc/Swat.kgc");
+	//m_LoadFiles.push_back(L"../../data/kgc/Man.kgc");
 	for (int iObj = 0; iObj < m_LoadFiles.size(); iObj++)
 	{
 		auto tObject = I_Object.Load(m_LoadFiles[iObj]);
@@ -174,23 +205,23 @@ void    Sample::Frame()
 	TDevice::m_pContext->UpdateSubresource(	m_pConstantBufferLight.Get(), 0, NULL, &m_LightInfo, 0, 0);
 	m_Quadtree.Frame();
 
-	if (m_pMapObjectList.size() > 0)
-	{
-		if (I_Input.Get().KeyCheck(VK_UP) == KEY_HOLD)
-		{
-			for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
-			{
-				m_pMapObjectList[iFbx].SetAnimFrame(61, 91);
-			}
-		}
-		else
-		{
-			for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
-			{
-				m_pMapObjectList[iFbx].SetAnimFrame(0, 60);
-			}
-		}
-	}
+	//if (m_pMapObjectList.size() > 0)
+	//{
+	//	if (I_Input.Get().KeyCheck(VK_UP) == KEY_HOLD)
+	//	{
+	//		//for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
+	//		{
+	//			m_pMapObjectList[1].SetAnimFrame(61, 91);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		//for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
+	//		{
+	//			m_pMapObjectList[1].SetAnimFrame(0, 60);
+	//		}
+	//	}
+	//}
 }
 void    Sample::PostFrame()
 {	

@@ -30,25 +30,26 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 	m_iNumNodeCount++;
 	if (node == nullptr) return;
 
-	auto  pTNode = std::make_shared<TFbxNode>();
-	pTNode->pFbxNode = node;
-	pTNode->szName = to_mw(node->GetName());
+	TFbxNode tNode;
+	wcscpy_s( tNode.szName, _countof(tNode.szName), to_mw(node->GetName()).c_str());
+	tNode.isMesh = FALSE;
 
-	pTNode->pFbxParentNode = node->GetParent();
-	if (pTNode->pFbxParentNode != nullptr)
+	FbxNode* pParentNode = node->GetParent();
+	wcscpy_s(tNode.szParentName, _countof(tNode.szParentName), L"null");
+	if (pParentNode)
 	{
-		pTNode->szParentName = to_mw(node->GetParent()->GetName());
+		wcscpy_s(tNode.szParentName, _countof(tNode.szParentName),to_mw(pParentNode->GetName()).c_str());
 	}
 
 	FbxMesh* mesh = node->GetMesh();
 	if (mesh != nullptr)
 	{
 		m_pFbxMeshList.push_back(mesh);
-		pTNode->isMesh = TRUE;
-		m_pFbxMeshNodeList.emplace_back(pTNode);
-	}
-	// Áß¿ä
+		tNode.isMesh = TRUE;
+		m_pFbxMeshNodeList.emplace_back(node);
+	}	
 	m_pFbxNodeList.emplace_back(node);
+	m_pTNodeList.emplace_back(tNode);
 	
 	int iNumChild = node->GetChildCount();
 	for (int iNode = 0; iNode < iNumChild; iNode++)
@@ -91,15 +92,17 @@ bool   TFbxLoader::Load(C_STR filename,
 
 	m_pRootNode = m_pScene->GetRootNode();
 	PreProcess(m_pRootNode);	
-
-	LoadNodeAnimation(tKgcFileFormat);
+	tKgcFileFormat->m_ptNodeList = m_pTNodeList;
 	tKgcFileFormat->m_Header.iNumNodeCounter = m_pFbxNodeList.size();
 
+
+	LoadNodeAnimation(tKgcFileFormat);
+	
 	for (int iMesh = 0; iMesh < m_pFbxMeshList.size(); iMesh++)
 	{
 		LoadMesh(iMesh, *tKgcFileFormat);
 	}	
-	tKgcFileFormat->m_pFbxNodeBindPoseMatrixList = m_pFbxNodeBindPoseMatrixList;	
+	tKgcFileFormat->m_matBindPose = m_matBindPose;	
 	LoadAnimation(tKgcFileFormat);
 
 	m_pFbxMeshList.clear();
@@ -297,7 +300,7 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 	std::shared_ptr<TKgcFileFormat>  pModel = std::make_shared<TKgcFileFormat>();
 	pModel->m_matWorld = ConvertFbxAMatrix(matWorld);
 
-	pModel->m_pFbxNodeBindPoseMatrixList.resize(m_pFbxNodeList.size());
+	pModel->m_matBindPose.resize(m_pFbxNodeList.size());
 	bool    bSkinned = ParseMeshSkinning(fbxMesh, *pModel.get());
 	
 	int  iBoneIndex = GetFbxNodeIndex(pFbxNode);

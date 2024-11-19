@@ -90,7 +90,9 @@ void   Sample::Init()
 	/// </summary>
 	std::wstring expFilename;
 	auto tKgcFileModel = std::make_shared<TKgcFileFormat>();
-	if (m_fbxLoader.Load("../../data/fbx/Man.fbx", 
+	if (m_fbxLoader.Load("../../data/fbx/Swat@walking.fbx", 
+	//if (m_fbxLoader.Load("../../data/fbx/Swat.fbx",
+	//if (m_fbxLoader.Load("../../data/fbx/Man.fbx",
 		tKgcFileModel.get()))
 	{
 		expFilename = ExportPath(L"../../data/fbx/Man.fbx",

@@ -7,15 +7,6 @@
 #pragma comment(lib, "zlib-md.lib")
 
 
-struct TFbxNode
-{	
-	std::wstring szName;
-	std::wstring szParentName;
-	BOOL         isMesh = FALSE;
-	FbxNode* pFbxNode = nullptr;
-	FbxNode* pFbxParentNode = nullptr;
-	std::vector<T::TMatrix> pAnimationMatrix;	
-};
 
 class TFbxLoader
 {
@@ -23,16 +14,15 @@ public:
 	int						m_iNumNodeCount = 0;
 	TScene					m_SceneInfo;
 	static FbxManager*		m_pManager;
-	FbxImporter*	m_pImporter = nullptr;
-	FbxScene*		m_pScene = nullptr;
-	FbxNode*		m_pRootNode = nullptr;
-
-	std::vector<FbxMesh*>		m_pFbxMeshList;	
-	std::vector<std::shared_ptr<TFbxNode>>		m_pFbxMeshNodeList;
-	// 전체 트리 노드 구조
-	std::vector<FbxNode*>		m_pFbxNodeList;
-	// 전체 트리 노드가 본 좌표계로 변환되는 행렬
-	std::vector<T::TMatrix>		m_pFbxNodeBindPoseMatrixList;
+	FbxImporter*			m_pImporter = nullptr;
+	FbxScene*				m_pScene = nullptr;
+	FbxNode*				m_pRootNode = nullptr;
+	
+	std::vector<TFbxNode>		m_pTNodeList;
+	std::vector<FbxMesh*>		m_pFbxMeshList;
+	std::vector<FbxNode*>		m_pFbxMeshNodeList;
+	std::vector<FbxNode*>		m_pFbxNodeList;	
+	std::vector<T::TMatrix>		m_matBindPose;
 public:
 	int    GetFbxNodeIndex(FbxNode* fbxNode);
 	bool   ParseMeshSkinning(FbxMesh* fbxMesh, TKgcFileFormat& model);
@@ -45,7 +35,7 @@ public:
 	void   LoadNodeAnimation(TKgcFileFormat*);
 
 	void   LoadAnimation(TKgcFileFormat* );
-	void   LoadAnimationNode(TKgcFileHeader	, TFbxNode*, TKgcFileFormat* );
+	void   LoadAnimationNode(TKgcFileHeader	, FbxNode* pNode, TKgcFileFormat* );
 	FbxVector2  GetUV(	FbxMesh* fbxMesh, 
 						FbxLayerElementUV* uv,
 						int iVertexPosIndex, 

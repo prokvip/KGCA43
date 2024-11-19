@@ -15,6 +15,7 @@ struct TMapObject
 {
 	int				iObjectType = 0;
 	TKgcObject*		m_pAnimMesh = nullptr;
+	TKgcObject*		m_pAnimMatrix  = nullptr;
 	T::TVector3		vPos;
 	T::TVector3		vScale;
 	T::TVector3		vRotate;
@@ -23,8 +24,8 @@ struct TMapObject
 	T::TVector3	    vSide = { 1.0f,0.0f,0.0f };
 	T::TVector3	    vUp = { 0.0f,1.0f,0.0f };
 	float			m_fFrameAnimation = 61.0f;
-	UINT			m_fStartFrame = 0.0f;
-	UINT			m_fLastFrame  = 60.0f;
+	UINT			m_fStartFrame = 1.0f;
+	UINT			m_fLastFrame  = 1.0f;
 	TKgcFileHeader	m_FileHeader;	
 	void       SetAnimFrame(UINT s, UINT e)
 	{
@@ -55,7 +56,7 @@ struct TMapObject
 		matWorld = matScale * matBaseRotate * matRotate * matTrans;
 
 		float FrameSpeed = 30.0f;
-		m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 1.f;
+		m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 0.5f;
 		if (m_fFrameAnimation > m_fLastFrame)
 		{
 			m_fFrameAnimation = m_fStartFrame;
@@ -64,7 +65,8 @@ struct TMapObject
 		if (m_pAnimMesh)
 		{
 			m_pAnimMesh->Get()->SetAnimFrame(m_fStartFrame, m_fLastFrame);
-			m_pAnimMesh->Get()->AnimFrame(m_fFrameAnimation);
+			TFbxModel* pAnim = m_pAnimMatrix->Get().get();
+			m_pAnimMesh->Get()->AnimFrame(m_fFrameAnimation, pAnim);
 			m_pAnimMesh->Get()->m_matParentWorld = matWorld;
 			m_pAnimMesh->Get()->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
 			m_pAnimMesh->Get()->Render(TDevice::m_pContext);
