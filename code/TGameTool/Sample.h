@@ -40,9 +40,9 @@ struct TMapObject
 	void       Render(TMap& map, TCamera& cam)
 	{
 		T::TMatrix matScale, matBaseRotate, matRotate, matTrans;
-		D3DXMatrixScaling(&matScale,vScale.x,	vScale.y,	vScale.z);		
-		D3DXMatrixRotationY(&matBaseRotate, DegreeToRadian(180.0f));
-		D3DXMatrixRotationY(&matRotate, g_fGameTime * 0.5f);
+		//D3DXMatrixScaling(&matScale,vScale.x,	vScale.y,	vScale.z);		
+		//D3DXMatrixRotationY(&matBaseRotate, DegreeToRadian(180.0f));
+		//D3DXMatrixRotationY(&matRotate, g_fGameTime * 0.5f);
 		//D3DXVec3TransformCoord(&vPos, &vPos, &matRotate);
 		
 		vLook.x = -matWorld._31;
@@ -50,7 +50,7 @@ struct TMapObject
 		vLook.z = -matWorld._33;
 		D3DXVec3Normalize(&vLook, &vLook);
 		
-		vPos += vLook * g_fSecondPerFrame * 100.0f;
+		// += vLook * g_fSecondPerFrame * 100.0f;
 		vPos.y = map.GetHeight(vPos);
 		D3DXMatrixTranslation(&matTrans, vPos.x, vPos.y, vPos.z);
 		matWorld = matScale * matBaseRotate * matRotate * matTrans;

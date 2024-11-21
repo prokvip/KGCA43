@@ -55,18 +55,18 @@ void   TFbxLoader::PreProcess(FbxNode* node)
 	for (int iNode = 0; iNode < iNumChild; iNode++)
 	{
 		FbxNode* pChild = node->GetChild(iNode);
-		// 헬퍼오브젝트 + 지오메트리 오브젝트
-		if (pChild->GetNodeAttribute() != nullptr)
-		{
-			FbxNodeAttribute::EType type = pChild->GetNodeAttribute()->GetAttributeType();
-			if (type == FbxNodeAttribute::eMesh ||
-				type == FbxNodeAttribute::eSkeleton ||
-				type == FbxNodeAttribute::eNull)
-			{
-				PreProcess(pChild);
-			}
-		}
-		else
+		//// 헬퍼오브젝트 + 지오메트리 오브젝트
+		//if (pChild->GetNodeAttribute() != nullptr)
+		//{
+		//	FbxNodeAttribute::EType type = pChild->GetNodeAttribute()->GetAttributeType();
+		//	if (type == FbxNodeAttribute::eMesh ||
+		//		type == FbxNodeAttribute::eSkeleton ||
+		//		type == FbxNodeAttribute::eNull)
+		//	{
+		//		PreProcess(pChild);
+		//	}
+		//}
+		//else
 		{
 			PreProcess(pChild);
 		}		

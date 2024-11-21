@@ -339,26 +339,51 @@ void	 TFbxModel::LoadTexture(std::wstring szPath)
 }
 bool     TFbxModel::CreateIWVertexBuffer(ID3D11Device* pd3dDevice)
 {
-	if (m_vIWVertexList.size() == 0) return true;
-	// 버퍼 할당 크기를 세팅한다.
-	D3D11_BUFFER_DESC  bd;
-	ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
-	bd.ByteWidth = sizeof(IW_Vertex) * m_vIWVertexList.size();
-	// 연결에 용도가 뭐냐? 
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	if (m_vSubMeshIWVertexList.size() == 0)
+	{
+		if (m_vIWVertexList.size() == 0) return true;
+		// 버퍼 할당 크기를 세팅한다.
+		D3D11_BUFFER_DESC  bd;
+		ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
+		bd.ByteWidth = sizeof(IW_Vertex) * m_vIWVertexList.size();
+		// 연결에 용도가 뭐냐? 
+		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 
-	// 할당된 버퍼에 
-	// 시스템메모리가 ->GPU메모리로 체워지는 데이터
-	D3D11_SUBRESOURCE_DATA sd;
-	ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-	sd.pSysMem = &m_vIWVertexList.at(0);
+		// 할당된 버퍼에 
+		// 시스템메모리가 ->GPU메모리로 체워지는 데이터
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &m_vIWVertexList.at(0);
 
-	HRESULT hr = pd3dDevice->CreateBuffer(
-		&bd,
-		&sd,
-		m_pIWVertexBuffer.GetAddressOf());
-	if (FAILED(hr)) return false;
+		HRESULT hr = pd3dDevice->CreateBuffer(
+			&bd,
+			&sd,
+			m_pIWVertexBuffer.GetAddressOf());
+		if (FAILED(hr)) return false;
+	}
+	else
+	{
+		m_pSubMeshIWVertexBuffer.resize(m_vSubMeshVertexList.size());
+		for (int iMesh = 0; iMesh < m_vSubMeshIWVertexList.size(); iMesh++)
+		{
+			if (m_vSubMeshIWVertexList[iMesh].size() <= 0) continue;
+
+			D3D11_BUFFER_DESC  bd;
+			ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
+			bd.ByteWidth = sizeof(IW_Vertex) * m_vSubMeshIWVertexList[iMesh].size();
+			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			D3D11_SUBRESOURCE_DATA sd;
+			ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+			sd.pSysMem = &m_vSubMeshIWVertexList[iMesh].at(0);
+
+			HRESULT hr = pd3dDevice->CreateBuffer(
+				&bd,
+				&sd,
+				m_pSubMeshIWVertexBuffer[iMesh].GetAddressOf());
+			if (FAILED(hr)) return false;
+		}
+	}
 	return true;
 }
 bool     TFbxModel::CreateVertexBuffer(ID3D11Device* pd3dDevice)
