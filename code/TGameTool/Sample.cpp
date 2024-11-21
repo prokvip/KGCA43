@@ -6,51 +6,105 @@ void   Sample::SetObject(T::TVector3 vPos)
 	TMapObject obj;
 	int iNumObject = I_Object.m_list.size();
 	obj.iObjectType = rand() % m_pFbxfileList.size();
-	obj.m_pAnimMesh = std::dynamic_pointer_cast<TKgcObject>(
+	obj.m_pMesh = std::dynamic_pointer_cast<TKgcObject>(
 								m_pFbxfileList[obj.iObjectType]->Get()).get();
-	//obj.m_pAnimMatrix = obj.m_pAnimMesh;
+	//obj.m_pAnimMatrix = obj.m_pMesh;
 
 	auto tObjectWalking = I_Object.Load(L"../../data/kgc/ThirdPersonIdle.kgc");
 	obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
 
 	// mesh
 
-	auto pMeshObj = obj.m_pAnimMesh->Get()->m_pTNodeList;
+	auto pMeshObj = obj.m_pMesh->Get()->m_pTNodeList;
 	auto pAnimObj = obj.m_pAnimMatrix->Get()->m_pTNodeList;
-
-	/// <summary>
-	///  메쉬의 노드와 에니메이션의 노드를 수정
-	/// </summary>
-	/// <param name="vPos"></param>
 	using boneFrameMatrix = std::vector<T::TMatrix>;
 	std::vector<boneFrameMatrix> m_pNewBoneAnimMatrix;
 	m_pNewBoneAnimMatrix.resize(pMeshObj.size());
-	UINT iNumNodes = obj.m_pAnimMatrix->Get()->m_FileHeader.iNumNodeCounter;
+
+	UINT iNumNodes = obj.m_pMesh->Get()->m_FileHeader.iNumNodeCounter;
 	UINT iLastFrame = obj.m_pAnimMatrix->Get()->m_FileHeader.iLastFrame;
-	boneFrameMatrix matNewMatrix(iLastFrame);
+
 	boneFrameMatrix matNewDummyMatrix(iLastFrame);
-	int iBoneNode = 0;
-	for (int iNode = 0; iNode < pMeshObj.size(); iNode++)
+	for (int ibone = 0; ibone < pMeshObj.size(); ibone++)
 	{
-		m_pNewBoneAnimMatrix[iNode].resize(iLastFrame);
-		std::wstring name1 = pMeshObj[iNode].szName;
-		std::wstring name2 = pAnimObj[iBoneNode].szName;
-		if (name1 == name2)
+		m_pNewBoneAnimMatrix[ibone].resize(iLastFrame);
+
+		int anim = 0;
+		std::wstring name1 = pMeshObj[ibone].szName;
+		for ( anim = 0; anim < pAnimObj.size(); anim++)
 		{
-			++iBoneNode;
-			iBoneNode = min(iBoneNode, iNumNodes-1);
-			matNewMatrix =
-				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[iBoneNode];
-			m_pNewBoneAnimMatrix[iNode] = matNewMatrix;
-		}		
-		else
+			std::wstring name2 = pAnimObj[anim].szName;
+			if (name1 == name2)
+			{				
+				m_pNewBoneAnimMatrix[ibone] = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim];
+				break;
+			}
+		}
+		if (anim >= pAnimObj.size())
 		{
-			m_pNewBoneAnimMatrix[iNode] = matNewDummyMatrix;
-		}		
+			m_pNewBoneAnimMatrix[ibone] = matNewDummyMatrix;
+		}
 	}
+	for (int anim = 0; anim < pAnimObj.size(); anim++)
+	{
+		obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim].clear();
+	}
+	obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.clear();
+
+	/*obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.resize(iNumNodes);
+	for (int node = 0; node < iNumNodes; node++)
+	{
+		obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node].resize(iLastFrame);
+		for (int iFrame = 0; iFrame < iLastFrame; iFrame++)
+		{
+			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][iFrame];
+		}
+	}*/
 	auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
 	bones =m_pNewBoneAnimMatrix;
-	//obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.push_back(matNewDummyMatrix);
+	// 
+	///// <summary>
+	/////  메쉬의 노드와 에니메이션의 노드를 수정
+	///// </summary>
+	///// <param name="vPos"></param>
+	//using boneFrameMatrix = std::vector<T::TMatrix>;
+	//std::vector<boneFrameMatrix> m_pNewBoneAnimMatrix;
+	//m_pNewBoneAnimMatrix.resize(pMeshObj.size());
+	//UINT iNumNodes = obj.m_pAnimMatrix->Get()->m_FileHeader.iNumNodeCounter;
+	//UINT iLastFrame = obj.m_pAnimMatrix->Get()->m_FileHeader.iLastFrame;
+	//boneFrameMatrix matNewMatrix(iLastFrame);
+	//boneFrameMatrix matNewDummyMatrix(iLastFrame);
+	//int iBoneNode = 0;
+	//for (int iNode = 0; iNode < pMeshObj.size(); iNode++)
+	//{
+	//	m_pNewBoneAnimMatrix[iNode].resize(iLastFrame);
+	//	std::wstring name1 = pMeshObj[iNode].szName;
+	//	std::wstring name2 = pAnimObj[iBoneNode].szName;
+	//	if (name1 == name2)
+	//	{
+	//		++iBoneNode;
+	//		if (iBoneNode <= iNumNodes - 1)
+	//		{
+	//			matNewMatrix =
+	//				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[iBoneNode];
+	//		}
+	//		else
+	//		{
+	//			iBoneNode = min(iBoneNode, iNumNodes-1);
+	//			matNewMatrix = matNewDummyMatrix;
+	//		}			
+	//		m_pNewBoneAnimMatrix[iNode] = matNewMatrix;
+	//	}		
+	//	else
+	//	{
+	//		m_pNewBoneAnimMatrix[iNode] = matNewDummyMatrix;
+	//	}		
+	//	obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[iBoneNode].clear();
+	//}
+	//obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.clear();
+	//auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
+	//bones =m_pNewBoneAnimMatrix;
+	
 
 
 

@@ -93,10 +93,10 @@ void   Sample::Init()
 	//if (m_fbxLoader.Load("../../data/fbx/Swat@walking.fbx", 
 	//if (m_fbxLoader.Load("../../data/fbx/Swat.fbx",
 	//if (m_fbxLoader.Load("../../data/fbx/Man.fbx",
-	if (m_fbxLoader.Load("../../data/fbx/ThirdPersonIdle.fbx",
+	if (m_fbxLoader.Load("../../data/fbx/SK_Mannequin.fbx",
 		tKgcFileModel.get()))
 	{
-		expFilename = ExportPath(L"../../data/fbx/ThirdPersonIdle.fbx",
+		expFilename = ExportPath(L"../../data/fbx/SK_Mannequin.fbx",
 			L"D:\\00_43\\data\\kgc\\");
 		TKgcFileFormat::Export(tKgcFileModel.get(),expFilename);
 	}

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="FBX">
+      <UniqueIdentifier>{58ad7b2c-d5ae-4da9-8f9a-3f8e5a6f7395}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -87,12 +90,6 @@
     <ClInclude Include="TShapeObj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TFbxLoader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TFbxObject.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="TMap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -107,6 +104,15 @@
     </ClInclude>
     <ClInclude Include="TSkyObject.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TFbxObject.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="TFbxLoader.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="TKgcFormat.h">
+      <Filter>FBX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -179,15 +185,6 @@
     <ClCompile Include="TShapeObj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TFbxLoader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TFbxObject.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TFbxAnimation.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="TMap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -202,6 +199,18 @@
     </ClCompile>
     <ClCompile Include="TSkyObject.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TFbxAnimation.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="TFbxLoader.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="TFbxObject.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="TKgcFormat.cpp">
+      <Filter>FBX</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

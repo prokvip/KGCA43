@@ -14,7 +14,7 @@ struct TLightInfo
 struct TMapObject
 {
 	int				iObjectType = 0;
-	TKgcObject*		m_pAnimMesh = nullptr;
+	TKgcObject*		m_pMesh = nullptr;
 	TKgcObject*		m_pAnimMatrix  = nullptr;
 	T::TVector3		vPos;
 	T::TVector3		vScale;
@@ -62,14 +62,14 @@ struct TMapObject
 			m_fFrameAnimation = m_fStartFrame;
 		}
 
-		if (m_pAnimMesh)
+		if (m_pMesh)
 		{
-			m_pAnimMesh->Get()->SetAnimFrame(m_fStartFrame, m_fLastFrame);
+			m_pMesh->Get()->SetAnimFrame(m_fStartFrame, m_fLastFrame);
 			TFbxModel* pAnim = m_pAnimMatrix->Get().get();
-			m_pAnimMesh->Get()->AnimFrame(m_fFrameAnimation, pAnim);
-			m_pAnimMesh->Get()->m_matParentWorld = matWorld;
-			m_pAnimMesh->Get()->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
-			m_pAnimMesh->Get()->Render(TDevice::m_pContext);
+			m_pMesh->Get()->AnimFrame(m_fFrameAnimation, pAnim);
+			m_pMesh->Get()->m_matParentWorld = matWorld;
+			m_pMesh->Get()->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
+			m_pMesh->Get()->Render(TDevice::m_pContext);
 		}
 	}	
 };

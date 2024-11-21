@@ -509,14 +509,14 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 				}
 				else
 				{
-					//pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
-					//pModel->m_vSubMeshIWVertexList[iSubMtrl].push_back(iwVertex);
-					bool bAddIWVertex = GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl],
+					pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
+					pModel->m_vSubMeshIWVertexList[iSubMtrl].push_back(iwVertex);
+					/*bool bAddIWVertex = GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl],
 							  pModel->m_vSubMeshIndexList[iSubMtrl], v);
 					if (bAddIWVertex)
 					{
 						pModel->m_vSubMeshIWVertexList[iSubMtrl].emplace_back(iwVertex);
-					}
+					}*/
 				}
 			}
 		}
