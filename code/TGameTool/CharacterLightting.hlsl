@@ -59,8 +59,8 @@ VS_Out VSMain(VS_In vsIn)
 	{
 		uint iBoneIndex = vsIn.i[iBone];
 		float1 fWeight = vsIn.w[iBone];
-		//float4x4 matBone = m_matConstBoneWorld[iBoneIndex];
-		float4x4 matBone = FetchBoneTransform(iBoneIndex);
+		float4x4 matBone = m_matConstBoneWorld[iBoneIndex];
+		//float4x4 matBone = FetchBoneTransform(iBoneIndex);
 
 		vAnimVertex += mul(vLocal, matBone) * fWeight;
 		vAnimNormal += mul(vsIn.n, (float3x3)matBone) * fWeight;

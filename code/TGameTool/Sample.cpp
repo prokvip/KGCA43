@@ -16,7 +16,7 @@ void   Sample::SetObject(T::TVector3 vPos)
 	ld.m_csLoadFileName = expFilename;
 	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
 	auto tObjectWalking = I_Object.Load(ld);
-	//obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
+	obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
 
 	// mesh
 
@@ -29,45 +29,50 @@ void   Sample::SetObject(T::TVector3 vPos)
 	UINT iNumNodes = obj.m_pMesh->Get()->m_FileHeader.iNumNodeCounter;
 	UINT iLastFrame = obj.m_pAnimMatrix->Get()->m_FileHeader.iLastFrame;
 
-	boneFrameMatrix matNewDummyMatrix(iLastFrame);
-	for (int ibone = 0; ibone < pMeshObj.size(); ibone++)
+	static bool bLoad = false;
+	if (bLoad == false)
 	{
-		m_pNewBoneAnimMatrix[ibone].resize(iLastFrame);
-
-		int anim = 0;
-		std::wstring name1 = pMeshObj[ibone].szName;
-		for ( anim = 0; anim < pAnimObj.size(); anim++)
+		boneFrameMatrix matNewDummyMatrix(iLastFrame);
+		for (int ibone = 0; ibone < pMeshObj.size(); ibone++)
 		{
-			std::wstring name2 = pAnimObj[anim].szName;
-			if (name1 == name2)
-			{				
-				m_pNewBoneAnimMatrix[ibone] = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim];
-				break;
+			m_pNewBoneAnimMatrix[ibone].resize(iLastFrame);
+
+			int anim = 0;
+			std::wstring name1 = pMeshObj[ibone].szName;
+			for (anim = 0; anim < pAnimObj.size(); anim++)
+			{
+				std::wstring name2 = pAnimObj[anim].szName;
+				if (name1 == name2)
+				{
+					m_pNewBoneAnimMatrix[ibone] = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim];
+					break;
+				}
+			}
+			if (anim >= pAnimObj.size())
+			{
+				m_pNewBoneAnimMatrix[ibone] = matNewDummyMatrix;
 			}
 		}
-		if (anim >= pAnimObj.size())
+		for (int anim = 0; anim < pAnimObj.size(); anim++)
 		{
-			m_pNewBoneAnimMatrix[ibone] = matNewDummyMatrix;
+			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim].clear();
 		}
-	}
-	for (int anim = 0; anim < pAnimObj.size(); anim++)
-	{
-		obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim].clear();
-	}
-	obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.clear();
+		obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.clear();
 
-	/*obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.resize(iNumNodes);
-	for (int node = 0; node < iNumNodes; node++)
-	{
-		obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node].resize(iLastFrame);
-		for (int iFrame = 0; iFrame < iLastFrame; iFrame++)
+		/*obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.resize(iNumNodes);
+		for (int node = 0; node < iNumNodes; node++)
 		{
-			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][0];
-		}
-	}*/
-	auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
-	bones =m_pNewBoneAnimMatrix;
+			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node].resize(iLastFrame);
+			for (int iFrame = 0; iFrame < iLastFrame; iFrame++)
+			{
+				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][0];
+			}
+		}*/
+		auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
+		bones = m_pNewBoneAnimMatrix;
 
+		bLoad = true;
+	}	
 
 	obj.vPos = vPos;
 	obj.vScale = { 1.0f, 1.0f, 1.0f };
@@ -125,8 +130,8 @@ void   Sample::Init()
 	//m_LoadFiles.push_back(L"../../data/kgc/Swat.kgc");
 	//m_LoadFiles.push_back(L"../../data/kgc/Man.kgc");
 	//m_LoadFiles.push_back(L"../../data/kgc/SK_Mannequin.kgc");	
-	//m_LoadFiles.push_back(L"../../data/kgc/SKM_Manny_Simple.kgc");
-	m_LoadFiles.push_back(L"../../data/kgc/Turret_Deploy1.kgc"); 	
+	m_LoadFiles.push_back(L"../../data/kgc/SKM_Manny_Simple.kgc");
+	//m_LoadFiles.push_back(L"../../data/kgc/Turret_Deploy1.kgc"); 	
 	TLoadData ld;	
 	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
 	for (int iObj = 0; iObj < m_LoadFiles.size(); iObj++)

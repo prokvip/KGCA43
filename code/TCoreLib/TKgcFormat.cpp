@@ -195,12 +195,12 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 		fread(&fbxModel->m_matBindPose.at(0), sizeof(T::TMatrix), iSize, fp);
 
 		// animation
-		/*fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
+		fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
 		for (int iFrame = 0; iFrame < header.iNumTrack; iFrame++)
 		{
 			fread(&fbxModel->m_pAnimationMatrix[iFrame], sizeof(T::TMatrix), 1, fp);
 
-		}*/
+		}
 
 		//fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
 		//fread(&fbxModel->m_pAnimationMatrix, sizeof(T::TMatrix), header.iNumTrack, fp);

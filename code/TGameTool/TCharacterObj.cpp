@@ -29,7 +29,7 @@ void       TMapObject::Render(TMap& map, TCamera& cam)
 	matWorld = matScale * matBaseRotate * matRotate * matTrans;
 
 	float FrameSpeed = 30.0f;
-	m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 0.1f;
+	m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 1.0f;
 	if (m_fFrameAnimation >= m_fLastFrame-1)
 	{
 		m_fFrameAnimation = m_fStartFrame;
