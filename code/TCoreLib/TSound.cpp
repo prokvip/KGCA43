@@ -2,8 +2,9 @@
 void   TSound::Init()
 {
 }
-bool   TSound::Load(std::wstring filename)
+bool   TSound::Load(TLoadData ld)
 {
+	std::wstring filename = ld.m_csLoadFileName;
 	// 1개의 사운드 파일 단위로 1개의 채널이 만들어 진다.
 	m_fVolume = 0.5f;  // 0 ~ 1	
 	FMOD_RESULT hr = m_pFmodSystem->createSound(to_wm(filename).c_str(),

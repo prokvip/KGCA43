@@ -23,8 +23,9 @@ void TShader::Release()
 		PS_Bytecode = nullptr;
 	}
 }
-bool TShader::Load(std::wstring filename)
+bool TShader::Load(TLoadData ld)
 {
+	std::wstring filename = ld.m_csLoadFileName;
 	m_csName = filename;
 	HRESULT hr;
 	ID3DBlob* errormsg = nullptr; // 컴파일 중 오류 메세지

@@ -680,7 +680,10 @@ bool   TDxObject::CreateConstantBuffer(ID3D11Device* pd3dDevice)
 }
 bool     TDxObject::LoadShader(std::wstring filename)
 {
-	m_pShader = I_Shader.Load(filename).get();
+	TLoadData ld;
+	ld.m_csLoadFileName = filename;
+	ld.m_csLoadShaderFileName = filename;
+	m_pShader = I_Shader.Load(ld).get();
 	if (m_pShader==nullptr) return false;
 	return true;
 }

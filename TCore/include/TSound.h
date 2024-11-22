@@ -31,7 +31,7 @@ public:
 	wchar_t			m_msSound[MAX_PATH] = { 0, };
 	wchar_t			m_msPlay[MAX_PATH] = { 0, };
 public:	
-	bool   Load(std::wstring filename);
+	bool   Load(TLoadData ld);
 	FMOD::Channel*  Play(bool bLoop=false);
 	void   PlayEffect();
 	void   Stop();
@@ -112,7 +112,10 @@ private:
 		std::shared_ptr<TSound>  pData = std::make_shared<TSound>();
 		pData->SetFmod(m_pFmodSystem);
 		pData->m_csName = name;
-		if (pData->Load(path) == false)
+		TLoadData ld;
+		ld.m_csLoadFileName = path;
+		ld.m_csLoadShaderFileName = path;
+		if (pData->Load(ld) == false)
 		{
 			return nullptr;
 		}

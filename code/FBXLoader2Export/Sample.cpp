@@ -88,16 +88,16 @@ void   Sample::Init()
 	/// fbx loader -> Export (*.kgc)
 	/// class TKgcFileFormat
 	/// </summary>
-	std::wstring expFilename;
+	std::wstring expFilename= L"../../data/fbx/MM_Idle.fbx";
 	auto tKgcFileModel = std::make_shared<TKgcFileFormat>();
 	//if (m_fbxLoader.Load("../../data/fbx/Swat@walking.fbx", 
 	//if (m_fbxLoader.Load("../../data/fbx/Swat.fbx",
 	//if (m_fbxLoader.Load("../../data/fbx/Man.fbx",
-	if (m_fbxLoader.Load("../../data/fbx/SK_Mannequin.fbx",
-		tKgcFileModel.get()))
+	//if (m_fbxLoader.Load("../../data/fbx/SK_Mannequin.fbx",
+	//if (m_fbxLoader.Load("../../data/fbx/SKM_Manny_Simple.fbx",
+	if (m_fbxLoader.Load( to_wm(expFilename),	tKgcFileModel.get()))
 	{
-		expFilename = ExportPath(L"../../data/fbx/SK_Mannequin.fbx",
-			L"D:\\00_43\\data\\kgc\\");
+		expFilename = ExportPath(expFilename,L"D:\\00_43\\data\\kgc\\");
 		TKgcFileFormat::Export(tKgcFileModel.get(),expFilename);
 	}
 

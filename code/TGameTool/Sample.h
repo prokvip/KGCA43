@@ -64,12 +64,16 @@ struct TMapObject
 
 		if (m_pMesh)
 		{
-			m_pMesh->Get()->SetAnimFrame(m_fStartFrame, m_fLastFrame);
+			auto pMesh = m_pMesh->Get();
+			pMesh->SetAnimFrame(m_fStartFrame, m_fLastFrame);
 			TFbxModel* pAnim = m_pAnimMatrix->Get().get();
-			m_pMesh->Get()->AnimFrame(m_fFrameAnimation, pAnim);
-			m_pMesh->Get()->m_matParentWorld = matWorld;
-			m_pMesh->Get()->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
-			m_pMesh->Get()->Render(TDevice::m_pContext);
+			if (pAnim != nullptr)
+			{
+				pMesh->AnimFrame(m_fFrameAnimation, pAnim);
+			}
+			pMesh->m_matParentWorld = matWorld;
+			pMesh->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
+			pMesh->Render(TDevice::m_pContext);
 		}
 	}	
 };

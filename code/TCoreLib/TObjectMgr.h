@@ -16,7 +16,7 @@ public:
 	std::wstring m_csName;
 public:
 	void Release() override;
-	bool Load(std::wstring filename)override;
+	bool Load(TLoadData ld)override;
 };
 
 class TObjectComposed : public TObject

@@ -5,8 +5,9 @@ void TObject::Release()
 	m_pdxObj->Release();
 }
 
-bool TObject::Load(std::wstring filename)
+bool TObject::Load(TLoadData ld)
 {
+	std::wstring filename = ld.m_csLoadFileName;
 	m_csName = filename;
 	wchar_t  szDrive[MAX_PATH] = { 0, };
 	wchar_t  szDir[MAX_PATH] = { 0, };
@@ -17,7 +18,7 @@ bool TObject::Load(std::wstring filename)
 	if (_tcsicmp(szFileExt, L".kgc") == 0)
 	{
 		auto model = std::make_shared<TKgcObject>();
-		model->Load(filename);
+		model->Load(ld);
 		m_pdxObj = std::dynamic_pointer_cast<TDxObject>(model);
 		return true;
 	}

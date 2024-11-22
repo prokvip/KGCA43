@@ -9,8 +9,11 @@ void   Sample::SetObject(T::TVector3 vPos)
 	obj.m_pMesh = std::dynamic_pointer_cast<TKgcObject>(
 								m_pFbxfileList[obj.iObjectType]->Get()).get();
 	//obj.m_pAnimMatrix = obj.m_pMesh;
-
-	auto tObjectWalking = I_Object.Load(L"../../data/kgc/ThirdPersonIdle.kgc");
+	std::wstring expFilename = L"../../data/kgc/MM_Idle.kgc";
+	TLoadData ld;
+	ld.m_csLoadFileName = expFilename;
+	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
+	auto tObjectWalking = I_Object.Load(ld);
 	obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
 
 	// mesh
@@ -62,50 +65,6 @@ void   Sample::SetObject(T::TVector3 vPos)
 	}*/
 	auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
 	bones =m_pNewBoneAnimMatrix;
-	// 
-	///// <summary>
-	/////  메쉬의 노드와 에니메이션의 노드를 수정
-	///// </summary>
-	///// <param name="vPos"></param>
-	//using boneFrameMatrix = std::vector<T::TMatrix>;
-	//std::vector<boneFrameMatrix> m_pNewBoneAnimMatrix;
-	//m_pNewBoneAnimMatrix.resize(pMeshObj.size());
-	//UINT iNumNodes = obj.m_pAnimMatrix->Get()->m_FileHeader.iNumNodeCounter;
-	//UINT iLastFrame = obj.m_pAnimMatrix->Get()->m_FileHeader.iLastFrame;
-	//boneFrameMatrix matNewMatrix(iLastFrame);
-	//boneFrameMatrix matNewDummyMatrix(iLastFrame);
-	//int iBoneNode = 0;
-	//for (int iNode = 0; iNode < pMeshObj.size(); iNode++)
-	//{
-	//	m_pNewBoneAnimMatrix[iNode].resize(iLastFrame);
-	//	std::wstring name1 = pMeshObj[iNode].szName;
-	//	std::wstring name2 = pAnimObj[iBoneNode].szName;
-	//	if (name1 == name2)
-	//	{
-	//		++iBoneNode;
-	//		if (iBoneNode <= iNumNodes - 1)
-	//		{
-	//			matNewMatrix =
-	//				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[iBoneNode];
-	//		}
-	//		else
-	//		{
-	//			iBoneNode = min(iBoneNode, iNumNodes-1);
-	//			matNewMatrix = matNewDummyMatrix;
-	//		}			
-	//		m_pNewBoneAnimMatrix[iNode] = matNewMatrix;
-	//	}		
-	//	else
-	//	{
-	//		m_pNewBoneAnimMatrix[iNode] = matNewDummyMatrix;
-	//	}		
-	//	obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[iBoneNode].clear();
-	//}
-	//obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.clear();
-	//auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
-	//bones =m_pNewBoneAnimMatrix;
-	
-
 
 
 	obj.vPos = vPos;
@@ -115,8 +74,6 @@ void   Sample::SetObject(T::TVector3 vPos)
 	obj.matWorld._42 = obj.vPos.y;
 	obj.matWorld._43 = obj.vPos.z;
 	obj.m_FileHeader = obj.m_pAnimMatrix->Get()->m_FileHeader;
-
-
 	
 	obj.SetAnimFrame(
 		obj.m_FileHeader.iStartFrame,
@@ -165,10 +122,15 @@ void   Sample::Init()
 	//m_LoadFiles.push_back(L"../../data/kgc/box.fbx");
 	//m_LoadFiles.push_back(L"../../data/kgc/Swat.kgc");
 	//m_LoadFiles.push_back(L"../../data/kgc/Man.kgc");
-	m_LoadFiles.push_back(L"../../data/kgc/SK_Mannequin.kgc");	
+	//m_LoadFiles.push_back(L"../../data/kgc/SK_Mannequin.kgc");	
+	m_LoadFiles.push_back(L"../../data/kgc/SKM_Manny_Simple.kgc");
+
+	TLoadData ld;	
+	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
 	for (int iObj = 0; iObj < m_LoadFiles.size(); iObj++)
 	{
-		auto tObject = I_Object.Load(m_LoadFiles[iObj]);
+		ld.m_csLoadFileName = m_LoadFiles[iObj];
+		auto tObject = I_Object.Load(ld);
 		m_pFbxfileList.emplace_back(tObject);
 	}
 

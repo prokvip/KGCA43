@@ -1,4 +1,28 @@
 #include "TFbxObject.h"
+bool	 TFbxModel::CreateBoneSRV(ID3D11Device* pd3dDevice)
+{
+	D3D11_BUFFER_DESC vbdesc =
+	{
+		MAX_BONE_MATRICES * sizeof(TMatrix),
+		D3D11_USAGE_DYNAMIC,
+		D3D11_BIND_SHADER_RESOURCE,
+		D3D11_CPU_ACCESS_WRITE,
+		0
+	};
+	pd3dDevice->CreateBuffer(&vbdesc, NULL, m_pBoneBuffer.GetAddressOf());
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+	// Again, we need a resource view to use it in the shader
+	ZeroMemory(&SRVDesc, sizeof(SRVDesc));
+	SRVDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	SRVDesc.Buffer.ElementOffset = 0;
+	SRVDesc.Buffer.ElementWidth = MAX_BONE_MATRICES * 4;
+	pd3dDevice->CreateShaderResourceView(
+		m_pBoneBuffer.Get(), &SRVDesc, m_pBoneBufferRV.GetAddressOf());
+
+	return true;
+}
 void	 TFbxModel::LoadTexture(std::wstring szPath) 
 {
 	if (m_vSubMeshVertexList.size() == 0)
@@ -30,8 +54,10 @@ void	 TFbxModel::LoadTexture(std::wstring szPath)
 			{
 				name += szFileExt;
 			}
-
-			m_pSubMeshTexture[iMesh] = I_Tex.Load(name).get();
+			TLoadData ld;
+			ld.m_csLoadFileName			= name;
+			ld.m_csLoadShaderFileName   = name;
+			m_pSubMeshTexture[iMesh] = I_Tex.Load(ld).get();
 			if (m_pSubMeshTexture[iMesh] != nullptr)
 			{
 				m_pSubMeshSRV[iMesh] = m_pSubMeshTexture[iMesh]->m_pSRV;
@@ -170,6 +196,8 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 
 		// skinning
 		pContext->VSSetConstantBuffers(2, 1, pModel->m_pBoneCB.GetAddressOf());
+		ID3D11ShaderResourceView* srvArray[] = { pModel->m_pBoneBufferRV.Get() };
+		pContext->VSSetShaderResources(1, 1, srvArray);
 
 		if (pModel->m_pSubMeshVertexBuffer.size())
 		{
@@ -188,7 +216,7 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 				//	pModel->m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
 				
 				pContext->PSSetShaderResources(0, 1, pModel->m_pSubMeshSRV[iSubMesh].GetAddressOf());
-				if (m_pSubMeshIndexBuffer.size())
+				if (pModel->m_pSubMeshIndexBuffer.size())
 				{
 					pContext->IASetIndexBuffer(pModel->m_pSubMeshIndexBuffer[iSubMesh].Get(), DXGI_FORMAT_R32_UINT, 0);
 
@@ -273,7 +301,7 @@ bool     TFbxModel::CreateInputLayout(ID3D11Device* pd3dDevice)
 bool	 TFbxModel::CreateConstantBuffer(ID3D11Device* pd3dDevice)
 {
 	TDxObject3D::CreateConstantBuffer(pd3dDevice);
-
+	CreateBoneSRV(pd3dDevice);
 	// 버퍼 할당 크기를 세팅한다.
 	D3D11_BUFFER_DESC  bd;
 	ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
@@ -321,10 +349,34 @@ void     TFbxModel::AnimFrame(float& fAnimFrame, TFbxModel* pAnim)
 		{			
 			//T::TMatrix matbone = GetBoneMatrix(pAnim, m_pTNodeList[iBone].szName, fAnimFrame);
 			//matAnim = pModel->m_matBindPose[iBone] * matbone;// pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
-			matAnim = pModel->m_matBindPose[iBone] * pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
+			matAnim = pModel->m_matBindPose[iBone] *pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
 			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matAnim);
 		}
 		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(), 0, NULL, &pModel->m_matBoneList, 0, 0);
+	}
+	SetBoneMatrices(TDevice::m_pContext, fAnimFrame, pAnim);
+}
+void TFbxModel::SetBoneMatrices(ID3D11DeviceContext* pContext, float& fAnimFrame, TFbxModel* pAnim)
+{
+	T::TMatrix* pMatrices;
+	T::TMatrix  matAnim;
+	HRESULT hr = S_OK;
+	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
+	{
+		auto pModel = m_ChildModel[iChild];
+		D3D11_MAPPED_SUBRESOURCE MappedFaceDest;
+		if (SUCCEEDED(pContext->Map(
+			(ID3D11Resource*)pModel->m_pBoneBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD,
+			0, &MappedFaceDest)))
+		{
+			pMatrices = (TMatrix*)MappedFaceDest.pData;
+			for (int iBone = 0; iBone < pModel->m_matBindPose.size(); iBone++)
+			{
+				matAnim = pModel->m_matBindPose[iBone] * pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];			
+				pMatrices[iBone] = matAnim;
+			}
+			pContext->Unmap(pModel->m_pBoneBuffer.Get(), 0);
+		}
 	}
 }
 T::TMatrix TFbxModel::GetBoneMatrix(TFbxModel* pAnim, std::wstring name, int iFrame)
@@ -339,10 +391,10 @@ T::TMatrix TFbxModel::GetBoneMatrix(TFbxModel* pAnim, std::wstring name, int iFr
 	}
 	return mat;
 }
-bool	TKgcObject::Load(T_STR filename)
+bool	TKgcObject::Load(TLoadData ld)
 {
 	m_pdxObj = std::make_shared<TFbxModel>();
-	if (TKgcFileFormat::Import(filename, L"../../data/shader/CharacterLightting.hlsl", m_pdxObj))
+	if (TKgcFileFormat::Import(ld.m_csLoadFileName, ld.m_csLoadShaderFileName, m_pdxObj))
 	{
 		return true;
 	}

@@ -24,7 +24,7 @@ public:
 	ComPtr<ID3D11Resource> m_pTexture = nullptr;
 public:
 	void Release();
-	bool Load(std::wstring filename);
+	bool Load(TLoadData ld);
 };
 // TTexture°´Ã¼¸¦ ¸®½ºÆ®·Î ÇÏ´Â ½Ì±ÛÅæ TTexMgr »ý¼º
 class TTexMgr : public TBaseManager<TTexture,TTexMgr>

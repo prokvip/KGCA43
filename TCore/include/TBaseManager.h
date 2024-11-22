@@ -15,7 +15,11 @@ public:
 		return mgr;
 	}
 };
-
+struct TLoadData
+{
+	std::wstring m_csLoadFileName;
+	std::wstring m_csLoadShaderFileName;
+};
 class TResource
 {
 public:
@@ -23,7 +27,7 @@ public:
 public:
 	virtual void Set(ID3D11Device* pDevice) {};
 	virtual void Release() = 0;
-	virtual bool Load(std::wstring filename) = 0;
+	virtual bool Load(TLoadData ld) = 0;
 };
 
 
@@ -42,10 +46,10 @@ public:
 	}
 
 	std::map<std::wstring, std::shared_ptr<T>>  m_list;
-	virtual std::shared_ptr<T> Load(std::wstring filename);
+	virtual std::shared_ptr<T> Load(TLoadData ld);
 	std::shared_ptr<T> GetPtr(std::wstring key);
 	void   Release();
-	virtual std::shared_ptr<T>  CreateObject(std::wstring path, std::wstring name);
+	virtual std::shared_ptr<T>  CreateObject(TLoadData ld, std::wstring name);
 	std::wstring splitpath(std::wstring path, std::wstring filename);
 public:		
 	TBaseManager()
@@ -59,8 +63,9 @@ public:
 
 
 template <class T, class S>
-std::shared_ptr<T> TBaseManager<T,S>::Load(std::wstring fullpath)
+std::shared_ptr<T> TBaseManager<T,S>::Load(TLoadData ld)
 {
+	std::wstring fullpath = ld.m_csLoadFileName;
 	// 파일명+확장자 검출
 	std::wstring name = splitpath(fullpath, L"");
 	// 중복 검증
@@ -69,16 +74,17 @@ std::shared_ptr<T> TBaseManager<T,S>::Load(std::wstring fullpath)
 	{
 		return pFindData;
 	}
-	return CreateObject(fullpath, name);;
+	return CreateObject(ld, name);
 }
 template <class T, class S>
 std::shared_ptr<T>  TBaseManager<T, S>::CreateObject(
-	std::wstring path, std::wstring name)
+	TLoadData ld, std::wstring name)
 {
+	std::wstring path = ld.m_csLoadFileName;
 	std::shared_ptr<T>  pData = std::make_shared<T>();
 	pData->Set(m_pd3dDevice);
 	pData->m_csName = name;
-	if (pData->Load(path) == false)
+	if (pData->Load(ld) == false)
 	{
 		//delete pData;
 		return nullptr;

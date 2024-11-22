@@ -1,5 +1,7 @@
 #pragma once
 #include "TDxObj3D.h"
+#define MAX_BONE_MATRICES 255
+
 struct TScene
 {
 	int		iStartFrame = 0;
@@ -68,7 +70,7 @@ struct TTexFileHeader
 };
 struct  TBoneMatrix
 {
-	T::TMatrix  matBone[255];
+	T::TMatrix  matBone[MAX_BONE_MATRICES];
 };
 
 class TFbxModel;

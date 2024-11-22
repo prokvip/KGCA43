@@ -16,7 +16,7 @@ public:
 	ID3DBlob* PS_Bytecode = nullptr; // 오브젝트 파일
 public:
 	void Release() override;
-	bool Load(std::wstring filename)override;
+	bool Load(TLoadData ld)override;
 };
 
 

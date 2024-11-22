@@ -1,4 +1,5 @@
 #define MAX_BONE_MATRICES 255 
+//#define USE_BONE_DATA_CONSTANTBUFFER 0
 struct VS_In
 {
 	float3 p : POS;
@@ -27,11 +28,26 @@ cbuffer DiffuseLight : register(b1)// 상수버퍼
 	float3   g_vLightPos	: packoffset(c1);
 	float1   g_vRadius		: packoffset(c1.w);
 };
+//#ifdef USE_BONE_DATA_CONSTANTBUFFER
+	cbuffer cbAnimMatrices : register (b2)
+	{
+		matrix m_matConstBoneWorld[MAX_BONE_MATRICES];
+	};
+//#else
+	Buffer<float4> g_texAnimMatrices : register(t1);
+	float4x4 FetchBoneTransform(uint iBone)
+	{
+		float4x4 mret;
+		iBone *= 4;
+		float4 row1 = g_texAnimMatrices.Load(iBone + 0);
+		float4 row2 = g_texAnimMatrices.Load(iBone + 1);
+		float4 row3 = g_texAnimMatrices.Load(iBone + 2);
+		float4 row4 = g_texAnimMatrices.Load(iBone + 3);
+		mret = float4x4(row1, row2, row3, row4);
+		return mret;
+	}
+//#endif
 
-cbuffer cbAnimMatrices : register (b2)
-{
-	matrix m_matConstBoneWorld[MAX_BONE_MATRICES];
-};
 VS_Out VSMain(VS_In vsIn)
 {
 	VS_Out  vsOut = (VS_Out)0;
@@ -43,7 +59,8 @@ VS_Out VSMain(VS_In vsIn)
 	{
 		uint iBoneIndex = vsIn.i[iBone];
 		float1 fWeight = vsIn.w[iBone];
-		float4x4 matBone = m_matConstBoneWorld[iBoneIndex];
+		//float4x4 matBone = m_matConstBoneWorld[iBoneIndex];
+		float4x4 matBone = FetchBoneTransform(iBoneIndex);
 
 		vAnimVertex += mul(vLocal, matBone) * fWeight;
 		vAnimNormal += mul(vsIn.n, (float3x3)matBone) * fWeight;
@@ -66,7 +83,7 @@ VS_Out VSMain(VS_In vsIn)
 	float4 fAmbientColor = float4(0.0f, 0.0f, 1.0f, 1.0f);
 	vsOut.c = fAmbientColor + float4(fDotDirection, fDotDirection, fDotDirection,1.0f) +
 		float4(1.0f* fDistance * fDot, 0.0f*fDistance * fDot, 0.0f*fDistance * fDot, 1.0f);
-	//vsOut.c = float4(fDot, fDot, fDot, 1.0f);
+	vsOut.c = float4(vsIn.w.x, vsIn.w.y, vsIn.w.z, 1.0f);
 	vsOut.t = vsIn.t;// *10.0f;
 	return vsOut;
 }
@@ -91,6 +108,6 @@ PS_Out PSMain(PS_In psIn)
 	PS_Out  psOut = (PS_Out)0;
 	float4 pixel = g_txTexture.Sample(LinearPoint, psIn.t);
 	//float4 pixel = g_txTexture.Sample(Point, psIn.t);
-	psOut.c = pixel * psIn.c;// float4(1, 0, 0, 1);
+	psOut.c = psIn.c;// float4(1, 0, 0, 1);
 	return psOut;	
 }

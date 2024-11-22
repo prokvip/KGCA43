@@ -22,7 +22,10 @@ void   TDxObject3D::Frame()
 }
 void   TDxObject3D::LoadTexture(std::wstring szPath)
 {
-	m_pTexture = I_Tex.Load(szPath).get();
+	TLoadData ld;
+	ld.m_csLoadFileName = szPath;
+	ld.m_csLoadShaderFileName = szPath;
+	m_pTexture = I_Tex.Load(ld).get();
 	if (m_pTexture != nullptr)
 	{
 		m_pSRV = m_pTexture->m_pSRV;

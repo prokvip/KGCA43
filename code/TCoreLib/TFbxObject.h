@@ -1,5 +1,6 @@
 #pragma once
 #include "TKgcFormat.h"
+
 class TFbxModel : public TDxObject3D
 {
 public:
@@ -38,9 +39,12 @@ public:
 	TBoneMatrix					m_matBoneList;
 	using boneFrameMatrix = std::vector<T::TMatrix>;
 	std::vector<boneFrameMatrix> m_pBoneAnimMatrix;
-
 	std::vector<TFbxNode>		m_pTNodeList;
 
+	// used texbuffer
+	ComPtr<ID3D11Buffer>			  m_pBoneBuffer;
+	ComPtr<ID3D11ShaderResourceView>  m_pBoneBufferRV;
+	void   SetBoneMatrices(ID3D11DeviceContext* pContext, float& fAnimFrame, TFbxModel* pAnim=nullptr);
 
 	virtual bool     CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
 	T::TMatrix		 GetBoneMatrix(TFbxModel* pAnim, std::wstring name, int iFrame);
@@ -49,6 +53,7 @@ public:
 	virtual bool     CreateVertexBuffer(ID3D11Device* pd3dDevice)override;
 	virtual bool     CreateIndexBuffer(ID3D11Device* pd3dDevice) override;
 	virtual bool	 CreateConstantBuffer(ID3D11Device* pd3dDevice) override;
+	virtual bool	 CreateBoneSRV(ID3D11Device* pd3dDevice);
 	virtual void     Frame()override;
 	virtual void     AnimFrame(float& fAnimFrame);
 	virtual void     AnimFrame(float& fAnimFrame, TFbxModel* pAnim);
@@ -63,6 +68,6 @@ class TKgcObject : public TDxObject3D
 public:
 	std::shared_ptr<TFbxModel> Get() { return m_pdxObj; }
 	TFbxModel* GetPtr() { return m_pdxObj.get(); }
-	bool  Load(T_STR filename);
+	bool  Load(TLoadData ld);
 	void  Release() override;
 };

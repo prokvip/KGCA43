@@ -47,10 +47,13 @@ bool   TSkyBox::Create(std::wstring texName, std::wstring hlsl)
 		L"..\\..\\data\\sky\\st00_cm_up.bmp",
 		L"..\\..\\data\\sky\\st00_cm_down.bmp"
 	};	
-	//m_pCubeSRV.Attach(
-	//	I_Tex.Load(L"..\\..\\data\\sky\\grassenvmap1024.dds")->m_pSRV.Get());
-	m_pCubeSRV.Attach(
-		I_Tex.Load(L"..\\..\\data\\sky\\Default_reflection.dds")->m_pSRV.Get());
+	
+	TLoadData ld;
+	ld.m_csLoadFileName = L"../../data/sky/Default_reflection.dds";
+	ld.m_csLoadShaderFileName = L"../../data/sky/Default_reflection.dds";
+
+	//m_pCubeSRV.Attach(I_Tex.Load(ld)->m_pSRV.Get());
+	m_pCubeSRV.Attach(I_Tex.Load(ld)->m_pSRV.Get());
 
 	return Create(texList, hlsl);
 };
@@ -59,7 +62,10 @@ bool   TSkyBox::Create(std::vector<std::wstring> texList, std::wstring hlsl)
 	SetRasterizerState();
 	for (int i = 0; i < texList.size(); i++)
 	{
-		m_pTex[i] = I_Tex.Load(texList[i]).get();
+		TLoadData ld;
+		ld.m_csLoadFileName = texList[i];
+		ld.m_csLoadShaderFileName = texList[i];
+		m_pTex[i] = I_Tex.Load(ld).get();
 		m_pSRVArray[i].Attach(m_pTex[i]->m_pSRV.Get());
 	}
 	return m_Mesh.Create(texList[0], hlsl);

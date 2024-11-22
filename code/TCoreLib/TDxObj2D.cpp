@@ -70,7 +70,11 @@ bool   TDxObject2D::Create(	RECT rt, std::wstring texName, std::wstring hlsl)
 
 	m_szShaderFilename = hlsl;
 
-	m_pTexture = I_Tex.Load(texName).get();
+	TLoadData ld;
+	ld.m_csLoadFileName = texName;
+	ld.m_csLoadShaderFileName = hlsl;
+
+	m_pTexture = I_Tex.Load(ld).get();
 	if (m_pTexture != nullptr)
 	{
 		m_pSRV = m_pTexture->m_pSRV;
@@ -120,7 +124,11 @@ bool     TDxObject2D::CreateVertexBuffer(ID3D11Device* pd3dDevice)
 }
 bool     TDxObject2D::LoadShader(std::wstring filename)
 {
-	m_pShader = I_Shader.Load(filename).get();
+	TLoadData ld;
+	ld.m_csLoadFileName = filename;
+	ld.m_csLoadShaderFileName = filename;
+
+	m_pShader = I_Shader.Load(ld).get();
 	if (m_pShader == nullptr) return false;
 	return true;
 }

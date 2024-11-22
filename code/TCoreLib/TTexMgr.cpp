@@ -5,8 +5,9 @@ void TTexture::Release()
 	m_pSRV.Reset();
 	m_pTexture.Reset();
 }
-bool TTexture::Load(std::wstring filename)
+bool TTexture::Load(TLoadData ld)
 {
+	std::wstring filename = ld.m_csLoadFileName;
 	HRESULT hr =
 		DirectX::CreateWICTextureFromFile(
 			m_pd3dDevice,
