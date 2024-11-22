@@ -95,7 +95,9 @@ std::shared_ptr<T>  TBaseManager<T, S>::CreateObject(
 template <class T, class S>
 std::shared_ptr<T> TBaseManager<T,S>::GetPtr(std::wstring key)
 {
-	auto iter = m_list.find(key);
+	// 파일명+확장자 검출
+	std::wstring name = splitpath(key, L"");
+	auto iter = m_list.find(name);
 	if (iter != m_list.end())
 	{
 		return (*iter).second;

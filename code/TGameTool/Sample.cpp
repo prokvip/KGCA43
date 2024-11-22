@@ -6,86 +6,83 @@ void   Sample::SetObject(T::TVector3 vPos)
 	TMapObject obj;
 	int iNumObject = I_Object.m_list.size();
 	obj.iObjectType = rand() % m_pFbxfileList.size();
-	obj.m_pMesh = std::dynamic_pointer_cast<TKgcObject>(
-								m_pFbxfileList[obj.iObjectType]->Get()).get();
+	obj.m_pMesh = std::dynamic_pointer_cast<TKgcObject>(m_pFbxfileList[obj.iObjectType]->Get()).get();
 	obj.m_pAnimMatrix = obj.m_pMesh;
-	//obj.m_pAnimMatrix = obj.m_pMesh;
+
 	std::wstring expFilename = L"../../data/kgc/MM_Idle.kgc";
-	//std::wstring expFilename = L"../../data/kgc/MM_Walk_Fwd.kgc";
+	//std::wstring expFilename = L"../../data/kgc/MM_Walk_Fwd.kgc";	
 	TLoadData ld;
 	ld.m_csLoadFileName = expFilename;
 	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
-	auto tObjectWalking = I_Object.Load(ld);
-	obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
-
-	// mesh
-
-	auto pMeshObj = obj.m_pMesh->Get()->m_pTNodeList;
-	auto pAnimObj = obj.m_pAnimMatrix->Get()->m_pTNodeList;
-	using boneFrameMatrix = std::vector<T::TMatrix>;
-	std::vector<boneFrameMatrix> m_pNewBoneAnimMatrix;
-	m_pNewBoneAnimMatrix.resize(pMeshObj.size());
-
-	UINT iNumNodes = obj.m_pMesh->Get()->m_FileHeader.iNumNodeCounter;
-	UINT iLastFrame = obj.m_pAnimMatrix->Get()->m_FileHeader.iLastFrame;
-
-	static bool bLoad = false;
-	if (bLoad == false)
-	{
-		boneFrameMatrix matNewDummyMatrix(iLastFrame);
-		for (int ibone = 0; ibone < pMeshObj.size(); ibone++)
+	auto bLoadObject = I_Object.GetPtr(ld.m_csLoadFileName);
+	if (bLoadObject == nullptr)
+	{		
+		auto tObjectWalking = I_Object.Load(ld);
+		if (tObjectWalking != nullptr)
 		{
-			m_pNewBoneAnimMatrix[ibone].resize(iLastFrame);
+			obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
+			// mesh
+			auto pMeshObj = obj.m_pMesh->Get()->m_pTNodeList;
+			auto pAnimObj = obj.m_pAnimMatrix->Get()->m_pTNodeList;
+			using boneFrameMatrix = std::vector<T::TMatrix>;
+			std::vector<boneFrameMatrix> m_pNewBoneAnimMatrix;
+			m_pNewBoneAnimMatrix.resize(pMeshObj.size());
 
-			int anim = 0;
-			std::wstring name1 = pMeshObj[ibone].szName;
-			for (anim = 0; anim < pAnimObj.size(); anim++)
+			UINT iNumNodes = obj.m_pMesh->Get()->m_FileHeader.iNumNodeCounter;
+			UINT iLastFrame = obj.m_pAnimMatrix->Get()->m_FileHeader.iLastFrame;
+
+			boneFrameMatrix matNewDummyMatrix(iLastFrame);
+			for (int ibone = 0; ibone < pMeshObj.size(); ibone++)
 			{
-				std::wstring name2 = pAnimObj[anim].szName;
-				if (name1 == name2)
+				m_pNewBoneAnimMatrix[ibone].resize(iLastFrame);
+
+				int anim = 0;
+				std::wstring name1 = pMeshObj[ibone].szName;
+				for (anim = 0; anim < pAnimObj.size(); anim++)
 				{
-					m_pNewBoneAnimMatrix[ibone] = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim];
-					break;
+					std::wstring name2 = pAnimObj[anim].szName;
+					if (name1 == name2)
+					{
+						m_pNewBoneAnimMatrix[ibone] = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim];
+						break;
+					}
+				}
+				if (anim >= pAnimObj.size())
+				{
+					m_pNewBoneAnimMatrix[ibone] = matNewDummyMatrix;
 				}
 			}
-			if (anim >= pAnimObj.size())
+			for (int anim = 0; anim < pAnimObj.size(); anim++)
 			{
-				m_pNewBoneAnimMatrix[ibone] = matNewDummyMatrix;
+				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim].clear();
 			}
-		}
-		for (int anim = 0; anim < pAnimObj.size(); anim++)
-		{
-			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim].clear();
-		}
-		obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.clear();
+			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.clear();
 
-		/*obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.resize(iNumNodes);
-		for (int node = 0; node < iNumNodes; node++)
-		{
-			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node].resize(iLastFrame);
-			for (int iFrame = 0; iFrame < iLastFrame; iFrame++)
+			/*obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.resize(iNumNodes);
+			for (int node = 0; node < iNumNodes; node++)
 			{
-				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][0];
-			}
-		}*/
-		auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
-		bones = m_pNewBoneAnimMatrix;
-
-		bLoad = true;
-	}	
-
+				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node].resize(iLastFrame);
+				for (int iFrame = 0; iFrame < iLastFrame; iFrame++)
+				{
+					obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][0];
+				}
+			}*/
+			auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
+			bones = m_pNewBoneAnimMatrix;
+		}
+	}
+	else
+	{
+		obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(bLoadObject->Get()).get();
+	}
 	obj.vPos = vPos;
 	obj.vScale = { 1.0f, 1.0f, 1.0f };
 	D3DXMatrixScaling(&obj.matWorld, obj.vScale.x, obj.vScale.y, obj.vScale.z);
 	obj.matWorld._41 = obj.vPos.x;
 	obj.matWorld._42 = obj.vPos.y;
 	obj.matWorld._43 = obj.vPos.z;
-	obj.m_FileHeader = obj.m_pAnimMatrix->Get()->m_FileHeader;
-	
-	obj.SetAnimFrame(
-		obj.m_FileHeader.iStartFrame,
-		obj.m_FileHeader.iLastFrame);
-
+	obj.m_FileHeader = obj.m_pAnimMatrix->Get()->m_FileHeader;	
+	obj.SetAnimFrame(obj.m_FileHeader.iStartFrame,obj.m_FileHeader.iLastFrame);
 	m_pMapObjectList.emplace_back(obj);
 	
 }
