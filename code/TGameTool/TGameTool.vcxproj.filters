@@ -66,6 +66,9 @@
     <ClInclude Include="Sample.h">
       <Filter>coreSrc</Filter>
     </ClInclude>
+    <ClInclude Include="TCharacterObj.h">
+      <Filter>coreSrc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TGameTool.cpp">
@@ -105,6 +108,9 @@
       <Filter>coreSrc</Filter>
     </ClCompile>
     <ClCompile Include="TSelect.cpp">
+      <Filter>coreSrc</Filter>
+    </ClCompile>
+    <ClCompile Include="TCharacterObj.cpp">
       <Filter>coreSrc</Filter>
     </ClCompile>
   </ItemGroup>

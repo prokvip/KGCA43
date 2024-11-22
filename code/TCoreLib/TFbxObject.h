@@ -46,6 +46,8 @@ public:
 	ComPtr<ID3D11ShaderResourceView>  m_pBoneBufferRV;
 	void   SetBoneMatrices(ID3D11DeviceContext* pContext, float& fAnimFrame, TFbxModel* pAnim=nullptr);
 
+	std::vector<std::vector<TTrack>>    m_matAnimTrack;
+public:
 	virtual bool     CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
 	T::TMatrix		 GetBoneMatrix(TFbxModel* pAnim, std::wstring name, int iFrame);
 public:

@@ -8,13 +8,15 @@ void   Sample::SetObject(T::TVector3 vPos)
 	obj.iObjectType = rand() % m_pFbxfileList.size();
 	obj.m_pMesh = std::dynamic_pointer_cast<TKgcObject>(
 								m_pFbxfileList[obj.iObjectType]->Get()).get();
+	obj.m_pAnimMatrix = obj.m_pMesh;
 	//obj.m_pAnimMatrix = obj.m_pMesh;
 	std::wstring expFilename = L"../../data/kgc/MM_Idle.kgc";
+	//std::wstring expFilename = L"../../data/kgc/MM_Walk_Fwd.kgc";
 	TLoadData ld;
 	ld.m_csLoadFileName = expFilename;
 	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
 	auto tObjectWalking = I_Object.Load(ld);
-	obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
+	//obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
 
 	// mesh
 
@@ -60,7 +62,7 @@ void   Sample::SetObject(T::TVector3 vPos)
 		obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node].resize(iLastFrame);
 		for (int iFrame = 0; iFrame < iLastFrame; iFrame++)
 		{
-			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][iFrame];
+			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][0];
 		}
 	}*/
 	auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
@@ -123,8 +125,8 @@ void   Sample::Init()
 	//m_LoadFiles.push_back(L"../../data/kgc/Swat.kgc");
 	//m_LoadFiles.push_back(L"../../data/kgc/Man.kgc");
 	//m_LoadFiles.push_back(L"../../data/kgc/SK_Mannequin.kgc");	
-	m_LoadFiles.push_back(L"../../data/kgc/SKM_Manny_Simple.kgc");
-
+	//m_LoadFiles.push_back(L"../../data/kgc/SKM_Manny_Simple.kgc");
+	m_LoadFiles.push_back(L"../../data/kgc/Turret_Deploy1.kgc"); 	
 	TLoadData ld;	
 	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
 	for (int iObj = 0; iObj < m_LoadFiles.size(); iObj++)

@@ -347,9 +347,31 @@ void     TFbxModel::AnimFrame(float& fAnimFrame, TFbxModel* pAnim)
 		auto pModel = m_ChildModel[iChild];
 		for (int iBone = 0; iBone < pModel->m_matBindPose.size(); iBone++)
 		{			
-			//T::TMatrix matbone = GetBoneMatrix(pAnim, m_pTNodeList[iBone].szName, fAnimFrame);
-			//matAnim = pModel->m_matBindPose[iBone] * matbone;// pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
-			matAnim = pModel->m_matBindPose[iBone] *pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
+			matAnim = pModel->m_matBindPose[iBone] *
+						pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
+			T::TVector3 v,s;
+			T::TQuaternion q;
+			int iBegin = fAnimFrame; // 3.5
+			int iEnd = iBegin + 1;   // 4
+			
+			float fLerpTime = fAnimFrame - pAnim->m_matAnimTrack[iBone][iBegin].fTime;
+			//int iTick = pAnim->m_matAnimTrack[iEnd].iTick - pAnim->m_matAnimTrack[iBegin].iTick;
+			D3DXVec3Lerp(&v, &pAnim->m_matAnimTrack[iBone][iBegin].v,
+							 &pAnim->m_matAnimTrack[iBone][iEnd].v, fLerpTime);
+			D3DXVec3Lerp(&s, &pAnim->m_matAnimTrack[iBone][iBegin].s,
+							 &pAnim->m_matAnimTrack[iBone][iEnd].s, fLerpTime);
+
+			TQuaternion q1 = pAnim->m_matAnimTrack[iBone][iBegin].q;
+			TQuaternion q2 = pAnim->m_matAnimTrack[iBone][iEnd].q;
+			D3DXQuaternionSlerp(&q, &q1, &q2, fLerpTime);
+
+			T::TMatrix matScale, matTrans, matRotate;
+			D3DXMatrixScaling(&matScale, s.x, s.y, s.z);
+			D3DXMatrixTranslation(&matTrans, v.x, v.y, v.z);
+			D3DXMatrixRotationQuaternion(&matRotate, &q);
+
+			T::TMatrix matFinalAnim = matScale * matRotate * matTrans;
+			//D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matFinalAnim);
 			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matAnim);
 		}
 		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(), 0, NULL, &pModel->m_matBoneList, 0, 0);

@@ -14,7 +14,38 @@ struct TFbxNode
 	WCHAR        szName[32];
 	WCHAR        szParentName[32];
 };
-
+struct TTrack
+{
+	int  iFrame;
+	int  iTick;  // 1초=30프레임, 1프레임=160 틱, 1초=4800tick
+	float fTime;
+	T::TVector3 v, s;
+	T::TQuaternion q;
+	T::TMatrix matScale, matTrans, matRotate;
+	TTrack() = default;
+	TTrack(int f, T::TVector3& s,
+		T::TQuaternion& r,
+		T::TVector3& t)
+	{
+		iFrame = f;
+		iTick = f * 160;
+		fTime = (float)f;// / 30.0f;
+		this->s = s;
+		v = t;
+		q = r;
+	}
+	TTrack(int f, T::TMatrix& s,
+		T::TMatrix& r,
+		T::TMatrix& t)
+	{
+		iFrame = f;
+		iTick = f * 160;
+		fTime = (float)f;// / 30.0f;
+		matScale = s;
+		matRotate = r;
+		matTrans = t;
+	}
+};
 // 정점 단위로 생성한다.
 struct TWeight
 {

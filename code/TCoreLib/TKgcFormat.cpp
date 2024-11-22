@@ -154,6 +154,29 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 			fread(&tFbxModel->m_pBoneAnimMatrix[iBone].at(0),
 				sizeof(T::TMatrix), fileHeader.iLastFrame, fp);
 		}
+
+		// 프레임 과 프레임 사이의 보간 작업 데이터
+		tFbxModel->m_matAnimTrack.resize(tFbxModel->m_pBoneAnimMatrix.size());
+		for (int iBone = 0; iBone < tFbxModel->m_pBoneAnimMatrix.size(); iBone++)
+		{
+			for (int iFrame = 0; iFrame < fileHeader.iLastFrame; iFrame++)
+			{
+				// 4x4
+				// m_pBoneAnimMatrix = self matrix(SRV) * parent matrix(SRT);
+				// self matrix = m_pBoneAnimMatrix * Inverse(parent boneAnimMatrix);
+				T::TMatrix mat = tFbxModel->m_pBoneAnimMatrix[iBone][iFrame];
+				// 행렬을 분해 S,R,T
+				T::TMatrix matScale, matTrans, matRotate;
+				T::TVector3 v, s;
+				T::TQuaternion q;
+				D3DXMatrixDecompose(&s, &q, &v, &mat );
+				/*D3DXMatrixScaling(&matScale, s.x, s.y, s.z);
+				D3DXMatrixTranslation(&matTrans, v.x, v.y, v.z);
+				D3DXMatrixRotationQuaternion(&matRotate, &q);*/				
+				//TTrack track(iFrame, s, q, v);
+				tFbxModel->m_matAnimTrack[iBone].emplace_back(iFrame, s,q,v);
+			}
+		}
 	}
 
 	for (int iMesh = 0; iMesh < fileHeader.iChildNodeCounter; iMesh++)
@@ -172,12 +195,12 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 		fread(&fbxModel->m_matBindPose.at(0), sizeof(T::TMatrix), iSize, fp);
 
 		// animation
-		fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
+		/*fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
 		for (int iFrame = 0; iFrame < header.iNumTrack; iFrame++)
 		{
 			fread(&fbxModel->m_pAnimationMatrix[iFrame], sizeof(T::TMatrix), 1, fp);
 
-		}
+		}*/
 
 		//fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
 		//fread(&fbxModel->m_pAnimationMatrix, sizeof(T::TMatrix), header.iNumTrack, fp);

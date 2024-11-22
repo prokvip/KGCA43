@@ -103,7 +103,7 @@ bool   TFbxLoader::Load(C_STR filename,
 		LoadMesh(iMesh, *tKgcFileFormat);
 	}	
 	tKgcFileFormat->m_matBindPose = m_matBindPose;	
-	LoadAnimation(tKgcFileFormat);
+	//LoadAnimation(tKgcFileFormat);
 
 	m_pFbxMeshList.clear();
 	m_pFbxMeshNodeList.clear();

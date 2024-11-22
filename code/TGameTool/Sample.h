@@ -1,82 +1,7 @@
 #pragma once
 #include "TCore.h"
-#include "TQuadtree.h"
-#include "TFbxLoader.h"
-#include "TObjectMgr.h"
-#include "TSelect.h"
+#include "TCharacterObj.h"
 
-struct TLightInfo
-{
-	//T::TVector4 m_vLightInfo; // x = num, y = 
-	T::TVector4 m_vLightDir;	
-	T::TVector4 m_vLightPos;
-};
-struct TMapObject
-{
-	int				iObjectType = 0;
-	TKgcObject*		m_pMesh = nullptr;
-	TKgcObject*		m_pAnimMatrix  = nullptr;
-	T::TVector3		vPos;
-	T::TVector3		vScale;
-	T::TVector3		vRotate;
-	T::TMatrix		matWorld;
-	T::TVector3	    vLook = { 0.0f,0.0f,-1.0f };
-	T::TVector3	    vSide = { 1.0f,0.0f,0.0f };
-	T::TVector3	    vUp = { 0.0f,1.0f,0.0f };
-	float			m_fFrameAnimation = 61.0f;
-	UINT			m_fStartFrame = 1.0f;
-	UINT			m_fLastFrame  = 1.0f;
-	TKgcFileHeader	m_FileHeader;	
-	void       SetAnimFrame(UINT s, UINT e)
-	{
-		if (m_fStartFrame != s && m_fLastFrame != e)
-		{
-			m_fStartFrame = s;
-			m_fLastFrame = e;
-			m_fFrameAnimation = s;
-		}
-	}
-
-	void       Render(TMap& map, TCamera& cam)
-	{
-		T::TMatrix matScale, matBaseRotate, matRotate, matTrans;
-		//D3DXMatrixScaling(&matScale,vScale.x,	vScale.y,	vScale.z);		
-		//D3DXMatrixRotationY(&matBaseRotate, DegreeToRadian(180.0f));
-		//D3DXMatrixRotationY(&matRotate, g_fGameTime * 0.5f);
-		//D3DXVec3TransformCoord(&vPos, &vPos, &matRotate);
-		
-		vLook.x = -matWorld._31;
-		vLook.y = -matWorld._32;
-		vLook.z = -matWorld._33;
-		D3DXVec3Normalize(&vLook, &vLook);
-		
-		// += vLook * g_fSecondPerFrame * 100.0f;
-		vPos.y = map.GetHeight(vPos);
-		D3DXMatrixTranslation(&matTrans, vPos.x, vPos.y, vPos.z);
-		matWorld = matScale * matBaseRotate * matRotate * matTrans;
-
-		float FrameSpeed = 30.0f;
-		m_fFrameAnimation += g_fSecondPerFrame * FrameSpeed * 0.5f;
-		if (m_fFrameAnimation > m_fLastFrame)
-		{
-			m_fFrameAnimation = m_fStartFrame;
-		}
-
-		if (m_pMesh)
-		{
-			auto pMesh = m_pMesh->Get();
-			pMesh->SetAnimFrame(m_fStartFrame, m_fLastFrame);
-			TFbxModel* pAnim = m_pAnimMatrix->Get().get();
-			if (pAnim != nullptr)
-			{
-				pMesh->AnimFrame(m_fFrameAnimation, pAnim);
-			}
-			pMesh->m_matParentWorld = matWorld;
-			pMesh->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
-			pMesh->Render(TDevice::m_pContext);
-		}
-	}	
-};
 
 class TMiniMap : public TPlaneObj
 {
@@ -112,6 +37,7 @@ public:
 		
 	}
 };
+
 class Sample : public TCore
 {	
 public:

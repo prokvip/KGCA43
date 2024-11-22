@@ -88,7 +88,9 @@ void   Sample::Init()
 	/// fbx loader -> Export (*.kgc)
 	/// class TKgcFileFormat
 	/// </summary>
-	std::wstring expFilename= L"../../data/fbx/MM_Idle.fbx";
+	//std::wstring expFilename= L"../../data/fbx/MM_Idle.fbx";
+	//std::wstring expFilename = L"../../data/fbx/MM_Walk_Fwd.fbx";
+	std::wstring expFilename = L"../../data/fbx/Turret_Deploy1.fbx";
 	auto tKgcFileModel = std::make_shared<TKgcFileFormat>();
 	//if (m_fbxLoader.Load("../../data/fbx/Swat@walking.fbx", 
 	//if (m_fbxLoader.Load("../../data/fbx/Swat.fbx",

@@ -221,6 +221,13 @@ void CClassView::AdjustLayout()
 
 BOOL CClassView::PreTranslateMessage(MSG* pMsg)
 {
+	if (pMsg->message == WM_LBUTTONDBLCLK)
+	{
+		HTREEITEM hRes = m_wndClassView.GetSelectedItem();
+		CString s = m_wndClassView.GetItemText(hRes);
+		CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
+		pMainFrame->m_wndOutput.m_wndOutputBuild.AddString(s);
+	}
 	return CDockablePane::PreTranslateMessage(pMsg);
 }
 
@@ -320,4 +327,21 @@ void CClassView::OnChangeVisualStyle()
 
 	m_wndToolBar.CleanUpLockedImages();
 	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_SORT_24 : IDR_SORT, 0, 0, TRUE /* 잠금 */);
+}
+
+
+BOOL CClassView::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+	NMHDR* pNMHDR = (NMHDR*)lParam;
+	if (pNMHDR && pNMHDR->code == NM_DBLCLK && pNMHDR->hwndFrom == m_wndClassView.m_hWnd)
+	{
+		HTREEITEM hItem = m_wndClassView.GetSelectedItem();
+		if (hItem)
+		{
+			CString s = m_wndClassView.GetItemText(hItem) + L"aa";
+			CMainFrame* pMainFrame = (CMainFrame*)AfxGetMainWnd();
+			pMainFrame->m_wndOutput.m_wndOutputBuild.AddString(s);
+		}
+	}	return CDockablePane::OnNotify(wParam, lParam, pResult);
 }
