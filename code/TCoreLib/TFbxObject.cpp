@@ -1,4 +1,71 @@
 #include "TFbxObject.h"
+bool     TFbxModel::RebuildAnimation(TFbxModel* pModel)
+{
+	if (pModel != nullptr)
+	{
+		// mesh
+		auto pMeshObj = pModel->m_pTNodeList;
+		auto pAnimObj = m_pTNodeList;
+		using boneFrameMatrix = std::vector<T::TMatrix>;
+		std::vector<boneFrameMatrix> m_pNewBoneAnimMatrix;
+		std::vector<std::vector<TTrack>>    m_pNewAnimTrack;
+
+		m_pNewBoneAnimMatrix.resize(pMeshObj.size());
+		m_pNewAnimTrack.resize(pMeshObj.size());
+
+		UINT iNumNodes = pModel->m_FileHeader.iNumNodeCounter;
+		UINT iLastFrame = m_FileHeader.iLastFrame;
+
+		boneFrameMatrix matNewDummyMatrix(iLastFrame);
+		std::vector<TTrack> matNewDummyTrack(iLastFrame);
+		for (int ibone = 0; ibone < pMeshObj.size(); ibone++)
+		{
+			m_pNewBoneAnimMatrix[ibone].resize(iLastFrame);
+			m_pNewAnimTrack[ibone].resize(iLastFrame);
+
+			int anim = 0;
+			std::wstring name1 = pMeshObj[ibone].szName;
+			for (anim = 0; anim < pAnimObj.size(); anim++)
+			{
+				std::wstring name2 = pAnimObj[anim].szName;
+				if (name1 == name2)
+				{
+					m_pNewBoneAnimMatrix[ibone] = m_pBoneAnimMatrix[anim];
+					m_pNewAnimTrack[ibone] = m_matAnimTrack[anim];
+					break;
+				}
+			}
+			if (anim >= pAnimObj.size())
+			{
+				m_pNewBoneAnimMatrix[ibone] = matNewDummyMatrix;
+				m_pNewAnimTrack[ibone] = matNewDummyTrack;
+			}
+		}
+		for (int anim = 0; anim < pAnimObj.size(); anim++)
+		{
+			m_pBoneAnimMatrix[anim].clear();
+			m_matAnimTrack[anim].clear();
+		}
+		m_pBoneAnimMatrix.clear();
+		m_matAnimTrack.clear();
+
+		/*m_pBoneAnimMatrix.resize(iNumNodes);
+		m_matAnimTrack.resize(iNumNodes);
+		for (int node = 0; node < iNumNodes; node++)
+		{
+			m_pBoneAnimMatrix[node].resize(iLastFrame);
+			m_matAnimTrack[node].resize(iLastFrame);
+			for (int iFrame = 0; iFrame < iLastFrame; iFrame++)
+			{
+				m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][iFrame];
+				m_matAnimTrack[node][iFrame] = m_matAnimTrack[node][iFrame];
+			}
+		}*/
+		m_pBoneAnimMatrix = m_pNewBoneAnimMatrix;
+		m_matAnimTrack = m_pNewAnimTrack;
+	}
+	return true;
+}
 bool	 TFbxModel::CreateBoneSRV(ID3D11Device* pd3dDevice)
 {
 	D3D11_BUFFER_DESC vbdesc =
@@ -207,11 +274,21 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 				UINT NumBuffers = 1;
 				UINT pStrides[3] = { sizeof(PNCT_Vertex), sizeof(IW_Vertex), sizeof(TInstance) }; // 1개의 정점 크기
 				UINT pOffsets[3] = { 0, 0, 0 }; // 버퍼에 시작 인덱스
-				ID3D11Buffer* buffer[3] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
-											pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get(),
-											pModel->m_pInstanceBuffer.Get() };
-				NumBuffers = 3;
-				pContext->IASetVertexBuffers(0, NumBuffers,buffer, pStrides, pOffsets);
+				if (pModel->m_pInstanceBuffer != nullptr)
+				{
+					ID3D11Buffer* buffer[3] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
+												pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get(),
+												pModel->m_pInstanceBuffer.Get() };
+					NumBuffers = 3;
+					pContext->IASetVertexBuffers(0, NumBuffers, buffer, pStrides, pOffsets);
+				}
+				else
+				{
+					ID3D11Buffer* buffer[2] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
+												pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get()};
+					NumBuffers = 2;
+					pContext->IASetVertexBuffers(0, NumBuffers, buffer, pStrides, pOffsets);
+				}
 				// 
 				//pContext->IASetVertexBuffers(StartSlot, NumBuffers,
 				//	pModel->m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
@@ -389,32 +466,28 @@ void     TFbxModel::AnimFrame(float& fAnimFrame, TFbxModel* pAnim)
 		auto pModel = m_ChildModel[iChild];
 		for (int iBone = 0; iBone < pModel->m_matBindPose.size(); iBone++)
 		{			
-			matAnim = pModel->m_matBindPose[iBone] *
-						pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
-			//T::TVector3 v,s;
-			//T::TQuaternion q;
-			//int iBegin = fAnimFrame; // 3.5
-			//int iEnd = iBegin + 1;   // 4
-			//
-			//float fLerpTime = fAnimFrame - pAnim->m_matAnimTrack[iBone][iBegin].fTime;
-			////int iTick = pAnim->m_matAnimTrack[iEnd].iTick - pAnim->m_matAnimTrack[iBegin].iTick;
-			//D3DXVec3Lerp(&v, &pAnim->m_matAnimTrack[iBone][iBegin].v,
-			//				 &pAnim->m_matAnimTrack[iBone][iEnd].v, fLerpTime);
-			//D3DXVec3Lerp(&s, &pAnim->m_matAnimTrack[iBone][iBegin].s,
-			//				 &pAnim->m_matAnimTrack[iBone][iEnd].s, fLerpTime);
+			T::TVector3 v, s;
+			T::TQuaternion q;
+			int iBegin = fAnimFrame; // 3.5
+			int iEnd = iBegin + 1;   // 4
 
-			//TQuaternion q1 = pAnim->m_matAnimTrack[iBone][iBegin].q;
-			//TQuaternion q2 = pAnim->m_matAnimTrack[iBone][iEnd].q;
-			//D3DXQuaternionSlerp(&q, &q1, &q2, fLerpTime);
+			float fLerpTime = fAnimFrame - pAnim->m_matAnimTrack[iBone][iBegin].fTime;
+			D3DXVec3Lerp(&v, &pAnim->m_matAnimTrack[iBone][iBegin].v, &pAnim->m_matAnimTrack[iBone][iEnd].v, fLerpTime);
+			D3DXVec3Lerp(&s, &pAnim->m_matAnimTrack[iBone][iBegin].s, &pAnim->m_matAnimTrack[iBone][iEnd].s, fLerpTime);
+			TQuaternion q1 = pAnim->m_matAnimTrack[iBone][iBegin].q;
+			TQuaternion q2 = pAnim->m_matAnimTrack[iBone][iEnd].q;
+			D3DXQuaternionSlerp(&q, &q1, &q2, fLerpTime);
 
-			//T::TMatrix matScale, matTrans, matRotate;
-			//D3DXMatrixScaling(&matScale, s.x, s.y, s.z);
-			//D3DXMatrixTranslation(&matTrans, v.x, v.y, v.z);
-			//D3DXMatrixRotationQuaternion(&matRotate, &q);
+			T::TMatrix matScale, matTrans, matRotate;
+			D3DXMatrixScaling(&matScale, s.x, s.y, s.z);
+			D3DXMatrixTranslation(&matTrans, v.x, v.y, v.z);
+			D3DXMatrixRotationQuaternion(&matRotate, &q);
 
-			//T::TMatrix matFinalAnim = matScale * matRotate * matTrans;
-			//D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matFinalAnim);
-			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matAnim);
+			T::TMatrix matFinalAnim = pModel->m_matBindPose[iBone] * (matScale * matRotate * matTrans);
+			D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matFinalAnim);
+
+			//matAnim = pModel->m_matBindPose[iBone] * pAnim->m_pBoneAnimMatrix[iBone][fAnimFrame];
+			//D3DXMatrixTranspose(&pModel->m_matBoneList.matBone[iBone], &matAnim);
 		}
 		TDevice::m_pContext->UpdateSubresource(pModel->m_pBoneCB.Get(), 0, NULL, &pModel->m_matBoneList, 0, 0);
 	}

@@ -16,59 +16,12 @@ void   Sample::SetObject(T::TVector3 vPos)
 	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
 	auto bLoadObject = I_Object.GetPtr(ld.m_csLoadFileName);
 	if (bLoadObject == nullptr)
-	{		
+	{
 		auto tObjectWalking = I_Object.Load(ld);
 		if (tObjectWalking != nullptr)
 		{
 			obj.m_pAnimMatrix = std::dynamic_pointer_cast<TKgcObject>(tObjectWalking->Get()).get();
-			// mesh
-			auto pMeshObj = obj.m_pMesh->Get()->m_pTNodeList;
-			auto pAnimObj = obj.m_pAnimMatrix->Get()->m_pTNodeList;
-			using boneFrameMatrix = std::vector<T::TMatrix>;
-			std::vector<boneFrameMatrix> m_pNewBoneAnimMatrix;
-			m_pNewBoneAnimMatrix.resize(pMeshObj.size());
-
-			UINT iNumNodes = obj.m_pMesh->Get()->m_FileHeader.iNumNodeCounter;
-			UINT iLastFrame = obj.m_pAnimMatrix->Get()->m_FileHeader.iLastFrame;
-
-			boneFrameMatrix matNewDummyMatrix(iLastFrame);
-			for (int ibone = 0; ibone < pMeshObj.size(); ibone++)
-			{
-				m_pNewBoneAnimMatrix[ibone].resize(iLastFrame);
-
-				int anim = 0;
-				std::wstring name1 = pMeshObj[ibone].szName;
-				for (anim = 0; anim < pAnimObj.size(); anim++)
-				{
-					std::wstring name2 = pAnimObj[anim].szName;
-					if (name1 == name2)
-					{
-						m_pNewBoneAnimMatrix[ibone] = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim];
-						break;
-					}
-				}
-				if (anim >= pAnimObj.size())
-				{
-					m_pNewBoneAnimMatrix[ibone] = matNewDummyMatrix;
-				}
-			}
-			for (int anim = 0; anim < pAnimObj.size(); anim++)
-			{
-				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[anim].clear();
-			}
-			obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.clear();
-
-			/*obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix.resize(iNumNodes);
-			for (int node = 0; node < iNumNodes; node++)
-			{
-				obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node].resize(iLastFrame);
-				for (int iFrame = 0; iFrame < iLastFrame; iFrame++)
-				{
-					obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix[node][iFrame] = m_pNewBoneAnimMatrix[node][0];
-				}
-			}*/
-			auto& bones = obj.m_pAnimMatrix->Get()->m_pBoneAnimMatrix;
-			bones = m_pNewBoneAnimMatrix;
+			obj.m_pAnimMatrix->Get()->RebuildAnimation(obj.m_pMesh->Get().get());
 		}
 	}
 	else
