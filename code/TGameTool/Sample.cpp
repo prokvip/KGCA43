@@ -130,7 +130,8 @@ void   Sample::Init()
 	m_LoadFiles.push_back(L"../../data/kgc/SKM_Manny_Simple.kgc");
 	//m_LoadFiles.push_back(L"../../data/kgc/Turret_Deploy1.kgc"); 	
 	TLoadData ld;	
-	ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
+	//ld.m_csLoadShaderFileName = L"CharacterLightting.hlsl";
+	ld.m_csLoadShaderFileName = L"CharacterInstance.hlsl";
 	for (int iObj = 0; iObj < m_LoadFiles.size(); iObj++)
 	{
 		ld.m_csLoadFileName = m_LoadFiles[iObj];

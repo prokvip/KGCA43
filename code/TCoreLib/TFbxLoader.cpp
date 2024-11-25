@@ -485,16 +485,24 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 				if (bSkinned)
 				{
 					TWeight& pWeight = pModel->m_WeightList[iVertexPositionIndex[iVertex]];
-					for (int i = 0; i < 4; i++)
+					for (int i = 0; i < pWeight.Index.size(); i++)
 					{
-						iwVertex.i[i] = pWeight.Index[i];
-						iwVertex.w[i] = pWeight.weight[i];
+						if (i < 4)
+						{
+							iwVertex.i0[i] = pWeight.Index[i];
+							iwVertex.w0[i] = pWeight.weight[i];
+						}
+						else
+						{
+							iwVertex.i1[i-4] = pWeight.Index[i];
+							iwVertex.w1[i-4] = pWeight.weight[i];
+						}
 					}
 				}
 				else
 				{
-					iwVertex.i[0] = iBoneIndex;
-					iwVertex.w[0] = 1.0f;
+					iwVertex.i0[0] = iBoneIndex;
+					iwVertex.w0[0] = 1.0f;
 				}
 
 				if (pModel->m_vSubMeshVertexList.size() == 0)
@@ -509,14 +517,14 @@ void   TFbxLoader::LoadMesh(int iMesh, TKgcFileFormat& model)
 				}
 				else
 				{
-					//pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
-					//pModel->m_vSubMeshIWVertexList[iSubMtrl].push_back(iwVertex);
-					bool bAddIWVertex = GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl],
+					pModel->m_vSubMeshVertexList[iSubMtrl].push_back(v);
+					pModel->m_vSubMeshIWVertexList[iSubMtrl].push_back(iwVertex);
+					/*bool bAddIWVertex = GenBuffer(pModel->m_vSubMeshVertexList[iSubMtrl],
 							  pModel->m_vSubMeshIndexList[iSubMtrl], v);
 					if (bAddIWVertex)
 					{
 						pModel->m_vSubMeshIWVertexList[iSubMtrl].emplace_back(iwVertex);
-					}
+					}*/
 				}
 			}
 		}

@@ -56,14 +56,8 @@ bool  TKgcFileFormat::Export(TKgcFileFormat* tFile, std::wstring szFileName)
 		int iSize = mesh->m_matBindPose.size();
 		fwrite(&iSize, sizeof(int), 1, fp);
 		if (iSize <= 0) continue;
-		fwrite(&mesh->m_matBindPose.at(0),
-			sizeof(T::TMatrix), iSize, fp);
-
-		//fwrite(&mesh->m_pAnimationMatrix, sizeof(T::TMatrix), header.iNumTrack, fp);
-		for (int iFrame = 0; iFrame < header.iNumTrack; iFrame++)
-		{
-			fwrite(&mesh->m_pAnimationMatrix[iFrame], sizeof(T::TMatrix), 1, fp);
-		}
+		fwrite(&mesh->m_matBindPose.at(0),	sizeof(T::TMatrix), iSize, fp);
+		
 
 		for (auto tex : mesh->m_szTexFileList)
 		{
@@ -193,17 +187,6 @@ bool  TKgcFileFormat::Import(std::wstring szFileName, std::wstring szShaderFile,
 		if (iSize <= 0) continue;
 		fbxModel->m_matBindPose.resize(iSize);
 		fread(&fbxModel->m_matBindPose.at(0), sizeof(T::TMatrix), iSize, fp);
-
-		// animation
-		fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
-		for (int iFrame = 0; iFrame < header.iNumTrack; iFrame++)
-		{
-			fread(&fbxModel->m_pAnimationMatrix[iFrame], sizeof(T::TMatrix), 1, fp);
-
-		}
-
-		//fbxModel->m_pAnimationMatrix.resize(header.iNumTrack);
-		//fread(&fbxModel->m_pAnimationMatrix, sizeof(T::TMatrix), header.iNumTrack, fp);
 
 		fbxModel->m_matWorld = header.matWorld;
 		fbxModel->m_matInitWorld = header.matWorld;

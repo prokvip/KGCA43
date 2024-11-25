@@ -1,6 +1,9 @@
 #pragma once
 #include "TKgcFormat.h"
-
+struct TInstance
+{
+	T::TMatrix matInstance;
+};
 class TFbxModel : public TDxObject3D
 {
 public:
@@ -47,6 +50,10 @@ public:
 	void   SetBoneMatrices(ID3D11DeviceContext* pContext, float& fAnimFrame, TFbxModel* pAnim=nullptr);
 
 	std::vector<std::vector<TTrack>>    m_matAnimTrack;
+
+	// Instance buffer
+	std::vector<TInstance>			  m_InstanceData;
+	ComPtr<ID3D11Buffer>			  m_pInstanceBuffer;
 public:
 	virtual bool     CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
 	T::TMatrix		 GetBoneMatrix(TFbxModel* pAnim, std::wstring name, int iFrame);

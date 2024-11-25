@@ -205,12 +205,13 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 			{
 				UINT StartSlot = 0;
 				UINT NumBuffers = 1;
-				UINT pStrides[2] = { sizeof(PNCT_Vertex), sizeof(IW_Vertex) }; // 1개의 정점 크기
-				UINT pOffsets[2] = { 0, 0 }; // 버퍼에 시작 인덱스
-				ID3D11Buffer* buffer[2] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
-											pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get()  };
-				NumBuffers = 2;
-				pContext->IASetVertexBuffers(0, 2,buffer, pStrides, pOffsets);
+				UINT pStrides[3] = { sizeof(PNCT_Vertex), sizeof(IW_Vertex), sizeof(TInstance) }; // 1개의 정점 크기
+				UINT pOffsets[3] = { 0, 0, 0 }; // 버퍼에 시작 인덱스
+				ID3D11Buffer* buffer[3] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
+											pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get(),
+											pModel->m_pInstanceBuffer.Get() };
+				NumBuffers = 3;
+				pContext->IASetVertexBuffers(0, NumBuffers,buffer, pStrides, pOffsets);
 				// 
 				//pContext->IASetVertexBuffers(StartSlot, NumBuffers,
 				//	pModel->m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
@@ -222,12 +223,30 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 
 					if (pModel->m_pSubMeshIndexBuffer[iSubMesh] != nullptr)
 					{
-						pContext->DrawIndexed(pModel->m_vSubMeshIndexList[iSubMesh].size(), 0, 0);
+						if (pModel->m_pInstanceBuffer == nullptr)
+						{
+							pContext->DrawIndexed(pModel->m_vSubMeshIndexList[iSubMesh].size(), 0, 0);
+						}
+						else
+						{
+							pContext->DrawIndexedInstanced(
+								pModel->m_vSubMeshIndexList[iSubMesh].size(),
+								pModel->m_InstanceData.size(), 0, 0, 0);
+						}
 					}
 				}
 				else
 				{
-					pContext->Draw(pModel->m_vSubMeshVertexList[iSubMesh].size(), 0);
+					if (pModel->m_pInstanceBuffer == nullptr)
+					{
+						pContext->Draw(pModel->m_vSubMeshVertexList[iSubMesh].size(), 0);
+					}
+					else
+					{
+						pContext->DrawInstanced(
+							pModel->m_vSubMeshVertexList[iSubMesh].size(),
+							pModel->m_InstanceData.size(), 0, 0);
+					}
 				}
 			}
 		}
@@ -281,8 +300,16 @@ bool     TFbxModel::CreateInputLayout(ID3D11Device* pd3dDevice)
 		{"COL",0,DXGI_FORMAT_R32G32B32A32_FLOAT,		0,24,D3D11_INPUT_PER_VERTEX_DATA,0 },
 		{"TEX",0,DXGI_FORMAT_R32G32_FLOAT,				0,40,D3D11_INPUT_PER_VERTEX_DATA,0 },
 
-		{"INDEX",0,	DXGI_FORMAT_R32G32B32_FLOAT,		1,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		{"WEIGHT",0,DXGI_FORMAT_R32G32B32A32_FLOAT,		1,16,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"TEXCOORD",1,	DXGI_FORMAT_R32G32B32A32_FLOAT,		1,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"TEXCOORD",2,	DXGI_FORMAT_R32G32B32A32_FLOAT,		1,16,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"TEXCOORD",3,	DXGI_FORMAT_R32G32B32A32_FLOAT,		1,32,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{"TEXCOORD",4,	DXGI_FORMAT_R32G32B32A32_FLOAT,		1,48,D3D11_INPUT_PER_VERTEX_DATA,0 },
+
+		{"TRANSFORM",0,	DXGI_FORMAT_R32G32B32A32_FLOAT,		2,0,D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{"TRANSFORM",1,	DXGI_FORMAT_R32G32B32A32_FLOAT,		2,16,D3D11_INPUT_PER_INSTANCE_DATA,1 },
+		{"TRANSFORM",2,	DXGI_FORMAT_R32G32B32A32_FLOAT,		2,32,D3D11_INPUT_PER_INSTANCE_DATA,1 },
+		{"TRANSFORM",3,	DXGI_FORMAT_R32G32B32A32_FLOAT,		2,48,D3D11_INPUT_PER_INSTANCE_DATA,1 },
+
 	};
 
 	UINT NumElements = sizeof(layout) / sizeof(layout[0]);
@@ -302,24 +329,39 @@ bool	 TFbxModel::CreateConstantBuffer(ID3D11Device* pd3dDevice)
 {
 	TDxObject3D::CreateConstantBuffer(pd3dDevice);
 	CreateBoneSRV(pd3dDevice);
-	// 버퍼 할당 크기를 세팅한다.
-	D3D11_BUFFER_DESC  bd;
-	ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
-	bd.ByteWidth = sizeof(TBoneMatrix);
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	m_pBoneCB.Attach(DX::CreateVertexBuffer(TDevice::m_pd3dDevice.Get(),&m_matBoneList,	1, sizeof(TBoneMatrix)));
+	//// 버퍼 할당 크기를 세팅한다.
+	//D3D11_BUFFER_DESC  bd;
+	//ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
+	//bd.ByteWidth = sizeof(TBoneMatrix);
+	//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 
-	// 할당된 버퍼에 
-	// 시스템메모리가 ->GPU메모리로 체워지는 데이터
-	D3D11_SUBRESOURCE_DATA sd;
-	ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-	sd.pSysMem = &m_matBoneList;
+	//// 할당된 버퍼에 
+	//// 시스템메모리가 ->GPU메모리로 체워지는 데이터
+	//D3D11_SUBRESOURCE_DATA sd;
+	//ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+	//sd.pSysMem = &m_matBoneList;
 
-	HRESULT hr = pd3dDevice->CreateBuffer(
-		&bd,
-		&sd,
-		m_pBoneCB.GetAddressOf());
-	if (FAILED(hr)) return false;
+	//HRESULT hr = pd3dDevice->CreateBuffer(
+	//	&bd,
+	//	&sd,
+	//	m_pBoneCB.GetAddressOf());
+	//if (FAILED(hr)) return false;
+
+
+	// Instance buffer
+	m_InstanceData.resize(5);
+	for (int i = 0; i < m_InstanceData.size(); i++)
+	{
+		T::TMatrix mat;
+		mat._41 = i * 100.0f;
+		m_InstanceData[i].matInstance = mat;
+	}	
+	m_pInstanceBuffer.Attach(
+		DX::CreateVertexBuffer(TDevice::m_pd3dDevice.Get(),
+			&m_InstanceData.at(0),
+			m_InstanceData.size(), sizeof(TInstance)));
 	return true;
 }
 void	 TFbxModel::Frame() {} 

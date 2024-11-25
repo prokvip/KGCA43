@@ -6,10 +6,11 @@ struct VS_In
 	float3 n : NOR;
 	float4 c : COL;
 	float2 t : TEX;
-	float4 i0 : TEXCOORD0;
-	float4 w0 : TEXCOORD1;
-	float4 i1 : TEXCOORD2;
-	float4 w1 : TEXCOORD3;
+	float4 i0 : TEXCOORD1;
+	float4 w0 : TEXCOORD2;
+	float4 i1 : TEXCOORD3;
+	float4 w1 : TEXCOORD4;
+	row_major float4x4 mTransform : TRANSFORM;
 };
 struct VS_Out
 {
@@ -77,7 +78,7 @@ VS_Out VSMain(VS_In vsIn)
 		vAnimNormal += mul(vsIn.n, (float3x3)matBone) * fWeight;
 	}
 
-	float4 vWorld = mul(vAnimVertex, g_matWorld);
+	float4 vWorld = mul(vAnimVertex, vsIn.mTransform);
 	float4 vView  = mul(vWorld, g_matView);
 	float4 vProj = mul(vView, g_matProj);
 	vsOut.p = vProj;
