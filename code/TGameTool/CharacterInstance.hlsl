@@ -78,7 +78,8 @@ VS_Out VSMain(VS_In vsIn)
 		vAnimNormal += mul(vsIn.n, (float3x3)matBone) * fWeight;
 	}
 
-	float4 vWorld = mul(vAnimVertex, vsIn.mTransform);
+	float4 vInstance = mul(vAnimVertex, vsIn.mTransform);
+	float4 vWorld = mul(vInstance, g_matWorld);
 	float4 vView  = mul(vWorld, g_matView);
 	float4 vProj = mul(vView, g_matProj);
 	vsOut.p = vProj;

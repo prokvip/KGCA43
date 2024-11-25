@@ -54,7 +54,8 @@ public:
 
 	// Instance buffer
 	std::vector<TInstance>			  m_InstanceData;
-	ComPtr<ID3D11Buffer>			  m_pInstanceBuffer;
+	ComPtr<ID3D11Buffer>			  m_pInstanceBuffer;	
+	void     RenderInstance(ID3D11Buffer* pInstanceBuffer, int iNumInstance);
 public:
 	virtual bool     CreateIWVertexBuffer(ID3D11Device* pd3dDevice) override;
 	T::TMatrix		 GetBoneMatrix(TFbxModel* pAnim, std::wstring name, int iFrame);

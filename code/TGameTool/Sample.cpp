@@ -36,6 +36,8 @@ void   Sample::SetObject(T::TVector3 vPos)
 	obj.matWorld._43 = obj.vPos.z;
 	obj.m_FileHeader = obj.m_pAnimMatrix->Get()->m_FileHeader;	
 	obj.SetAnimFrame(obj.m_FileHeader.iStartFrame,obj.m_FileHeader.iLastFrame);
+
+	obj.Init();
 	m_pMapObjectList.emplace_back(obj);
 	
 }
@@ -199,6 +201,16 @@ void    Sample::Frame()
 	m_LightInfo.m_vLightPos.w = 1.0f;
 	TDevice::m_pContext->UpdateSubresource(	m_pConstantBufferLight.Get(), 0, NULL, &m_LightInfo, 0, 0);
 	m_Quadtree.Frame();
+
+	for (int iFbx = 0; iFbx < m_pMapObjectList.size(); iFbx++)
+	{
+		for (int iObj = 0; iObj < 10; iObj++)
+		{
+			m_pMapObjectList[iFbx].InstanceUpdate(iObj,
+				T::TVector3(iObj*100.0f, iObj* 50.0f, iObj*100.0f));
+		}
+		m_pMapObjectList[iFbx].Frame();
+	}
 
 	//if (m_pMapObjectList.size() > 0)
 	//{

@@ -253,6 +253,7 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
 	{
 		auto pModel = m_ChildModel[iChild];
+		
 		//pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];
 		//pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];		
 		D3DXMatrixIdentity(&pModel->m_matWorld);
@@ -275,7 +276,17 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 				UINT pStrides[3] = { sizeof(PNCT_Vertex), sizeof(IW_Vertex), sizeof(TInstance) }; // 1개의 정점 크기
 				UINT pOffsets[3] = { 0, 0, 0 }; // 버퍼에 시작 인덱스
 				if (pModel->m_pInstanceBuffer != nullptr)
-				{
+				{					
+					for (int iInstance = 0; iInstance < pModel->m_InstanceData.size();
+						iInstance++)
+					{
+						pModel->m_InstanceData[iInstance].matInstance._42 = 
+							iInstance * 50;
+					}
+					pContext->UpdateSubresource(
+						pModel->m_pInstanceBuffer.Get(), 0, NULL,
+						&pModel->m_InstanceData.at(0), 0,0 );
+
 					ID3D11Buffer* buffer[3] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
 												pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get(),
 												pModel->m_pInstanceBuffer.Get() };
@@ -323,6 +334,102 @@ void     TFbxModel::Render(ID3D11DeviceContext* pContext)
 						pContext->DrawInstanced(
 							pModel->m_vSubMeshVertexList[iSubMesh].size(),
 							pModel->m_InstanceData.size(), 0, 0);
+					}
+				}
+			}
+		}
+		else
+		{
+			UINT StartSlot = 0;
+			UINT NumBuffers = 1;
+			UINT pStrides[2] = { sizeof(PNCT_Vertex), sizeof(IW_Vertex) }; // 1개의 정점 크기
+			UINT pOffsets[2] = { 0, 0 }; // 버퍼에 시작 인덱스
+			ID3D11Buffer* buffer[2] = { pModel->m_pVertexBuffer,
+										pModel->m_pIWVertexBuffer.Get() };
+			NumBuffers = 2;
+			pContext->IASetVertexBuffers(0, 2, buffer, pStrides, pOffsets);
+			pModel->PostRender(pContext);
+		}
+	}
+}
+void     TFbxModel::RenderInstance(ID3D11Buffer* pInstanceBuffer, int iNumInstance)
+{
+	auto pContext = TDevice::m_pContext;
+	for (int iChild = 0; iChild < m_ChildModel.size(); iChild++)
+	{
+		auto pModel = m_ChildModel[iChild];
+
+		//pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];
+		//pModel->m_matWorld = pModel->m_pAnimationMatrix[m_fFrameAnimation];		
+		D3DXMatrixIdentity(&pModel->m_matWorld);
+		pModel->m_matParentWorld = m_matParentWorld;
+		pModel->SetMatrix(nullptr, &m_matView, &m_matProj);
+
+		pModel->PreRender(TDevice::m_pContext);
+
+		
+		// skinning
+		pContext->VSSetConstantBuffers(2, 1, pModel->m_pBoneCB.GetAddressOf());
+		ID3D11ShaderResourceView* srvArray[] = { pModel->m_pBoneBufferRV.Get() };
+		pContext->VSSetShaderResources(1, 1, srvArray);
+
+		if (pModel->m_pSubMeshVertexBuffer.size())
+		{
+			for (int iSubMesh = 0; iSubMesh < pModel->m_pSubMeshVertexBuffer.size(); iSubMesh++)
+			{
+				UINT StartSlot = 0;
+				UINT NumBuffers = 1;
+				UINT pStrides[3] = { sizeof(PNCT_Vertex), sizeof(IW_Vertex), sizeof(TInstance) }; // 1개의 정점 크기
+				UINT pOffsets[3] = { 0, 0, 0 }; // 버퍼에 시작 인덱스
+				if (pInstanceBuffer != nullptr)
+				{					
+					ID3D11Buffer* buffer[3] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
+												pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get(),
+												pInstanceBuffer };
+					NumBuffers = 3;
+					pContext->IASetVertexBuffers(0, NumBuffers, buffer, pStrides, pOffsets);
+				}
+				else
+				{
+					ID3D11Buffer* buffer[2] = { pModel->m_pSubMeshVertexBuffer[iSubMesh].Get(),
+												pModel->m_pSubMeshIWVertexBuffer[iSubMesh].Get() };
+					NumBuffers = 2;
+					pContext->IASetVertexBuffers(0, NumBuffers, buffer, pStrides, pOffsets);
+				}
+				// 
+				//pContext->IASetVertexBuffers(StartSlot, NumBuffers,
+				//	pModel->m_pSubMeshVertexBuffer[iSubMesh].GetAddressOf(), &pStrides, &pOffsets);
+
+				pContext->PSSetShaderResources(0, 1, pModel->m_pSubMeshSRV[iSubMesh].GetAddressOf());
+				if (pModel->m_pSubMeshIndexBuffer.size())
+				{
+					pContext->IASetIndexBuffer(pModel->m_pSubMeshIndexBuffer[iSubMesh].Get(), DXGI_FORMAT_R32_UINT, 0);
+
+					if (pModel->m_pSubMeshIndexBuffer[iSubMesh] != nullptr)
+					{
+						if (pInstanceBuffer == nullptr)
+						{
+							pContext->DrawIndexed(pModel->m_vSubMeshIndexList[iSubMesh].size(), 0, 0);
+						}
+						else
+						{
+							pContext->DrawIndexedInstanced(
+								pModel->m_vSubMeshIndexList[iSubMesh].size(),
+								pModel->m_InstanceData.size(), 0, 0, 0);
+						}
+					}
+				}
+				else
+				{
+					if (pInstanceBuffer == nullptr)
+					{
+						pContext->Draw(pModel->m_vSubMeshVertexList[iSubMesh].size(), 0);
+					}
+					else
+					{
+						pContext->DrawInstanced(
+							pModel->m_vSubMeshVertexList[iSubMesh].size(),
+							iNumInstance, 0, 0);
 					}
 				}
 			}
@@ -428,20 +535,22 @@ bool	 TFbxModel::CreateConstantBuffer(ID3D11Device* pd3dDevice)
 
 
 	// Instance buffer
-	m_InstanceData.resize(5);
-	for (int i = 0; i < m_InstanceData.size(); i++)
-	{
-		T::TMatrix mat;
-		mat._41 = i * 100.0f;
-		m_InstanceData[i].matInstance = mat;
-	}	
-	m_pInstanceBuffer.Attach(
-		DX::CreateVertexBuffer(TDevice::m_pd3dDevice.Get(),
-			&m_InstanceData.at(0),
-			m_InstanceData.size(), sizeof(TInstance)));
+	//m_InstanceData.resize(5);
+	//for (int i = 0; i < m_InstanceData.size(); i++)
+	//{
+	//	T::TMatrix mat;
+	//	mat._41 = i * 100.0f;
+	//	m_InstanceData[i].matInstance = mat;
+	//}	
+	//m_pInstanceBuffer.Attach(
+	//	DX::CreateVertexBuffer(TDevice::m_pd3dDevice.Get(),
+	//		&m_InstanceData.at(0),
+	//		m_InstanceData.size(), sizeof(TInstance)));
 	return true;
 }
-void	 TFbxModel::Frame() {} 
+void	 TFbxModel::Frame() {
+	
+} 
 void     TFbxModel::AnimFrame(float& fAnimFrame)
 {
 	T::TMatrix matAnim;

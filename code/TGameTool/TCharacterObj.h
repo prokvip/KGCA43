@@ -26,7 +26,17 @@ struct TMapObject
 	UINT			m_fStartFrame = 1.0f;
 	UINT			m_fLastFrame = 1.0f;
 	TKgcFileHeader	m_FileHeader;
+
+	std::vector< TInstance>  m_InstanceData;
+	ComPtr<ID3D11Buffer>	 m_pInstanceBuffer;
+	void       Init();
+	void       Frame();
+	void       InstanceUpdate(int iIndex, T::TVector3 v);
 public:
 	void       SetAnimFrame(UINT s, UINT e);
 	void       Render(TMap& map, TCamera& cam);
+	TMapObject()
+	{
+		m_InstanceData.resize(10);
+	}
 };

@@ -1,5 +1,25 @@
 #include "pch.h"
 #include "TCharacterObj.h"
+void       TMapObject::Init()
+{
+	m_pInstanceBuffer.Attach(
+		DX::CreateVertexBuffer(TDevice::m_pd3dDevice.Get(),
+			&m_InstanceData.at(0),
+			m_InstanceData.size(), sizeof(TInstance)));
+}
+void       TMapObject::Frame()
+{
+	TDevice::m_pContext->UpdateSubresource(
+		m_pInstanceBuffer.Get(), 0, NULL,
+		&m_InstanceData.at(0), 0, 0);
+}
+void       TMapObject::InstanceUpdate(int iIndex, T::TVector3 v)
+{
+	m_InstanceData[iIndex].matInstance._41 = v.x;
+	m_InstanceData[iIndex].matInstance._42 = v.y;
+	m_InstanceData[iIndex].matInstance._43 = v.z;
+}
+
 void       TMapObject::SetAnimFrame(UINT s, UINT e)
 {
 	if (m_fStartFrame != s && m_fLastFrame != e)
@@ -46,6 +66,6 @@ void       TMapObject::Render(TMap& map, TCamera& cam)
 		}
 		pMesh->m_matParentWorld = matWorld;
 		pMesh->SetMatrix(nullptr, &cam.m_matView, &cam.m_matProj);
-		pMesh->Render(TDevice::m_pContext);
+		pMesh->RenderInstance(m_pInstanceBuffer.Get(), m_InstanceData.size());
 	}
 }
