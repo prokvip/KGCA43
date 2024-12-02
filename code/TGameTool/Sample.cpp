@@ -1,6 +1,195 @@
 #include "pch.h"
 #include "Sample.h"
 #include "TTexMgr.h"
+template< typename T >
+struct array_deleter
+{
+	void operator ()(T const* p)
+	{
+		delete[] p;
+	}
+};
+bool Sample::CreateBufferSRV(ComPtr<ID3D11Buffer>& pBuffer,
+	ComPtr<ID3D11ShaderResourceView>& srv)
+{
+	D3D11_BUFFER_DESC descBuf;
+	ZeroMemory(&descBuf, sizeof(descBuf));
+	pBuffer->GetDesc(&descBuf);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+	desc.BufferEx.FirstElement = 0;
+
+	//if (descBuf.MiscFlags & D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS)
+	//{
+	//	// This is a Raw Buffer
+
+	//	desc.Format = DXGI_FORMAT_R32_TYPELESS;
+	//	desc.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
+	//	desc.BufferEx.NumElements = descBuf.ByteWidth / 4;
+	//}
+	//else
+	if (descBuf.MiscFlags & D3D11_RESOURCE_MISC_BUFFER_STRUCTURED)
+	{
+		desc.Format = DXGI_FORMAT_UNKNOWN;
+		desc.BufferEx.NumElements =
+			descBuf.ByteWidth / descBuf.StructureByteStride;
+	}
+	else
+	{
+		return E_INVALIDARG;
+	}
+
+	return TDevice::m_pd3dDevice->CreateShaderResourceView(
+		pBuffer.Get(),
+		&desc,
+		srv.GetAddressOf());
+}
+bool  Sample::CreateStructureBuffer(
+	UINT uElementSize,
+	UINT uCount,
+	VOID* pInitData,
+	ComPtr<ID3D11Buffer>& sBuffer)
+{
+	D3D11_BUFFER_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.BindFlags =
+		D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	desc.ByteWidth = uElementSize * uCount;
+	desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	desc.StructureByteStride = uElementSize;
+
+	if (pInitData)
+	{
+		D3D11_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = pInitData;
+		return TDevice::m_pd3dDevice->CreateBuffer(&desc,
+			&InitData, sBuffer.GetAddressOf());
+	}
+	return TDevice::m_pd3dDevice->CreateBuffer(&desc, NULL,
+		sBuffer.GetAddressOf());
+}
+HRESULT  Sample::CreateAlphaTex(UINT iWidth, UINT iHeight)
+{
+	HRESULT hr = S_OK;
+	std::shared_ptr<int> buf(new int[iWidth * iHeight], array_deleter<int>());
+	for (int i = 0; i < iHeight; i++)
+	{
+		for (int j = 0; j < iWidth; j++)
+		{
+			if ((i & 32) == (j & 32))
+				buf.get()[i * iWidth + j] = 0x00000000;//0xffffffff ABGR
+			else
+				buf.get()[i * iWidth + j] = 0x00000000; //0xffffff00; ABGR
+		}
+	}
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(textureDesc));
+	textureDesc.Width = iWidth;
+	textureDesc.Height = iHeight;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	// 텍스처 초기화 방법들
+	//D3D11_USAGE_DEFAULT(	// 1) pInitialData	// 2)UpdateSubresource)
+	//D3D11_USAGE_DYNAMIC Map()~Unmap()
+	//D3D11_USAGE_STAGING(D3D11_MAP_WRITE) 1)Map()~Unmap() 2)CopyResource 
+	D3D11_SUBRESOURCE_DATA pInitialData;
+	ZeroMemory(&pInitialData, sizeof(pInitialData));
+	pInitialData.pSysMem = (void*)buf.get();
+	pInitialData.SysMemPitch = iWidth * 4;	// 1줄 바이트 크기 지정
+	pInitialData.SysMemSlicePitch = iWidth * iHeight * 4; // 2D텍스처는 필요없다.
+
+	hr = TDevice::m_pd3dDevice->CreateTexture2D(&textureDesc, &pInitialData,
+					m_pAlphaTexture.GetAddressOf());
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+	//D3D11_BIND_UNORDERED_ACCESS 필요
+	D3D11_UNORDERED_ACCESS_VIEW_DESC viewDescUAV;
+	ZeroMemory(&viewDescUAV, sizeof(viewDescUAV));
+	viewDescUAV.Format = textureDesc.Format;
+	viewDescUAV.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	viewDescUAV.Texture2D.MipSlice = 0;
+	hr = TDevice::m_pd3dDevice->CreateUnorderedAccessView(m_pAlphaTexture.Get(), 
+		&viewDescUAV, m_pAlphaTexUAV.GetAddressOf());
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+	//D3D11_BIND_SHADER_RESOURCE 필요
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	hr = TDevice::m_pd3dDevice->CreateShaderResourceView(m_pAlphaTexture.Get(), &srvDesc, 
+		m_pAlphaTexSRV.GetAddressOf());
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+	return hr;
+}
+void   Sample::Splatting()
+{
+	TLoadData ld;
+	ld.m_csLoadFileName = L"../../data/map/tiles/Tile28.jpg";
+	m_pTexSplatting[0] = I_Tex.Load(ld).get();
+	ld.m_csLoadFileName = L"../../data/map/tiles/020.bmp";
+	m_pTexSplatting[1] = I_Tex.Load(ld).get();
+	ld.m_csLoadFileName = L"../../data/map/tiles/Snow.jpg";
+	m_pTexSplatting[2] = I_Tex.Load(ld).get();
+	ld.m_csLoadFileName = L"../../data/map/tiles/Tile42.jpg";
+	m_pTexSplatting[3] = I_Tex.Load(ld).get();
+
+	m_pCS.Attach(
+		DX::LoadComputeShaderFile(
+			TDevice::m_pd3dDevice.Get(),
+			L"CS.txt", nullptr, "CSMain"));
+	float fX = 100.0f;
+	float fY = 0.0f;
+	m_SelectPick.vPickPos = { -fX,fY, 0.0f };
+	m_SelectPick.fRaidus = 256.0f;
+	m_SelectPick.iIndex = 1; // A=0,B=1,G=2,R=3
+	m_SelectPick.fTexWidth = 1024.0f;
+	m_SelectPick.fTexHeight = 1024.0f;
+	
+	CreateStructureBuffer(sizeof(PickData), 1, &m_SelectPick, m_pBuf0);	
+	CreateBufferSRV(m_pBuf0, m_pBuf0SRV);
+	CreateAlphaTex(m_iTextureWidth, m_iTextureHeight);
+
+	ID3D11ShaderResourceView* SRVArray[] = {m_pBuf0SRV.Get()};
+	TDevice::m_pContext->CSSetShader(m_pCS.Get(), NULL, 0);
+	TDevice::m_pContext->CSSetShaderResources(0, 1, SRVArray);
+	TDevice::m_pContext->CSSetUnorderedAccessViews(0, 1, m_pAlphaTexUAV.GetAddressOf(), NULL);
+
+	// groupid= 1024*1*1
+	// groupthreadid = [0~1023][1][1]
+	// numthreads(1,1,1) -> thread = 0~1023;
+	// SV_DispatchThreadID = 0~1024 -> CSMain()
+	// x(32) = 1024 / 32
+	// y(32) = 1024 / 32
+	TDevice::m_pContext->Dispatch(  m_iTextureWidth/32.0f,
+									m_iTextureHeight/32.0f, 1);
+
+	TDevice::m_pContext->CSSetShader(NULL, NULL, 0);
+	ID3D11UnorderedAccessView* ppUAViewNULL[1] = { NULL };
+	TDevice::m_pContext->CSSetUnorderedAccessViews(0, 1, ppUAViewNULL, NULL);
+
+	ID3D11ShaderResourceView* ppSRVNULL[2] = { NULL, NULL };
+	TDevice::m_pContext->CSSetShaderResources(0, 2, ppSRVNULL);
+
+	ID3D11Buffer* ppCBNULL[1] = { NULL };
+	TDevice::m_pContext->CSSetConstantBuffers(0, 1, ppCBNULL);
+}
 void   Sample::SetObject(T::TVector3 vPos)
 {
 	TMapObject obj;
@@ -54,6 +243,7 @@ void   Sample::CreateTopViewRT()
 }
 void   Sample::Init()
 {
+	Splatting();
 	CreateTopViewRT();
 
 	m_LightInfo.m_vLightDir = T::TVector4(0, -1, 0, 1);
@@ -66,7 +256,7 @@ void   Sample::Init()
 		L"../../data/map/heightmap/heightMap513.bmp");
 
 	TMapDesc desc = { m_Map.m_HeightMapDesc.Width,
-					m_Map.m_HeightMapDesc.Height, 10.0f, 2.0f,
+					m_Map.m_HeightMapDesc.Height, 1.0f, 0.1f,
 		//TMapDesc desc = { 5,
 		//			5, 10.0f, 2.0f,
 		//L"../../data/map/heightmap/castle.jpg",
@@ -246,7 +436,14 @@ void    Sample::MapRender(TCamera* pCamera)
 	m_Map.SetMatrix(nullptr, &pCamera->m_matView,
 							 &pCamera->m_matProj);
 	m_Map.PreRender(TDevice::m_pContext);
-
+	
+	ID3D11ShaderResourceView* aRViews[4] = { m_pTexSplatting[0]->m_pSRV.Get(),
+											 m_pTexSplatting[1]->m_pSRV.Get(),
+											 m_pTexSplatting[2]->m_pSRV.Get(),
+											 m_pTexSplatting[3]->m_pSRV.Get() };
+	TDevice::m_pContext->PSSetShaderResources(2, 4, aRViews);
+	TDevice::m_pContext->PSSetShaderResources(1, 1, m_pAlphaTexSRV.GetAddressOf());
+	
 	TDevice::m_pContext->IASetIndexBuffer(
 		m_Quadtree.m_pRootNode->m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	//m_Quadtree.PostRender(TDevice::m_pContext, m_Quadtree.m_pRootNode);

@@ -57,8 +57,14 @@ VS_Out VSMain(VS_In vsIn)
 	return vsOut;
 }
 
-Texture2D g_txTexture : register(t0);
-SamplerState LinearPoint : register(s0);
+Texture2D g_txBaseDiffuse : register(t0);
+Texture2D g_txMaskAlpha: register (t1);
+Texture2D g_txDiffuseA: register (t2);
+Texture2D g_txDiffuseB: register (t3);
+Texture2D g_txDiffuseC: register (t4);
+Texture2D g_txDiffuseD: register (t5);
+
+SamplerState samLinear : register(s0);
 SamplerState Point  : register(s1);
 
 
@@ -72,11 +78,21 @@ struct PS_Out
 {
 	float4 c : SV_Target;
 };
+
 PS_Out PSMain(PS_In psIn)
 {
 	PS_Out  psOut = (PS_Out)0;
-	float4 pixel = g_txTexture.Sample(LinearPoint, psIn.t);
-	//float4 pixel = g_txTexture.Sample(Point, psIn.t);
-	psOut.c = pixel * psIn.c;// float4(1, 0, 0, 1);
-	return psOut;	
+	float4 pixel  = g_txBaseDiffuse.Sample(samLinear, psIn.t);
+	float4 vAlpha = g_txMaskAlpha.Sample(samLinear, psIn.t);
+	float4 vColorA = g_txDiffuseA.Sample(samLinear, psIn.t);
+	float4 vColorB = g_txDiffuseB.Sample(samLinear, psIn.t);
+	float4 vColorC = g_txDiffuseC.Sample(samLinear, psIn.t);
+	float4 vColorD = g_txDiffuseD.Sample(samLinear, psIn.t);
+
+	
+	psOut.c = lerp(pixel, vColorA, vAlpha.r);
+	psOut.c = lerp(psOut.c, vColorB, vAlpha.g);
+	psOut.c = lerp(psOut.c, vColorC, vAlpha.b);
+	psOut.c = lerp(psOut.c, vColorD, vAlpha.a);
+	return psOut;
 }

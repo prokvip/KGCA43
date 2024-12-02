@@ -38,13 +38,23 @@ public:
 	}
 };
 
+struct PickData
+{
+	T::TVector3 vPickPos;
+	float	    fRaidus;
+	int			iIndex;
+	float		fTexWidth;
+	float		fTexHeight;
+};
 class Sample : public TCore
 {	
 public:
 	TRenderTarget	m_TopViewRT;
 	TCamera			m_TopViewCamera;
+	
 public:
 	TSelect		m_Select;
+	TTexture*	m_pTexSplatting[4];
 	TMap		m_Map;
 	TQuadtree   m_Quadtree;
 	TMiniMap	m_MiniMapObj;
@@ -67,4 +77,25 @@ public:
 	void   MapRender(TCamera* pCamera);
 	void   MiniMapRander(ID3D11ShaderResourceView* pSRV);
 	void   CreateTopViewRT();
+
+public:
+	UINT					m_iTextureWidth = 1024;
+	UINT					m_iTextureHeight = 1024;
+	void					Splatting();
+	PickData				m_SelectPick;
+	
+	ComPtr<ID3D11Buffer>					m_pBuf0;
+	ComPtr<ID3D11ShaderResourceView>		m_pBuf0SRV;
+	ComPtr < ID3D11Texture2D >              m_pAlphaTexture;
+	ComPtr<ID3D11ShaderResourceView>		m_pAlphaTexSRV;
+	ComPtr<ID3D11UnorderedAccessView>		m_pAlphaTexUAV;
+
+	ComPtr<ID3D11ComputeShader>  m_pCS;
+	bool  CreateStructureBuffer(UINT uElementSize,
+		UINT uCount,
+		VOID* pInitData,
+		ComPtr<ID3D11Buffer>& sBuffer);
+	HRESULT  CreateAlphaTex(UINT iWidth, UINT iHeight);
+	bool CreateBufferSRV(ComPtr<ID3D11Buffer>& pBuffer,
+		ComPtr<ID3D11ShaderResourceView>& srv);
 };

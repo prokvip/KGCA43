@@ -1,0 +1,46 @@
+struct PickData
+{
+	float3 vPickPos;
+	float  fRaidus;
+	int    iIndex;
+	float  fTexWidth;
+	float  fTexHeight;
+};
+StructuredBuffer<PickData>	SelectData : register(t0);
+RWTexture2D<float4>			OutputMap : register(u0);
+
+#define size_x 32
+#define size_y 32
+
+[numthreads(size_x,size_y,1)]
+void CSMain(uint3 GroupID : SV_GroupID,
+			uint3 DispatchThreadID : SV_DispatchThreadID, 
+			uint3 GroupThreadID : SV_GroupThreadID, 
+			uint  GroupIndex : SV_GroupIndex)
+{
+	int3 texturelocation = int3(0,0,0);
+	// 0 ~ 1024
+	//texturelocation.x = GroupID.x * size_x + GroupThreadID.x;
+	//texturelocation.y = GroupID.y * size_y + GroupThreadID.y;
+	texturelocation.x = DispatchThreadID.x;
+	texturelocation.y = DispatchThreadID.y;
+	float1 w = SelectData[0].fTexWidth;
+	float1 h = SelectData[0].fTexHeight;
+	float2 uv = float2(	texturelocation.x / w, texturelocation.y / h);
+	float3 vPos = float3((uv.x * 2.0f - 1.0f) * w*0.25f,
+						-(uv.y * 2.0f - 1.0f) * h*0.25f,	0.0f);
+	float fRadius = distance(vPos.xyz,  SelectData[0].vPickPos.xyz);
+	if( fRadius < SelectData[0].fRaidus)
+	{
+		float4 fAlpha = OutputMap.Load(texturelocation);
+		float fDot = 1.0f- ( fRadius / SelectData[0].fRaidus);
+		switch(SelectData[0].iIndex)
+		{
+			case 0 : fAlpha.x = max(fAlpha, fDot); break; //R
+			case 1 : fAlpha.y = max(fAlpha, fDot); break; //G
+			case 2 : fAlpha.z = max(fAlpha, fDot); break; //B
+			case 3 : fAlpha.w = max(fAlpha, fDot); break; //A
+		}		
+		OutputMap[texturelocation.xy] = fAlpha;
+	 }	
+}
